@@ -1,0 +1,10 @@
+# byte-compiled / optimized / DLL files
+**/__pycache__
+
+# configuration files
+*.ini
+!Config_examples/*.ini
+
+# temporary directory for signal synchronization
+sig-tmp
+
