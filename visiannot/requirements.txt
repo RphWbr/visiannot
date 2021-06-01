@@ -1,0 +1,7 @@
+configobj==5.0.6
+numpy==1.17.4
+pyqtgraph==0.11.0
+h5py==2.10.0
+pytz==2019.3
+scipy==1.5.3
+PyQt5==5.15.4

@@ -1,0 +1,329 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>visiannot.tools.ToolsAudio &mdash; ViSiAnnoT 0.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> ViSiAnnoT
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide-visiannot.html">User guide: ViSiAnnoT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide-configuration.html">User guide: configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide-toolspyqt.html">User guide: ToolsPyQt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide-toolspyqtgraph.html">User guide: ToolsPyqtgraph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../exe.html">Creating a standalone executable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../software.html">Software description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../further.html">Further developments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../APIreference/index.html">API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ViSiAnnoT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>visiannot.tools.ToolsAudio</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for visiannot.tools.ToolsAudio</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright Université Rennes 1</span>
+<span class="c1"># Contributor: Raphael Weber</span>
+<span class="c1">#</span>
+<span class="c1"># Under CeCILL license</span>
+<span class="c1"># http://www.cecill.info</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module with functions for loading audio files</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">wave</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="getAudioWaveFrequency"><a class="viewcode-back" href="../../../APIreference/tools/ToolsAudio/index.html#visiannot.tools.ToolsAudio.getAudioWaveFrequency">[docs]</a><span class="k">def</span> <span class="nf">getAudioWaveFrequency</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loads audio wave and gets frequency</span>
+
+<span class="sd">    :param path: path to the audio file</span>
+<span class="sd">    :type path: str</span>
+
+<span class="sd">    :returns:</span>
+<span class="sd">        - **data_wave** (*wave.Wave_read*) -- see</span>
+<span class="sd">          https://docs.python.org/3/library/wave.html#wave-read-objects</span>
+<span class="sd">        - **freq** (*int* or *float*) -- frequency</span>
+
+<span class="sd">    :author: Raphael Weber</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># get audio wave</span>
+    <span class="n">data_wave</span> <span class="o">=</span> <span class="n">wave</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
+
+    <span class="c1"># get frequency</span>
+    <span class="n">freq</span> <span class="o">=</span> <span class="n">data_wave</span><span class="o">.</span><span class="n">getframerate</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">data_wave</span><span class="p">,</span> <span class="n">freq</span></div>
+
+
+<div class="viewcode-block" id="getDataAudio"><a class="viewcode-back" href="../../../APIreference/tools/ToolsAudio/index.html#visiannot.tools.ToolsAudio.getDataAudio">[docs]</a><span class="k">def</span> <span class="nf">getDataAudio</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">channel_id</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loads audio data</span>
+
+<span class="sd">    :param path: path to the audio file</span>
+<span class="sd">    :type path: str</span>
+<span class="sd">    :param channel_id: audio channel to be loaded as a numpy array, set it to</span>
+<span class="sd">        ``-1`` to get all channels</span>
+<span class="sd">    :type channel_id: int</span>
+
+<span class="sd">    :returns:</span>
+<span class="sd">        - **data_wave** (*wave.Wave_read*) -- see</span>
+<span class="sd">          https://docs.python.org/3/library/wave.html#wave-read-objects</span>
+<span class="sd">        - **data_audio** (*numpy array*) -- audio signal, with all channels</span>
+<span class="sd">          if ``channel_id`` is set to ``-1``</span>
+<span class="sd">        - **freq** (*int*) -- frequency</span>
+
+<span class="sd">    :author: Raphael Weber</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># get audio wave and frequency</span>
+    <span class="n">data_wave</span><span class="p">,</span> <span class="n">freq</span> <span class="o">=</span> <span class="n">getAudioWaveFrequency</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="c1"># get audio data as a numpy array</span>
+    <span class="n">data_audio</span> <span class="o">=</span> <span class="n">data_wave</span><span class="o">.</span><span class="n">readframes</span><span class="p">(</span><span class="n">data_wave</span><span class="o">.</span><span class="n">getnframes</span><span class="p">())</span>
+    <span class="n">byte_length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_audio</span><span class="p">)</span> <span class="o">/</span> <span class="n">data_wave</span><span class="o">.</span><span class="n">getnframes</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="n">byte_length</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">np_type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int8</span>
+    <span class="k">elif</span> <span class="n">byte_length</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">np_type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int16</span>
+    <span class="k">elif</span> <span class="n">byte_length</span> <span class="o">==</span> <span class="mi">8</span><span class="p">:</span>
+        <span class="n">np_type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span>
+    <span class="k">elif</span> <span class="n">byte_length</span> <span class="o">==</span> <span class="mi">16</span><span class="p">:</span>
+        <span class="n">np_type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span>
+
+    <span class="n">data_audio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">data_audio</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np_type</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">data_wave</span><span class="o">.</span><span class="n">getnframes</span><span class="p">(),</span> <span class="n">data_wave</span><span class="o">.</span><span class="n">getnchannels</span><span class="p">())</span>
+    <span class="p">)</span>
+
+    <span class="c1"># get specific channel if necessary</span>
+    <span class="k">if</span> <span class="n">channel_id</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">data_audio</span> <span class="o">=</span> <span class="n">data_audio</span><span class="p">[:,</span> <span class="n">channel_id</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">data_wave</span><span class="p">,</span> <span class="n">data_audio</span><span class="p">,</span> <span class="n">freq</span></div>
+
+
+<div class="viewcode-block" id="convertKeyToChannelId"><a class="viewcode-back" href="../../../APIreference/tools/ToolsAudio/index.html#visiannot.tools.ToolsAudio.convertKeyToChannelId">[docs]</a><span class="k">def</span> <span class="nf">convertKeyToChannelId</span><span class="p">(</span><span class="n">key_data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts a key to access data (configuration for :class:`.ViSiAnnoT`) to</span>
+<span class="sd">    the index of an audio channel</span>
+
+<span class="sd">    The key must contain the word &quot;left&quot; or &quot;right&quot;, otherwise default channel</span>
+<span class="sd">    is ``0``.</span>
+
+<span class="sd">    :param key_data: key with channel ID</span>
+<span class="sd">    :type key_data: str</span>
+
+<span class="sd">    :returns: channel ID</span>
+<span class="sd">    :rtype: int</span>
+
+<span class="sd">    :author: Raphael Weber</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">key_data_lower</span> <span class="o">=</span> <span class="n">key_data</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="s2">&quot;left&quot;</span> <span class="ow">in</span> <span class="n">key_data_lower</span><span class="p">:</span>
+        <span class="n">channel_id</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">elif</span> <span class="s2">&quot;right&quot;</span> <span class="ow">in</span> <span class="n">key_data_lower</span><span class="p">:</span>
+        <span class="n">channel_id</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">channel_id</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">return</span> <span class="n">channel_id</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020-2021, Université Rennes 1
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,471 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>visiannot.visiannot.components.Signal &mdash; ViSiAnnoT 0.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> ViSiAnnoT
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../userguide-visiannot.html">User guide: ViSiAnnoT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../userguide-configuration.html">User guide: configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../userguide-toolspyqt.html">User guide: ToolsPyQt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../userguide-toolspyqtgraph.html">User guide: ToolsPyqtgraph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../exe.html">Creating a standalone executable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../software.html">Software description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../further.html">Further developments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../APIreference/index.html">API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">ViSiAnnoT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>visiannot.visiannot.components.Signal</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for visiannot.visiannot.components.Signal</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright Université Rennes 1</span>
+<span class="c1"># Contributor: Raphael Weber</span>
+<span class="c1">#</span>
+<span class="c1"># Under CeCILL license</span>
+<span class="c1"># http://www.cecill.info</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module defining :class:`.Signal`</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="Signal"><a class="viewcode-back" href="../../../../APIreference/visiannot/components/Signal/index.html#visiannot.visiannot.components.Signal.Signal">[docs]</a><span class="k">class</span> <span class="nc">Signal</span><span class="p">():</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">max_points</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+                 <span class="n">plot_style</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">legend_text</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class defining a signal to plot in :class:`.ViSiAnnoT`</span>
+
+<span class="sd">        The signal data can be accessed with the methods</span>
+<span class="sd">        :meth:`.Signal.getData` and :meth:`.Signal.getDataInRange`.</span>
+
+<span class="sd">        The attributes have the prefix _, so one should call the get methods to</span>
+<span class="sd">        access them.</span>
+
+<span class="sd">        :param data: signal data, shape :math:`(n_{samples})` if regularly</span>
+<span class="sd">            sampled (i.e. ``freq != 0``), or :math:`(n_{samples}, 2)` if not</span>
+<span class="sd">            regularlay sampled (i.e. ``freq == 0``), then first column contains</span>
+<span class="sd">            the timestamp in milliseconds and the second column contains the</span>
+<span class="sd">            data</span>
+<span class="sd">        :type data: numpy array</span>
+<span class="sd">        :param freq: signal frequency, set it to 0 if not regularly sampled</span>
+<span class="sd">        :type freq: int or float</span>
+<span class="sd">        :param max_points: maximum number of points to display in</span>
+<span class="sd">            :class:`.ViSiAnnoT` (used in :meth:`.Signal.getDataInRange`)</span>
+<span class="sd">        :type max_points: int</span>
+<span class="sd">        :param plot_style: plot style of the signal, see</span>
+<span class="sd">            https://pyqtgraph.readthedocs.io/en/latest/graphicsItems/plotdataitem.html</span>
+<span class="sd">            for details</span>
+<span class="sd">        :type plot_style: dict</span>
+<span class="sd">        :param legend_text: legend associated to the signal plot</span>
+<span class="sd">        :type legend_text: str</span>
+
+<span class="sd">        :author: Raphael Weber</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
+
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">data_range</span> <span class="o">=</span> <span class="mi">1000</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">freq</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">data_range</span><span class="p">,</span> <span class="n">data</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_freq</span> <span class="o">=</span> <span class="n">freq</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_points</span> <span class="o">=</span> <span class="n">max_points</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_plot_style</span> <span class="o">=</span> <span class="n">plot_style</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_legend_text</span> <span class="o">=</span> <span class="n">legend_text</span>
+
+
+<div class="viewcode-block" id="Signal.getData"><a class="viewcode-back" href="../../../../APIreference/visiannot/components/Signal/index.html#visiannot.visiannot.components.Signal.Signal.getData">[docs]</a>    <span class="k">def</span> <span class="nf">getData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get method</span>
+
+<span class="sd">        :returns: signal data, shape :math:`(n_{samples}, 2)` (even if</span>
+<span class="sd">            regularly sampled), first column contains the timestamp in</span>
+<span class="sd">            milliseconds and the second column contains the data</span>
+<span class="sd">        :rtype: numpy array</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span></div>
+
+
+<div class="viewcode-block" id="Signal.getFreq"><a class="viewcode-back" href="../../../../APIreference/visiannot/components/Signal/index.html#visiannot.visiannot.components.Signal.Signal.getFreq">[docs]</a>    <span class="k">def</span> <span class="nf">getFreq</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get method</span>
+
+<span class="sd">        :returns: signal frequency (``0`` if not regularly sampled)</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_freq</span></div>
+
+
+<div class="viewcode-block" id="Signal.getPlotStyle"><a class="viewcode-back" href="../../../../APIreference/visiannot/components/Signal/index.html#visiannot.visiannot.components.Signal.Signal.getPlotStyle">[docs]</a>    <span class="k">def</span> <span class="nf">getPlotStyle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get method</span>
+
+<span class="sd">        :returns: plot style, might be ``None``</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plot_style</span></div>
+
+
+<div class="viewcode-block" id="Signal.getMaxPoints"><a class="viewcode-back" href="../../../../APIreference/visiannot/components/Signal/index.html#visiannot.visiannot.components.Signal.Signal.getMaxPoints">[docs]</a>    <span class="k">def</span> <span class="nf">getMaxPoints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get method</span>
+
+<span class="sd">        :returns: maximum number of points to display in :class:`.ViSiAnnoT`</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_points</span></div>
+
+<div class="viewcode-block" id="Signal.getLegendText"><a class="viewcode-back" href="../../../../APIreference/visiannot/components/Signal/index.html#visiannot.visiannot.components.Signal.Signal.getLegendText">[docs]</a>    <span class="k">def</span> <span class="nf">getLegendText</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get method</span>
+
+<span class="sd">        :returns: legend associated to the signal plot</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_legend_text</span></div>
+
+
+<div class="viewcode-block" id="Signal.setSignal"><a class="viewcode-back" href="../../../../APIreference/visiannot/components/Signal/index.html#visiannot.visiannot.components.Signal.Signal.setSignal">[docs]</a>    <span class="k">def</span> <span class="nf">setSignal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the instance with new values</span>
+
+<span class="sd">        It calls the constructor.</span>
+
+<span class="sd">        :param args: positional arguments of the constructor of</span>
+<span class="sd">            :class:`.Signal`</span>
+<span class="sd">        :param kwargs:</span>
+<span class="sd">        :type kwargs: keyword arguments of the constructor of</span>
+<span class="sd">            :class:`.Signal`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Signal.getDataInRange"><a class="viewcode-back" href="../../../../APIreference/visiannot/components/Signal/index.html#visiannot.visiannot.components.Signal.Signal.getDataInRange">[docs]</a>    <span class="k">def</span> <span class="nf">getDataInRange</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first_frame_ms</span><span class="p">,</span> <span class="n">last_frame_ms</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the signal data in the range defined by</span>
+<span class="sd">        ``first_frame_ms:last_frame_ms``</span>
+
+<span class="sd">        :param first_frame_ms: first frame of the range in milliseconds</span>
+<span class="sd">        :type first_frame_ms: int</span>
+<span class="sd">        :param last_frame_ms: last frame of the range in milliseconds</span>
+<span class="sd">        :type last_frame_ms: int</span>
+
+<span class="sd">        :returns: signal data in the range [first_frame_ms:last_frame_ms]</span>
+<span class="sd">        :rtype: numpy array</span>
+
+<span class="sd">        :author: Raphael Weber</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># get start index</span>
+        <span class="n">start_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">first_frame_ms</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">start_indexes</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">start_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># substraction with 1 in order to get the point just before,</span>
+            <span class="c1"># it looks better like that for signals with non constant frequency</span>
+            <span class="n">start_id</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">start_indexes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># get stop index</span>
+        <span class="n">stop_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">last_frame_ms</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">stop_indexes</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">stop_id</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># addition with 2 in order to get the point just after,</span>
+            <span class="c1"># it looks better like that for signals with non constant frequency</span>
+            <span class="n">stop_id</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">stop_indexes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># reverse start and stop index if necessary</span>
+        <span class="k">if</span> <span class="n">start_id</span> <span class="o">&gt;</span> <span class="n">stop_id</span><span class="p">:</span>
+            <span class="n">start_id</span><span class="p">,</span> <span class="n">stop_id</span> <span class="o">=</span> <span class="n">stop_id</span><span class="p">,</span> <span class="n">start_id</span>
+
+        <span class="c1"># downsampling if too much data to plot</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="n">stop_id</span> <span class="o">-</span> <span class="n">start_id</span>
+
+        <span class="k">if</span> <span class="n">length</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_points</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">start_id</span><span class="p">:</span><span class="n">stop_id</span><span class="p">]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">step</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">length</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_points</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">start_id</span><span class="p">,</span> <span class="n">stop_id</span><span class="p">,</span> <span class="n">step</span><span class="p">),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">start_id</span><span class="p">:</span><span class="n">stop_id</span><span class="p">:</span><span class="n">step</span><span class="p">]</span>
+                <span class="p">))</span><span class="o">.</span><span class="n">T</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">start_id</span><span class="p">:</span><span class="n">stop_id</span><span class="p">:</span><span class="n">step</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Signal.downsampleSignal"><a class="viewcode-back" href="../../../../APIreference/visiannot/components/Signal/index.html#visiannot.visiannot.components.Signal.Signal.downsampleSignal">[docs]</a>    <span class="k">def</span> <span class="nf">downsampleSignal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_freq</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the instance with a new signal frequency</span>
+
+<span class="sd">        Once the signal data is downsampled, the method calls the method</span>
+<span class="sd">        :meth:`.Signal.setSignal`.</span>
+
+<span class="sd">        NB: make sure that this method is called only if the signal is</span>
+<span class="sd">        regularly sampled.</span>
+
+<span class="sd">        :param new_freq: new frequency of the signal, make sure that it is</span>
+<span class="sd">            littler than the current frequency</span>
+<span class="sd">        :type new_freq: int or float</span>
+
+<span class="sd">        :author: Raphael Weber</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># downsampling factor</span>
+        <span class="n">factor</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_freq</span> <span class="o">/</span> <span class="n">new_freq</span><span class="p">)</span>
+
+        <span class="c1"># get data values</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># check if data size is divisible by downsampling factor</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">factor</span><span class="p">)</span><span class="o">.</span><span class="n">is_integer</span><span class="p">():</span>
+            <span class="c1"># downsample</span>
+            <span class="n">new_data</span> <span class="o">=</span> <span class="n">Signal</span><span class="o">.</span><span class="n">downSample</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">factor</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># fill data with nan</span>
+            <span class="n">fill_nb</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span>
+                <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">factor</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">factor</span><span class="p">)</span> <span class="o">*</span> <span class="n">factor</span>
+            <span class="p">)</span>
+
+            <span class="n">new_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">fill_nb</span><span class="p">,))))</span>
+
+            <span class="c1"># downsample</span>
+            <span class="n">new_data</span> <span class="o">=</span> <span class="n">Signal</span><span class="o">.</span><span class="n">downSample</span><span class="p">(</span><span class="n">new_data</span><span class="p">,</span> <span class="n">factor</span><span class="p">)</span>
+
+            <span class="c1"># delete nan</span>
+            <span class="n">nan_nb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">new_data</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">nan_nb</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">new_data</span> <span class="o">=</span> <span class="n">new_data</span><span class="p">[:</span><span class="o">-</span><span class="n">nan_nb</span><span class="p">]</span>
+
+        <span class="c1"># reset signal</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setSignal</span><span class="p">(</span>
+            <span class="n">new_data</span><span class="p">,</span> <span class="n">new_freq</span><span class="p">,</span> <span class="n">plot_style</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_plot_style</span><span class="p">,</span>
+            <span class="n">legend_text</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_legend_text</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Signal.downSample"><a class="viewcode-back" href="../../../../APIreference/visiannot/components/Signal/index.html#visiannot.visiannot.components.Signal.Signal.downSample">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">downSample</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">factor</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Downsamples the input data by the specified factor using mean</span>
+
+<span class="sd">        :param data: signal data to downsample, shape :math:`(n_{frames},)`</span>
+<span class="sd">        :type data: numpy array</span>
+<span class="sd">        :param factor: downsampling factor, make sure that</span>
+<span class="sd">            :math:`n_{frames}/factor` is an integer</span>
+<span class="sd">        :type factor: int</span>
+
+<span class="sd">        :returns: downsampled signal data, shape :math:`(n_{frames}/factor,)`</span>
+<span class="sd">        :rtype: numpy array</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">factor</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020-2021, Université Rennes 1
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

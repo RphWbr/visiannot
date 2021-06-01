@@ -1,0 +1,765 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>visiannot.tools.ToolsDateTime &mdash; ViSiAnnoT 0.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> ViSiAnnoT
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide-visiannot.html">User guide: ViSiAnnoT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide-configuration.html">User guide: configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide-toolspyqt.html">User guide: ToolsPyQt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide-toolspyqtgraph.html">User guide: ToolsPyqtgraph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../exe.html">Creating a standalone executable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../software.html">Software description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../further.html">Further developments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../APIreference/index.html">API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ViSiAnnoT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>visiannot.tools.ToolsDateTime</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for visiannot.tools.ToolsDateTime</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright Université Rennes 1</span>
+<span class="c1"># Contributor: Raphael Weber</span>
+<span class="c1">#</span>
+<span class="c1"># Under CeCILL license</span>
+<span class="c1"># http://www.cecill.info</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module with functions for date-time management</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">pytz</span> <span class="k">import</span> <span class="n">timezone</span>
+<span class="kn">from</span> <span class="nn">.ToolsData</span> <span class="k">import</span> <span class="n">getDataGeneric</span>
+
+
+<div class="viewcode-block" id="getBeginningEndingDateTimeFromList"><a class="viewcode-back" href="../../../APIreference/tools/ToolsDateTime/index.html#visiannot.tools.ToolsDateTime.getBeginningEndingDateTimeFromList">[docs]</a><span class="k">def</span> <span class="nf">getBeginningEndingDateTimeFromList</span><span class="p">(</span>
+    <span class="n">file_path_list</span><span class="p">,</span> <span class="n">key_data</span><span class="p">,</span> <span class="n">freq_data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gets the beginning and ending date-time of a list of data files</span>
+
+<span class="sd">    The beginning date-time must be in the path of the data files.</span>
+
+<span class="sd">    :param file_path_list: list of paths to the data files</span>
+<span class="sd">    :type file_path_list: list</span>
+<span class="sd">    :param key_data: key to access the data (in case of .mat or .h5)</span>
+<span class="sd">    :type key_data: str</span>
+<span class="sd">    :param freq_data: data frequency</span>
+<span class="sd">    :type freq_data: int or float</span>
+<span class="sd">    :param args: positional arguments of :func:`.getDatetimeFromPath`, minus</span>
+<span class="sd">        the first one</span>
+<span class="sd">    :param kwargs: keyword arguments of</span>
+<span class="sd">        :func:`.getDatetimeFromPath` (keyword argument</span>
+<span class="sd">        ``fmt`` will be ignored here)</span>
+
+<span class="sd">    :returns:</span>
+<span class="sd">        - **beginning_datetime_list** (*list*) -- instances of</span>
+<span class="sd">          datetime.datetime (beginning date-time of the files)</span>
+<span class="sd">        - **ending_datetime_list** (*list*) -- instances of datetime.datetime</span>
+<span class="sd">          (ending date-time of the files)</span>
+
+<span class="sd">    :author: Raphael Weber</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">beginning_datetime_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">ending_datetime_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">file_path_list</span><span class="p">:</span>
+        <span class="c1"># get file beginning date time</span>
+        <span class="n">b_date_time</span> <span class="o">=</span> <span class="n">getDatetimeFromPath</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># get data length</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">getDataGeneric</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key_data</span><span class="p">)</span>
+
+        <span class="c1"># check if any data</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># check if signal not regularly sampled</span>
+            <span class="k">if</span> <span class="n">freq_data</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># get duration in seconds</span>
+                <span class="n">duration_sec</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span>
+
+            <span class="c1"># regularly sampled signal</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># get duration in seconds</span>
+                <span class="n">duration_sec</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">freq_data</span>
+
+            <span class="c1"># get file ending date time</span>
+            <span class="n">e_date_time</span> <span class="o">=</span> <span class="n">b_date_time</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">duration_sec</span><span class="p">)</span>
+
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">e_date_time</span> <span class="o">=</span> <span class="n">b_date_time</span>
+            <span class="n">duration_sec</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># append lists</span>
+        <span class="n">beginning_datetime_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b_date_time</span><span class="p">)</span>
+        <span class="n">ending_datetime_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e_date_time</span><span class="p">)</span>
+
+    <span class="c1"># sort paths by chronological order</span>
+    <span class="n">sort_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">beginning_datetime_list</span><span class="p">)</span>
+
+    <span class="n">beginning_datetime_list</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">beginning_datetime_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sort_indexes</span>
+    <span class="p">]</span>
+
+    <span class="n">ending_datetime_list</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">ending_datetime_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sort_indexes</span>
+    <span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">beginning_datetime_list</span><span class="p">,</span> <span class="n">ending_datetime_list</span></div>
+
+
+<div class="viewcode-block" id="getDatetimeFromPath"><a class="viewcode-back" href="../../../APIreference/tools/ToolsDateTime/index.html#visiannot.tools.ToolsDateTime.getDatetimeFromPath">[docs]</a><span class="k">def</span> <span class="nf">getDatetimeFromPath</span><span class="p">(</span>
+    <span class="n">path</span><span class="p">,</span> <span class="n">datetime_del</span><span class="p">,</span> <span class="n">datetime_pos</span><span class="p">,</span> <span class="n">datetime_fmt</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gets datetime contained in a file name</span>
+
+<span class="sd">    :param path: path where to find datetime</span>
+<span class="sd">    :type path: str</span>
+<span class="sd">    :param datetime_del: delimiter to get beginning datetime in the file name</span>
+<span class="sd">    :type datetime_del: str</span>
+<span class="sd">    :param datetime_pos: position of the beginning datetime in the file name,</span>
+<span class="sd">        according to the delimiter</span>
+<span class="sd">    :type datetime_pos: str</span>
+<span class="sd">    :param datetime_fmt: format of the beginning datetime in the file name</span>
+<span class="sd">        (either ``&quot;posix&quot;`` or a format compliant with ``datetime.strptime()``</span>
+<span class="sd">        see</span>
+<span class="sd">        https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes)</span>
+<span class="sd">    :type datetime_fmt: str</span>
+<span class="sd">    :param kwargs: keyword arguments of :func:`.convertStringToDatetime`</span>
+
+<span class="sd">    If datetime is not in the file name, then set to ``None`` one of the</span>
+<span class="sd">    following positional argument: ``datetime_del``, ``datetime_pos``,</span>
+<span class="sd">    ``datetime_fmt``. By default the returned datetime is</span>
+<span class="sd">    ``datetime(2000, 1, 1, 0, 0, 0)``.</span>
+
+<span class="sd">    :returns: datetime</span>
+<span class="sd">    :rtype: datetime.datetime</span>
+
+<span class="sd">    :author: Raphael Weber</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">datetime_del</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">datetime_pos</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">datetime_fmt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># get file basename</span>
+        <span class="n">basename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># get datetime string</span>
+        <span class="n">datetime_str</span> <span class="o">=</span> <span class="n">basename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">datetime_del</span><span class="p">)[</span><span class="n">datetime_pos</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">convertStringToDatetime</span><span class="p">(</span><span class="n">datetime_str</span><span class="p">,</span> <span class="n">datetime_fmt</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="convertSectimeToTime"><a class="viewcode-back" href="../../../APIreference/tools/ToolsDateTime/index.html#visiannot.tools.ToolsDateTime.convertSectimeToTime">[docs]</a><span class="k">def</span> <span class="nf">convertSectimeToTime</span><span class="p">(</span><span class="n">time</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts time in seconds to time as hour/minute/second/msec</span>
+
+<span class="sd">    :param time: time in seconds</span>
+<span class="sd">    :type time: int or float</span>
+
+<span class="sd">    :returns:</span>
+<span class="sd">        - **hour** (*int*)</span>
+<span class="sd">        - **minute** (*int*)</span>
+<span class="sd">        - **second** (*int*)</span>
+<span class="sd">        - **millisecond** (*int*)</span>
+
+<span class="sd">    :author: Raphael Weber</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">hour</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span> <span class="o">/</span> <span class="mi">3600</span><span class="p">)</span>
+    <span class="n">minute</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span> <span class="o">/</span> <span class="mi">60</span><span class="p">)</span> <span class="o">-</span> <span class="mi">60</span> <span class="o">*</span> <span class="n">hour</span>
+    <span class="n">sec</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span> <span class="o">-</span> <span class="mi">60</span> <span class="o">*</span> <span class="p">(</span><span class="n">minute</span> <span class="o">+</span> <span class="mi">60</span> <span class="o">*</span> <span class="n">hour</span><span class="p">))</span>
+    <span class="n">msec</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1000</span> <span class="o">*</span> <span class="p">(</span><span class="n">time</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="n">sec</span><span class="p">,</span> <span class="n">msec</span></div>
+
+
+<div class="viewcode-block" id="convertFrameToTime"><a class="viewcode-back" href="../../../APIreference/tools/ToolsDateTime/index.html#visiannot.tools.ToolsDateTime.convertFrameToTime">[docs]</a><span class="k">def</span> <span class="nf">convertFrameToTime</span><span class="p">(</span><span class="n">frame_nb</span><span class="p">,</span> <span class="n">fps</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts frame number to time as hour/minute/second/msec</span>
+
+<span class="sd">    :param frame_nb: frame number</span>
+<span class="sd">    :type frame_nb: int</span>
+<span class="sd">    :param fps: frequency related to the frame number</span>
+<span class="sd">    :type fps: int or float</span>
+
+<span class="sd">    :returns:</span>
+<span class="sd">        - **hour** (*int*)</span>
+<span class="sd">        - **minute** (*int*)</span>
+<span class="sd">        - **second** (*int*)</span>
+<span class="sd">        - **millisecond** (*int*)</span>
+
+<span class="sd">    :author: Raphael Weber</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">convertSectimeToTime</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">frame_nb</span><span class="p">)</span> <span class="o">/</span> <span class="n">fps</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="convertTimeToString"><a class="viewcode-back" href="../../../APIreference/tools/ToolsDateTime/index.html#visiannot.tools.ToolsDateTime.convertTimeToString">[docs]</a><span class="k">def</span> <span class="nf">convertTimeToString</span><span class="p">(</span><span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="n">sec</span><span class="p">,</span> <span class="n">msec</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts time as hour/minute/second/msec to string &quot;HH:MM:SS.sss&quot;</span>
+
+<span class="sd">    :param hour:</span>
+<span class="sd">    :type hour: int</span>
+<span class="sd">    :param minute:</span>
+<span class="sd">    :type minute: int</span>
+<span class="sd">    :param sec:</span>
+<span class="sd">    :type sec: int</span>
+<span class="sd">    :param msec:</span>
+<span class="sd">    :type msec: int</span>
+
+<span class="sd">    :returns: time with format &quot;HH:MM:SS.sss&quot;</span>
+<span class="sd">    :rtype: str</span>
+
+<span class="sd">    :author: Raphael Weber</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{:&gt;02}</span><span class="s1">:</span><span class="si">{:&gt;02}</span><span class="s1">:</span><span class="si">{:&gt;02}</span><span class="s1">.</span><span class="si">{:&gt;03}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="n">sec</span><span class="p">,</span> <span class="n">msec</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="convertDatetimeToString"><a class="viewcode-back" href="../../../APIreference/tools/ToolsDateTime/index.html#visiannot.tools.ToolsDateTime.convertDatetimeToString">[docs]</a><span class="k">def</span> <span class="nf">convertDatetimeToString</span><span class="p">(</span><span class="n">date_time</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts datetime to string &quot;yyyy-mm-ddTHH:MM:SS.SSS&quot; or</span>
+<span class="sd">    &quot;yyyy-mm-ddTHH-MM-SS&quot;</span>
+
+<span class="sd">    :param date_time: datetime to convert</span>
+<span class="sd">    :type date_time: datetime.datetime</span>
+<span class="sd">    :param fmt: output format, ``0`` =&gt; &quot;HH:MM:SS.SSS&quot; or ``1`` =&gt;</span>
+<span class="sd">        &quot;HH-MM-SS&quot; (no milliseconds)</span>
+<span class="sd">    :type fmt: int</span>
+
+<span class="sd">    :returns: date-time string</span>
+<span class="sd">    :rtype: str</span>
+
+<span class="sd">    :author: Raphael Weber</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">date_string</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:&gt;04}</span><span class="s1">-</span><span class="si">{:&gt;02}</span><span class="s1">-</span><span class="si">{:&gt;02}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">date_time</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">date_time</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="n">date_time</span><span class="o">.</span><span class="n">day</span>
+    <span class="p">)</span>
+
+    <span class="n">time_string</span> <span class="o">=</span> <span class="n">convertTimeToString</span><span class="p">(</span>
+        <span class="n">date_time</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span> <span class="n">date_time</span><span class="o">.</span><span class="n">minute</span><span class="p">,</span> <span class="n">date_time</span><span class="o">.</span><span class="n">second</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">date_time</span><span class="o">.</span><span class="n">microsecond</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">date_time_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">T</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">date_string</span><span class="p">,</span> <span class="n">time_string</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">date_time_string</span> <span class="o">=</span> <span class="n">date_time_string</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)[:</span><span class="mi">19</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">date_time_string</span></div>
+
+
+<div class="viewcode-block" id="convertFrameToString"><a class="viewcode-back" href="../../../APIreference/tools/ToolsDateTime/index.html#visiannot.tools.ToolsDateTime.convertFrameToString">[docs]</a><span class="k">def</span> <span class="nf">convertFrameToString</span><span class="p">(</span><span class="n">frame_nb</span><span class="p">,</span> <span class="n">fps</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts frame number to string &quot;HH:MM:SS.sss&quot;</span>
+
+<span class="sd">    :param frame_nb: frame number to convert</span>
+<span class="sd">    :type frame_nb: int</span>
+<span class="sd">    :param fps: frequency related to the frame number</span>
+<span class="sd">    :type fps: int or float</span>
+
+<span class="sd">    :returns: time with format &quot;HH:MM:SS.sss&quot;</span>
+<span class="sd">    :rtype: str</span>
+
+<span class="sd">    :author: Raphael Weber</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="n">sec</span><span class="p">,</span> <span class="n">msec</span> <span class="o">=</span> <span class="n">convertFrameToTime</span><span class="p">(</span><span class="n">frame_nb</span><span class="p">,</span> <span class="n">fps</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">convertTimeToString</span><span class="p">(</span><span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="n">sec</span><span class="p">,</span> <span class="n">msec</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="convertStringToDatetime"><a class="viewcode-back" href="../../../APIreference/tools/ToolsDateTime/index.html#visiannot.tools.ToolsDateTime.convertStringToDatetime">[docs]</a><span class="k">def</span> <span class="nf">convertStringToDatetime</span><span class="p">(</span><span class="n">datetime_str</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">time_zone</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts date-time string to datetime</span>
+
+<span class="sd">    :param content: date-time string</span>
+<span class="sd">    :type content: str</span>
+<span class="sd">    :param fmt: date-time string format, might be ``posix``, ``format_T``</span>
+<span class="sd">        (``%Y-%m-%dT%H:%M:%S.sss``, where ``sss`` is millisecond),</span>
+<span class="sd">        or any format supported by ``datetime.strptime``</span>
+<span class="sd">    :type fmt: str</span>
+<span class="sd">    :param time_zone: timezone compliant with package pytz</span>
+<span class="sd">    :type time_zone: str</span>
+
+<span class="sd">    :returns: datetime</span>
+<span class="sd">    :rtype: datetime.datetime</span>
+
+<span class="sd">    :author: Raphael Weber</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># convert string to datetime</span>
+    <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;posix&quot;</span><span class="p">:</span>
+        <span class="n">date_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">datetime_str</span><span class="p">))</span>
+
+    <span class="k">elif</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;format_T&quot;</span><span class="p">:</span>
+        <span class="n">date_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">datetime_str</span><span class="p">[:</span><span class="mi">19</span><span class="p">],</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S&quot;</span><span class="p">)</span>
+        <span class="n">date_time</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">microsecond</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">datetime_str</span><span class="p">[</span><span class="mi">20</span><span class="p">:]))</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">date_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">datetime_str</span><span class="p">,</span> <span class="n">fmt</span><span class="p">)</span>
+
+    <span class="c1"># timezone</span>
+    <span class="k">if</span> <span class="n">time_zone</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pst</span> <span class="o">=</span> <span class="n">timezone</span><span class="p">(</span><span class="n">time_zone</span><span class="p">)</span>
+        <span class="n">date_time</span> <span class="o">=</span> <span class="n">pst</span><span class="o">.</span><span class="n">localize</span><span class="p">(</span><span class="n">date_time</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">date_time</span></div>
+
+
+<div class="viewcode-block" id="convertStringColonToFrame"><a class="viewcode-back" href="../../../APIreference/tools/ToolsDateTime/index.html#visiannot.tools.ToolsDateTime.convertStringColonToFrame">[docs]</a><span class="k">def</span> <span class="nf">convertStringColonToFrame</span><span class="p">(</span><span class="n">time_string</span><span class="p">,</span> <span class="n">fps</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts time string to frame number</span>
+
+<span class="sd">    :param time_string: time in format &quot;HH:MM:SS&quot;, &quot;MM:SS&quot; or &quot;SS&quot;</span>
+<span class="sd">        (there can be milliseconds appended &quot;.sss&quot;)</span>
+<span class="sd">    :type time_string: str</span>
+<span class="sd">    :param fps: frequency related to the converted frame number</span>
+<span class="sd">    :type fps: int or float</span>
+
+<span class="sd">    :returns: frame number</span>
+<span class="sd">    :rtype: int</span>
+
+<span class="sd">    :author: Raphael Weber</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">time_string</span> <span class="o">=</span> <span class="n">time_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_string</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">hour</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time_string</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">minute</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time_string</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">sec_split</span> <span class="o">=</span> <span class="n">time_string</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sec_split</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">sec</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time_string</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+            <span class="n">msec</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sec</span> <span class="o">=</span> <span class="n">sec_split</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">msec</span> <span class="o">=</span> <span class="n">sec_split</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_string</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">hour</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">minute</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time_string</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">sec_split</span> <span class="o">=</span> <span class="n">time_string</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sec_split</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">sec</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time_string</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">msec</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sec</span> <span class="o">=</span> <span class="n">sec_split</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">msec</span> <span class="o">=</span> <span class="n">sec_split</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_string</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+
+        <span class="n">sec_split</span> <span class="o">=</span> <span class="n">time_string</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sec_split</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">sec</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time_string</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">msec</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sec</span> <span class="o">=</span> <span class="n">sec_split</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">msec</span> <span class="o">=</span> <span class="n">sec_split</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="n">sec</span><span class="p">,</span> <span class="n">msec</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+
+    <span class="k">return</span> <span class="n">convertTimeToFrame</span><span class="p">(</span><span class="n">fps</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="n">sec</span><span class="p">,</span> <span class="n">msec</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="convertTimeToFrame"><a class="viewcode-back" href="../../../APIreference/tools/ToolsDateTime/index.html#visiannot.tools.ToolsDateTime.convertTimeToFrame">[docs]</a><span class="k">def</span> <span class="nf">convertTimeToFrame</span><span class="p">(</span><span class="n">fps</span><span class="p">,</span> <span class="n">hour</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sec</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">msec</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts time as hour/minute/second/millisecond to frame number</span>
+
+<span class="sd">    :param fps: frequency related to the converted frame number</span>
+<span class="sd">    :type fps: int or float</span>
+<span class="sd">    :param hour:</span>
+<span class="sd">    :type hour: int</span>
+<span class="sd">    :param minute:</span>
+<span class="sd">    :type minute: int</span>
+<span class="sd">    :param sec:</span>
+<span class="sd">    :type sec: int</span>
+<span class="sd">    :param msec:</span>
+<span class="sd">    :type msec: int</span>
+
+<span class="sd">    :returns: frame number</span>
+<span class="sd">    :rtype: int</span>
+
+<span class="sd">    :author: Raphael Weber</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">fps</span> <span class="o">*</span> <span class="p">(</span><span class="mi">3600</span> <span class="o">*</span> <span class="n">hour</span> <span class="o">+</span> <span class="mi">60</span> <span class="o">*</span> <span class="n">minute</span> <span class="o">+</span> <span class="n">sec</span> <span class="o">+</span> <span class="n">msec</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="convertAbsoluteDatetimeStringToFrame"><a class="viewcode-back" href="../../../APIreference/tools/ToolsDateTime/index.html#visiannot.tools.ToolsDateTime.convertAbsoluteDatetimeStringToFrame">[docs]</a><span class="k">def</span> <span class="nf">convertAbsoluteDatetimeStringToFrame</span><span class="p">(</span>
+    <span class="n">content</span><span class="p">,</span> <span class="n">fps</span><span class="p">,</span> <span class="n">beginning_datetime</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts absolute date-time string to frame number</span>
+
+<span class="sd">    The input beginning datetime is substracted to the absolute datetime to</span>
+<span class="sd">    convert, so that the converted frame number is relative to the input</span>
+<span class="sd">    beginning datetime.</span>
+
+<span class="sd">    :param content: absolute datetime string in format</span>
+<span class="sd">        ``&quot;%Y-%m-%dT%H:%M:%S.sss&quot;``, where ``sss`` is millisecond</span>
+<span class="sd">    :type content: str</span>
+<span class="sd">    :param fps: frequency related to the converted frame number</span>
+<span class="sd">    :type fps: int or float</span>
+<span class="sd">    :param beginning_datetime: beginning datetime which is the reference for</span>
+<span class="sd">        the converted frame number</span>
+<span class="sd">    :type beginning_datetime: datetime.datetime</span>
+<span class="sd">    :param kwargs: keyword argument of</span>
+<span class="sd">        :func:`.ToolsDateTime.convertStringToDatetime`</span>
+
+<span class="sd">    :returns: frame number</span>
+<span class="sd">    :rtype: int</span>
+
+<span class="sd">    :author: Raphael Weber</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">date_time</span> <span class="o">=</span> <span class="n">convertStringToDatetime</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="s2">&quot;format_T&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">convertAbsoluteDatetimeToFrame</span><span class="p">(</span><span class="n">date_time</span><span class="p">,</span> <span class="n">fps</span><span class="p">,</span> <span class="n">beginning_datetime</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="convertAbsoluteDatetimeToFrame"><a class="viewcode-back" href="../../../APIreference/tools/ToolsDateTime/index.html#visiannot.tools.ToolsDateTime.convertAbsoluteDatetimeToFrame">[docs]</a><span class="k">def</span> <span class="nf">convertAbsoluteDatetimeToFrame</span><span class="p">(</span><span class="n">date_time</span><span class="p">,</span> <span class="n">fps</span><span class="p">,</span> <span class="n">beginning_datetime</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts absolute datetime to frame number</span>
+
+<span class="sd">    The input beginning datetime is substracted to the absolute datetime to</span>
+<span class="sd">    convert, so that the converted frame number is relative to the input</span>
+<span class="sd">    beginning datetime.</span>
+
+<span class="sd">    :param content: absolute datetime</span>
+<span class="sd">    :type content: instace of datetime.datetime</span>
+<span class="sd">    :param fps: frequency related to the converted frame number</span>
+<span class="sd">    :type fps: int or float</span>
+<span class="sd">    :param beginning_datetime: beginning datetime which is the reference for</span>
+<span class="sd">        the converted frame number</span>
+<span class="sd">    :type beginning_datetime: datetime.datetime</span>
+
+<span class="sd">    :returns: frame number</span>
+<span class="sd">    :rtype: int</span>
+
+<span class="sd">    :author: Raphael Weber</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">seconds</span> <span class="o">=</span> <span class="p">(</span><span class="n">date_time</span> <span class="o">-</span> <span class="n">beginning_datetime</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span>
+
+    <span class="n">sec</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">seconds</span><span class="p">)</span>
+    <span class="n">msec</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1000</span> <span class="o">*</span> <span class="p">(</span><span class="n">seconds</span> <span class="o">-</span> <span class="n">sec</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">convertTimeToFrame</span><span class="p">(</span><span class="n">fps</span><span class="p">,</span> <span class="n">sec</span><span class="o">=</span><span class="n">sec</span><span class="p">,</span> <span class="n">msec</span><span class="o">=</span><span class="n">msec</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="convertFrameToAbsoluteDatetime"><a class="viewcode-back" href="../../../APIreference/tools/ToolsDateTime/index.html#visiannot.tools.ToolsDateTime.convertFrameToAbsoluteDatetime">[docs]</a><span class="k">def</span> <span class="nf">convertFrameToAbsoluteDatetime</span><span class="p">(</span><span class="n">frame_nb</span><span class="p">,</span> <span class="n">fps</span><span class="p">,</span> <span class="n">beginning_datetime</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts frame number to absolute datetime</span>
+
+<span class="sd">    The input beginning datetime is added to the frame number,</span>
+<span class="sd">    so that the converted datetime is absolute.</span>
+
+<span class="sd">    :param frame_nb: frame number to convert</span>
+<span class="sd">    :type frame_nb: int</span>
+<span class="sd">    :param fps: frequency related to the frame number</span>
+<span class="sd">    :type fps: int or float</span>
+<span class="sd">    :param beginning_datetime: reference datetime to get absolute datetime</span>
+<span class="sd">    :type beginning_datetime: datetime.datetime</span>
+
+<span class="sd">    :returns: absolute datetime</span>
+<span class="sd">    :rtype: datetime.datetime</span>
+
+<span class="sd">    :author: Raphael Weber</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="n">sec</span><span class="p">,</span> <span class="n">msec</span> <span class="o">=</span> <span class="n">convertFrameToTime</span><span class="p">(</span><span class="n">frame_nb</span><span class="p">,</span> <span class="n">fps</span><span class="p">)</span>
+    <span class="n">date_time</span> <span class="o">=</span> <span class="n">beginning_datetime</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span>
+        <span class="n">hours</span><span class="o">=</span><span class="n">hour</span><span class="p">,</span> <span class="n">minutes</span><span class="o">=</span><span class="n">minute</span><span class="p">,</span> <span class="n">seconds</span><span class="o">=</span><span class="n">sec</span><span class="p">,</span> <span class="n">milliseconds</span><span class="o">=</span><span class="n">msec</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">date_time</span></div>
+
+
+<div class="viewcode-block" id="convertFrameToAbsoluteTimeString"><a class="viewcode-back" href="../../../APIreference/tools/ToolsDateTime/index.html#visiannot.tools.ToolsDateTime.convertFrameToAbsoluteTimeString">[docs]</a><span class="k">def</span> <span class="nf">convertFrameToAbsoluteTimeString</span><span class="p">(</span><span class="n">frame_nb</span><span class="p">,</span> <span class="n">fps</span><span class="p">,</span> <span class="n">beginning_datetime</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts frame number to absolute time string &quot;HH:MM:SS.sss&quot; (date not</span>
+<span class="sd">    provided)</span>
+
+<span class="sd">    The input beginning datetime is added to the frame number,</span>
+<span class="sd">    so that the converted time string is absolute.</span>
+
+<span class="sd">    :param frame_nb: frame number to convert</span>
+<span class="sd">    :type frame_nb: int</span>
+<span class="sd">    :param fps: frequency related to the frame number</span>
+<span class="sd">    :type fps: int or float</span>
+<span class="sd">    :param beginning_datetime: reference datetime to get absolute datetime</span>
+<span class="sd">    :type beginning_datetime: datetime.datetime</span>
+
+<span class="sd">    :returns: absolute time &quot;HH:MM:SS.sss&quot; (date not provided)</span>
+<span class="sd">    :rtype: str</span>
+
+<span class="sd">    :author: Raphael Weber</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">date_time</span> <span class="o">=</span> <span class="n">convertFrameToAbsoluteDatetime</span><span class="p">(</span>
+        <span class="n">frame_nb</span><span class="p">,</span> <span class="n">fps</span><span class="p">,</span> <span class="n">beginning_datetime</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">convertTimeToString</span><span class="p">(</span>
+        <span class="n">date_time</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span> <span class="n">date_time</span><span class="o">.</span><span class="n">minute</span><span class="p">,</span> <span class="n">date_time</span><span class="o">.</span><span class="n">second</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">date_time</span><span class="o">.</span><span class="n">microsecond</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="convertMsecToAbsoluteTimeString"><a class="viewcode-back" href="../../../APIreference/tools/ToolsDateTime/index.html#visiannot.tools.ToolsDateTime.convertMsecToAbsoluteTimeString">[docs]</a><span class="k">def</span> <span class="nf">convertMsecToAbsoluteTimeString</span><span class="p">(</span><span class="n">msec</span><span class="p">,</span> <span class="n">beginning_datetime</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts milliseconds to absolute time string &quot;HH:MM:SS.sss&quot;</span>
+<span class="sd">    (date not provided)</span>
+
+<span class="sd">    The input beginning datetime is added to the input milliseconds,</span>
+<span class="sd">    so that the converted time string is absolute.</span>
+
+<span class="sd">    :param msec: milliseconds to convert</span>
+<span class="sd">    :type msec: int</span>
+<span class="sd">    :param beginning_datetime: reference datetime to get absolute datetime</span>
+<span class="sd">    :type beginning_datetime: datetime.datetime</span>
+
+<span class="sd">    :returns: absolute time &quot;HH:MM:SS.sss&quot; (date not provided)</span>
+<span class="sd">    :rtype: str</span>
+
+<span class="sd">    :author: Raphael Weber</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">date_time</span> <span class="o">=</span> <span class="n">beginning_datetime</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">milliseconds</span><span class="o">=</span><span class="n">msec</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">convertTimeToString</span><span class="p">(</span>
+        <span class="n">date_time</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span> <span class="n">date_time</span><span class="o">.</span><span class="n">minute</span><span class="p">,</span> <span class="n">date_time</span><span class="o">.</span><span class="n">second</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">date_time</span><span class="o">.</span><span class="n">microsecond</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="convertFrameToAbsoluteDatetimeString"><a class="viewcode-back" href="../../../APIreference/tools/ToolsDateTime/index.html#visiannot.tools.ToolsDateTime.convertFrameToAbsoluteDatetimeString">[docs]</a><span class="k">def</span> <span class="nf">convertFrameToAbsoluteDatetimeString</span><span class="p">(</span>
+    <span class="n">frame_nb</span><span class="p">,</span> <span class="n">fps</span><span class="p">,</span> <span class="n">beginning_datetime</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts frame number to absolute datetime string</span>
+
+<span class="sd">    The input beginning datetime is added to the frame number,</span>
+<span class="sd">    so that the converted datetimetime string is absolute.</span>
+
+<span class="sd">    :param frame_nb: frame number to convert</span>
+<span class="sd">    :type frame_nb: int</span>
+<span class="sd">    :param fps: frequency related to the frame number</span>
+<span class="sd">    :type fps: int or float</span>
+<span class="sd">    :param beginning_datetime: reference datetime to get absolute datetime</span>
+<span class="sd">    :type beginning_datetime: datetime.datetime</span>
+<span class="sd">    :param kwargs: keyword arguments of :func:`.convertDatetimeToString`</span>
+
+<span class="sd">    :returns: absolute datetime</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">date_time</span> <span class="o">=</span> <span class="n">convertFrameToAbsoluteDatetime</span><span class="p">(</span>
+        <span class="n">frame_nb</span><span class="p">,</span> <span class="n">fps</span><span class="p">,</span> <span class="n">beginning_datetime</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">convertDatetimeToString</span><span class="p">(</span><span class="n">date_time</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020-2021, Université Rennes 1
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

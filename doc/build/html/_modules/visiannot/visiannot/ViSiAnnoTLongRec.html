@@ -1,0 +1,1411 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>visiannot.visiannot.ViSiAnnoTLongRec &mdash; ViSiAnnoT 0.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> ViSiAnnoT
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide-visiannot.html">User guide: ViSiAnnoT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide-configuration.html">User guide: configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide-toolspyqt.html">User guide: ToolsPyQt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide-toolspyqtgraph.html">User guide: ToolsPyqtgraph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../exe.html">Creating a standalone executable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../software.html">Software description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../further.html">Further developments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../APIreference/index.html">API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ViSiAnnoT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>visiannot.visiannot.ViSiAnnoTLongRec</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for visiannot.visiannot.ViSiAnnoTLongRec</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright Université Rennes 1</span>
+<span class="c1"># Contributor: Raphael Weber</span>
+<span class="c1">#</span>
+<span class="c1"># Under CeCILL license</span>
+<span class="c1"># http://www.cecill.info</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module defining :class:`.ViSiAnnoTLongRec`</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="k">import</span> <span class="n">glob</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">..tools</span> <span class="k">import</span> <span class="n">ToolsPyQt</span>
+<span class="kn">from</span> <span class="nn">..tools</span> <span class="k">import</span> <span class="n">ToolsPyqtgraph</span>
+<span class="kn">from</span> <span class="nn">..tools</span> <span class="k">import</span> <span class="n">ToolsDateTime</span>
+<span class="kn">from</span> <span class="nn">..tools</span> <span class="k">import</span> <span class="n">ToolsData</span>
+<span class="kn">from</span> <span class="nn">..tools</span> <span class="k">import</span> <span class="n">ToolsImage</span>
+<span class="kn">from</span> <span class="nn">..tools</span> <span class="k">import</span> <span class="n">ToolsAudio</span>
+<span class="kn">from</span> <span class="nn">.ViSiAnnoT</span> <span class="k">import</span> <span class="n">ViSiAnnoT</span>
+
+
+<div class="viewcode-block" id="ViSiAnnoTLongRec"><a class="viewcode-back" href="../../../APIreference/visiannot/ViSiAnnoTLongRec/index.html#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec">[docs]</a><span class="k">class</span> <span class="nc">ViSiAnnoTLongRec</span><span class="p">(</span><span class="n">ViSiAnnoT</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">video_dict</span><span class="p">,</span> <span class="n">signal_dict</span><span class="p">,</span> <span class="n">interval_dict</span><span class="o">=</span><span class="p">{},</span> <span class="n">flag_synchro</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">layout_mode</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">poswid_dict</span><span class="o">=</span><span class="p">{},</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Subclass of :class:`.ViSiAnnoT` for managing a long recording with</span>
+<span class="sd">        several files</span>
+
+<span class="sd">        First, it searches the list of paths to the video/signal files. If</span>
+<span class="sd">        signals are not synchronized with videos, then it creates temporary</span>
+<span class="sd">        files with info for synchronization. Each created file corresponds to</span>
+<span class="sd">        one video file and contains the path to the signal file to use with the</span>
+<span class="sd">        starting second.</span>
+
+<span class="sd">        :param video_dict: video configuration, each item corresponds to one</span>
+<span class="sd">            camera. Key is the camera ID (string). Value is a configuration</span>
+<span class="sd">            list of length 5:</span>
+
+<span class="sd">            - (*str*) Directory where to find the video files,</span>
+<span class="sd">            - (*str*) Pattern to find video files (e.g. ``&quot;*.mp4&quot;``),</span>
+<span class="sd">            - (*str*) Delimiter to get beginning datetime in the video file</span>
+<span class="sd">              name,</span>
+<span class="sd">            - (*int*) Position of the beginning datetime in the video file</span>
+<span class="sd">              name, according to the delimiter,</span>
+<span class="sd">            - (*str*) Format of the beginning datetime in the video file name</span>
+<span class="sd">              (either ``&quot;posix&quot;`` or a format compliant with</span>
+<span class="sd">              ``datetime.strptime()``).</span>
+<span class="sd">        :type video_dict: dict</span>
+<span class="sd">        :param signal_dict: signal configuration, each item corresponds to one</span>
+<span class="sd">            signal widget. Key is the widget ID (Y axis label, string). Value</span>
+<span class="sd">            is a nested list of signal configurations. Each element of the</span>
+<span class="sd">            nested list corresponds to one signal plot and is a configuration</span>
+<span class="sd">            list of 8 elements:</span>
+
+<span class="sd">            - (*str*) Directory where to find the signal files, see positional</span>
+<span class="sd">              argument ``signal_dict`` of :class:`.ViSiAnnoT` constructor for</span>
+<span class="sd">              detail about data storing format,</span>
+<span class="sd">            - (*str*) Key to access the data (in case of .mat or .h5 file),</span>
+<span class="sd">            - (*int* or *float* or *str*) Signal frequency, set it to ``0`` if</span>
+<span class="sd">              signal non regularly sampled, set it to ``-1`` if same frequency</span>
+<span class="sd">              as :attr:`.ViSiAnnoT.fps`, it may be a string with the path to</span>
+<span class="sd">              the frequency attribute in a .h5 file,</span>
+<span class="sd">            - (*str*) Pattern to find signal files,</span>
+<span class="sd">            - (*str*) Delimiter to get beginning datetime in the signal file</span>
+<span class="sd">              name,</span>
+<span class="sd">            - (*int*) Position of the beginning datetime in the signal file</span>
+<span class="sd">              name, according to the delimiter,</span>
+<span class="sd">            - (*str*) Format of the beginning datetime in the signal file name</span>
+<span class="sd">              (either ``&quot;posix&quot;`` or a format compliant with</span>
+<span class="sd">              ``datetime.strptime()``),</span>
+<span class="sd">            - (*dict*) Plot style, see</span>
+<span class="sd">              https://pyqtgraph.readthedocs.io/en/latest/graphicsItems/plotdataitem.html</span>
+<span class="sd">              for details, set it to ``None`` for default.</span>
+
+<span class="sd">            Here is an example::</span>
+
+<span class="sd">                {</span>
+<span class="sd">                &quot;sig_1&quot;: [</span>
+<span class="sd">                    [</span>
+<span class="sd">                        &quot;path/to/folder1&quot;, &quot;&quot;, 50, &quot;*_motion.txt&quot;, &#39;_&#39;, 1,</span>
+<span class="sd">                        &quot;%Y-%m-%dT%H-%M-%S&quot;, None</span>
+<span class="sd">                    ]</span>
+<span class="sd">                ],</span>
+<span class="sd">                &quot;sig_2&quot;: [</span>
+<span class="sd">                    [</span>
+<span class="sd">                        &quot;path/to/folder2&quot;, &quot;ecg&quot;, 0, &quot;*_physio.h5&quot;, &#39;_&#39;, 0,</span>
+<span class="sd">                        &quot;posix&quot;, {&#39;pen&#39;: {&#39;color&#39;: &#39;m&#39;, &#39;width&#39;: 1}</span>
+<span class="sd">                    ],</span>
+<span class="sd">                    [</span>
+<span class="sd">                        &quot;path/to/folder2&quot;, &quot;resp&quot;, -1, &quot;*_physio.h5&quot;, &#39;_&#39;, 0,</span>
+<span class="sd">                        &quot;posix&quot;,None</span>
+<span class="sd">                    ]</span>
+<span class="sd">                ]</span>
+<span class="sd">                }</span>
+
+<span class="sd">            In case of audio signal to plot, the configuration list is slightly</span>
+<span class="sd">            different. The second element (key to access data) is a string to</span>
+<span class="sd">            specify which channel to plot. It must contain ``&quot;left&quot;`` or</span>
+<span class="sd">            ``&quot;right&quot;``, whatever the letter capitalization is. Otherwise, by</span>
+<span class="sd">            default the left channel is plotted. Moreover, the frequency is</span>
+<span class="sd">            directly retrieved from the wav file, so the third element of the</span>
+<span class="sd">            configuration list (signal frequency) is ignored.</span>
+
+<span class="sd">            Here is an example for audio::</span>
+
+<span class="sd">                {</span>
+<span class="sd">                &quot;Audio L&quot;: [[</span>
+<span class="sd">                    &quot;path/to/folder&quot;, &quot;Left channel&quot;, 0, &quot;*_audio.wav&quot;, &#39;_&#39;,</span>
+<span class="sd">                    1, &quot;%Y-%m-%dT%H-%M-%S&quot;, None</span>
+<span class="sd">                ]],</span>
+<span class="sd">                &quot;Audio R&quot;: [[</span>
+<span class="sd">                    &quot;path/to/folder&quot;, &quot;Right channel&quot;, 0, &quot;*_audio.wav&quot;, &#39;_&#39;,</span>
+<span class="sd">                    1, &quot;%Y-%m-%dT%H-%M-%S&quot;, None]]</span>
+<span class="sd">                }</span>
+<span class="sd">        :type signal_dict: dict</span>
+<span class="sd">        :param interval_dict: interval configuration. Each item</span>
+<span class="sd">            corresponds to a signal widget on which to plot intervals. The key</span>
+<span class="sd">            must be the same as in ``signal_dict``. Value is a nested list of</span>
+<span class="sd">            interval configurations. Each element of the nested list</span>
+<span class="sd">            corresponds to a type of interval to be plotted in the same</span>
+<span class="sd">            signal widget and is a configuration list of 8 elements:</span>
+
+<span class="sd">            - (*str*) Directory where to find interval files, see positional</span>
+<span class="sd">              argument ``interval_dict`` of :class:`.ViSiAnnoT` constructor for</span>
+<span class="sd">              detail about data storing format,</span>
+<span class="sd">            - (*str*) Key to access the data (in case of .mat or .h5 file),</span>
+<span class="sd">            - (*int*) Signal frequency, set it to ``-1`` if same frequency as</span>
+<span class="sd">              :attr:`.ViSiAnnoT.fps`, it may be a string with the path to the</span>
+<span class="sd">              frequency attribute in a .h5 file,</span>
+<span class="sd">            - (*str*) Pattern to find interval files,</span>
+<span class="sd">            - (*str*) Delimiter to get beginning datetime in the interval file</span>
+<span class="sd">              name,</span>
+<span class="sd">            - (*int*) Position of the beginning datetime in the interval file</span>
+<span class="sd">              name, according to the delimiter,</span>
+<span class="sd">            - (*str*) Format of the beginning datetime in the interval file</span>
+<span class="sd">              name (either ``&quot;posix&quot;`` or a format compliant with</span>
+<span class="sd">              ``datetime.strptime()``),</span>
+<span class="sd">            - (*tuple* or *list*) Plot color (RGBA).</span>
+<span class="sd">        :type interval_dict: dict</span>
+<span class="sd">        :param flag_synchro: specify if video and signal are synchronized, in</span>
+<span class="sd">            case there is no video and several signals that are not</span>
+<span class="sd">            synchronized with each other, then ``flag_synchro`` can be set to</span>
+<span class="sd">            ``False`` and the synchronization reference is the first signal</span>
+<span class="sd">        :type flag_synchro: bool</span>
+<span class="sd">        :param layout_mode: layout mode of the window for positioning the</span>
+<span class="sd">            widgets, one of the following:</span>
+
+<span class="sd">            - ``1`` (focus on video, works better with a big screen),</span>
+<span class="sd">            - ``2`` (focus on signal, suitable for a laptop screen),</span>
+<span class="sd">            - ``3`` (compact display with some features disabled),</span>
+<span class="sd">            - ``4`` (even more compact display, image extraction tool is</span>
+<span class="sd">              disabled).</span>
+<span class="sd">        :type layout_mode: int</span>
+<span class="sd">        :param poswid_dict: custom position of the widgets in the window,</span>
+<span class="sd">            default ``{}`` to use the positions defined by the layout mode (see</span>
+<span class="sd">            input ``layout_mode``). Value is a tuple of length 2 ``(row, col)``</span>
+<span class="sd">            or 4 ``(row, col, rowspan, colspan)``. Key identifies the widget:</span>
+
+<span class="sd">            - ``&quot;logo&quot;``</span>
+<span class="sd">            - ``&quot;select_trunc&quot;``</span>
+<span class="sd">            - ``&quot;select_manual&quot;``</span>
+<span class="sd">            - ``&quot;select_from_cursor&quot;``</span>
+<span class="sd">            - ``&quot;annot_event&quot;``</span>
+<span class="sd">            - ``&quot;annot_image&quot;``</span>
+<span class="sd">            - ``&quot;visi&quot;``</span>
+<span class="sd">            - ``&quot;zoomin&quot;``</span>
+<span class="sd">            - ``&quot;zoomout&quot;``</span>
+<span class="sd">            - ``&quot;previous&quot;``</span>
+<span class="sd">            - ``&quot;next&quot;``</span>
+<span class="sd">            - ``&quot;rec_choice&quot;``</span>
+<span class="sd">            - ``&quot;progress&quot;``</span>
+<span class="sd">        :type poswid_dict: dict</span>
+<span class="sd">        :param kwargs: keyword arguments of :class:`.ViSiAnnoT` constructor</span>
+
+<span class="sd">        :author: Raphael Weber</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># check input dictionaries are empty</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">video_dict</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">signal_dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Input dictionaries are empty&quot;</span><span class="p">)</span>
+
+        <span class="c1">#: (*bool*) Specify if video and signal are synchronized</span>
+        <span class="c1">#:</span>
+        <span class="c1">#: In case there is no video and several signals not synchronized, then</span>
+        <span class="c1">#: ``synchro`` can be set to False and the synchronization reference is</span>
+        <span class="c1">#: the first signal</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flag_synchro</span> <span class="o">=</span> <span class="n">flag_synchro</span>
+
+        <span class="c1"># get time zone</span>
+        <span class="k">if</span> <span class="s2">&quot;time_zone&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">time_zone</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;time_zone&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">time_zone</span> <span class="o">=</span> <span class="s2">&quot;Europe/Paris&quot;</span>
+
+
+        <span class="c1"># ******************************************************************* #</span>
+        <span class="c1"># ****************** search for video paths ************************* #</span>
+        <span class="c1"># ******************************************************************* #</span>
+
+        <span class="c1">#: (*dict*) Key is a camera ID. Value is a list along the video files</span>
+        <span class="c1">#: in the long recording, where each element is a configuration list</span>
+        <span class="c1">#: (see first positional argument of :class:`.ViSiAnnoT` constructor</span>
+        <span class="c1">#: for details about configuration list)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">video_dict_list</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+        <span class="c1"># dictionary containing the current video file path</span>
+        <span class="n">video_dict_current</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+        <span class="c1"># nested list of video paths</span>
+        <span class="n">video_path_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># nested list of beginning datetime of video files</span>
+        <span class="n">video_datetime_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># nested list of duration of video files</span>
+        <span class="n">video_duration_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># loop on cameras</span>
+        <span class="k">for</span> <span class="n">ite_id</span><span class="p">,</span> <span class="p">(</span><span class="n">video_id</span><span class="p">,</span> <span class="p">(</span><span class="n">dir_video</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">fmt</span><span class="p">))</span> <span class="ow">in</span> \
+                <span class="nb">enumerate</span><span class="p">(</span><span class="n">video_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="c1"># get list of video paths for current camera</span>
+            <span class="n">video_path_list_tmp</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dir_video</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)))</span>
+
+            <span class="c1"># check if any video file</span>
+            <span class="k">if</span> <span class="n">video_path_list_tmp</span> <span class="o">==</span> <span class="p">[]:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="s2">&quot;Wrong input video directory for video </span><span class="si">%s</span><span class="s2"> - </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span>
+                    <span class="p">(</span><span class="n">video_id</span><span class="p">,</span> <span class="n">dir_video</span><span class="p">)</span>
+                <span class="p">)</span>
+
+            <span class="c1"># initialize list of beginning datetime of video files for current</span>
+            <span class="c1"># camera</span>
+            <span class="n">video_datetime_list_tmp</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="c1"># initialize list of duration of video files for current camera</span>
+            <span class="n">video_duration_list_tmp</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="c1"># loop on paths</span>
+            <span class="k">for</span> <span class="n">video_path</span> <span class="ow">in</span> <span class="n">video_path_list_tmp</span><span class="p">:</span>
+                <span class="c1"># get beginning datetime of the video file</span>
+                <span class="n">beginning_datetime</span> <span class="o">=</span> <span class="n">ToolsDateTime</span><span class="o">.</span><span class="n">getDatetimeFromPath</span><span class="p">(</span>
+                    <span class="n">video_path</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">time_zone</span><span class="o">=</span><span class="n">time_zone</span>
+                <span class="p">)</span>
+
+                <span class="c1"># append list</span>
+                <span class="n">video_datetime_list_tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">beginning_datetime</span><span class="p">)</span>
+
+                <span class="c1"># get information for video duration</span>
+                <span class="n">_</span><span class="p">,</span> <span class="n">nframes</span><span class="p">,</span> <span class="n">fps</span> <span class="o">=</span> <span class="n">ToolsImage</span><span class="o">.</span><span class="n">getDataVideo</span><span class="p">(</span><span class="n">video_path</span><span class="p">)</span>
+
+                <span class="c1"># check fps</span>
+                <span class="k">if</span> <span class="n">fps</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="c1"># append list of video duration</span>
+                    <span class="n">video_duration_list_tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nframes</span> <span class="o">/</span> <span class="n">fps</span><span class="p">)</span>
+
+                    <span class="c1"># store fps as an attribute</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;fps&quot;</span><span class="p">):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">fps</span> <span class="o">=</span> <span class="n">fps</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># append list of video duration</span>
+                    <span class="n">video_duration_list_tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="c1"># sort video paths by chronological order</span>
+            <span class="n">sort_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">video_datetime_list_tmp</span><span class="p">)</span>
+
+            <span class="c1"># append lists</span>
+            <span class="n">video_path_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">video_path_list_tmp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sort_indexes</span><span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="n">video_datetime_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">video_datetime_list_tmp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sort_indexes</span><span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="n">video_duration_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">video_duration_list_tmp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sort_indexes</span><span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="c1"># check if more than one camera</span>
+        <span class="c1"># then check for &quot;holes&quot; in cameras</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">video_dict</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># get maximum number of video files with regard to camera</span>
+            <span class="n">nb_vid_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">sub_list</span><span class="p">)</span> <span class="k">for</span> <span class="n">sub_list</span> <span class="ow">in</span> <span class="n">video_path_list</span><span class="p">])</span>
+
+            <span class="c1"># get number of cameras</span>
+            <span class="n">nb_camera</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">video_dict</span><span class="p">)</span>
+
+            <span class="c1"># loop on video files</span>
+            <span class="k">for</span> <span class="n">ite_vid</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb_vid_max</span><span class="p">):</span>
+                <span class="c1"># loop on cameras (skipping first camera because of reference)</span>
+                <span class="k">for</span> <span class="n">ite_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nb_camera</span><span class="p">):</span>
+                    <span class="c1"># get delta in seconds between the current camera and the</span>
+                    <span class="c1"># first camera</span>
+                    <span class="n">delta</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">video_datetime_list</span><span class="p">[</span><span class="n">ite_id</span><span class="p">][</span><span class="n">ite_vid</span><span class="p">]</span> <span class="o">-</span>
+                        <span class="n">video_datetime_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">ite_vid</span><span class="p">]</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span>
+
+                    <span class="c1"># check if delta is more than 1 second</span>
+                    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="c1"># check if missing file for current camera</span>
+                        <span class="k">if</span> <span class="n">delta</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">ite_id_tmp</span> <span class="o">=</span> <span class="n">ite_id</span>
+                            <span class="n">ite_id_tmp_comp</span> <span class="o">=</span> <span class="mi">0</span>
+
+                        <span class="c1"># missing file for first camera</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">ite_id_tmp</span> <span class="o">=</span> <span class="mi">0</span>
+                            <span class="n">ite_id_tmp_comp</span> <span class="o">=</span> <span class="n">ite_id</span>
+
+                        <span class="c1"># insert fake video file to fill the hole</span>
+                        <span class="n">video_path_list</span><span class="p">[</span><span class="n">ite_id_tmp</span><span class="p">]</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">ite_vid</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+                        <span class="n">video_datetime_list</span><span class="p">[</span><span class="n">ite_id_tmp</span><span class="p">]</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span>
+                            <span class="n">ite_vid</span><span class="p">,</span>
+                            <span class="n">video_datetime_list</span><span class="p">[</span><span class="n">ite_id_tmp_comp</span><span class="p">][</span><span class="n">ite_vid</span><span class="p">]</span>
+                        <span class="p">)</span>
+
+                        <span class="n">video_duration_list</span><span class="p">[</span><span class="n">ite_id_tmp</span><span class="p">]</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span>
+                            <span class="n">ite_vid</span><span class="p">,</span>
+                            <span class="n">video_duration_list</span><span class="p">[</span><span class="n">ite_id_tmp_comp</span><span class="p">][</span><span class="n">ite_vid</span><span class="p">]</span>
+                        <span class="p">)</span>
+
+        <span class="c1"># update dictionaries</span>
+        <span class="k">for</span> <span class="n">ite_id</span><span class="p">,</span> <span class="n">video_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">video_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">video_dict_list</span><span class="p">[</span><span class="n">video_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">[</span>
+                    <span class="n">path</span><span class="p">,</span> <span class="n">video_dict</span><span class="p">[</span><span class="n">video_id</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span>
+                    <span class="n">video_dict</span><span class="p">[</span><span class="n">video_id</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span> <span class="n">video_dict</span><span class="p">[</span><span class="n">video_id</span><span class="p">][</span><span class="mi">4</span><span class="p">]</span>
+                <span class="p">]</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">video_path_list</span><span class="p">[</span><span class="n">ite_id</span><span class="p">]</span>
+            <span class="p">]</span>
+
+            <span class="n">video_dict_current</span><span class="p">[</span><span class="n">video_id</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_dict_list</span><span class="p">[</span><span class="n">video_id</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+
+        <span class="c1"># ******************************************************************* #</span>
+        <span class="c1"># ****************** get files beginning time *********************** #</span>
+        <span class="c1"># ******************************************************************* #</span>
+
+        <span class="c1">#: (*list*) Instances of datetime.datetime with the beginning datetime</span>
+        <span class="c1">#: of each video file (or first signal if no video)</span>
+        <span class="c1">#:</span>
+        <span class="c1">#: The list of video files that is used is in the first value of</span>
+        <span class="c1">#: :attr:`.ViSiAnnoTLongRec.video_dict_list`</span>
+        <span class="c1">#: (or :attr:`.ViSiAnnoTLongRec.signal_dict_list` in case</span>
+        <span class="c1">#: :attr:`.ViSiAnnoTLongRec.video_dict_list` is empty).</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rec_beginning_datetime_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1">#: (*list*) Durations in seconds of each video file (or first signal if</span>
+        <span class="c1">#: no video)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rec_duration_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># check if there is any video</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_dict_list</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rec_beginning_datetime_list</span> <span class="o">=</span> <span class="n">video_datetime_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rec_duration_list</span> <span class="o">=</span> <span class="n">video_duration_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># no video</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># get info for first signal</span>
+            <span class="n">data_dir</span><span class="p">,</span> <span class="n">key_data</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">path_pattern_data</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> \
+                <span class="n">_</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">signal_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># get list of signal files paths</span>
+            <span class="n">data_list_tmp</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+                <span class="n">glob</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">path_pattern_data</span><span class="p">))</span>
+            <span class="p">)</span>
+
+            <span class="c1"># check if any file</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_list_tmp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="s2">&quot;Empty directory for first signal: </span><span class="si">%s</span><span class="s2"> - </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span>
+                    <span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">path_pattern_data</span><span class="p">)</span>
+                <span class="p">)</span>
+
+            <span class="c1"># store frequency as an attribute</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fps</span> <span class="o">=</span> <span class="n">ToolsData</span><span class="o">.</span><span class="n">getAttributeGeneric</span><span class="p">(</span>
+                    <span class="n">data_list_tmp</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">freq</span>
+                <span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fps</span> <span class="o">=</span> <span class="n">freq</span>
+
+            <span class="c1"># loop on signal files</span>
+            <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">data_list_tmp</span><span class="p">:</span>
+                <span class="c1"># get data length</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">ToolsData</span><span class="o">.</span><span class="n">getDataGeneric</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key_data</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">nframes</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+                    <span class="c1"># get beginning datetime</span>
+                    <span class="n">date_time</span> <span class="o">=</span> <span class="n">ToolsDateTime</span><span class="o">.</span><span class="n">getDatetimeFromPath</span><span class="p">(</span>
+                        <span class="n">path</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">time_zone</span><span class="o">=</span><span class="n">time_zone</span>
+                    <span class="p">)</span>
+
+                    <span class="c1"># append lists</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">rec_duration_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nframes</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">fps</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">rec_beginning_datetime_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">date_time</span><span class="p">)</span>
+
+            <span class="c1"># sort signal paths by chronological order</span>
+            <span class="n">sort_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rec_beginning_datetime_list</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">rec_beginning_datetime_list</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rec_beginning_datetime_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sort_indexes</span>
+            <span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">rec_duration_list</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rec_duration_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sort_indexes</span>
+            <span class="p">]</span>
+
+
+        <span class="c1"># ******************************************************************* #</span>
+        <span class="c1"># ******************* search for signal files *********************** #</span>
+        <span class="c1"># ******************************************************************* #</span>
+
+        <span class="c1">#: (*str*) Directory where to save temporary files for synchrnonization</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tmp_name</span> <span class="o">=</span> <span class="s2">&quot;sig-tmp&quot;</span>
+
+        <span class="c1">#: (*str*) Delimiter for parsing temporary files for synchronization</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tmp_delimiter</span> <span class="o">=</span> <span class="s2">&quot; *=* &quot;</span>
+
+        <span class="c1"># check if asynchronous signals</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">flag_synchro</span><span class="p">:</span>
+            <span class="c1"># create temporary directory for signals if not synchro with video</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tmp_name</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tmp_name</span><span class="p">)</span>
+
+            <span class="c1"># delete content from temporary directory</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="kn">from</span> <span class="nn">shutil</span> <span class="k">import</span> <span class="n">rmtree</span>
+                <span class="n">rmtree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tmp_name</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tmp_name</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Synchronized: </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">flag_synchro</span><span class="p">)</span>
+
+        <span class="c1">#: (*dict*) Each item corresponds to one signal widget, key is the data</span>
+        <span class="c1">#: type of the widget, value is a nested list of signal configurations</span>
+        <span class="c1">#:</span>
+        <span class="c1">#: Each element of the nested list corresponds to one signal plot and</span>
+        <span class="c1">#: is a list along the signal files in the long recording, where each</span>
+        <span class="c1">#: element is a configuration list (see second positional argument of</span>
+        <span class="c1">#: :class:`.ViSiAnnoT` constructor for details about the configuration</span>
+        <span class="c1">#: list).</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">signal_dict_list</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+        <span class="c1">#: (*dict*) Each item corresponds to one signal widget on which to plot</span>
+        <span class="c1">#: intervals, key is the data type of the widget, value is a nested</span>
+        <span class="c1">#: list of interval configurations.</span>
+        <span class="c1">#:</span>
+        <span class="c1">#: Each element of the nested list corresponds to one type of interval</span>
+        <span class="c1">#: and is a list along the interval files in the long recording, where</span>
+        <span class="c1">#: each element is a configuration list (see second keyword argument</span>
+        <span class="c1">#: ``interval_dict`` of :class:`.ViSiAnnoT` constructor for details</span>
+        <span class="c1">#: about the configuration list).</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interval_dict_list</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+        <span class="c1"># get signal configuration</span>
+        <span class="n">signal_dict_current</span><span class="p">,</span> <span class="n">interval_dict_current</span> <span class="o">=</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">getSignalConfigurationAllTypes</span><span class="p">(</span>
+                <span class="n">signal_dict</span><span class="p">,</span> <span class="n">interval_dict</span><span class="p">,</span> <span class="n">time_zone</span><span class="o">=</span><span class="n">time_zone</span>
+            <span class="p">)</span>
+
+
+        <span class="c1"># ******************************************************************* #</span>
+        <span class="c1"># *********************** layout definition ************************* #</span>
+        <span class="c1"># ******************************************************************* #</span>
+
+        <span class="c1"># define window organization if none provided</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">poswid_dict</span><span class="p">):</span>
+            <span class="n">poswid_dict</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">nb_video</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">video_dict</span><span class="p">)</span>
+
+            <span class="c1"># check layout mode</span>
+            <span class="k">if</span> <span class="n">layout_mode</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">ite_video</span><span class="p">,</span> <span class="n">video_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">video_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                    <span class="n">poswid_dict</span><span class="p">[</span><span class="n">video_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">ite_video</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;select_trunc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">nb_video</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;select_from_cursor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">nb_video</span> <span class="o">+</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;select_manual&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nb_video</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;annot_event&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">nb_video</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;annot_image&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">nb_video</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;visi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">nb_video</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;zoomin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">nb_video</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;zoomout&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">nb_video</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;previous&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">nb_video</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;next&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">nb_video</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;rec_choice&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">nb_video</span> <span class="o">+</span> <span class="mi">5</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;progress&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nb_video</span> <span class="o">+</span> <span class="mi">6</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">layout_mode</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">ite_video</span><span class="p">,</span> <span class="n">video_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">video_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                    <span class="n">poswid_dict</span><span class="p">[</span><span class="n">video_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">ite_video</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;select_trunc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nb_video</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;select_from_cursor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nb_video</span> <span class="o">+</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;select_manual&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">nb_video</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;annot_event&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">nb_video</span> <span class="o">+</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;annot_image&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">nb_video</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;visi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">nb_video</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;zoomin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">nb_video</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;zoomout&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">nb_video</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;previous&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">nb_video</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;next&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">nb_video</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;rec_choice&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">nb_video</span> <span class="o">+</span> <span class="mi">5</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;progress&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nb_video</span> <span class="o">+</span> <span class="mi">7</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">layout_mode</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">ite_video</span><span class="p">,</span> <span class="n">video_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">video_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                    <span class="n">poswid_dict</span><span class="p">[</span><span class="n">video_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">ite_video</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;annot_event&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">nb_video</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;annot_image&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">nb_video</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;visi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nb_video</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;zoomin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nb_video</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;zoomout&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nb_video</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;previous&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">nb_video</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;next&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">nb_video</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;rec_choice&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">nb_video</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span>
+                <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;progress&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nb_video</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;No layout configuration given - got mode </span><span class="si">%d</span><span class="s2">, must be 1, 2 or 3&quot;</span> <span class="o">%</span> <span class="n">layout_mode</span><span class="p">)</span>
+
+
+        <span class="c1"># ******************************************************************* #</span>
+        <span class="c1"># *********************** launch ViSiAnnoT ************************** #</span>
+        <span class="c1"># ******************************************************************* #</span>
+
+        <span class="c1"># check if any video</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">video_dict_current</span><span class="p">):</span>
+            <span class="c1">#: (*str*) Base name of the annotation files</span>
+            <span class="c1">#:</span>
+            <span class="c1">#: Label and annotation type is added when loading/saving</span>
+            <span class="c1">#: annotation files)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">annot_file_base</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">video_dict_current</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+            <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># get base name of annotation files</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">annot_file_base</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">signal_dict_current</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+            <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># lauch ViSiAnnoT for first video/signal file</span>
+        <span class="n">ViSiAnnoT</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">video_dict_current</span><span class="p">,</span> <span class="n">signal_dict_current</span><span class="p">,</span>
+            <span class="n">interval_dict</span><span class="o">=</span><span class="n">interval_dict_current</span><span class="p">,</span> <span class="n">poswid_dict</span><span class="o">=</span><span class="n">poswid_dict</span><span class="p">,</span>
+            <span class="n">flag_long_rec</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">layout_mode</span><span class="o">=</span><span class="n">layout_mode</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+
+        <span class="c1"># udpate number of recordings</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rec_nb</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rec_beginning_datetime_list</span><span class="p">)</span>
+
+
+        <span class="c1"># ******************************************************************* #</span>
+        <span class="c1"># ******************* previous/next recording *********************** #</span>
+        <span class="c1"># ******************************************************************* #</span>
+
+        <span class="c1"># read images</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">&quot;_MEIPASS&quot;</span><span class="p">):</span>
+            <span class="n">dir_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">&quot;_MEIPASS&quot;</span><span class="p">))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dir_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+
+        <span class="n">previous_path</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/Images/previous.jpg&#39;</span> <span class="o">%</span> <span class="n">dir_path</span>
+        <span class="n">next_path</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/Images/next.jpg&#39;</span> <span class="o">%</span> <span class="n">dir_path</span>
+
+        <span class="n">previous_im</span> <span class="o">=</span> <span class="n">ToolsImage</span><span class="o">.</span><span class="n">readImage</span><span class="p">(</span><span class="n">previous_path</span><span class="p">)</span>
+        <span class="n">next_im</span> <span class="o">=</span> <span class="n">ToolsImage</span><span class="o">.</span><span class="n">readImage</span><span class="p">(</span><span class="n">next_path</span><span class="p">)</span>
+
+        <span class="c1">#: (*QtWidgets.QGridlayout*) Widget of the &quot;previous rec&quot; image</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wid_previous</span> <span class="o">=</span> <span class="n">ToolsPyqtgraph</span><span class="o">.</span><span class="n">createWidgetLogo</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lay</span><span class="p">,</span> <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;previous&#39;</span><span class="p">],</span> <span class="n">previous_im</span><span class="p">,</span> <span class="n">box_size</span><span class="o">=</span><span class="mi">50</span>
+        <span class="p">)</span>
+
+        <span class="c1">#: (*QtWidgets.QGridlayout*) Widget of the &quot;next rec&quot; image</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wid_next</span> <span class="o">=</span> <span class="n">ToolsPyqtgraph</span><span class="o">.</span><span class="n">createWidgetLogo</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lay</span><span class="p">,</span> <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;next&#39;</span><span class="p">],</span> <span class="n">next_im</span><span class="p">,</span> <span class="n">box_size</span><span class="o">=</span><span class="mi">50</span>
+        <span class="p">)</span>
+
+        <span class="c1"># for documentation onyl</span>
+        <span class="c1">#: (*QtWidgets.QComboBox*) Combo box for recording file selection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">combo_rec_choice</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># create combo box widget</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">group_box</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">combo_rec_choice</span> <span class="o">=</span> <span class="n">ToolsPyQt</span><span class="o">.</span><span class="n">addComboBox</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lay</span><span class="p">,</span> <span class="n">poswid_dict</span><span class="p">[</span><span class="s1">&#39;rec_choice&#39;</span><span class="p">],</span>
+            <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">rec_id</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">rec_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rec_nb</span><span class="p">)],</span>
+            <span class="n">box_title</span><span class="o">=</span><span class="s2">&quot;File ID / </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">rec_nb</span>
+        <span class="p">)</span>
+
+        <span class="n">group_box</span><span class="o">.</span><span class="n">setMaximumWidth</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+
+        <span class="c1"># listen to callbacks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wid_previous</span><span class="o">.</span><span class="n">scene</span><span class="p">()</span><span class="o">.</span><span class="n">sigMouseClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mouseClickedPrevious</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wid_next</span><span class="o">.</span><span class="n">scene</span><span class="p">()</span><span class="o">.</span><span class="n">sigMouseClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mouseClickedNext</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">combo_rec_choice</span><span class="o">.</span><span class="n">currentIndexChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recChoice</span><span class="p">)</span>
+
+
+        <span class="c1"># ******************************************************************* #</span>
+        <span class="c1"># *********************** infinite loop ***************************** #</span>
+        <span class="c1"># ******************************************************************* #</span>
+        <span class="n">ToolsPyQt</span><span class="o">.</span><span class="n">infiniteLoopDisplay</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">)</span>
+
+        <span class="c1"># close streams, delete temporary folders</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stopProcessing</span><span class="p">()</span>
+
+
+    <span class="c1"># *********************************************************************** #</span>
+    <span class="c1"># Group: Methods  for converting converting an input signal configuration to a list of signal configurations compliant with ViSiAnnoT</span>
+    <span class="c1"># *********************************************************************** #</span>
+
+
+<div class="viewcode-block" id="ViSiAnnoTLongRec.getSignalConfigurationSingleType"><a class="viewcode-back" href="../../../APIreference/visiannot/ViSiAnnoTLongRec/index.html#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.getSignalConfigurationSingleType">[docs]</a>    <span class="k">def</span> <span class="nf">getSignalConfigurationSingleType</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">type_data</span><span class="p">,</span> <span class="n">data_info_list</span><span class="p">,</span> <span class="n">flag_raise_exception</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts the configuration lists for a specific signal widget and for</span>
+<span class="sd">        the whole long recording</span>
+
+<span class="sd">        It can be used for signal configuration or intervals configuration.</span>
+
+<span class="sd">        :param type_data: data type of the signal widget</span>
+<span class="sd">        :type type_data: str</span>
+<span class="sd">        :param data_info_list: list of configuration lists, each element is a</span>
+<span class="sd">            list of length 8:</span>
+
+<span class="sd">            - (*str*) Directory where to find the data files,</span>
+<span class="sd">            - (*str*) Key to access the data (in case of .h5 or .mat files),</span>
+<span class="sd">            - (*float* or *str*) Data frequency</span>
+<span class="sd">            - (*str*) Pattern to find the data files,</span>
+<span class="sd">            - (*str*) Delimiter to get beginning datetime in the data file</span>
+<span class="sd">              name,</span>
+<span class="sd">            - (*int*) Position of the beginning datetime in the data file</span>
+<span class="sd">              name, according to the delimiter,</span>
+<span class="sd">            - (*str*) Format of the beginning datetime in the data file name</span>
+<span class="sd">              (either ``&quot;posix&quot;`` or a format compliant with</span>
+<span class="sd">              ``datetime.strptime()``),</span>
+<span class="sd">            - (*dict*) Plot style.</span>
+<span class="sd">        :type data_info_list: list</span>
+<span class="sd">        :param flag_raise_exception: specify if an exception must be raised</span>
+<span class="sd">            when no data files are found</span>
+<span class="sd">        :type flag_raise_exception: bool</span>
+<span class="sd">        :param kwargs: keyword arguments of the function</span>
+<span class="sd">            :func:`.getBeginningEndingDateTimeFromList`</span>
+
+<span class="sd">        :returns:</span>
+<span class="sd">            - **config_whole_rec_list** (*list*) -- nested list where each</span>
+<span class="sd">              element is a configuration list and corresponds to one file in</span>
+<span class="sd">              the long recording. Each element corresponds to one</span>
+<span class="sd">              signal/interval and is a nested list where each element</span>
+<span class="sd">              corresponds to one file in the long recording with 4 elements</span>
+<span class="sd">              (path to the data file, key to access data, frequency, plot</span>
+<span class="sd">              style)</span>
+<span class="sd">            - **config_current_list** (*list*) -- configuration list of the</span>
+<span class="sd">              first file in the long recording. Each element corresponds to one</span>
+<span class="sd">              signal/interval and is a list with 4 elements (path to the data</span>
+<span class="sd">              file, key to access data, frequency, plot style)</span>
+
+<span class="sd">        :author: Raphael Weber</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># initialize list of configuration for the whole recording</span>
+        <span class="n">config_whole_rec_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># initialize list of current configuration (i.e. for the first file</span>
+        <span class="c1"># of the recording)</span>
+        <span class="n">config_current_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># loop on sub-configurations</span>
+        <span class="k">for</span> <span class="n">data_dir</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">plot_style</span> <span class="ow">in</span> \
+                <span class="n">data_info_list</span><span class="p">:</span>
+            <span class="c1"># get list of data paths of the recording</span>
+            <span class="n">path_list</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)))</span>
+
+            <span class="c1"># get number of files in the recording</span>
+            <span class="n">nb_files</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_list</span><span class="p">)</span>
+
+            <span class="c1"># check if any file</span>
+            <span class="k">if</span> <span class="n">nb_files</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># get frequency attribute if necessary</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;.wav&quot;</span><span class="p">:</span>
+                    <span class="n">_</span><span class="p">,</span> <span class="n">freq</span> <span class="o">=</span> <span class="n">ToolsAudio</span><span class="o">.</span><span class="n">getAudioWaveFrequency</span><span class="p">(</span>
+                        <span class="n">path_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="p">)</span>
+
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">freq</span> <span class="o">=</span> <span class="n">ToolsData</span><span class="o">.</span><span class="n">getAttributeGeneric</span><span class="p">(</span>
+                        <span class="n">path_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">freq</span>
+                    <span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">freq</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">freq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fps</span>
+
+                <span class="c1"># synchro is OK</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">flag_synchro</span><span class="p">:</span>
+                    <span class="c1"># get configuration</span>
+                    <span class="n">configuration</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span>
+                        <span class="n">path_list</span><span class="p">,</span>
+                        <span class="n">nb_files</span> <span class="o">*</span> <span class="p">[</span><span class="n">key</span><span class="p">],</span>
+                        <span class="n">nb_files</span> <span class="o">*</span> <span class="p">[</span><span class="n">freq</span><span class="p">],</span>
+                        <span class="n">nb_files</span> <span class="o">*</span> <span class="p">[</span><span class="n">delimiter</span><span class="p">],</span>
+                        <span class="n">nb_files</span> <span class="o">*</span> <span class="p">[</span><span class="n">pos</span><span class="p">],</span>
+                        <span class="n">nb_files</span> <span class="o">*</span> <span class="p">[</span><span class="n">fmt</span><span class="p">],</span>
+                        <span class="n">nb_files</span> <span class="o">*</span> <span class="p">[</span><span class="n">plot_style</span><span class="p">]</span>
+                    <span class="p">))</span>
+
+                <span class="c1"># synchro is not OK</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># get beginning/ending time of files</span>
+                    <span class="n">beginning_datetime_list</span><span class="p">,</span> <span class="n">ending_datetime_list</span> <span class="o">=</span> \
+                        <span class="n">ToolsDateTime</span><span class="o">.</span><span class="n">getBeginningEndingDateTimeFromList</span><span class="p">(</span>
+                            <span class="n">path_list</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+                        <span class="p">)</span>
+
+                    <span class="c1"># create temporary synchronization files</span>
+                    <span class="n">sync_path_list</span> <span class="o">=</span> \
+                        <span class="n">ViSiAnnoTLongRec</span><span class="o">.</span><span class="n">createSynchronizationFiles</span><span class="p">(</span>
+                            <span class="n">path_list</span><span class="p">,</span>
+                            <span class="n">type_data</span><span class="p">,</span>
+                            <span class="n">key</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">rec_beginning_datetime_list</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">rec_duration_list</span><span class="p">,</span>
+                            <span class="n">beginning_datetime_list</span><span class="p">,</span>
+                            <span class="n">ending_datetime_list</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">tmp_name</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">tmp_delimiter</span>
+                        <span class="p">)</span>
+
+                    <span class="c1"># get number of synchronization files</span>
+                    <span class="n">nb_files</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sync_path_list</span><span class="p">)</span>
+
+                    <span class="c1"># get configuration</span>
+                    <span class="n">configuration</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span>
+                        <span class="n">sync_path_list</span><span class="p">,</span>
+                        <span class="n">nb_files</span> <span class="o">*</span> <span class="p">[</span><span class="n">key</span><span class="p">],</span>
+                        <span class="n">nb_files</span> <span class="o">*</span> <span class="p">[</span><span class="n">freq</span><span class="p">],</span>
+                        <span class="n">nb_files</span> <span class="o">*</span> <span class="p">[</span><span class="s1">&#39;_&#39;</span><span class="p">],</span>
+                        <span class="n">nb_files</span> <span class="o">*</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                        <span class="n">nb_files</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H-%M-%S&quot;</span><span class="p">],</span>
+                        <span class="n">nb_files</span> <span class="o">*</span> <span class="p">[</span><span class="n">plot_style</span><span class="p">]</span>
+                    <span class="p">))</span>
+
+                <span class="n">config_whole_rec_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">configuration</span><span class="p">)</span>
+
+                <span class="c1"># get current intervals files</span>
+                <span class="n">config_current_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">configuration</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+            <span class="k">elif</span> <span class="n">flag_raise_exception</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;wrong input data directory</span><span class="se">\n</span><span class="s1">got: </span><span class="si">%s</span><span class="s1"> - </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
+                                <span class="p">(</span><span class="n">type_data</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">config_whole_rec_list</span><span class="p">,</span> <span class="n">config_current_list</span></div>
+
+
+<div class="viewcode-block" id="ViSiAnnoTLongRec.getSignalConfigurationAllTypes"><a class="viewcode-back" href="../../../APIreference/visiannot/ViSiAnnoTLongRec/index.html#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.getSignalConfigurationAllTypes">[docs]</a>    <span class="k">def</span> <span class="nf">getSignalConfigurationAllTypes</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">signal_dict</span><span class="p">,</span> <span class="n">interval_dict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts signal and interval configurations to configuration lists</span>
+<span class="sd">        compliant with :class:`.ViSiAnnoT`</span>
+
+<span class="sd">        It sets the following attributes:</span>
+
+<span class="sd">        - :attr:`.ViSiAnnoTLongRec.signal_dict_list`</span>
+<span class="sd">        - :attr:`.ViSiAnnoTLongRec.interval_dict_list` (must be initialized)</span>
+
+<span class="sd">        :param signal_dict: see second positional argument of</span>
+<span class="sd">            :class:`.ViSiAnnoTLongRec` constructor</span>
+<span class="sd">        :type signal_dict: dict</span>
+<span class="sd">        :param interval_dict: see keyword argument of</span>
+<span class="sd">            :class:`.ViSiAnnoTLongRec` constructor</span>
+<span class="sd">        :type interval_dict: dict</span>
+<span class="sd">        :param kwargs: keyword arguments of the function</span>
+<span class="sd">            :func:`.getBeginningEndingDateTimeFromList`</span>
+
+<span class="sd">        :returns:</span>
+<span class="sd">            - **signal_dict_current** (*list*) -- signal configuration of the</span>
+<span class="sd">              first file in the long recording. Each element corresponds to one</span>
+<span class="sd">              signal and is a list with 7 elements (see positional argument</span>
+<span class="sd">              ``signal_dict`` of :class:`.ViSiAnnoT` constructor)</span>
+<span class="sd">            - **interval_dict_current** (*list*) -- interval configuration of</span>
+<span class="sd">              the first file in the long recording. Each element corresponds to</span>
+<span class="sd">              one interval and is a list with 7 elements (see keyword argument</span>
+<span class="sd">              ``interval_dict`` of :class:`.ViSiAnnoT` constructor)</span>
+
+<span class="sd">        :author: Raphael Weber</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># dictionary containing the curent signals configuration</span>
+        <span class="n">signal_dict_current</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+        <span class="c1"># dictionary containing the current files of intervals and the color to</span>
+        <span class="c1"># plot</span>
+        <span class="n">interval_dict_current</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+        <span class="c1"># loop on data types</span>
+        <span class="k">for</span> <span class="n">type_data</span><span class="p">,</span> <span class="n">data_info_list</span> <span class="ow">in</span> <span class="n">signal_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># check if there are intervals</span>
+            <span class="k">if</span> <span class="n">type_data</span> <span class="ow">in</span> <span class="n">interval_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="c1"># get interval configuration for the data type</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">signal_dict_list</span><span class="p">[</span><span class="n">type_data</span><span class="p">],</span> \
+                    <span class="n">signal_dict_current</span><span class="p">[</span><span class="n">type_data</span><span class="p">]</span> <span class="o">=</span> \
+                    <span class="bp">self</span><span class="o">.</span><span class="n">getSignalConfigurationSingleType</span><span class="p">(</span>
+                        <span class="n">type_data</span><span class="p">,</span> <span class="n">interval_dict</span><span class="p">[</span><span class="n">type_data</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span>
+                <span class="p">)</span>
+
+            <span class="c1"># get signal configuration for the data type</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">signal_dict_list</span><span class="p">[</span><span class="n">type_data</span><span class="p">],</span> \
+                <span class="n">signal_dict_current</span><span class="p">[</span><span class="n">type_data</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="bp">self</span><span class="o">.</span><span class="n">getSignalConfigurationSingleType</span><span class="p">(</span>
+                    <span class="n">type_data</span><span class="p">,</span> <span class="n">data_info_list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">signal_dict_current</span><span class="p">,</span> <span class="n">interval_dict_current</span></div>
+
+
+<div class="viewcode-block" id="ViSiAnnoTLongRec.createSynchronizationFiles"><a class="viewcode-back" href="../../../APIreference/visiannot/ViSiAnnoTLongRec/index.html#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.createSynchronizationFiles">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">createSynchronizationFiles</span><span class="p">(</span>
+        <span class="n">data_path_list</span><span class="p">,</span> <span class="n">type_data</span><span class="p">,</span> <span class="n">key_data</span><span class="p">,</span> <span class="n">ref_beginning_datetime_list</span><span class="p">,</span>
+        <span class="n">ref_duration_list</span><span class="p">,</span> <span class="n">data_beginning_datetime_list</span><span class="p">,</span>
+        <span class="n">data_ending_datetime_list</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">delimiter</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class method for creating synchronization files</span>
+
+<span class="sd">        The reference for synchronization is given by</span>
+<span class="sd">        ``ref_beginning_datetime_list`` and ``ref_duration_list``. A</span>
+<span class="sd">        synchronization file is created for each element of those lists.</span>
+
+<span class="sd">        An example of synchronization file::</span>
+
+<span class="sd">            None *=* 30</span>
+<span class="sd">            dir/file1.h5</span>
+
+<span class="sd">        It means that for the first 30 seconds there is no signal, then there</span>
+<span class="sd">        is the file &quot;signal dir/file1.h5&quot; until the end of the reference file</span>
+<span class="sd">        is reached.</span>
+
+<span class="sd">        Another example::</span>
+
+<span class="sd">            dir/file2.h5 *=* 50</span>
+<span class="sd">            dir/file3.h5</span>
+<span class="sd">            dir/file4.h5</span>
+
+<span class="sd">        It means that the first 50 seconds of the file &quot;dir/file2.h5&quot; are</span>
+<span class="sd">        excluded, then there is the full file &quot;dir/file3.h5&quot;, then there is the</span>
+<span class="sd">        file &quot;dir/file4.h5&quot; until the end of the reference file is reached.</span>
+
+<span class="sd">        :param data_path_list: paths to the data files to synchronize</span>
+<span class="sd">        :type data_path_list: list</span>
+<span class="sd">        :param type_data: data type, used for the name of the synchronization</span>
+<span class="sd">            files</span>
+<span class="sd">        :type type_data: str</span>
+<span class="sd">        :param key_data: key to access data (in case of .h5 or .mat files),</span>
+<span class="sd">            used for the name of the synchronization files</span>
+<span class="sd">        :type key_data: str</span>
+<span class="sd">        :param ref_beginning_datetime_list: instances of datetime.datetime with</span>
+<span class="sd">            the beginning datetime of each reference file</span>
+<span class="sd">        :type ref_beginning_datetime_list: list</span>
+<span class="sd">        :param ref_duration_list: durations of each reference file in seconds</span>
+<span class="sd">        :type ref_duration_list: list</span>
+<span class="sd">        :param data_beginning_datetime_list: instances of datetime.datetime</span>
+<span class="sd">            with the beginning datetime of each data file to synchronize</span>
+<span class="sd">        :type data_beginning_datetime_list: list</span>
+<span class="sd">        :param data_ending_datetime_list: instances of datetime.datetime with</span>
+<span class="sd">            the ending datetime of each data file to synchronize</span>
+<span class="sd">        :type data_ending_datetime_list: list</span>
+<span class="sd">        :param output_dir: directory where to save the synchronization files</span>
+<span class="sd">        :type output_dir: str</span>
+<span class="sd">        :param delimiter: delimiter between data path and starting second in</span>
+<span class="sd">            the synchronization file, in the examples above it is ``&quot; *=* &quot;``</span>
+<span class="sd">        :type delimiter: str</span>
+
+<span class="sd">        :returns: paths to the created synchronization files</span>
+<span class="sd">        :rtype: list</span>
+
+<span class="sd">        :author: Raphael Weber</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># initialize list of synchronization files names</span>
+        <span class="n">synchro_path_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># loop on videos beginning date time</span>
+        <span class="k">for</span> <span class="n">video_date_time</span><span class="p">,</span> <span class="n">video_duration</span> \
+                <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ref_beginning_datetime_list</span><span class="p">,</span> <span class="n">ref_duration_list</span><span class="p">):</span>
+            <span class="c1"># compute difference of start time between video and signal files</span>
+            <span class="n">start_sig_diff_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+                <span class="p">(</span><span class="n">beg_rec</span> <span class="o">-</span> <span class="n">video_date_time</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">beg_rec</span> <span class="ow">in</span> <span class="n">data_beginning_datetime_list</span>
+            <span class="p">])</span>
+
+            <span class="c1"># get signal files sharing temporality with video</span>
+            <span class="n">sig_file_id_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">intersect1d</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">start_sig_diff_array</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">start_sig_diff_array</span> <span class="o">&lt;=</span> <span class="n">video_duration</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="c1"># check if there is a signal file beginning before video</span>
+            <span class="n">before_video_sig_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">start_sig_diff_array</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">before_video_sig_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># check length of signal file beginning before video</span>
+                <span class="k">if</span> <span class="n">data_ending_datetime_list</span><span class="p">[</span><span class="n">before_video_sig_array</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">&gt;</span> \
+                        <span class="n">video_date_time</span><span class="p">:</span>
+                    <span class="c1"># update list of signal files sharing temporality with video</span>
+                    <span class="n">sig_file_id_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span>
+                        <span class="n">before_video_sig_array</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">sig_file_id_list</span>
+                    <span class="p">))</span>
+
+            <span class="c1"># get synchronization file name</span>
+            <span class="n">tmp_file_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">_</span><span class="si">%s</span><span class="s2">-</span><span class="si">%s</span><span class="s2">_</span><span class="si">%s</span><span class="s2">.txt&quot;</span> <span class="o">%</span> \
+                <span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">type_data</span><span class="p">,</span> <span class="n">key_data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">),</span>
+                 <span class="n">ToolsDateTime</span><span class="o">.</span><span class="n">convertDatetimeToString</span><span class="p">(</span><span class="n">video_date_time</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                 <span class="p">)</span>
+
+            <span class="n">synchro_path_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp_file_name</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_file_name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">ite_id</span><span class="p">,</span> <span class="n">sig_file_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sig_file_id_list</span><span class="p">):</span>
+                    <span class="c1"># check first signal file</span>
+                    <span class="k">if</span> <span class="n">ite_id</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="c1"># if first signal file begins before the video</span>
+                        <span class="k">if</span> <span class="n">start_sig_diff_array</span><span class="p">[</span><span class="n">sig_file_id</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="c1"># in case of TQRS, start second is computed from</span>
+                            <span class="c1">#: the very beginning</span>
+                            <span class="n">start_sec</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span>
+                                <span class="n">video_date_time</span> <span class="o">-</span>
+                                <span class="n">data_beginning_datetime_list</span><span class="p">[</span><span class="n">sig_file_id</span><span class="p">]</span>
+                            <span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span>
+
+                            <span class="n">start_sig_file</span> <span class="o">=</span> <span class="n">data_path_list</span><span class="p">[</span><span class="n">sig_file_id</span><span class="p">]</span>
+
+                            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s%s%d</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                                <span class="n">start_sig_file</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">,</span> <span class="n">start_sec</span>
+                            <span class="p">))</span>
+
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">start_sec</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span>
+                                <span class="n">data_beginning_datetime_list</span><span class="p">[</span><span class="n">sig_file_id</span><span class="p">]</span> <span class="o">-</span>
+                                <span class="n">video_date_time</span>
+                            <span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span>
+
+                            <span class="n">end_sig_file</span> <span class="o">=</span> <span class="n">data_path_list</span><span class="p">[</span><span class="n">sig_file_id</span><span class="p">]</span>
+
+                            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;None</span><span class="si">%s%d</span><span class="se">\n</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                                <span class="n">delimiter</span><span class="p">,</span> <span class="n">start_sec</span><span class="p">,</span> <span class="n">end_sig_file</span>
+                            <span class="p">))</span>
+
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">data_path_list</span><span class="p">[</span><span class="n">sig_file_id</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">synchro_path_list</span></div>
+
+
+    <span class="c1"># *********************************************************************** #</span>
+    <span class="c1"># End group</span>
+    <span class="c1"># *********************************************************************** #</span>
+
+    <span class="c1"># *********************************************************************** #</span>
+    <span class="c1"># Group: Methods for managing the navigation along the recording files</span>
+    <span class="c1"># *********************************************************************** #</span>
+
+
+<div class="viewcode-block" id="ViSiAnnoTLongRec.changeFileInLongRec"><a class="viewcode-back" href="../../../APIreference/visiannot/ViSiAnnoTLongRec/index.html#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.changeFileInLongRec">[docs]</a>    <span class="k">def</span> <span class="nf">changeFileInLongRec</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">rec_id</span><span class="p">,</span> <span class="n">new_frame_id</span><span class="p">,</span> <span class="n">flag_previous_scroll</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Changes file in the long recording</span>
+
+<span class="sd">        It loads new data files by calling</span>
+<span class="sd">        :meth:`.ViSiAnnoTLongRec.prepareNewRecording`. Then it updates the</span>
+<span class="sd">        display.</span>
+
+<span class="sd">        :param rec_id: index of the new file in the long recording</span>
+<span class="sd">        :type rec_id: int</span>
+<span class="sd">        :param new_frame_id: new current frame number (sampled at the</span>
+<span class="sd">            reference frequency :attr:`.ViSiAnnoT.fps`)</span>
+<span class="sd">        :type new_frame_id: int</span>
+<span class="sd">        :param flag_previous_scroll: specify if the new file is reach backward</span>
+<span class="sd">            by scrolling</span>
+<span class="sd">        :type flag_previous_scroll: bool</span>
+
+<span class="sd">        :returns: specify if the file has been effectively changed</span>
+<span class="sd">        :rtype: bool</span>
+
+<span class="sd">        :author: Raphael Weber</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># set new recording</span>
+        <span class="n">ok</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepareNewRecording</span><span class="p">(</span><span class="n">rec_id</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ok</span><span class="p">:</span>
+            <span class="c1"># update frame id</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">updateFrameId</span><span class="p">(</span><span class="n">new_frame_id</span><span class="p">)</span>
+
+            <span class="c1"># new temporal range</span>
+            <span class="n">current_range</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_frame</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_frame</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">flag_previous_scroll</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">first_frame</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">last_frame</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">current_range</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">first_frame</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="o">-</span> <span class="n">current_range</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">last_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span>
+
+            <span class="c1"># update signals plot</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">updateSignalPlot</span><span class="p">()</span>
+
+            <span class="c1"># update progress bar</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wid_progress</span><span class="o">.</span><span class="n">getProgressCurve</span><span class="p">()</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span>
+                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="c1"># update annotation regions plot if necessary</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">annotevent_label_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotevent_button_label_list</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;On&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">clearAnnotEventRegions</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">annotevent_description_dict</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">plotAnnotEventRegions</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">ok</span></div>
+
+
+<div class="viewcode-block" id="ViSiAnnoTLongRec.previousRecording"><a class="viewcode-back" href="../../../APIreference/visiannot/ViSiAnnoTLongRec/index.html#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.previousRecording">[docs]</a>    <span class="k">def</span> <span class="nf">previousRecording</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads previous file in the long recording</span>
+
+<span class="sd">        :author: Raphael Weber</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">changeFileInLongRec</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rec_id</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_id</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span><span class="p">,</span>
+            <span class="n">flag_previous_scroll</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ViSiAnnoTLongRec.mouseClickedPrevious"><a class="viewcode-back" href="../../../APIreference/visiannot/ViSiAnnoTLongRec/index.html#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.mouseClickedPrevious">[docs]</a>    <span class="k">def</span> <span class="nf">mouseClickedPrevious</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Callback method for loading previous file in the long recording after</span>
+<span class="sd">        having clicked on the &quot;previous&quot; image</span>
+
+<span class="sd">        Connected to the signal ``sigMouseClicked`` of the attribute ``scene``</span>
+<span class="sd">        of :attr:`.ViSiAnnoTLongRec.wid_previous`.</span>
+
+<span class="sd">        :author: Raphael Weber</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">changeFileInLongRec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rec_id</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ViSiAnnoTLongRec.nextRecording"><a class="viewcode-back" href="../../../APIreference/visiannot/ViSiAnnoTLongRec/index.html#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.nextRecording">[docs]</a>    <span class="k">def</span> <span class="nf">nextRecording</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads next file in the long recording</span>
+
+<span class="sd">        :returns: specify if the file has been effectively changed</span>
+<span class="sd">        :rtype: bool</span>
+
+<span class="sd">        :author: Raphael Weber</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">ok</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">changeFileInLongRec</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rec_id</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_id</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ok</span></div>
+
+
+<div class="viewcode-block" id="ViSiAnnoTLongRec.mouseClickedNext"><a class="viewcode-back" href="../../../APIreference/visiannot/ViSiAnnoTLongRec/index.html#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.mouseClickedNext">[docs]</a>    <span class="k">def</span> <span class="nf">mouseClickedNext</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Callback method for loading next file in the long recording after</span>
+<span class="sd">        having clicked on the &quot;next&quot; image</span>
+
+<span class="sd">        Connected to the signal ``sigMouseClicked`` of the attribute ``scene``</span>
+<span class="sd">        of :attr:`.ViSiAnnoTLongRec.wid_next`.</span>
+
+<span class="sd">        :author: Raphael Weber</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">changeFileInLongRec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rec_id</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ViSiAnnoTLongRec.prepareNewRecording"><a class="viewcode-back" href="../../../APIreference/visiannot/ViSiAnnoTLongRec/index.html#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.prepareNewRecording">[docs]</a>    <span class="k">def</span> <span class="nf">prepareNewRecording</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rec_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads data of a new file in the long recording</span>
+
+<span class="sd">        It does not set :attr:`.ViSiAnnoT.first_frame` and</span>
+<span class="sd">        :attr:`.ViSiAnnoT.last_frame`, and it does not update signal plots.</span>
+
+<span class="sd">        :param rec_id: index of the new file in the long recording</span>
+<span class="sd">        :type rec_id: int</span>
+
+<span class="sd">        :returns: specify if the new file has been effectively loaded</span>
+<span class="sd">        :rtype: bool</span>
+
+<span class="sd">        :author: Raphael Weber</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># check recording id</span>
+        <span class="k">if</span> <span class="n">rec_id</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">rec_id</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">rec_nb</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rec_id</span> <span class="o">=</span> <span class="n">rec_id</span>
+
+            <span class="c1"># get new video data</span>
+            <span class="n">video_dict_current</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">video_id</span><span class="p">,</span> <span class="n">video_dict_list_tmp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_dict_list</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">video_dict_current</span><span class="p">[</span><span class="n">video_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">video_dict_list_tmp</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">rec_id</span><span class="p">]</span>
+
+                <span class="c1"># set video widget title</span>
+                <span class="n">file_name</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">video_dict_current</span><span class="p">[</span><span class="n">video_id</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                <span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">wid_vid_dict</span><span class="p">[</span><span class="n">video_id</span><span class="p">]</span><span class="o">.</span><span class="n">setTitle</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">vid_file_name_dict</span><span class="p">[</span><span class="n">video_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">file_name</span>
+
+            <span class="c1"># get new signals and intervals</span>
+            <span class="n">signal_dict_current</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+            <span class="n">interval_dict_current</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">type_data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal_dict_list</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="c1"># signal</span>
+                <span class="n">signal_dict_current</span><span class="p">[</span><span class="n">type_data</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">config_list</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal_dict_list</span><span class="p">[</span><span class="n">type_data</span><span class="p">]:</span>
+                    <span class="n">signal_dict_current</span><span class="p">[</span><span class="n">type_data</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">config_list</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">rec_id</span><span class="p">]</span>
+                    <span class="p">)</span>
+
+                <span class="c1"># additinal intervals</span>
+                <span class="k">if</span> <span class="n">type_data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">interval_dict_list</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">interval_dict_current</span><span class="p">[</span><span class="n">type_data</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">interval_config_list</span> <span class="ow">in</span> \
+                            <span class="bp">self</span><span class="o">.</span><span class="n">interval_dict_list</span><span class="p">[</span><span class="n">type_data</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rec_id</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">interval_config_list</span><span class="p">):</span>
+                            <span class="n">interval_dict_current</span><span class="p">[</span><span class="n">type_data</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                                <span class="n">interval_config_list</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">rec_id</span><span class="p">]</span>
+                            <span class="p">)</span>
+
+            <span class="c1"># set new data</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setAllData</span><span class="p">(</span>
+                <span class="n">video_dict_current</span><span class="p">,</span> <span class="n">signal_dict_current</span><span class="p">,</span> <span class="n">interval_dict_current</span>
+            <span class="p">)</span>
+
+            <span class="c1"># update progress bar</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setTemporalTicks</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">wid_progress</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fps</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wid_progress</span><span class="o">.</span><span class="n">updateNFrames</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nframes</span><span class="p">)</span>
+
+            <span class="c1"># set recording choice combo box</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">combo_rec_choice</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rec_id</span><span class="p">)</span>
+
+            <span class="c1"># reset combo boxes</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">combo_trunc</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">combo_from_cursor</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="ViSiAnnoTLongRec.recChoice"><a class="viewcode-back" href="../../../APIreference/visiannot/ViSiAnnoTLongRec/index.html#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.recChoice">[docs]</a>    <span class="k">def</span> <span class="nf">recChoice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ite_rec</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Callback method for choosing a new file in the long recording with the</span>
+<span class="sd">        combo box</span>
+
+<span class="sd">        Connected to the signal ``currentIndexChanged`` of</span>
+<span class="sd">        :attr:`.ViSiAnnoTLongRec.combo_rec_choice`.</span>
+
+<span class="sd">        :param ite_rec: index of the new file in the long recording selected</span>
+<span class="sd">            in the combo box</span>
+<span class="sd">        :type ite_rec: int</span>
+
+<span class="sd">        :author: Raphael Weber</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># change recording</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">changeFileInLongRec</span><span class="p">(</span><span class="n">ite_rec</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div></div>
+
+
+    <span class="c1"># *********************************************************************** #</span>
+    <span class="c1"># End group</span>
+    <span class="c1"># *********************************************************************** #</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020-2021, Université Rennes 1
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

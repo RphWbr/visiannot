@@ -1,0 +1,639 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>visiannot.tools.ToolsData &mdash; ViSiAnnoT 0.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> ViSiAnnoT
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide-visiannot.html">User guide: ViSiAnnoT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide-configuration.html">User guide: configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide-toolspyqt.html">User guide: ToolsPyQt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide-toolspyqtgraph.html">User guide: ToolsPyqtgraph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../exe.html">Creating a standalone executable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../software.html">Software description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../further.html">Further developments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../APIreference/index.html">API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ViSiAnnoT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>visiannot.tools.ToolsData</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for visiannot.tools.ToolsData</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright Université Rennes 1</span>
+<span class="c1"># Contributor: Raphael Weber</span>
+<span class="c1">#</span>
+<span class="c1"># Under CeCILL license</span>
+<span class="c1"># http://www.cecill.info</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module with functions for loading and saving data files</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">isfile</span><span class="p">,</span> <span class="n">split</span><span class="p">,</span> <span class="n">abspath</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">realpath</span>
+<span class="kn">from</span> <span class="nn">scipy.io</span> <span class="k">import</span> <span class="n">loadmat</span>
+<span class="kn">from</span> <span class="nn">h5py</span> <span class="k">import</span> <span class="n">File</span><span class="p">,</span> <span class="n">Dataset</span>
+<span class="kn">from</span> <span class="nn">.ToolsAudio</span> <span class="k">import</span> <span class="n">getDataAudio</span>
+
+
+<div class="viewcode-block" id="getWorkingDirectory"><a class="viewcode-back" href="../../../APIreference/tools/ToolsData/index.html#visiannot.tools.ToolsData.getWorkingDirectory">[docs]</a><span class="k">def</span> <span class="nf">getWorkingDirectory</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gets working directory when ViSiAnnoT is launched, which depends on wether</span>
+<span class="sd">    it is launched as a Python script or an executable (generated with</span>
+<span class="sd">    PyInstaller)</span>
+
+<span class="sd">    Typically, ``path`` is the path to a Python module of **visiannot** that is</span>
+<span class="sd">    being executed.</span>
+
+<span class="sd">    In case it is launched as a Python script, it returns the absolute path to</span>
+<span class="sd">    the directory containing the module.</span>
+
+<span class="sd">    In case it is launched as an executable generated with PyInstaller, it</span>
+<span class="sd">    returns the path to the temporary directory created by PyInstaller where</span>
+<span class="sd">    are putted source code and related data files.</span>
+
+<span class="sd">    :param path: typically ``__file``</span>
+<span class="sd">    :type path: str</span>
+
+<span class="sd">    :author: Raphael Weber</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">&quot;_MEIPASS&quot;</span><span class="p">):</span>
+        <span class="n">path_w</span> <span class="o">=</span> <span class="n">abspath</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">&quot;_MEIPASS&quot;</span><span class="p">))</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">path_w</span> <span class="o">=</span> <span class="n">dirname</span><span class="p">(</span><span class="n">realpath</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">path_w</span></div>
+
+
+<div class="viewcode-block" id="convertIntervalsToTimeSeries"><a class="viewcode-back" href="../../../APIreference/tools/ToolsData/index.html#visiannot.tools.ToolsData.convertIntervalsToTimeSeries">[docs]</a><span class="k">def</span> <span class="nf">convertIntervalsToTimeSeries</span><span class="p">(</span><span class="n">intervals</span><span class="p">,</span> <span class="n">nframes</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts intervals as 2D array to a time series of 0 and 1 (1D array)</span>
+
+<span class="sd">    :param intervals: intervals in frame numbers, shape</span>
+<span class="sd">        :math:`(n_{intervals}, 2)`</span>
+<span class="sd">    :type intervals: numpy array or list</span>
+<span class="sd">    :param nframes: number of frames of the time series</span>
+
+<span class="sd">    :returns: intervals as a time series, shape :math:`(n_{frames},)`</span>
+<span class="sd">    :rtype: numpy array</span>
+
+<span class="sd">    If the end time of an interval is -1 (second column of ``intervals``, then</span>
+<span class="sd">    the end time is set to nframes.</span>
+
+<span class="sd">    Example::</span>
+<span class="sd">        &gt;&gt;&gt; a = np.array([[4, 5], [9, 12], [16, -1]])</span>
+<span class="sd">        &gt;&gt;&gt; convertIntervalsToTimeSeries(a, 20)</span>
+<span class="sd">        array([0., 0., 0., 0., 1., 0., 0., 0., 0., 1., 1., 1., 0., 0., 0., 0.,</span>
+<span class="sd">               1., 1., 1., 1.])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">intervals</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="n">intervals</span> <span class="o">=</span> <span class="n">intervals</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">time_series</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nframes</span><span class="p">,))</span>
+    <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="n">intervals</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">interval</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">interval</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">nframes</span>
+        <span class="n">time_series</span><span class="p">[</span><span class="n">interval</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">interval</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">time_series</span></div>
+
+
+<div class="viewcode-block" id="convertTimeSeriesToIntervals"><a class="viewcode-back" href="../../../APIreference/tools/ToolsData/index.html#visiannot.tools.ToolsData.convertTimeSeriesToIntervals">[docs]</a><span class="k">def</span> <span class="nf">convertTimeSeriesToIntervals</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gets the intervals of a 1D signal with a specific value</span>
+
+<span class="sd">    :param data: 1D array</span>
+<span class="sd">    :type data: numpy array</span>
+<span class="sd">    :param value: value that defines the intervals to retrieve from ``data``</span>
+
+<span class="sd">    :return: 2D array with indexes of intervals (ending index is not included</span>
+<span class="sd">        in the interval, as with ``range`` in Python)</span>
+<span class="sd">    :rtype: numpy array</span>
+
+<span class="sd">    Example::</span>
+<span class="sd">        &gt;&gt;&gt; a = np.array([0, 0, 0, 0, 5, 1, 1, 1, 1, 5, 5, 5, 0, 0, 0, 0])</span>
+<span class="sd">        &gt;&gt;&gt; convertTimeSeriesToIntervals(a,0)</span>
+<span class="sd">        array([[ 0,  4],</span>
+<span class="sd">               [12, 16]])</span>
+<span class="sd">        &gt;&gt;&gt; convertTimeSeriesToIntervals(a,1)</span>
+<span class="sd">        array([[5, 9]])</span>
+<span class="sd">        &gt;&gt;&gt; convertTimeSeriesToIntervals(a,5)</span>
+<span class="sd">        array([[ 4,  5],</span>
+<span class="sd">               [ 9, 12]])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+        <span class="n">inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">data</span> <span class="o">==</span> <span class="n">value</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">inds</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">inds_inds_diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">inds</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">start_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">inds</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">],</span> <span class="n">inds</span><span class="p">[</span><span class="n">inds_inds_diff</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
+
+        <span class="n">end_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">inds</span><span class="p">[</span><span class="n">inds_inds_diff</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">inds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">start_inds</span><span class="p">,</span> <span class="n">end_inds</span><span class="p">))</span><span class="o">.</span><span class="n">T</span></div>
+
+
+<div class="viewcode-block" id="getDataInterval"><a class="viewcode-back" href="../../../APIreference/tools/ToolsData/index.html#visiannot.tools.ToolsData.getDataInterval">[docs]</a><span class="k">def</span> <span class="nf">getDataInterval</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loads file containing temporal intervals, output shape</span>
+<span class="sd">    :math:`(n_{intervals},2)`</span>
+
+<span class="sd">    The file format must be supported by :func:`.ToolsData.getDataGeneric`.</span>
+
+<span class="sd">    The data can be stored in two ways:</span>
+
+<span class="sd">    - shape :math:`(n_{intervals},2)`, where each line contains the start frame</span>
+<span class="sd">      and end frame of an interval, then no conversion is needed</span>
+<span class="sd">    - shape :math:`(n_{samples},)` with 0 and 1, then it is converted to shape</span>
+<span class="sd">      :math:`(n_{intervals},2)`</span>
+
+<span class="sd">    :param path: path to the data file</span>
+<span class="sd">    :type path: str</span>
+<span class="sd">    :param key: key to access the data in case of mat or h5 file, for txt file</span>
+<span class="sd">        it is ignored</span>
+<span class="sd">    :type key: str</span>
+
+<span class="sd">    :returns: numpy array of shape :math:`(n_{intervals},2)` with intervals in</span>
+<span class="sd">        frames number</span>
+<span class="sd">    :rtype: numpy array</span>
+
+<span class="sd">    :author: Raphael Weber</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="n">data_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">getDataGeneric</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">ndmin</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">data_array</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">data_array</span> <span class="o">=</span> <span class="n">convertTimeSeriesToIntervals</span><span class="p">(</span><span class="n">data_array</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">data_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">data_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">data_array</span></div>
+
+
+<div class="viewcode-block" id="getDataIntervalAsTimeSeries"><a class="viewcode-back" href="../../../APIreference/tools/ToolsData/index.html#visiannot.tools.ToolsData.getDataIntervalAsTimeSeries">[docs]</a><span class="k">def</span> <span class="nf">getDataIntervalAsTimeSeries</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loads file containing temporal intervals, output shape</span>
+<span class="sd">    :math:`(n_{samples},)`</span>
+
+<span class="sd">    The data can be stored in two ways:</span>
+
+<span class="sd">    - shape :math:`(n_{intervals},2)`, where each line contains the start frame</span>
+<span class="sd">      and end frame of an interval, then it is converted to shape</span>
+<span class="sd">      :math:`(n_{samples},)`, so the number of frames must be specified</span>
+<span class="sd">      (allowed formats: txt, mat, h5)</span>
+<span class="sd">    - shape :math:`(n_{samples},)` with 0 and 1, then no conversion is needed</span>
+<span class="sd">      (allowed formats: mat, h5)</span>
+
+<span class="sd">    :param path: path to the data file</span>
+<span class="sd">    :type path: str</span>
+<span class="sd">    :param n_samples: number of samples of the time series</span>
+<span class="sd">    :type n_samples: int</span>
+<span class="sd">    :param key: key to access the data in case of mat or h5 file, for txt file</span>
+<span class="sd">        it is ignored</span>
+<span class="sd">    :type key: str</span>
+
+<span class="sd">    :returns: numpy array of shape :math:`(n_{samples},)` with intervals as a</span>
+<span class="sd">        time series of 0 and 1</span>
+<span class="sd">    :rtype: numpy array</span>
+
+<span class="sd">    :author: Raphael Weber</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="n">data_array</span> <span class="o">=</span> <span class="n">getDataGeneric</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">ndmin</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">data_array</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">data_array</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">data_array</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">data_array</span> <span class="o">=</span> <span class="n">convertIntervalsToTimeSeries</span><span class="p">(</span><span class="n">data_array</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Time series full of NaN because file not found: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">path</span><span class="p">)</span>
+        <span class="n">data_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">n_samples</span><span class="p">,))</span>
+
+    <span class="k">return</span> <span class="n">data_array</span></div>
+
+
+<div class="viewcode-block" id="getTxtLines"><a class="viewcode-back" href="../../../APIreference/tools/ToolsData/index.html#visiannot.tools.ToolsData.getTxtLines">[docs]</a><span class="k">def</span> <span class="nf">getTxtLines</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loads a file as a list of lines</span>
+
+<span class="sd">    :param path: path to the text file</span>
+<span class="sd">    :type pat: str</span>
+
+<span class="sd">    :returns: list of strings with the lines of the file</span>
+<span class="sd">    :rtype: list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">lines</span></div>
+
+
+<div class="viewcode-block" id="getDataGeneric"><a class="viewcode-back" href="../../../APIreference/tools/ToolsData/index.html#visiannot.tools.ToolsData.getDataGeneric">[docs]</a><span class="k">def</span> <span class="nf">getDataGeneric</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loads data from a file with format mat, h5, txt or wav</span>
+
+<span class="sd">    :param path: path to the data file</span>
+<span class="sd">    :type path: str</span>
+<span class="sd">       string containing the path to the data</span>
+<span class="sd">    :param key: key to access the data in case of mat or h5 file, for txt file</span>
+<span class="sd">        it is ignored</span>
+<span class="sd">    :type key: str</span>
+<span class="sd">    :param kwargs: keyword arguments of numpy.loadtxt (in case of txt file) or</span>
+<span class="sd">        :func:`.ToolsAudio.getDataAudio` (in case of wav file)</span>
+
+<span class="sd">    :returns: data</span>
+<span class="sd">    :rtype: numpy array</span>
+
+<span class="sd">    It raises an exception if the format is not supported.</span>
+
+<span class="sd">    :author: Raphael Weber</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">ext</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;mat&quot;</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">getDataMat</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;h5&quot;</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">getDataH5</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;txt&quot;</span><span class="p">:</span>
+        <span class="c1"># disable warnings</span>
+        <span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">catch_warnings</span><span class="p">,</span> <span class="n">simplefilter</span>
+        <span class="k">with</span> <span class="n">catch_warnings</span><span class="p">():</span>
+            <span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;wav&quot;</span><span class="p">:</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">getDataAudio</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Data format not supported: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">ext</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="getDataMat"><a class="viewcode-back" href="../../../APIreference/tools/ToolsData/index.html#visiannot.tools.ToolsData.getDataMat">[docs]</a><span class="k">def</span> <span class="nf">getDataMat</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loads data from a mat file</span>
+
+<span class="sd">    :param path: path to the data file</span>
+<span class="sd">    :type path: str</span>
+<span class="sd">    :param key: key to access the data</span>
+<span class="sd">    :type key: str</span>
+
+<span class="sd">    :returns: data</span>
+<span class="sd">    :rtype: numpy array</span>
+
+<span class="sd">    :author: Raphael Weber</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># try opening with loadmat, otherwise with h5py</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">loadmat</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">getDataH5</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="getAttributeH5"><a class="viewcode-back" href="../../../APIreference/tools/ToolsData/index.html#visiannot.tools.ToolsData.getAttributeH5">[docs]</a><span class="k">def</span> <span class="nf">getAttributeH5</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gets an attribute in a h5 file</span>
+
+<span class="sd">    :param path: path to the file</span>
+<span class="sd">    :type path: str</span>
+<span class="sd">    :param key_path: key path to the attribute in the file</span>
+<span class="sd">    :type key_path: str</span>
+
+<span class="sd">    :returns: attribute</span>
+
+<span class="sd">    :author: Raphael Weber</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">dataset_path</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="n">split</span><span class="p">(</span><span class="n">key_path</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">File</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dataset_path</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">attr</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">dataset_path</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">attr</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">attr</span></div>
+
+
+<div class="viewcode-block" id="getAttributeGeneric"><a class="viewcode-back" href="../../../APIreference/tools/ToolsData/index.html#visiannot.tools.ToolsData.getAttributeGeneric">[docs]</a><span class="k">def</span> <span class="nf">getAttributeGeneric</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gets an attribute in a mat or h5 file</span>
+
+<span class="sd">    :param path: path to the file</span>
+<span class="sd">    :type path: str</span>
+<span class="sd">    :param key_path: key path to the attribute in the file</span>
+<span class="sd">    :type key_path: str</span>
+
+<span class="sd">    If the file is not mat or h5, it returns key.</span>
+
+<span class="sd">    :returns: attribute</span>
+
+<span class="sd">    :author: Raphael Weber</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">ext</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;mat&quot;</span><span class="p">:</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="n">getDataMat</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;h5&quot;</span><span class="p">:</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="n">getAttributeH5</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="n">key</span>
+
+    <span class="k">return</span> <span class="n">attr</span></div>
+
+
+<div class="viewcode-block" id="recursiveReadH5"><a class="viewcode-back" href="../../../APIreference/tools/ToolsData/index.html#visiannot.tools.ToolsData.recursiveReadH5">[docs]</a><span class="k">def</span> <span class="nf">recursiveReadH5</span><span class="p">(</span><span class="n">parent_item</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Recursive function to read data from a h5py file object while preserving</span>
+<span class="sd">    nested architecture</span>
+
+<span class="sd">    It reaches the last group level recursively.</span>
+
+<span class="sd">    If the parent item is a H5 dataset, then the function returns a numpy</span>
+<span class="sd">    array. Otherwise it returns a dictionary, where the key corresponds to one</span>
+<span class="sd">    H5 group and the value correponds to the H5 group content (may it be a</span>
+<span class="sd">    nested group, a numpy array in case of H5 dataset or a string/int/float in</span>
+<span class="sd">    case of H5 attribute). The attributes of a H5 dataset are not retrieved,</span>
+<span class="sd">    it only works for attributes of a H5 group.</span>
+
+<span class="sd">    :param parent_item: h5py file object</span>
+
+<span class="sd">    :returns: all data contained in ``parent_item``</span>
+<span class="sd">    :rtype: dict or numpy array</span>
+
+<span class="sd">    :author: Raphael Weber</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># check if parent item is a dataset</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parent_item</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">):</span>
+        <span class="c1"># output is a numpy array</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">parent_item</span><span class="p">[()]</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># output is a dictionary</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># get attributes</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">parent_item</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">output</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="c1"># loop on items of the next level</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">parent_item</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># recursive call</span>
+            <span class="n">output</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">recursiveReadH5</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">output</span></div>
+
+
+<div class="viewcode-block" id="getDataH5"><a class="viewcode-back" href="../../../APIreference/tools/ToolsData/index.html#visiannot.tools.ToolsData.getDataH5">[docs]</a><span class="k">def</span> <span class="nf">getDataH5</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">root_path</span><span class="o">=</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads the whole content of a H5 file or a specific dataset/group</span>
+
+<span class="sd">    It calls the recursive function :func:`.recursiveReadH5`.</span>
+
+<span class="sd">    :param path: path to the file</span>
+<span class="sd">    :type path: str</span>
+<span class="sd">    :param root_path: path to the H5 group or H5 dataset where to start</span>
+<span class="sd">        retrieving data, default ``&#39;/&#39;`` (file root)</span>
+<span class="sd">    :type key_path: str</span>
+
+<span class="sd">    :returns: three options:</span>
+
+<span class="sd">    - (*dict*) -- in case ``root_path`` points to a H5 group, all data</span>
+<span class="sd">      contained in the H5 group</span>
+<span class="sd">    - (*numpy array*) -- in case ``root_path`` points to a H5 dataset</span>
+<span class="sd">    - ``None`` -- in case ``root_path`` points to a location that is not in the</span>
+<span class="sd">      file</span>
+
+<span class="sd">    :author: Raphael Weber</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="n">File</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">root_path</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">recursiveReadH5</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">root_path</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">output</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020-2021, Université Rennes 1
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

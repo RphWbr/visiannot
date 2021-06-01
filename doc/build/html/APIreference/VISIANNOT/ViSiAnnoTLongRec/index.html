@@ -1,0 +1,903 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>visiannot.visiannot.ViSiAnnoTLongRec &mdash; ViSiAnnoT 0.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="visiannot.visiannot.ViSiAnnoTLongRecFromConfigFile" href="../ViSiAnnoTLongRecFromConfigFile/index.html" />
+    <link rel="prev" title="visiannot.visiannot.ViSiAnnoT" href="../ViSiAnnoT/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> ViSiAnnoT
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide-visiannot.html">User guide: ViSiAnnoT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide-configuration.html">User guide: configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide-toolspyqt.html">User guide: ToolsPyQt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide-toolspyqtgraph.html">User guide: ToolsPyqtgraph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../exe.html">Creating a standalone executable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../software.html">Software description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../further.html">Further developments</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../configuration/index.html">visiannot.configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tools/index.html">visiannot.tools</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">visiannot.visiannot</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../ViSiAnnoT/index.html">visiannot.visiannot.ViSiAnnoT</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">visiannot.visiannot.ViSiAnnoTLongRec</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#summary">Summary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api">API</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ViSiAnnoTLongRecFromConfigFile/index.html">visiannot.visiannot.ViSiAnnoTLongRecFromConfigFile</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ViSiAnnoTLongRecFromConfigGUI/index.html">visiannot.visiannot.ViSiAnnoTLongRecFromConfigGUI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../components/index.html">visiannot.visiannot.components</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ViSiAnnoT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">API Reference</a> &raquo;</li>
+        
+          <li><a href="../index.html">visiannot.visiannot</a> &raquo;</li>
+        
+      <li>visiannot.visiannot.ViSiAnnoTLongRec</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../../_sources/APIreference/visiannot/ViSiAnnoTLongRec/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-visiannot.visiannot.ViSiAnnoTLongRec">
+<span id="visiannot-visiannot-visiannotlongrec"></span><h1>visiannot.visiannot.ViSiAnnoTLongRec<a class="headerlink" href="#module-visiannot.visiannot.ViSiAnnoTLongRec" title="Permalink to this headline">¶</a></h1>
+<p>Module defining <a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec"><code class="xref py py-class docutils literal notranslate"><span class="pre">ViSiAnnoTLongRec</span></code></a></p>
+<div class="section" id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec</span></code></a>(…)</p></td>
+<td><p>Subclass of <a class="reference internal" href="../ViSiAnnoT/index.html#visiannot.visiannot.ViSiAnnoT.ViSiAnnoT" title="visiannot.visiannot.ViSiAnnoT.ViSiAnnoT"><code class="xref py py-class docutils literal notranslate"><span class="pre">ViSiAnnoT</span></code></a> for managing a long recording with several files</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="class-visiannotlongrec">
+<h3>Class ViSiAnnoTLongRec<a class="headerlink" href="#class-visiannotlongrec" title="Permalink to this headline">¶</a></h3>
+<p><strong>Methods for managing the navigation along the recording files:</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.changeFileInLongRec" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.changeFileInLongRec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">changeFileInLongRec</span></code></a>(rec_id, new_frame_id[, …])</p></td>
+<td><p>Changes file in the long recording</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.mouseClickedNext" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.mouseClickedNext"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mouseClickedNext</span></code></a>()</p></td>
+<td><p>Callback method for loading next file in the long recording after having clicked on the “next” image</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.mouseClickedPrevious" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.mouseClickedPrevious"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mouseClickedPrevious</span></code></a>()</p></td>
+<td><p>Callback method for loading previous file in the long recording after having clicked on the “previous” image</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.nextRecording" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.nextRecording"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nextRecording</span></code></a>()</p></td>
+<td><p>Loads next file in the long recording</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.prepareNewRecording" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.prepareNewRecording"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prepareNewRecording</span></code></a>(rec_id)</p></td>
+<td><p>Loads data of a new file in the long recording</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.previousRecording" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.previousRecording"><code class="xref py py-obj docutils literal notranslate"><span class="pre">previousRecording</span></code></a>()</p></td>
+<td><p>Loads previous file in the long recording</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.recChoice" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.recChoice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">recChoice</span></code></a>(ite_rec)</p></td>
+<td><p>Callback method for choosing a new file in the long recording with the combo box</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Methods  for converting converting an input signal configuration to a list of signal configurations compliant with ViSiAnnoT:</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.createSynchronizationFiles" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.createSynchronizationFiles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">createSynchronizationFiles</span></code></a>(data_path_list, …)</p></td>
+<td><p>Class method for creating synchronization files</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.getSignalConfigurationAllTypes" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.getSignalConfigurationAllTypes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getSignalConfigurationAllTypes</span></code></a>(signal_dict, …)</p></td>
+<td><p>Converts signal and interval configurations to configuration lists compliant with <a class="reference internal" href="../ViSiAnnoT/index.html#visiannot.visiannot.ViSiAnnoT.ViSiAnnoT" title="visiannot.visiannot.ViSiAnnoT.ViSiAnnoT"><code class="xref py py-class docutils literal notranslate"><span class="pre">ViSiAnnoT</span></code></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.getSignalConfigurationSingleType" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.getSignalConfigurationSingleType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getSignalConfigurationSingleType</span></code></a>(type_data, …)</p></td>
+<td><p>Converts the configuration lists for a specific signal widget and for the whole long recording</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Attributes:</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.flag_synchro" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.flag_synchro"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flag_synchro</span></code></a></p></td>
+<td><p>(<em>bool</em>) Specify if video and signal are synchronized</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.video_dict_list" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.video_dict_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">video_dict_list</span></code></a></p></td>
+<td><p>(<em>dict</em>) Key is a camera ID.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.rec_beginning_datetime_list" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.rec_beginning_datetime_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rec_beginning_datetime_list</span></code></a></p></td>
+<td><p>(<em>list</em>) Instances of datetime.datetime with the beginning datetime of each video file (or first signal if no video)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.rec_duration_list" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.rec_duration_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rec_duration_list</span></code></a></p></td>
+<td><p>(<em>list</em>) Durations in seconds of each video file (or first signal if no video)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.tmp_name" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.tmp_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tmp_name</span></code></a></p></td>
+<td><p>(<em>str</em>) Directory where to save temporary files for synchrnonization</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.tmp_delimiter" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.tmp_delimiter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tmp_delimiter</span></code></a></p></td>
+<td><p>(<em>str</em>) Delimiter for parsing temporary files for synchronization</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.signal_dict_list" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.signal_dict_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">signal_dict_list</span></code></a></p></td>
+<td><p>(<em>dict</em>) Each item corresponds to one signal widget, key is the data type of the widget, value is a nested list of signal configurations</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.interval_dict_list" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.interval_dict_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interval_dict_list</span></code></a></p></td>
+<td><p>(<em>dict</em>) Each item corresponds to one signal widget on which to plot intervals, key is the data type of the widget, value is a nested list of interval configurations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.annot_file_base" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.annot_file_base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annot_file_base</span></code></a></p></td>
+<td><p>(<em>str</em>) Base name of the annotation files</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.wid_previous" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.wid_previous"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wid_previous</span></code></a></p></td>
+<td><p>(<em>QtWidgets.QGridlayout</em>) Widget of the “previous rec” image</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.wid_next" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.wid_next"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wid_next</span></code></a></p></td>
+<td><p>(<em>QtWidgets.QGridlayout</em>) Widget of the “next rec” image</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.combo_rec_choice" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.combo_rec_choice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combo_rec_choice</span></code></a></p></td>
+<td><p>(<em>QtWidgets.QComboBox</em>) Combo box for recording file selection</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt id="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec">
+<em class="property">class </em><code class="sig-prename descclassname">visiannot.visiannot.ViSiAnnoTLongRec.</code><code class="sig-name descname">ViSiAnnoTLongRec</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">video_dict</span></em>, <em class="sig-param"><span class="n">signal_dict</span></em>, <em class="sig-param"><span class="n">interval_dict</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">flag_synchro</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">layout_mode</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">poswid_dict</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/visiannot/ViSiAnnoTLongRec.html#ViSiAnnoTLongRec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../ViSiAnnoT/index.html#visiannot.visiannot.ViSiAnnoT.ViSiAnnoT" title="visiannot.visiannot.ViSiAnnoT.ViSiAnnoT"><code class="xref py py-class docutils literal notranslate"><span class="pre">visiannot.visiannot.ViSiAnnoT.ViSiAnnoT</span></code></a></p>
+<p>Subclass of <a class="reference internal" href="../ViSiAnnoT/index.html#visiannot.visiannot.ViSiAnnoT.ViSiAnnoT" title="visiannot.visiannot.ViSiAnnoT.ViSiAnnoT"><code class="xref py py-class docutils literal notranslate"><span class="pre">ViSiAnnoT</span></code></a> for managing a long recording with
+several files</p>
+<p>First, it searches the list of paths to the video/signal files. If
+signals are not synchronized with videos, then it creates temporary
+files with info for synchronization. Each created file corresponds to
+one video file and contains the path to the signal file to use with the
+starting second.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>video_dict</strong> (<em>dict</em>) – <p>video configuration, each item corresponds to one
+camera. Key is the camera ID (string). Value is a configuration
+list of length 5:</p>
+<ul>
+<li><p>(<em>str</em>) Directory where to find the video files,</p></li>
+<li><p>(<em>str</em>) Pattern to find video files (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;*.mp4&quot;</span></code>),</p></li>
+<li><p>(<em>str</em>) Delimiter to get beginning datetime in the video file
+name,</p></li>
+<li><p>(<em>int</em>) Position of the beginning datetime in the video file
+name, according to the delimiter,</p></li>
+<li><p>(<em>str</em>) Format of the beginning datetime in the video file name
+(either <code class="docutils literal notranslate"><span class="pre">&quot;posix&quot;</span></code> or a format compliant with
+<code class="docutils literal notranslate"><span class="pre">datetime.strptime()</span></code>).</p></li>
+</ul>
+</p></li>
+<li><p><strong>signal_dict</strong> (<em>dict</em>) – <p>signal configuration, each item corresponds to one
+signal widget. Key is the widget ID (Y axis label, string). Value
+is a nested list of signal configurations. Each element of the
+nested list corresponds to one signal plot and is a configuration
+list of 8 elements:</p>
+<ul>
+<li><p>(<em>str</em>) Directory where to find the signal files, see positional
+argument <code class="docutils literal notranslate"><span class="pre">signal_dict</span></code> of <a class="reference internal" href="../ViSiAnnoT/index.html#visiannot.visiannot.ViSiAnnoT.ViSiAnnoT" title="visiannot.visiannot.ViSiAnnoT.ViSiAnnoT"><code class="xref py py-class docutils literal notranslate"><span class="pre">ViSiAnnoT</span></code></a> constructor for
+detail about data storing format,</p></li>
+<li><p>(<em>str</em>) Key to access the data (in case of .mat or .h5 file),</p></li>
+<li><p>(<em>int</em> or <em>float</em> or <em>str</em>) Signal frequency, set it to <code class="docutils literal notranslate"><span class="pre">0</span></code> if
+signal non regularly sampled, set it to <code class="docutils literal notranslate"><span class="pre">-1</span></code> if same frequency
+as <a class="reference internal" href="../ViSiAnnoT/index.html#visiannot.visiannot.ViSiAnnoT.ViSiAnnoT.fps" title="visiannot.visiannot.ViSiAnnoT.ViSiAnnoT.fps"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ViSiAnnoT.fps</span></code></a>, it may be a string with the path to
+the frequency attribute in a .h5 file,</p></li>
+<li><p>(<em>str</em>) Pattern to find signal files,</p></li>
+<li><p>(<em>str</em>) Delimiter to get beginning datetime in the signal file
+name,</p></li>
+<li><p>(<em>int</em>) Position of the beginning datetime in the signal file
+name, according to the delimiter,</p></li>
+<li><p>(<em>str</em>) Format of the beginning datetime in the signal file name
+(either <code class="docutils literal notranslate"><span class="pre">&quot;posix&quot;</span></code> or a format compliant with
+<code class="docutils literal notranslate"><span class="pre">datetime.strptime()</span></code>),</p></li>
+<li><p>(<em>dict</em>) Plot style, see
+<a class="reference external" href="https://pyqtgraph.readthedocs.io/en/latest/graphicsItems/plotdataitem.html">https://pyqtgraph.readthedocs.io/en/latest/graphicsItems/plotdataitem.html</a>
+for details, set it to <code class="docutils literal notranslate"><span class="pre">None</span></code> for default.</p></li>
+</ul>
+<p>Here is an example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="s2">&quot;sig_1&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">[</span>
+        <span class="s2">&quot;path/to/folder1&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="s2">&quot;*_motion.txt&quot;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H-%M-%S&quot;</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="p">]</span>
+<span class="p">],</span>
+<span class="s2">&quot;sig_2&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">[</span>
+        <span class="s2">&quot;path/to/folder2&quot;</span><span class="p">,</span> <span class="s2">&quot;ecg&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;*_physio.h5&quot;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;posix&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;pen&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="s1">&#39;width&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+    <span class="p">],</span>
+    <span class="p">[</span>
+        <span class="s2">&quot;path/to/folder2&quot;</span><span class="p">,</span> <span class="s2">&quot;resp&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;*_physio.h5&quot;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;posix&quot;</span><span class="p">,</span><span class="kc">None</span>
+    <span class="p">]</span>
+<span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>In case of audio signal to plot, the configuration list is slightly
+different. The second element (key to access data) is a string to
+specify which channel to plot. It must contain <code class="docutils literal notranslate"><span class="pre">&quot;left&quot;</span></code> or
+<code class="docutils literal notranslate"><span class="pre">&quot;right&quot;</span></code>, whatever the letter capitalization is. Otherwise, by
+default the left channel is plotted. Moreover, the frequency is
+directly retrieved from the wav file, so the third element of the
+configuration list (signal frequency) is ignored.</p>
+<p>Here is an example for audio:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="s2">&quot;Audio L&quot;</span><span class="p">:</span> <span class="p">[[</span>
+    <span class="s2">&quot;path/to/folder&quot;</span><span class="p">,</span> <span class="s2">&quot;Left channel&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;*_audio.wav&quot;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">,</span>
+    <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H-%M-%S&quot;</span><span class="p">,</span> <span class="kc">None</span>
+<span class="p">]],</span>
+<span class="s2">&quot;Audio R&quot;</span><span class="p">:</span> <span class="p">[[</span>
+    <span class="s2">&quot;path/to/folder&quot;</span><span class="p">,</span> <span class="s2">&quot;Right channel&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;*_audio.wav&quot;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">,</span>
+    <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H-%M-%S&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</p></li>
+<li><p><strong>interval_dict</strong> (<em>dict</em>) – <p>interval configuration. Each item
+corresponds to a signal widget on which to plot intervals. The key
+must be the same as in <code class="docutils literal notranslate"><span class="pre">signal_dict</span></code>. Value is a nested list of
+interval configurations. Each element of the nested list
+corresponds to a type of interval to be plotted in the same
+signal widget and is a configuration list of 8 elements:</p>
+<ul>
+<li><p>(<em>str</em>) Directory where to find interval files, see positional
+argument <code class="docutils literal notranslate"><span class="pre">interval_dict</span></code> of <a class="reference internal" href="../ViSiAnnoT/index.html#visiannot.visiannot.ViSiAnnoT.ViSiAnnoT" title="visiannot.visiannot.ViSiAnnoT.ViSiAnnoT"><code class="xref py py-class docutils literal notranslate"><span class="pre">ViSiAnnoT</span></code></a> constructor for
+detail about data storing format,</p></li>
+<li><p>(<em>str</em>) Key to access the data (in case of .mat or .h5 file),</p></li>
+<li><p>(<em>int</em>) Signal frequency, set it to <code class="docutils literal notranslate"><span class="pre">-1</span></code> if same frequency as
+<a class="reference internal" href="../ViSiAnnoT/index.html#visiannot.visiannot.ViSiAnnoT.ViSiAnnoT.fps" title="visiannot.visiannot.ViSiAnnoT.ViSiAnnoT.fps"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ViSiAnnoT.fps</span></code></a>, it may be a string with the path to the
+frequency attribute in a .h5 file,</p></li>
+<li><p>(<em>str</em>) Pattern to find interval files,</p></li>
+<li><p>(<em>str</em>) Delimiter to get beginning datetime in the interval file
+name,</p></li>
+<li><p>(<em>int</em>) Position of the beginning datetime in the interval file
+name, according to the delimiter,</p></li>
+<li><p>(<em>str</em>) Format of the beginning datetime in the interval file
+name (either <code class="docutils literal notranslate"><span class="pre">&quot;posix&quot;</span></code> or a format compliant with
+<code class="docutils literal notranslate"><span class="pre">datetime.strptime()</span></code>),</p></li>
+<li><p>(<em>tuple</em> or <em>list</em>) Plot color (RGBA).</p></li>
+</ul>
+</p></li>
+<li><p><strong>flag_synchro</strong> (<em>bool</em>) – specify if video and signal are synchronized, in
+case there is no video and several signals that are not
+synchronized with each other, then <code class="docutils literal notranslate"><span class="pre">flag_synchro</span></code> can be set to
+<code class="docutils literal notranslate"><span class="pre">False</span></code> and the synchronization reference is the first signal</p></li>
+<li><p><strong>layout_mode</strong> (<em>int</em>) – <p>layout mode of the window for positioning the
+widgets, one of the following:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code> (focus on video, works better with a big screen),</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">2</span></code> (focus on signal, suitable for a laptop screen),</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">3</span></code> (compact display with some features disabled),</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">4</span></code> (even more compact display, image extraction tool is
+disabled).</p></li>
+</ul>
+</p></li>
+<li><p><strong>poswid_dict</strong> (<em>dict</em>) – <p>custom position of the widgets in the window,
+default <code class="docutils literal notranslate"><span class="pre">{}</span></code> to use the positions defined by the layout mode (see
+input <code class="docutils literal notranslate"><span class="pre">layout_mode</span></code>). Value is a tuple of length 2 <code class="docutils literal notranslate"><span class="pre">(row,</span> <span class="pre">col)</span></code>
+or 4 <code class="docutils literal notranslate"><span class="pre">(row,</span> <span class="pre">col,</span> <span class="pre">rowspan,</span> <span class="pre">colspan)</span></code>. Key identifies the widget:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;logo&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;select_trunc&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;select_manual&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;select_from_cursor&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;annot_event&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;annot_image&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;visi&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;zoomin&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;zoomout&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;previous&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;next&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;rec_choice&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;progress&quot;</span></code></p></li>
+</ul>
+</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of <a class="reference internal" href="../ViSiAnnoT/index.html#visiannot.visiannot.ViSiAnnoT.ViSiAnnoT" title="visiannot.visiannot.ViSiAnnoT.ViSiAnnoT"><code class="xref py py-class docutils literal notranslate"><span class="pre">ViSiAnnoT</span></code></a> constructor</p></li>
+</ul>
+</dd>
+<dt class="field-even">Author</dt>
+<dd class="field-even"><p>Raphael Weber</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.changeFileInLongRec">
+<code class="sig-name descname">changeFileInLongRec</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rec_id</span></em>, <em class="sig-param"><span class="n">new_frame_id</span></em>, <em class="sig-param"><span class="n">flag_previous_scroll</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/visiannot/ViSiAnnoTLongRec.html#ViSiAnnoTLongRec.changeFileInLongRec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.changeFileInLongRec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Changes file in the long recording</p>
+<p>It loads new data files by calling
+<a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.prepareNewRecording" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.prepareNewRecording"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ViSiAnnoTLongRec.prepareNewRecording()</span></code></a>. Then it updates the
+display.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rec_id</strong> (<em>int</em>) – index of the new file in the long recording</p></li>
+<li><p><strong>new_frame_id</strong> (<em>int</em>) – new current frame number (sampled at the
+reference frequency <a class="reference internal" href="../ViSiAnnoT/index.html#visiannot.visiannot.ViSiAnnoT.ViSiAnnoT.fps" title="visiannot.visiannot.ViSiAnnoT.ViSiAnnoT.fps"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ViSiAnnoT.fps</span></code></a>)</p></li>
+<li><p><strong>flag_previous_scroll</strong> (<em>bool</em>) – specify if the new file is reach backward
+by scrolling</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>specify if the file has been effectively changed</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+<dt class="field-even">Author</dt>
+<dd class="field-even"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.createSynchronizationFiles">
+<em class="property">static </em><code class="sig-name descname">createSynchronizationFiles</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_path_list</span></em>, <em class="sig-param"><span class="n">type_data</span></em>, <em class="sig-param"><span class="n">key_data</span></em>, <em class="sig-param"><span class="n">ref_beginning_datetime_list</span></em>, <em class="sig-param"><span class="n">ref_duration_list</span></em>, <em class="sig-param"><span class="n">data_beginning_datetime_list</span></em>, <em class="sig-param"><span class="n">data_ending_datetime_list</span></em>, <em class="sig-param"><span class="n">output_dir</span></em>, <em class="sig-param"><span class="n">delimiter</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/visiannot/ViSiAnnoTLongRec.html#ViSiAnnoTLongRec.createSynchronizationFiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.createSynchronizationFiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method for creating synchronization files</p>
+<p>The reference for synchronization is given by
+<code class="docutils literal notranslate"><span class="pre">ref_beginning_datetime_list</span></code> and <code class="docutils literal notranslate"><span class="pre">ref_duration_list</span></code>. A
+synchronization file is created for each element of those lists.</p>
+<p>An example of synchronization file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kc">None</span> <span class="o">*=*</span> <span class="mi">30</span>
+<span class="nb">dir</span><span class="o">/</span><span class="n">file1</span><span class="o">.</span><span class="n">h5</span>
+</pre></div>
+</div>
+<p>It means that for the first 30 seconds there is no signal, then there
+is the file “signal dir/file1.h5” until the end of the reference file
+is reached.</p>
+<p>Another example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">dir</span><span class="o">/</span><span class="n">file2</span><span class="o">.</span><span class="n">h5</span> <span class="o">*=*</span> <span class="mi">50</span>
+<span class="nb">dir</span><span class="o">/</span><span class="n">file3</span><span class="o">.</span><span class="n">h5</span>
+<span class="nb">dir</span><span class="o">/</span><span class="n">file4</span><span class="o">.</span><span class="n">h5</span>
+</pre></div>
+</div>
+<p>It means that the first 50 seconds of the file “dir/file2.h5” are
+excluded, then there is the full file “dir/file3.h5”, then there is the
+file “dir/file4.h5” until the end of the reference file is reached.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_path_list</strong> (<em>list</em>) – paths to the data files to synchronize</p></li>
+<li><p><strong>type_data</strong> (<em>str</em>) – data type, used for the name of the synchronization
+files</p></li>
+<li><p><strong>key_data</strong> (<em>str</em>) – key to access data (in case of .h5 or .mat files),
+used for the name of the synchronization files</p></li>
+<li><p><strong>ref_beginning_datetime_list</strong> (<em>list</em>) – instances of datetime.datetime with
+the beginning datetime of each reference file</p></li>
+<li><p><strong>ref_duration_list</strong> (<em>list</em>) – durations of each reference file in seconds</p></li>
+<li><p><strong>data_beginning_datetime_list</strong> (<em>list</em>) – instances of datetime.datetime
+with the beginning datetime of each data file to synchronize</p></li>
+<li><p><strong>data_ending_datetime_list</strong> (<em>list</em>) – instances of datetime.datetime with
+the ending datetime of each data file to synchronize</p></li>
+<li><p><strong>output_dir</strong> (<em>str</em>) – directory where to save the synchronization files</p></li>
+<li><p><strong>delimiter</strong> (<em>str</em>) – delimiter between data path and starting second in
+the synchronization file, in the examples above it is <code class="docutils literal notranslate"><span class="pre">&quot;</span> <span class="pre">*=*</span> <span class="pre">&quot;</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>paths to the created synchronization files</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+<dt class="field-even">Author</dt>
+<dd class="field-even"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.getSignalConfigurationAllTypes">
+<code class="sig-name descname">getSignalConfigurationAllTypes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">signal_dict</span></em>, <em class="sig-param"><span class="n">interval_dict</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/visiannot/ViSiAnnoTLongRec.html#ViSiAnnoTLongRec.getSignalConfigurationAllTypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.getSignalConfigurationAllTypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts signal and interval configurations to configuration lists
+compliant with <a class="reference internal" href="../ViSiAnnoT/index.html#visiannot.visiannot.ViSiAnnoT.ViSiAnnoT" title="visiannot.visiannot.ViSiAnnoT.ViSiAnnoT"><code class="xref py py-class docutils literal notranslate"><span class="pre">ViSiAnnoT</span></code></a></p>
+<p>It sets the following attributes:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.signal_dict_list" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.signal_dict_list"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ViSiAnnoTLongRec.signal_dict_list</span></code></a></p></li>
+<li><p><a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.interval_dict_list" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.interval_dict_list"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ViSiAnnoTLongRec.interval_dict_list</span></code></a> (must be initialized)</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>signal_dict</strong> (<em>dict</em>) – see second positional argument of
+<a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec"><code class="xref py py-class docutils literal notranslate"><span class="pre">ViSiAnnoTLongRec</span></code></a> constructor</p></li>
+<li><p><strong>interval_dict</strong> (<em>dict</em>) – see keyword argument of
+<a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec"><code class="xref py py-class docutils literal notranslate"><span class="pre">ViSiAnnoTLongRec</span></code></a> constructor</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of the function
+<a class="reference internal" href="../../tools/ToolsDateTime/index.html#visiannot.tools.ToolsDateTime.getBeginningEndingDateTimeFromList" title="visiannot.tools.ToolsDateTime.getBeginningEndingDateTimeFromList"><code class="xref py py-func docutils literal notranslate"><span class="pre">getBeginningEndingDateTimeFromList()</span></code></a></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>signal_dict_current</strong> (<em>list</em>) – signal configuration of the
+first file in the long recording. Each element corresponds to one
+signal and is a list with 7 elements (see positional argument
+<code class="docutils literal notranslate"><span class="pre">signal_dict</span></code> of <a class="reference internal" href="../ViSiAnnoT/index.html#visiannot.visiannot.ViSiAnnoT.ViSiAnnoT" title="visiannot.visiannot.ViSiAnnoT.ViSiAnnoT"><code class="xref py py-class docutils literal notranslate"><span class="pre">ViSiAnnoT</span></code></a> constructor)</p></li>
+<li><p><strong>interval_dict_current</strong> (<em>list</em>) – interval configuration of
+the first file in the long recording. Each element corresponds to
+one interval and is a list with 7 elements (see keyword argument
+<code class="docutils literal notranslate"><span class="pre">interval_dict</span></code> of <a class="reference internal" href="../ViSiAnnoT/index.html#visiannot.visiannot.ViSiAnnoT.ViSiAnnoT" title="visiannot.visiannot.ViSiAnnoT.ViSiAnnoT"><code class="xref py py-class docutils literal notranslate"><span class="pre">ViSiAnnoT</span></code></a> constructor)</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.getSignalConfigurationSingleType">
+<code class="sig-name descname">getSignalConfigurationSingleType</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type_data</span></em>, <em class="sig-param"><span class="n">data_info_list</span></em>, <em class="sig-param"><span class="n">flag_raise_exception</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/visiannot/ViSiAnnoTLongRec.html#ViSiAnnoTLongRec.getSignalConfigurationSingleType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.getSignalConfigurationSingleType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the configuration lists for a specific signal widget and for
+the whole long recording</p>
+<p>It can be used for signal configuration or intervals configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>type_data</strong> (<em>str</em>) – data type of the signal widget</p></li>
+<li><p><strong>data_info_list</strong> (<em>list</em>) – <p>list of configuration lists, each element is a
+list of length 8:</p>
+<ul>
+<li><p>(<em>str</em>) Directory where to find the data files,</p></li>
+<li><p>(<em>str</em>) Key to access the data (in case of .h5 or .mat files),</p></li>
+<li><p>(<em>float</em> or <em>str</em>) Data frequency</p></li>
+<li><p>(<em>str</em>) Pattern to find the data files,</p></li>
+<li><p>(<em>str</em>) Delimiter to get beginning datetime in the data file
+name,</p></li>
+<li><p>(<em>int</em>) Position of the beginning datetime in the data file
+name, according to the delimiter,</p></li>
+<li><p>(<em>str</em>) Format of the beginning datetime in the data file name
+(either <code class="docutils literal notranslate"><span class="pre">&quot;posix&quot;</span></code> or a format compliant with
+<code class="docutils literal notranslate"><span class="pre">datetime.strptime()</span></code>),</p></li>
+<li><p>(<em>dict</em>) Plot style.</p></li>
+</ul>
+</p></li>
+<li><p><strong>flag_raise_exception</strong> (<em>bool</em>) – specify if an exception must be raised
+when no data files are found</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of the function
+<a class="reference internal" href="../../tools/ToolsDateTime/index.html#visiannot.tools.ToolsDateTime.getBeginningEndingDateTimeFromList" title="visiannot.tools.ToolsDateTime.getBeginningEndingDateTimeFromList"><code class="xref py py-func docutils literal notranslate"><span class="pre">getBeginningEndingDateTimeFromList()</span></code></a></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>config_whole_rec_list</strong> (<em>list</em>) – nested list where each
+element is a configuration list and corresponds to one file in
+the long recording. Each element corresponds to one
+signal/interval and is a nested list where each element
+corresponds to one file in the long recording with 4 elements
+(path to the data file, key to access data, frequency, plot
+style)</p></li>
+<li><p><strong>config_current_list</strong> (<em>list</em>) – configuration list of the
+first file in the long recording. Each element corresponds to one
+signal/interval and is a list with 4 elements (path to the data
+file, key to access data, frequency, plot style)</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.mouseClickedNext">
+<code class="sig-name descname">mouseClickedNext</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/visiannot/ViSiAnnoTLongRec.html#ViSiAnnoTLongRec.mouseClickedNext"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.mouseClickedNext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback method for loading next file in the long recording after
+having clicked on the “next” image</p>
+<p>Connected to the signal <code class="docutils literal notranslate"><span class="pre">sigMouseClicked</span></code> of the attribute <code class="docutils literal notranslate"><span class="pre">scene</span></code>
+of <a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.wid_next" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.wid_next"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ViSiAnnoTLongRec.wid_next</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.mouseClickedPrevious">
+<code class="sig-name descname">mouseClickedPrevious</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/visiannot/ViSiAnnoTLongRec.html#ViSiAnnoTLongRec.mouseClickedPrevious"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.mouseClickedPrevious" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback method for loading previous file in the long recording after
+having clicked on the “previous” image</p>
+<p>Connected to the signal <code class="docutils literal notranslate"><span class="pre">sigMouseClicked</span></code> of the attribute <code class="docutils literal notranslate"><span class="pre">scene</span></code>
+of <a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.wid_previous" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.wid_previous"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ViSiAnnoTLongRec.wid_previous</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.nextRecording">
+<code class="sig-name descname">nextRecording</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/visiannot/ViSiAnnoTLongRec.html#ViSiAnnoTLongRec.nextRecording"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.nextRecording" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads next file in the long recording</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>specify if the file has been effectively changed</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.prepareNewRecording">
+<code class="sig-name descname">prepareNewRecording</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rec_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/visiannot/ViSiAnnoTLongRec.html#ViSiAnnoTLongRec.prepareNewRecording"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.prepareNewRecording" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads data of a new file in the long recording</p>
+<p>It does not set <a class="reference internal" href="../ViSiAnnoT/index.html#visiannot.visiannot.ViSiAnnoT.ViSiAnnoT.first_frame" title="visiannot.visiannot.ViSiAnnoT.ViSiAnnoT.first_frame"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ViSiAnnoT.first_frame</span></code></a> and
+<a class="reference internal" href="../ViSiAnnoT/index.html#visiannot.visiannot.ViSiAnnoT.ViSiAnnoT.last_frame" title="visiannot.visiannot.ViSiAnnoT.ViSiAnnoT.last_frame"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ViSiAnnoT.last_frame</span></code></a>, and it does not update signal plots.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>rec_id</strong> (<em>int</em>) – index of the new file in the long recording</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>specify if the new file has been effectively loaded</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+<dt class="field-even">Author</dt>
+<dd class="field-even"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.previousRecording">
+<code class="sig-name descname">previousRecording</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/visiannot/ViSiAnnoTLongRec.html#ViSiAnnoTLongRec.previousRecording"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.previousRecording" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads previous file in the long recording</p>
+<dl class="field-list simple">
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.recChoice">
+<code class="sig-name descname">recChoice</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ite_rec</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/visiannot/ViSiAnnoTLongRec.html#ViSiAnnoTLongRec.recChoice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.recChoice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback method for choosing a new file in the long recording with the
+combo box</p>
+<p>Connected to the signal <code class="docutils literal notranslate"><span class="pre">currentIndexChanged</span></code> of
+<a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.combo_rec_choice" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.combo_rec_choice"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ViSiAnnoTLongRec.combo_rec_choice</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ite_rec</strong> (<em>int</em>) – index of the new file in the long recording selected
+in the combo box</p>
+</dd>
+<dt class="field-even">Author</dt>
+<dd class="field-even"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.annot_file_base">
+<code class="sig-name descname">annot_file_base</code><a class="headerlink" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.annot_file_base" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<em>str</em>) Base name of the annotation files</p>
+<p>Label and annotation type is added when loading/saving
+annotation files)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.combo_rec_choice">
+<code class="sig-name descname">combo_rec_choice</code><a class="headerlink" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.combo_rec_choice" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<em>QtWidgets.QComboBox</em>) Combo box for recording file selection</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.flag_synchro">
+<code class="sig-name descname">flag_synchro</code><a class="headerlink" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.flag_synchro" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<em>bool</em>) Specify if video and signal are synchronized</p>
+<p>In case there is no video and several signals not synchronized, then
+<code class="docutils literal notranslate"><span class="pre">synchro</span></code> can be set to False and the synchronization reference is
+the first signal</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.interval_dict_list">
+<code class="sig-name descname">interval_dict_list</code><a class="headerlink" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.interval_dict_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<em>dict</em>) Each item corresponds to one signal widget on which to plot
+intervals, key is the data type of the widget, value is a nested
+list of interval configurations.</p>
+<p>Each element of the nested list corresponds to one type of interval
+and is a list along the interval files in the long recording, where
+each element is a configuration list (see second keyword argument
+<code class="docutils literal notranslate"><span class="pre">interval_dict</span></code> of <a class="reference internal" href="../ViSiAnnoT/index.html#visiannot.visiannot.ViSiAnnoT.ViSiAnnoT" title="visiannot.visiannot.ViSiAnnoT.ViSiAnnoT"><code class="xref py py-class docutils literal notranslate"><span class="pre">ViSiAnnoT</span></code></a> constructor for details
+about the configuration list).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.rec_beginning_datetime_list">
+<code class="sig-name descname">rec_beginning_datetime_list</code><a class="headerlink" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.rec_beginning_datetime_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<em>list</em>) Instances of datetime.datetime with the beginning datetime
+of each video file (or first signal if no video)</p>
+<p>The list of video files that is used is in the first value of
+<a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.video_dict_list" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.video_dict_list"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ViSiAnnoTLongRec.video_dict_list</span></code></a>
+(or <a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.signal_dict_list" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.signal_dict_list"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ViSiAnnoTLongRec.signal_dict_list</span></code></a> in case
+<a class="reference internal" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.video_dict_list" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.video_dict_list"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ViSiAnnoTLongRec.video_dict_list</span></code></a> is empty).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.rec_duration_list">
+<code class="sig-name descname">rec_duration_list</code><a class="headerlink" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.rec_duration_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<em>list</em>) Durations in seconds of each video file (or first signal if
+no video)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.signal_dict_list">
+<code class="sig-name descname">signal_dict_list</code><a class="headerlink" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.signal_dict_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<em>dict</em>) Each item corresponds to one signal widget, key is the data
+type of the widget, value is a nested list of signal configurations</p>
+<p>Each element of the nested list corresponds to one signal plot and
+is a list along the signal files in the long recording, where each
+element is a configuration list (see second positional argument of
+<a class="reference internal" href="../ViSiAnnoT/index.html#visiannot.visiannot.ViSiAnnoT.ViSiAnnoT" title="visiannot.visiannot.ViSiAnnoT.ViSiAnnoT"><code class="xref py py-class docutils literal notranslate"><span class="pre">ViSiAnnoT</span></code></a> constructor for details about the configuration
+list).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.tmp_delimiter">
+<code class="sig-name descname">tmp_delimiter</code><a class="headerlink" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.tmp_delimiter" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<em>str</em>) Delimiter for parsing temporary files for synchronization</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.tmp_name">
+<code class="sig-name descname">tmp_name</code><a class="headerlink" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.tmp_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<em>str</em>) Directory where to save temporary files for synchrnonization</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.video_dict_list">
+<code class="sig-name descname">video_dict_list</code><a class="headerlink" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.video_dict_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<em>dict</em>) Key is a camera ID. Value is a list along the video files
+in the long recording, where each element is a configuration list
+(see first positional argument of <a class="reference internal" href="../ViSiAnnoT/index.html#visiannot.visiannot.ViSiAnnoT.ViSiAnnoT" title="visiannot.visiannot.ViSiAnnoT.ViSiAnnoT"><code class="xref py py-class docutils literal notranslate"><span class="pre">ViSiAnnoT</span></code></a> constructor
+for details about configuration list)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.wid_next">
+<code class="sig-name descname">wid_next</code><a class="headerlink" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.wid_next" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<em>QtWidgets.QGridlayout</em>) Widget of the “next rec” image</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.wid_previous">
+<code class="sig-name descname">wid_previous</code><a class="headerlink" href="#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec.wid_previous" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<em>QtWidgets.QGridlayout</em>) Widget of the “previous rec” image</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../ViSiAnnoTLongRecFromConfigFile/index.html" class="btn btn-neutral float-right" title="visiannot.visiannot.ViSiAnnoTLongRecFromConfigFile" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../ViSiAnnoT/index.html" class="btn btn-neutral float-left" title="visiannot.visiannot.ViSiAnnoT" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020-2021, Université Rennes 1
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

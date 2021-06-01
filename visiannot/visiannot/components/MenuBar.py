@@ -1,0 +1,118 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright Université Rennes 1
+# Contributor: Raphael Weber
+#
+# Under CeCILL license
+# http://www.cecill.info
+
+"""
+Module defining :class:`.MenuBar`
+"""
+
+from . import WindowsPopUp
+from PyQt5.QtWidgets import QMenuBar, QAction
+import webbrowser
+from os.path import normpath, sep, join, abspath
+import sys
+
+
+class MenuBar(QMenuBar):
+    def __init__(self, win_parent, lay_parent):
+        """
+        Menu bar item
+
+        :param win_parent: container of the parent window
+        :type win_parent: QtWidgets.QWidget
+        :param lay_parent: layout of the parent window, where to add the menu
+            bar
+        :type lay_parent: QtWidgets.QGridLayout
+
+        In order to add a menu or an action, the method
+        :meth:`.addMenuAndActions` may be used.
+
+        :author: Raphael Weber
+        """
+
+        # call parent class constructor
+        QMenuBar.__init__(self, win_parent)
+
+        # add menu bar to parent layout
+        lay_parent.setMenuBar(self)
+
+        # hide menu bar
+        self.hide()
+
+        #: (*QtWidgets.QWidget*) Container of the parent window
+        self.win_parent = win_parent
+
+        #: (:class:`.WindowAbout`) Container of the pop-up window with
+        #: information about **ViSiAnnoT**
+        self.win_about = WindowsPopUp.WindowAbout()
+
+        #: (:class:`.WindowLicense`) Container of the pop-up window with
+        #: **ViSiAnnoT** license
+        self.win_license = WindowsPopUp.WindowLicense()
+
+        # add a menu with actions to menu bar
+        self.addMenuWithActions(
+            "Help", {
+                "Documentation": MenuBar.openDocumentation,
+                "License": self.win_license.show,
+                "About ViSiAnnoT": self.win_about.show
+            }
+        )
+
+
+    def addMenuWithActions(self, menu_name, action_dict):
+        """
+        Adds menus with actions to menu bar
+
+        :param menu_name: name of the menu to add
+        :type menu_name: str
+        :param action_dict: actions to add in the menu, each element
+            corresponds one action, key is the action name, value is the slot
+            method to be called when activating the action
+        :type action_dict: dict
+
+        :author: Raphael Weber
+        """
+
+        # add menu to menu bar
+        menu = self.addMenu(menu_name)
+
+        # loop on actions to add to the menu
+        for action_name, slot_method in action_dict.items():
+            # create action item
+            action = QAction(action_name, self.win_parent)
+
+            # add action to menu
+            menu.addAction(action)
+
+            # connect action to slot method
+            action.triggered.connect(slot_method)
+
+
+    @staticmethod
+    def openDocumentation():
+        """
+        Static method for launching the default web browser and loading
+        **ViSiAnnoT** HTML documentation
+        """
+
+        # check if ViSiAnnoT launched as an executable
+        if hasattr(sys, "_MEIPASS"):
+            dir_tmp_exe = abspath(getattr(sys, "_MEIPASS"))
+            doc_path = join(dir_tmp_exe, "doc_html", "index.html")
+
+        else:
+            component_list = normpath(__file__).split(sep)[:-4]
+            doc_parent_dir = join(*component_list)
+            if component_list[0] == '':
+                doc_parent_dir = '/' + doc_parent_dir
+
+            doc_path = join(
+                doc_parent_dir, "doc", "build", "html", "index.html"
+            )
+
+        webbrowser.open(doc_path, new=2)

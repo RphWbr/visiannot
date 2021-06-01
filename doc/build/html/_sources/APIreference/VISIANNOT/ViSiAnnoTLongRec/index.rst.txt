@@ -1,0 +1,29 @@
+====================================
+visiannot.visiannot.ViSiAnnoTLongRec
+====================================
+
+.. automodule:: visiannot.visiannot.ViSiAnnoTLongRec
+
+Summary
+=======
+
+Classes
+-------
+
+.. autosummary::
+   visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec
+
+API
+===
+
+Class ViSiAnnoTLongRec
+----------------------
+
+.. autoclasssumm:: visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec
+
+.. autoclass:: visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+

@@ -1,0 +1,376 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>visiannot.visiannot.components.MenuBar &mdash; ViSiAnnoT 0.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="visiannot.visiannot.components.Signal" href="../Signal/index.html" />
+    <link rel="prev" title="visiannot.visiannot.components" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> ViSiAnnoT
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../userguide-visiannot.html">User guide: ViSiAnnoT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../userguide-configuration.html">User guide: configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../userguide-toolspyqt.html">User guide: ToolsPyQt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../userguide-toolspyqtgraph.html">User guide: ToolsPyqtgraph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../exe.html">Creating a standalone executable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../software.html">Software description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../further.html">Further developments</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../configuration/index.html">visiannot.configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tools/index.html">visiannot.tools</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">visiannot.visiannot</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../ViSiAnnoT/index.html">visiannot.visiannot.ViSiAnnoT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ViSiAnnoTLongRec/index.html">visiannot.visiannot.ViSiAnnoTLongRec</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ViSiAnnoTLongRecFromConfigFile/index.html">visiannot.visiannot.ViSiAnnoTLongRecFromConfigFile</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ViSiAnnoTLongRecFromConfigGUI/index.html">visiannot.visiannot.ViSiAnnoTLongRecFromConfigGUI</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">visiannot.visiannot.components</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">visiannot.visiannot.components.MenuBar</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Signal/index.html">visiannot.visiannot.components.Signal</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../WindowsPopUp/index.html">visiannot.visiannot.components.WindowsPopUp</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">ViSiAnnoT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">API Reference</a> &raquo;</li>
+        
+          <li><a href="../../index.html">visiannot.visiannot</a> &raquo;</li>
+        
+          <li><a href="../index.html">visiannot.visiannot.components</a> &raquo;</li>
+        
+      <li>visiannot.visiannot.components.MenuBar</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../../../_sources/APIreference/visiannot/components/MenuBar/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-visiannot.visiannot.components.MenuBar">
+<span id="visiannot-visiannot-components-menubar"></span><h1>visiannot.visiannot.components.MenuBar<a class="headerlink" href="#module-visiannot.visiannot.components.MenuBar" title="Permalink to this headline">¶</a></h1>
+<p>Module defining <a class="reference internal" href="#visiannot.visiannot.components.MenuBar.MenuBar" title="visiannot.visiannot.components.MenuBar.MenuBar"><code class="xref py py-class docutils literal notranslate"><span class="pre">MenuBar</span></code></a></p>
+<div class="section" id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.visiannot.components.MenuBar.MenuBar" title="visiannot.visiannot.components.MenuBar.MenuBar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visiannot.visiannot.components.MenuBar.MenuBar</span></code></a>(…)</p></td>
+<td><p>Menu bar item</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="class-menubar">
+<h3>Class MenuBar<a class="headerlink" href="#class-menubar" title="Permalink to this headline">¶</a></h3>
+<p><strong>Methods:</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.visiannot.components.MenuBar.MenuBar.addMenuWithActions" title="visiannot.visiannot.components.MenuBar.MenuBar.addMenuWithActions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addMenuWithActions</span></code></a>(menu_name, action_dict)</p></td>
+<td><p>Adds menus with actions to menu bar</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.visiannot.components.MenuBar.MenuBar.openDocumentation" title="visiannot.visiannot.components.MenuBar.MenuBar.openDocumentation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">openDocumentation</span></code></a>()</p></td>
+<td><p>Static method for launching the default web browser and loading <strong>ViSiAnnoT</strong> HTML documentation</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Attributes:</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.visiannot.components.MenuBar.MenuBar.win_parent" title="visiannot.visiannot.components.MenuBar.MenuBar.win_parent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">win_parent</span></code></a></p></td>
+<td><p>(<em>QtWidgets.QWidget</em>) Container of the parent window</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.visiannot.components.MenuBar.MenuBar.win_about" title="visiannot.visiannot.components.MenuBar.MenuBar.win_about"><code class="xref py py-obj docutils literal notranslate"><span class="pre">win_about</span></code></a></p></td>
+<td><p>(<a class="reference internal" href="../WindowsPopUp/index.html#visiannot.visiannot.components.WindowsPopUp.WindowAbout" title="visiannot.visiannot.components.WindowsPopUp.WindowAbout"><code class="xref py py-class docutils literal notranslate"><span class="pre">WindowAbout</span></code></a>) Container of the pop-up window with information about <strong>ViSiAnnoT</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.visiannot.components.MenuBar.MenuBar.win_license" title="visiannot.visiannot.components.MenuBar.MenuBar.win_license"><code class="xref py py-obj docutils literal notranslate"><span class="pre">win_license</span></code></a></p></td>
+<td><p>(<a class="reference internal" href="../WindowsPopUp/index.html#visiannot.visiannot.components.WindowsPopUp.WindowLicense" title="visiannot.visiannot.components.WindowsPopUp.WindowLicense"><code class="xref py py-class docutils literal notranslate"><span class="pre">WindowLicense</span></code></a>) Container of the pop-up window with <strong>ViSiAnnoT</strong> license</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt id="visiannot.visiannot.components.MenuBar.MenuBar">
+<em class="property">class </em><code class="sig-prename descclassname">visiannot.visiannot.components.MenuBar.</code><code class="sig-name descname">MenuBar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">win_parent</span></em>, <em class="sig-param"><span class="n">lay_parent</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/visiannot/visiannot/components/MenuBar.html#MenuBar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.visiannot.components.MenuBar.MenuBar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QMenuBar</span></code></p>
+<p>Menu bar item</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>win_parent</strong> (<em>QtWidgets.QWidget</em>) – container of the parent window</p></li>
+<li><p><strong>lay_parent</strong> (<em>QtWidgets.QGridLayout</em>) – layout of the parent window, where to add the menu
+bar</p></li>
+</ul>
+</dd>
+</dl>
+<p>In order to add a menu or an action, the method
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">addMenuAndActions()</span></code> may be used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Raphael Weber</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="visiannot.visiannot.components.MenuBar.MenuBar.addMenuWithActions">
+<code class="sig-name descname">addMenuWithActions</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">menu_name</span></em>, <em class="sig-param"><span class="n">action_dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/visiannot/visiannot/components/MenuBar.html#MenuBar.addMenuWithActions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.visiannot.components.MenuBar.MenuBar.addMenuWithActions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds menus with actions to menu bar</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>menu_name</strong> (<em>str</em>) – name of the menu to add</p></li>
+<li><p><strong>action_dict</strong> (<em>dict</em>) – actions to add in the menu, each element
+corresponds one action, key is the action name, value is the slot
+method to be called when activating the action</p></li>
+</ul>
+</dd>
+<dt class="field-even">Author</dt>
+<dd class="field-even"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="visiannot.visiannot.components.MenuBar.MenuBar.openDocumentation">
+<em class="property">static </em><code class="sig-name descname">openDocumentation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/visiannot/visiannot/components/MenuBar.html#MenuBar.openDocumentation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.visiannot.components.MenuBar.MenuBar.openDocumentation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method for launching the default web browser and loading
+<strong>ViSiAnnoT</strong> HTML documentation</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="visiannot.visiannot.components.MenuBar.MenuBar.win_about">
+<code class="sig-name descname">win_about</code><a class="headerlink" href="#visiannot.visiannot.components.MenuBar.MenuBar.win_about" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<a class="reference internal" href="../WindowsPopUp/index.html#visiannot.visiannot.components.WindowsPopUp.WindowAbout" title="visiannot.visiannot.components.WindowsPopUp.WindowAbout"><code class="xref py py-class docutils literal notranslate"><span class="pre">WindowAbout</span></code></a>) Container of the pop-up window with
+information about <strong>ViSiAnnoT</strong></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="visiannot.visiannot.components.MenuBar.MenuBar.win_license">
+<code class="sig-name descname">win_license</code><a class="headerlink" href="#visiannot.visiannot.components.MenuBar.MenuBar.win_license" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<a class="reference internal" href="../WindowsPopUp/index.html#visiannot.visiannot.components.WindowsPopUp.WindowLicense" title="visiannot.visiannot.components.WindowsPopUp.WindowLicense"><code class="xref py py-class docutils literal notranslate"><span class="pre">WindowLicense</span></code></a>) Container of the pop-up window with
+<strong>ViSiAnnoT</strong> license</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="visiannot.visiannot.components.MenuBar.MenuBar.win_parent">
+<code class="sig-name descname">win_parent</code><a class="headerlink" href="#visiannot.visiannot.components.MenuBar.MenuBar.win_parent" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<em>QtWidgets.QWidget</em>) Container of the parent window</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../Signal/index.html" class="btn btn-neutral float-right" title="visiannot.visiannot.components.Signal" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../index.html" class="btn btn-neutral float-left" title="visiannot.visiannot.components" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020-2021, Université Rennes 1
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

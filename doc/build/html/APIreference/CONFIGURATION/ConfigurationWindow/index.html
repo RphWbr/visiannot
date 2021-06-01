@@ -1,0 +1,851 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>visiannot.configuration.ConfigurationWindow &mdash; ViSiAnnoT 0.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="visiannot.tools" href="../../tools/index.html" />
+    <link rel="prev" title="visiannot.configuration.Configuration" href="../Configuration/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> ViSiAnnoT
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide-visiannot.html">User guide: ViSiAnnoT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide-configuration.html">User guide: configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide-toolspyqt.html">User guide: ToolsPyQt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide-toolspyqtgraph.html">User guide: ToolsPyqtgraph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../exe.html">Creating a standalone executable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../software.html">Software description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../further.html">Further developments</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">visiannot.configuration</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../Configuration/index.html">visiannot.configuration.Configuration</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">visiannot.configuration.ConfigurationWindow</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#summary">Summary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api">API</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../tools/index.html">visiannot.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../visiannot/index.html">visiannot.visiannot</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ViSiAnnoT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">API Reference</a> &raquo;</li>
+        
+          <li><a href="../index.html">visiannot.configuration</a> &raquo;</li>
+        
+      <li>visiannot.configuration.ConfigurationWindow</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../../_sources/APIreference/configuration/ConfigurationWindow/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-visiannot.configuration.ConfigurationWindow">
+<span id="visiannot-configuration-configurationwindow"></span><h1>visiannot.configuration.ConfigurationWindow<a class="headerlink" href="#module-visiannot.configuration.ConfigurationWindow" title="Permalink to this headline">¶</a></h1>
+<p>Module defining class <a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigurationWindow</span></code></a></p>
+<div class="section" id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visiannot.configuration.ConfigurationWindow.ConfigurationWindow</span></code></a>([path])</p></td>
+<td><p>Class creating the window for configuring <a class="reference internal" href="../../visiannot/ViSiAnnoTLongRec/index.html#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec"><code class="xref py py-class docutils literal notranslate"><span class="pre">ViSiAnnoTLongRec</span></code></a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="class-configurationwindow">
+<h3>Class ConfigurationWindow<a class="headerlink" href="#class-configurationwindow" title="Permalink to this headline">¶</a></h3>
+<p><strong>Methods for the management of callbacks:</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.callLSD" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.callLSD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">callLSD</span></code></a>(button_id)</p></td>
+<td><p>Callback method for Load/Save/Done push buttons</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.setDirectoryAnnotation" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.setDirectoryAnnotation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setDirectoryAnnotation</span></code></a>()</p></td>
+<td><p>Callback method for annotation directory selection</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.showChildWindow" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.showChildWindow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">showChildWindow</span></code></a>(button_id)</p></td>
+<td><p>Callback method for opening child configuration window related to signal configuration</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Static methods for converting dictionary to list:</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.convertDictToList" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.convertDictToList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convertDictToList</span></code></a>(dic)</p></td>
+<td><p>Puts the values of a dictionary in a list</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.convertDictToListNested" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.convertDictToListNested"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convertDictToListNested</span></code></a>(dic[, level])</p></td>
+<td><p>Puts the values of a nested dictionary in a nested list</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Methods for widget creation:</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.createChildConfigurationWindow" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.createChildConfigurationWindow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">createChildConfigurationWindow</span></code></a>(…[, win_size])</p></td>
+<td><p>Creates a window for a child configuration</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.createWidgetGeneral" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.createWidgetGeneral"><code class="xref py py-obj docutils literal notranslate"><span class="pre">createWidgetGeneral</span></code></a>(widget_position)</p></td>
+<td><p>Adds a widget with the general configuration to the layout <a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.lay" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.lay"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ConfigurationWindow.lay</span></code></a></p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Methods for loading/saving configuration:</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.load" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(path)</p></td>
+<td><p>Loads a configuration file and store it directly in the configuration dictionaries</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.loadConfigFile" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.loadConfigFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loadConfigFile</span></code></a>(path[, key_dict])</p></td>
+<td><p>Loads a configuration file</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.resetDisplay" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.resetDisplay"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resetDisplay</span></code></a>()</p></td>
+<td><p>Deletes the whole configuration display and replaces it with the current values of the attribute dictionaries</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.setConfigurationDictionaries" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.setConfigurationDictionaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setConfigurationDictionaries</span></code></a>()</p></td>
+<td><p>Sets the configuration dictionaries with the values filled in the GUI</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.setGeneralConfiguration" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.setGeneralConfiguration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setGeneralConfiguration</span></code></a>(flag_display)</p></td>
+<td><p>Displays the values in the general configuration widget from <a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict"><code class="xref py py-attr docutils literal notranslate"><span class="pre">general_dict</span></code></a> or sets the values of <a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict"><code class="xref py py-attr docutils literal notranslate"><span class="pre">general_dict</span></code></a> from the values filled in the general configuration widget (i.e.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.writeConfigObjFile" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.writeConfigObjFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">writeConfigObjFile</span></code></a>(path)</p></td>
+<td><p>Creates a .ini configuration file with the current configuration</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Attributes:</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.meta_dict" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.meta_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">meta_dict</span></code></a></p></td>
+<td><p>(<em>dict</em>) Each value is an instances of <code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code> contained in the window</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.config_type_list" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.config_type_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">config_type_list</span></code></a></p></td>
+<td><p>(<em>list</em>) Types of configuration, each element is a string and must be a key of <a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.meta_dict" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.meta_dict"><code class="xref py py-attr docutils literal notranslate"><span class="pre">meta_dict</span></code></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_config_position_dict" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_config_position_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">general_config_position_dict</span></code></a></p></td>
+<td><p>(<em>dict</em>) Same keys as <a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict"><code class="xref py py-attr docutils literal notranslate"><span class="pre">general_dict</span></code></a>, value is the list of positions of the corresponding widgets in the general configuration widget (<a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_lay" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_lay"><code class="xref py py-attr docutils literal notranslate"><span class="pre">general_lay</span></code></a>)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_lay" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_lay"><code class="xref py py-obj docutils literal notranslate"><span class="pre">general_lay</span></code></a></p></td>
+<td><p>(<em>QtWidgets.QGridLayout</em>) Layout of the general configuration widget</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_group_box" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_group_box"><code class="xref py py-obj docutils literal notranslate"><span class="pre">general_group_box</span></code></a></p></td>
+<td><p>(<em>QtWidgets.QGroupBox</em>) Group box of the general configuration widget</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_push_button" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_push_button"><code class="xref py py-obj docutils literal notranslate"><span class="pre">general_push_button</span></code></a></p></td>
+<td><p>(<em>QtWidgets.QPushButton</em>) Push button for changing the directory of annotations</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.app" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.app"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app</span></code></a></p></td>
+<td><p>(<em>QtWidgets.QApplication</em>) Display initializer</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.win" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.win"><code class="xref py py-obj docutils literal notranslate"><span class="pre">win</span></code></a></p></td>
+<td><p>(<em>QtWidgets.QWidget</em>) Container of main configuration window</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.lay" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.lay"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lay</span></code></a></p></td>
+<td><p>(<em>QtWidgets.QGridLayout</em>) Layout of the main configuration window</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.button_group_lsd" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.button_group_lsd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">button_group_lsd</span></code></a></p></td>
+<td><p>(<em>QtWidgets.QButtonGroup</em>) Group of buttons with the push buttons Load/Save/Done</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.children_win_list" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.children_win_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">children_win_list</span></code></a></p></td>
+<td><p>(<em>list</em>) Instances of QtWidgets.QWidget containing the children configuration windows</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict_default" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict_default"><code class="xref py py-obj docutils literal notranslate"><span class="pre">general_dict_default</span></code></a></p></td>
+<td><p>(<em>dict</em>) Default general configuration, see <a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict"><code class="xref py py-attr docutils literal notranslate"><span class="pre">general_dict</span></code></a> for details</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">general_dict</span></code></a></p></td>
+<td><p>(<em>dict</em>) General configuration</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt id="visiannot.configuration.ConfigurationWindow.ConfigurationWindow">
+<em class="property">class </em><code class="sig-prename descclassname">visiannot.configuration.ConfigurationWindow.</code><code class="sig-name descname">ConfigurationWindow</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/configuration/ConfigurationWindow.html#ConfigurationWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class creating the window for configuring
+<a class="reference internal" href="../../visiannot/ViSiAnnoTLongRec/index.html#visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec" title="visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec"><code class="xref py py-class docutils literal notranslate"><span class="pre">ViSiAnnoTLongRec</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – path to the configuration file to load when
+creating the window</p>
+</dd>
+</dl>
+<p>The window is composed of 5 main widgets:</p>
+<ul class="simple">
+<li><p>Video configuration</p></li>
+<li><p>Signal configuration</p></li>
+<li><p>Eevent annotation configuration</p></li>
+<li><p>General configuration</p></li>
+<li><p>Group box with load/save/done push buttons</p></li>
+</ul>
+<p>Each one of the video configuration, signal configuration and event
+annotation configuration is contained in an instance of
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code>.</p>
+<p>The signal configuration has several configuration children (Interval,
+Threshold and YRange), each one displayed in a separate window.</p>
+<p>All the instances of <code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code> are stored in the
+dictionary <a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.meta_dict" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.meta_dict"><code class="xref py py-attr docutils literal notranslate"><span class="pre">meta_dict</span></code></a>.</p>
+<p>On the one hand, the attribute <a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.lay" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.lay"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ConfigurationWindow.lay</span></code></a> refers
+to the first level of QGridLayout, meaning the layout filling the whole
+window. On the other hand, the second level of QGridLayout fills the
+first level layout ConfigurationWindow.lay.
+These layouts are the configuration widgets (general =&gt;
+ConfigurationWindow.general_lay, video =&gt;
+ConfigurationWindow.meta_dict[“Video”].lay, …).</p>
+<p>The different types of configuration are stored in 7 dictionaries:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ConfigurationWindow.general_dict</span></code></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ConfigurationWindow.meta_dict[&quot;Video&quot;].dict</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ConfigurationWindow.meta_dict[&quot;Signal&quot;].dict</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ConfigurationWindow.meta_dict[&quot;Interval&quot;].dict</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ConfigurationWindow.meta_dict[&quot;Threshold&quot;].dict</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ConfigurationWindow.meta_dict[&quot;AnnotEvent&quot;].dict</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ConfigurationWindow.meta_dict[&quot;AnnotImage&quot;].dict</span></code></p></li>
+</ul>
+<p>When values are modified manually in the window, these dictionaries are
+not updated. The method <a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.setConfigurationDictionaries" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.setConfigurationDictionaries"><code class="xref py py-meth docutils literal notranslate"><span class="pre">setConfigurationDictionaries()</span></code></a> must
+be called to do so.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Raphael Weber</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.callLSD">
+<code class="sig-name descname">callLSD</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">button_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/configuration/ConfigurationWindow.html#ConfigurationWindow.callLSD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.callLSD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback method for Load/Save/Done push buttons</p>
+<p>Connected to the signal <code class="docutils literal notranslate"><span class="pre">buttonClicked[int]</span></code> of the button group
+<a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.button_group_lsd" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.button_group_lsd"><code class="xref py py-attr docutils literal notranslate"><span class="pre">button_group_lsd</span></code></a></p>
+<p>The group button ConfigurationWindow.button_group_lsd has 3 buttons:</p>
+<ul class="simple">
+<li><p>button_id == 0 =&gt; load configuration file</p></li>
+<li><p>button_id == 1 =&gt; save configuration file</p></li>
+<li><p>button_id == 2 =&gt; set configuration dictionaries and close main
+window</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>button_id</strong> (<em>int</em>) – index of the button that has been pushed</p>
+</dd>
+<dt class="field-even">Author</dt>
+<dd class="field-even"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.convertDictToList">
+<em class="property">static </em><code class="sig-name descname">convertDictToList</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dic</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/configuration/ConfigurationWindow.html#ConfigurationWindow.convertDictToList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.convertDictToList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Puts the values of a dictionary in a list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dic</strong> (<em>dict</em>) – dictionary</p>
+</dd>
+</dl>
+<p>If dic is not a dictionary, then it returns <code class="docutils literal notranslate"><span class="pre">dic</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.convertDictToListNested">
+<em class="property">static </em><code class="sig-name descname">convertDictToListNested</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dic</span></em>, <em class="sig-param"><span class="n">level</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/configuration/ConfigurationWindow.html#ConfigurationWindow.convertDictToListNested"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.convertDictToListNested" title="Permalink to this definition">¶</a></dt>
+<dd><p>Puts the values of a nested dictionary in a nested list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dic</strong> (<em>dict</em>) – dictionary</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of lists</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+<dt class="field-even">Author</dt>
+<dd class="field-even"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.createChildConfigurationWindow">
+<code class="sig-name descname">createChildConfigurationWindow</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parent_config</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">win_size</span><span class="o">=</span><span class="default_value">(0, 0)</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/configuration/ConfigurationWindow.html#ConfigurationWindow.createChildConfigurationWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.createChildConfigurationWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a window for a child configuration</p>
+<p>This method can be used when a configuration type is linked to another
+one so that the keys in Configuration.dict must be the same.</p>
+<p>For example, this applies to the signal configuration. We can specify
+some threshold values to plot on the signal widgets. The thresholds
+must be defined for an existing signal, so the keys in the
+configuration dictionary are the same as in the signal configuration.</p>
+<p>As a consequence, when a configuration grid is added in the child
+configuration window, it has automatically the same key as in the
+signal configuration and it cannot be changed. If the whole
+configuration grid for a given key is deleted in the signal
+configuration, then it is also deleted in the threshold configuration.</p>
+<p>This method sets the following attributes:</p>
+<ul class="simple">
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">additional_win_list</span></code>.</p></li>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">additional_lay_list</span></code>.</p></li>
+<li><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.meta_dict" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.meta_dict"><code class="xref py py-attr docutils literal notranslate"><span class="pre">meta_dict</span></code></a>.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parent_config</strong> (<a class="reference internal" href="../Configuration/index.html#visiannot.configuration.Configuration.Configuration" title="visiannot.configuration.Configuration.Configuration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code></a>) – parent configuration</p></li>
+<li><p><strong>args</strong> – positional arguments of <a class="reference internal" href="../Configuration/index.html#visiannot.configuration.Configuration.Configuration" title="visiannot.configuration.Configuration.Configuration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code></a>
+constructor, starting from the third position</p></li>
+<li><p><strong>win_size</strong> (<em>tuple</em>) – window size <img class="math" src="../../../_images/math/40f1fee6194653d48a79d630dd8aba7553861866.png" alt="(width, height)"/>, set one value to
+0 to maximize the window</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of <a class="reference internal" href="../Configuration/index.html#visiannot.configuration.Configuration.Configuration" title="visiannot.configuration.Configuration.Configuration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code></a> constructor
+(excepted <code class="docutils literal notranslate"><span class="pre">parent_config</span></code> which is the first positional argument
+of this method)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Author</dt>
+<dd class="field-even"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.createWidgetGeneral">
+<code class="sig-name descname">createWidgetGeneral</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">widget_position</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/configuration/ConfigurationWindow.html#ConfigurationWindow.createWidgetGeneral"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.createWidgetGeneral" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a widget with the general configuration to the layout
+<a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.lay" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.lay"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ConfigurationWindow.lay</span></code></a></p>
+<p>The widget is contained in an instance of QtWidgets.QGroupBox.</p>
+<p>This method sets the following attributes:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_config_position_dict" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_config_position_dict"><code class="xref py py-attr docutils literal notranslate"><span class="pre">general_config_position_dict</span></code></a>.</p></li>
+<li><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_group_box" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_group_box"><code class="xref py py-attr docutils literal notranslate"><span class="pre">general_group_box</span></code></a>.</p></li>
+<li><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_lay" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_lay"><code class="xref py py-attr docutils literal notranslate"><span class="pre">general_lay</span></code></a>,</p></li>
+<li><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_push_button" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_push_button"><code class="xref py py-attr docutils literal notranslate"><span class="pre">general_push_button</span></code></a>.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>widget_position</strong> (<em>tuple of integers</em>) – position of the group box in the parent grid
+layout, length 2 <code class="docutils literal notranslate"><span class="pre">(row,</span> <span class="pre">col)</span></code> or
+4 <code class="docutils literal notranslate"><span class="pre">(row,</span> <span class="pre">col,</span> <span class="pre">rowspan,</span> <span class="pre">colspan)</span></code></p>
+</dd>
+<dt class="field-even">Author</dt>
+<dd class="field-even"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.load">
+<code class="sig-name descname">load</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/configuration/ConfigurationWindow.html#ConfigurationWindow.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads a configuration file and store it directly in the configuration
+dictionaries</p>
+<p>It calls the static method <a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.loadConfigFile" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.loadConfigFile"><code class="xref py py-meth docutils literal notranslate"><span class="pre">loadConfigFile()</span></code></a>
+and then sets the following attributes:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict"><code class="xref py py-attr docutils literal notranslate"><span class="pre">general_dict</span></code></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ConfigurationWindow.meta_dict[config_type].dict</span></code> for config_type
+in <a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.config_type_list" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.config_type_list"><code class="xref py py-attr docutils literal notranslate"><span class="pre">config_type_list</span></code></a></p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – path to the configuration file to load</p>
+</dd>
+<dt class="field-even">Author</dt>
+<dd class="field-even"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.loadConfigFile">
+<em class="property">static </em><code class="sig-name descname">loadConfigFile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">key_dict</span><span class="o">=</span><span class="default_value">{'AnnotEvent': 1, 'AnnotImage': 0, 'General': 0, 'Interval': 2, 'Signal': 2, 'Threshold': 2, 'Video': 1, 'YRange': 1}</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/configuration/ConfigurationWindow.html#ConfigurationWindow.loadConfigFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.loadConfigFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads a configuration file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em>) – path to the configuration file to load</p></li>
+<li><p><strong>key_dict</strong> (<em>dict</em>) – each item corresponds to a configuration type to
+retrieve, key is the configuration key, value is the number of
+nesting levels to apply for converting a nested dictionary (that
+may be retrieved by <strong>ConfigObj</strong>) to a nested list (equivalent to
+<a class="reference internal" href="../Configuration/index.html#visiannot.configuration.Configuration.Configuration.nb_level" title="visiannot.configuration.Configuration.Configuration.nb_level"><code class="xref py py-attr docutils literal notranslate"><span class="pre">nb_level</span></code></a> of corresponding instance of
+<a class="reference internal" href="../Configuration/index.html#visiannot.configuration.Configuration.Configuration" title="visiannot.configuration.Configuration.Configuration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>configuration dictionary, with the same keys as <code class="docutils literal notranslate"><span class="pre">key_dict</span></code></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Author</dt>
+<dd class="field-even"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.resetDisplay">
+<code class="sig-name descname">resetDisplay</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/configuration/ConfigurationWindow.html#ConfigurationWindow.resetDisplay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.resetDisplay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes the whole configuration display and replaces it with the
+current values of the attribute dictionaries</p>
+<dl class="field-list simple">
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.setConfigurationDictionaries">
+<code class="sig-name descname">setConfigurationDictionaries</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/configuration/ConfigurationWindow.html#ConfigurationWindow.setConfigurationDictionaries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.setConfigurationDictionaries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the configuration dictionaries with the values filled in the GUI</p>
+<p>The configuration dictionaries are:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict"><code class="xref py py-attr docutils literal notranslate"><span class="pre">general_dict</span></code></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ConfigurationWindow.meta_dict[config_type].dict</span></code> for config_type
+in <a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.config_type_list" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.config_type_list"><code class="xref py py-attr docutils literal notranslate"><span class="pre">config_type_list</span></code></a></p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.setDirectoryAnnotation">
+<code class="sig-name descname">setDirectoryAnnotation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/configuration/ConfigurationWindow.html#ConfigurationWindow.setDirectoryAnnotation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.setDirectoryAnnotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback method for annotation directory selection</p>
+<p>Connected to the signal <code class="docutils literal notranslate"><span class="pre">clicked</span></code> of
+<a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_push_button" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_push_button"><code class="xref py py-attr docutils literal notranslate"><span class="pre">general_push_button</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.setGeneralConfiguration">
+<code class="sig-name descname">setGeneralConfiguration</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">flag_display</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/configuration/ConfigurationWindow.html#ConfigurationWindow.setGeneralConfiguration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.setGeneralConfiguration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Displays the values in the general configuration widget from
+<a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict"><code class="xref py py-attr docutils literal notranslate"><span class="pre">general_dict</span></code></a> or sets the values
+of <a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict"><code class="xref py py-attr docutils literal notranslate"><span class="pre">general_dict</span></code></a> from the values filled in
+the general configuration widget (i.e.
+<a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_lay" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_lay"><code class="xref py py-attr docutils literal notranslate"><span class="pre">general_lay</span></code></a>)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>flag_display</strong> (<em>bool</em>) – specify if displaying values in the general
+configuration widget, if <code class="docutils literal notranslate"><span class="pre">False</span></code> then it sets the values of
+<a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict"><code class="xref py py-attr docutils literal notranslate"><span class="pre">general_dict</span></code></a></p>
+</dd>
+<dt class="field-even">Author</dt>
+<dd class="field-even"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.showChildWindow">
+<code class="sig-name descname">showChildWindow</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">button_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/configuration/ConfigurationWindow.html#ConfigurationWindow.showChildWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.showChildWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback method for opening child configuration window related to
+signal configuration</p>
+<p>Connected to the signal <code class="docutils literal notranslate"><span class="pre">buttonClicked[int]</span></code> of
+<code class="docutils literal notranslate"><span class="pre">ConfigurationWindow.meta_dict[&quot;Signal&quot;].button_group_children</span></code>.</p>
+<p>The group button
+<code class="docutils literal notranslate"><span class="pre">ConfigurationWindow.meta_dict[&quot;Signal&quot;].button_group_children</span></code>
+has as much buttons as children configurations (see
+<a class="reference internal" href="../Configuration/index.html#visiannot.configuration.Configuration.Configuration.children_configuration_list" title="visiannot.configuration.Configuration.Configuration.children_configuration_list"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Configuration.children_configuration_list</span></code></a> of
+<code class="docutils literal notranslate"><span class="pre">ConfigurationWindow.meta_dict[&quot;Signal&quot;]</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>button_id</strong> (<em>int</em>) – index of the button that has been pushed</p>
+</dd>
+<dt class="field-even">Author</dt>
+<dd class="field-even"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.writeConfigObjFile">
+<code class="sig-name descname">writeConfigObjFile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/configuration/ConfigurationWindow.html#ConfigurationWindow.writeConfigObjFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.writeConfigObjFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a .ini configuration file with the current configuration</p>
+<p>Before writing the file, the method calls
+<a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.setConfigurationDictionaries" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.setConfigurationDictionaries"><code class="xref py py-meth docutils literal notranslate"><span class="pre">setConfigurationDictionaries()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – path to the configuration file to create</p>
+</dd>
+<dt class="field-even">Author</dt>
+<dd class="field-even"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.app">
+<code class="sig-name descname">app</code><a class="headerlink" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.app" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<em>QtWidgets.QApplication</em>) Display initializer</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.button_group_lsd">
+<code class="sig-name descname">button_group_lsd</code><a class="headerlink" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.button_group_lsd" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<em>QtWidgets.QButtonGroup</em>) Group of buttons with the push buttons
+Load/Save/Done</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.children_win_list">
+<code class="sig-name descname">children_win_list</code><a class="headerlink" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.children_win_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<em>list</em>) Instances of QtWidgets.QWidget containing the children
+configuration windows</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.config_type_list">
+<code class="sig-name descname">config_type_list</code><a class="headerlink" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.config_type_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<em>list</em>) Types of configuration, each element is a string and must
+be a key of <a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.meta_dict" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.meta_dict"><code class="xref py py-attr docutils literal notranslate"><span class="pre">meta_dict</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_config_position_dict">
+<code class="sig-name descname">general_config_position_dict</code><a class="headerlink" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_config_position_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<em>dict</em>) Same keys as <a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict"><code class="xref py py-attr docutils literal notranslate"><span class="pre">general_dict</span></code></a>,
+value is the list of positions of the corresponding widgets in the
+general configuration widget
+(<a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_lay" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_lay"><code class="xref py py-attr docutils literal notranslate"><span class="pre">general_lay</span></code></a>)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict">
+<code class="sig-name descname">general_dict</code><a class="headerlink" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<em>dict</em>) General configuration</p>
+<p>The keys and values are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;flag_synchro&quot;</span></code>: (<em>bool</em>) specify if the signals are
+synchronized with video</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;flag_pause_status&quot;</span></code>: (<em>bool</em>) specify if the video is
+paused at launching</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;layout_mode&quot;</span></code>: (<em>int</em>) either 0, 1 or 2</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;zoom_factor&quot;</span></code>: (<em>int</em>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;down_freq&quot;</span></code>: (<em>float</em>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;max_points&quot;</span></code>: (<em>int</em>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;nb_ticks&quot;</span></code>: (<em>int</em>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;trunc_duration&quot;</span></code>: (<em>list</em>) length 2 <em>(minute, second)</em></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;time_zone&quot;</span></code>: (<em>str</em>) time zone (complying with pytz
+package)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;annot_dir_base&quot;</span></code>: (<em>str</em>) base directory of the
+annotations</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;from_cursor_list&quot;</span></code>: (<em>list</em>) each element is a list of
+length 2 <em>(minute, second)</em></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;ticks_size&quot;</span></code>: (<em>int</em>) size of the ticks text in signal
+plots</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;ticks_color&quot;</span></code>: (<em>list</em>) RGB color of ticks</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;ticks_offset&quot;</span></code>: (<em>int</em>) space in pixels between ticks and
+associated values</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;font_name&quot;</span></code>: (<em>str</em>) font of the text in ViSiAnnoT</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;font_size&quot;</span></code>: (<em>int</em>) font size in ViSiAnnoT</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;font_size_title&quot;</span></code>: (<em>int</em>) font size in ViSiAnnoT (title
+of video widget and progress bar widget)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;font_color&quot;</span></code>: (<em>list</em>) RGB color of font in ViSiAnnoT</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;nb_table_annot&quot;</span></code>: (<em>int</em>) maximum number of labels in one
+row in annotation widgets</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;bg_color&quot;</span></code>: (<em>list</em>) RGB color of background in ViSiAnnoT</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;bg_color_plot&quot;</span></code>: (<em>list</em>) RGB color of background color of
+signal plots</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict_default">
+<code class="sig-name descname">general_dict_default</code><a class="headerlink" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict_default" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<em>dict</em>) Default general configuration, see <a class="reference internal" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict" title="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_dict"><code class="xref py py-attr docutils literal notranslate"><span class="pre">general_dict</span></code></a>
+for details</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_group_box">
+<code class="sig-name descname">general_group_box</code><a class="headerlink" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_group_box" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<em>QtWidgets.QGroupBox</em>) Group box of the general configuration
+widget</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_lay">
+<code class="sig-name descname">general_lay</code><a class="headerlink" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_lay" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<em>QtWidgets.QGridLayout</em>) Layout of the general configuration widget</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_push_button">
+<code class="sig-name descname">general_push_button</code><a class="headerlink" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.general_push_button" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<em>QtWidgets.QPushButton</em>) Push button for changing the directory of
+annotations</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.lay">
+<code class="sig-name descname">lay</code><a class="headerlink" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.lay" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<em>QtWidgets.QGridLayout</em>) Layout of the main configuration window</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.meta_dict">
+<code class="sig-name descname">meta_dict</code><a class="headerlink" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.meta_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<em>dict</em>) Each value is an instances of <code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code>
+contained in the window</p>
+<p>The keys are:</p>
+<ul class="simple">
+<li><p>Video</p></li>
+<li><p>Signal</p></li>
+<li><p>Interval</p></li>
+<li><p>Threshold</p></li>
+<li><p>YRange</p></li>
+<li><p>AnnotEvent</p></li>
+<li><p>AnnotImage</p></li>
+</ul>
+<p>See <code class="xref py py-attr docutils literal notranslate"><span class="pre">Configuration.dict</span></code> for details.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="visiannot.configuration.ConfigurationWindow.ConfigurationWindow.win">
+<code class="sig-name descname">win</code><a class="headerlink" href="#visiannot.configuration.ConfigurationWindow.ConfigurationWindow.win" title="Permalink to this definition">¶</a></dt>
+<dd><p>(<em>QtWidgets.QWidget</em>) Container of main configuration window</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../../tools/index.html" class="btn btn-neutral float-right" title="visiannot.tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../Configuration/index.html" class="btn btn-neutral float-left" title="visiannot.configuration.Configuration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020-2021, Université Rennes 1
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

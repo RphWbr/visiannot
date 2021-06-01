@@ -1,0 +1,330 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>visiannot.visiannot.components.MenuBar &mdash; ViSiAnnoT 0.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> ViSiAnnoT
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../userguide-visiannot.html">User guide: ViSiAnnoT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../userguide-configuration.html">User guide: configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../userguide-toolspyqt.html">User guide: ToolsPyQt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../userguide-toolspyqtgraph.html">User guide: ToolsPyqtgraph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../exe.html">Creating a standalone executable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../software.html">Software description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../further.html">Further developments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../APIreference/index.html">API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">ViSiAnnoT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>visiannot.visiannot.components.MenuBar</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for visiannot.visiannot.components.MenuBar</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright Université Rennes 1</span>
+<span class="c1"># Contributor: Raphael Weber</span>
+<span class="c1">#</span>
+<span class="c1"># Under CeCILL license</span>
+<span class="c1"># http://www.cecill.info</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module defining :class:`.MenuBar`</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">WindowsPopUp</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="k">import</span> <span class="n">QMenuBar</span><span class="p">,</span> <span class="n">QAction</span>
+<span class="kn">import</span> <span class="nn">webbrowser</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">normpath</span><span class="p">,</span> <span class="n">sep</span><span class="p">,</span> <span class="n">join</span><span class="p">,</span> <span class="n">abspath</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+
+<div class="viewcode-block" id="MenuBar"><a class="viewcode-back" href="../../../../APIreference/visiannot/components/MenuBar/index.html#visiannot.visiannot.components.MenuBar.MenuBar">[docs]</a><span class="k">class</span> <span class="nc">MenuBar</span><span class="p">(</span><span class="n">QMenuBar</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">win_parent</span><span class="p">,</span> <span class="n">lay_parent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Menu bar item</span>
+
+<span class="sd">        :param win_parent: container of the parent window</span>
+<span class="sd">        :type win_parent: QtWidgets.QWidget</span>
+<span class="sd">        :param lay_parent: layout of the parent window, where to add the menu</span>
+<span class="sd">            bar</span>
+<span class="sd">        :type lay_parent: QtWidgets.QGridLayout</span>
+
+<span class="sd">        In order to add a menu or an action, the method</span>
+<span class="sd">        :meth:`.addMenuAndActions` may be used.</span>
+
+<span class="sd">        :author: Raphael Weber</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># call parent class constructor</span>
+        <span class="n">QMenuBar</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">win_parent</span><span class="p">)</span>
+
+        <span class="c1"># add menu bar to parent layout</span>
+        <span class="n">lay_parent</span><span class="o">.</span><span class="n">setMenuBar</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="c1"># hide menu bar</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+
+        <span class="c1">#: (*QtWidgets.QWidget*) Container of the parent window</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">win_parent</span> <span class="o">=</span> <span class="n">win_parent</span>
+
+        <span class="c1">#: (:class:`.WindowAbout`) Container of the pop-up window with</span>
+        <span class="c1">#: information about **ViSiAnnoT**</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">win_about</span> <span class="o">=</span> <span class="n">WindowsPopUp</span><span class="o">.</span><span class="n">WindowAbout</span><span class="p">()</span>
+
+        <span class="c1">#: (:class:`.WindowLicense`) Container of the pop-up window with</span>
+        <span class="c1">#: **ViSiAnnoT** license</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">win_license</span> <span class="o">=</span> <span class="n">WindowsPopUp</span><span class="o">.</span><span class="n">WindowLicense</span><span class="p">()</span>
+
+        <span class="c1"># add a menu with actions to menu bar</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addMenuWithActions</span><span class="p">(</span>
+            <span class="s2">&quot;Help&quot;</span><span class="p">,</span> <span class="p">{</span>
+                <span class="s2">&quot;Documentation&quot;</span><span class="p">:</span> <span class="n">MenuBar</span><span class="o">.</span><span class="n">openDocumentation</span><span class="p">,</span>
+                <span class="s2">&quot;License&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">win_license</span><span class="o">.</span><span class="n">show</span><span class="p">,</span>
+                <span class="s2">&quot;About ViSiAnnoT&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">win_about</span><span class="o">.</span><span class="n">show</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+
+<div class="viewcode-block" id="MenuBar.addMenuWithActions"><a class="viewcode-back" href="../../../../APIreference/visiannot/components/MenuBar/index.html#visiannot.visiannot.components.MenuBar.MenuBar.addMenuWithActions">[docs]</a>    <span class="k">def</span> <span class="nf">addMenuWithActions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">menu_name</span><span class="p">,</span> <span class="n">action_dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds menus with actions to menu bar</span>
+
+<span class="sd">        :param menu_name: name of the menu to add</span>
+<span class="sd">        :type menu_name: str</span>
+<span class="sd">        :param action_dict: actions to add in the menu, each element</span>
+<span class="sd">            corresponds one action, key is the action name, value is the slot</span>
+<span class="sd">            method to be called when activating the action</span>
+<span class="sd">        :type action_dict: dict</span>
+
+<span class="sd">        :author: Raphael Weber</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># add menu to menu bar</span>
+        <span class="n">menu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="n">menu_name</span><span class="p">)</span>
+
+        <span class="c1"># loop on actions to add to the menu</span>
+        <span class="k">for</span> <span class="n">action_name</span><span class="p">,</span> <span class="n">slot_method</span> <span class="ow">in</span> <span class="n">action_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># create action item</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="n">action_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">win_parent</span><span class="p">)</span>
+
+            <span class="c1"># add action to menu</span>
+            <span class="n">menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+            <span class="c1"># connect action to slot method</span>
+            <span class="n">action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">slot_method</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MenuBar.openDocumentation"><a class="viewcode-back" href="../../../../APIreference/visiannot/components/MenuBar/index.html#visiannot.visiannot.components.MenuBar.MenuBar.openDocumentation">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">openDocumentation</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Static method for launching the default web browser and loading</span>
+<span class="sd">        **ViSiAnnoT** HTML documentation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># check if ViSiAnnoT launched as an executable</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">&quot;_MEIPASS&quot;</span><span class="p">):</span>
+            <span class="n">dir_tmp_exe</span> <span class="o">=</span> <span class="n">abspath</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">&quot;_MEIPASS&quot;</span><span class="p">))</span>
+            <span class="n">doc_path</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">dir_tmp_exe</span><span class="p">,</span> <span class="s2">&quot;doc_html&quot;</span><span class="p">,</span> <span class="s2">&quot;index.html&quot;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">component_list</span> <span class="o">=</span> <span class="n">normpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">sep</span><span class="p">)[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
+            <span class="n">doc_parent_dir</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">component_list</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">component_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="n">doc_parent_dir</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">doc_parent_dir</span>
+
+            <span class="n">doc_path</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span>
+                <span class="n">doc_parent_dir</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="s2">&quot;build&quot;</span><span class="p">,</span> <span class="s2">&quot;html&quot;</span><span class="p">,</span> <span class="s2">&quot;index.html&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">doc_path</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020-2021, Université Rennes 1
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

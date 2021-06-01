@@ -1,0 +1,904 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>visiannot.tools.ToolsPyQt &mdash; ViSiAnnoT 0.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="visiannot.tools.ToolsPyqtgraph" href="../ToolsPyqtgraph/index.html" />
+    <link rel="prev" title="visiannot.tools.ToolsImage" href="../ToolsImage/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> ViSiAnnoT
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide-visiannot.html">User guide: ViSiAnnoT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide-configuration.html">User guide: configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide-toolspyqt.html">User guide: ToolsPyQt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide-toolspyqtgraph.html">User guide: ToolsPyqtgraph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../exe.html">Creating a standalone executable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../software.html">Software description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../further.html">Further developments</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../configuration/index.html">visiannot.configuration</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">visiannot.tools</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../ToolsAnnotation/index.html">visiannot.tools.ToolsAnnotation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ToolsAudio/index.html">visiannot.tools.ToolsAudio</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ToolsData/index.html">visiannot.tools.ToolsData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ToolsDateTime/index.html">visiannot.tools.ToolsDateTime</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ToolsImage/index.html">visiannot.tools.ToolsImage</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">visiannot.tools.ToolsPyQt</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#summary">Summary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api">API</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ToolsPyqtgraph/index.html">visiannot.tools.ToolsPyqtgraph</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../visiannot/index.html">visiannot.visiannot</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ViSiAnnoT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">API Reference</a> &raquo;</li>
+        
+          <li><a href="../index.html">visiannot.tools</a> &raquo;</li>
+        
+      <li>visiannot.tools.ToolsPyQt</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../../_sources/APIreference/tools/ToolsPyQt/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-visiannot.tools.ToolsPyQt">
+<span id="visiannot-tools-toolspyqt"></span><h1>visiannot.tools.ToolsPyQt<a class="headerlink" href="#module-visiannot.tools.ToolsPyQt" title="Permalink to this headline">¶</a></h1>
+<p>Module with sub-classes and functions for GUI creation with PyQt5</p>
+<p>See <a class="reference external" href="https://pypi.org/project/PyQt5">https://pypi.org/project/PyQt5</a> and
+<a class="reference external" href="https://doc.qt.io/qt-5/reference-overview.html">https://doc.qt.io/qt-5/reference-overview.html</a></p>
+<div class="section" id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.tools.ToolsPyQt.ComboBox" title="visiannot.tools.ToolsPyQt.ComboBox"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visiannot.tools.ToolsPyQt.ComboBox</span></code></a></p></td>
+<td><p>Subclass of QtWidgets.QComboBox so that key press events are ignored</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.tools.ToolsPyQt.PushButton" title="visiannot.tools.ToolsPyQt.PushButton"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visiannot.tools.ToolsPyQt.PushButton</span></code></a></p></td>
+<td><p>Subclass of QtWidgets.QPushButton so that key press events are ignored</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.tools.ToolsPyQt.ScrollArea" title="visiannot.tools.ToolsPyQt.ScrollArea"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visiannot.tools.ToolsPyQt.ScrollArea</span></code></a></p></td>
+<td><p>Subclass of QtWidgets so that wheel events are ignored</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.tools.ToolsPyQt.addCheckBox" title="visiannot.tools.ToolsPyQt.addCheckBox"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visiannot.tools.ToolsPyQt.addCheckBox</span></code></a>(…[, …])</p></td>
+<td><p>Adds a check box to a grid layout</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.tools.ToolsPyQt.addComboBox" title="visiannot.tools.ToolsPyQt.addComboBox"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visiannot.tools.ToolsPyQt.addComboBox</span></code></a>(lay, …)</p></td>
+<td><p>Creates a group box with a combo box and adds it to a grid layout</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.tools.ToolsPyQt.addGroupBox" title="visiannot.tools.ToolsPyQt.addGroupBox"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visiannot.tools.ToolsPyQt.addGroupBox</span></code></a>(…[, …])</p></td>
+<td><p>Adds a group box to a grid layout</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.tools.ToolsPyQt.addLineEditList" title="visiannot.tools.ToolsPyQt.addLineEditList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visiannot.tools.ToolsPyQt.addLineEditList</span></code></a>(…)</p></td>
+<td><p>Adds a list of line edits to a layout</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.tools.ToolsPyQt.addPushButton" title="visiannot.tools.ToolsPyQt.addPushButton"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visiannot.tools.ToolsPyQt.addPushButton</span></code></a>(…)</p></td>
+<td><p>Adds a push button to a grid layout</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.tools.ToolsPyQt.addRadioButton" title="visiannot.tools.ToolsPyQt.addRadioButton"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visiannot.tools.ToolsPyQt.addRadioButton</span></code></a>(…)</p></td>
+<td><p>Adds a radio button to a grid layout</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.tools.ToolsPyQt.addScrollArea" title="visiannot.tools.ToolsPyQt.addScrollArea"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visiannot.tools.ToolsPyQt.addScrollArea</span></code></a>(…)</p></td>
+<td><p>Adds a scroll area to a grid layout</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.tools.ToolsPyQt.addSpinBoxTable" title="visiannot.tools.ToolsPyQt.addSpinBoxTable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visiannot.tools.ToolsPyQt.addSpinBoxTable</span></code></a>(…)</p></td>
+<td><p>Adds a table of spin boxes to an instance of QtWidgets.QGridLayout</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.tools.ToolsPyQt.addWidgetButtonGroup" title="visiannot.tools.ToolsPyQt.addWidgetButtonGroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visiannot.tools.ToolsPyQt.addWidgetButtonGroup</span></code></a>(…)</p></td>
+<td><p>Creates a group box with a group of buttons and adds it to a parent layout</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.tools.ToolsPyQt.addWidgetToLayout" title="visiannot.tools.ToolsPyQt.addWidgetToLayout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visiannot.tools.ToolsPyQt.addWidgetToLayout</span></code></a>(…)</p></td>
+<td><p>Adds a widget to a layout</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.tools.ToolsPyQt.createWindow" title="visiannot.tools.ToolsPyQt.createWindow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visiannot.tools.ToolsPyQt.createWindow</span></code></a>([…])</p></td>
+<td><p>Creates a window</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.tools.ToolsPyQt.deleteWidgetsFromLayout" title="visiannot.tools.ToolsPyQt.deleteWidgetsFromLayout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visiannot.tools.ToolsPyQt.deleteWidgetsFromLayout</span></code></a>(…)</p></td>
+<td><p>Deletes a specified number of widgets in a grid layout</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.tools.ToolsPyQt.infiniteLoopDisplay" title="visiannot.tools.ToolsPyQt.infiniteLoopDisplay"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visiannot.tools.ToolsPyQt.infiniteLoopDisplay</span></code></a>(app)</p></td>
+<td><p>Creates an infinite loop for a given GUI application, so that the window does not disappear right after being created</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.tools.ToolsPyQt.initializeDisplay" title="visiannot.tools.ToolsPyQt.initializeDisplay"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visiannot.tools.ToolsPyQt.initializeDisplay</span></code></a>()</p></td>
+<td><p>Creates a GUI application for display</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.tools.ToolsPyQt.setLineEditList" title="visiannot.tools.ToolsPyQt.setLineEditList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visiannot.tools.ToolsPyQt.setLineEditList</span></code></a>(…)</p></td>
+<td><p>Sets the values of a list of QLineEdit from a list of lists (mode 0) or sets the values of a list of lists from the values of a list of QLineEdit (mode 1)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#visiannot.tools.ToolsPyQt.setSpinBoxTable" title="visiannot.tools.ToolsPyQt.setSpinBoxTable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visiannot.tools.ToolsPyQt.setSpinBoxTable</span></code></a>(…)</p></td>
+<td><p>Sets the values of a table of spin boxes from an input list of lists or returns the values of a table of spin boxes</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.tools.ToolsPyQt.setStyleSheet" title="visiannot.tools.ToolsPyQt.setStyleSheet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visiannot.tools.ToolsPyQt.setStyleSheet</span></code></a>(app, …)</p></td>
+<td><p>Sets the style sheet for a list of Qt classes in a QApplication</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="class-combobox">
+<h3>Class ComboBox<a class="headerlink" href="#class-combobox" title="Permalink to this headline">¶</a></h3>
+<p><strong>Methods:</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.tools.ToolsPyQt.ComboBox.keyPressEvent" title="visiannot.tools.ToolsPyQt.ComboBox.keyPressEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keyPressEvent</span></code></a>(ev)</p></td>
+<td><p>Re-implemented so that key press events are ignored</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt id="visiannot.tools.ToolsPyQt.ComboBox">
+<em class="property">class </em><code class="sig-prename descclassname">visiannot.tools.ToolsPyQt.</code><code class="sig-name descname">ComboBox</code><a class="reference internal" href="../../../_modules/visiannot/tools/ToolsPyQt.html#ComboBox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.tools.ToolsPyQt.ComboBox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QComboBox</span></code></p>
+<p>Subclass of QtWidgets.QComboBox so that key press events are ignored</p>
+<dl class="py method">
+<dt id="visiannot.tools.ToolsPyQt.ComboBox.keyPressEvent">
+<code class="sig-name descname">keyPressEvent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ev</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/tools/ToolsPyQt.html#ComboBox.keyPressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.tools.ToolsPyQt.ComboBox.keyPressEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Re-implemented so that key press events are ignored</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="class-pushbutton">
+<h3>Class PushButton<a class="headerlink" href="#class-pushbutton" title="Permalink to this headline">¶</a></h3>
+<p><strong>Methods:</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.tools.ToolsPyQt.PushButton.keyPressEvent" title="visiannot.tools.ToolsPyQt.PushButton.keyPressEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keyPressEvent</span></code></a>(ev)</p></td>
+<td><p>Re-implemented so that key press events are ignored</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt id="visiannot.tools.ToolsPyQt.PushButton">
+<em class="property">class </em><code class="sig-prename descclassname">visiannot.tools.ToolsPyQt.</code><code class="sig-name descname">PushButton</code><a class="reference internal" href="../../../_modules/visiannot/tools/ToolsPyQt.html#PushButton"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.tools.ToolsPyQt.PushButton" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QPushButton</span></code></p>
+<p>Subclass of QtWidgets.QPushButton so that key press events are ignored</p>
+<dl class="py method">
+<dt id="visiannot.tools.ToolsPyQt.PushButton.keyPressEvent">
+<code class="sig-name descname">keyPressEvent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ev</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/tools/ToolsPyQt.html#PushButton.keyPressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.tools.ToolsPyQt.PushButton.keyPressEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Re-implemented so that key press events are ignored</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="class-scrollarea">
+<h3>Class ScrollArea<a class="headerlink" href="#class-scrollarea" title="Permalink to this headline">¶</a></h3>
+<p><strong>Methods:</strong></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#visiannot.tools.ToolsPyQt.ScrollArea.wheelEvent" title="visiannot.tools.ToolsPyQt.ScrollArea.wheelEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wheelEvent</span></code></a>(ev)</p></td>
+<td><p>Re-implemented so that wheel events are ignored</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt id="visiannot.tools.ToolsPyQt.ScrollArea">
+<em class="property">class </em><code class="sig-prename descclassname">visiannot.tools.ToolsPyQt.</code><code class="sig-name descname">ScrollArea</code><a class="reference internal" href="../../../_modules/visiannot/tools/ToolsPyQt.html#ScrollArea"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.tools.ToolsPyQt.ScrollArea" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QScrollArea</span></code></p>
+<p>Subclass of QtWidgets so that wheel events are ignored</p>
+<dl class="py method">
+<dt id="visiannot.tools.ToolsPyQt.ScrollArea.wheelEvent">
+<code class="sig-name descname">wheelEvent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ev</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/tools/ToolsPyQt.html#ScrollArea.wheelEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.tools.ToolsPyQt.ScrollArea.wheelEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Re-implemented so that wheel events are ignored</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="id1">
+<h3>Functions<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<dl class="py function">
+<dt id="visiannot.tools.ToolsPyQt.addCheckBox">
+<code class="sig-prename descclassname">visiannot.tools.ToolsPyQt.</code><code class="sig-name descname">addCheckBox</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">layout</span></em>, <em class="sig-param"><span class="n">position</span></em>, <em class="sig-param"><span class="n">text</span></em>, <em class="sig-param"><span class="n">flag_checked</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">color</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/tools/ToolsPyQt.html#addCheckBox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.tools.ToolsPyQt.addCheckBox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a check box to a grid layout</p>
+<p>The method raises an error if the length of position is not 2 or 4.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layout</strong> (<em>QtWidgets.QGridLayout</em>) – parent layout where the check box is added</p></li>
+<li><p><strong>position</strong> (<em>tuple of integers</em>) – position of the check box in the parent layout, length 2
+<code class="docutils literal notranslate"><span class="pre">(row,</span> <span class="pre">col)</span></code> or 4 <code class="docutils literal notranslate"><span class="pre">(row,</span> <span class="pre">col,</span> <span class="pre">rowspan,</span> <span class="pre">colspan)</span></code></p></li>
+<li><p><strong>text</strong> (<em>str</em>) – text displayed next to the check box</p></li>
+<li><p><strong>flag_checked</strong> (<em>bool</em>) – specify if check box is initially checked</p></li>
+<li><p><strong>color</strong> (<em>tuple</em>) – color in RGB format</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>check box item</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>QtWidgets.QCheckBox</p>
+</dd>
+<dt class="field-even">Author</dt>
+<dd class="field-even"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="visiannot.tools.ToolsPyQt.addComboBox">
+<code class="sig-prename descclassname">visiannot.tools.ToolsPyQt.</code><code class="sig-name descname">addComboBox</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lay</span></em>, <em class="sig-param"><span class="n">widget_position</span></em>, <em class="sig-param"><span class="n">item_list</span></em>, <em class="sig-param"><span class="n">box_title</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">flag_enable_key_interaction</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/tools/ToolsPyQt.html#addComboBox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.tools.ToolsPyQt.addComboBox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a group box with a combo box and adds it to a grid layout</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lay</strong> (<em>QtWidgets.QGridLayout</em>) – parent layout where the group box is added</p></li>
+<li><p><strong>widget_position</strong> (<em>tuple of integers</em>) – position of the group box in the parent layout,
+length 2 <code class="docutils literal notranslate"><span class="pre">(row,</span> <span class="pre">col)</span></code> or 4 <code class="docutils literal notranslate"><span class="pre">(row,</span> <span class="pre">col,</span> <span class="pre">rowspan,</span> <span class="pre">colspan)</span></code></p></li>
+<li><p><strong>item_list</strong> (<em>list</em>) – items of the combo box, each element is a string</p></li>
+<li><p><strong>box_title</strong> (<em>str</em>) – title of the group box containing the combo box</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>grid</strong> (<em>QtWidgets.QGridLayout</em>) – layout filling the group box</p></li>
+<li><p><strong>group_box</strong> (<em>QtWidgets.QGroupBox</em>) – widget added to the parent
+layout</p></li>
+<li><p><strong>combo_box</strong> (<a class="reference internal" href="#visiannot.tools.ToolsPyQt.ComboBox" title="visiannot.tools.ToolsPyQt.ComboBox"><code class="xref py py-class docutils literal notranslate"><span class="pre">ToolsPyQt.ComboBox</span></code></a> or <em>QtWidgets.QComboBox</em>)
+- combo box item</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="visiannot.tools.ToolsPyQt.addGroupBox">
+<code class="sig-prename descclassname">visiannot.tools.ToolsPyQt.</code><code class="sig-name descname">addGroupBox</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">layout</span></em>, <em class="sig-param"><span class="n">position</span></em>, <em class="sig-param"><span class="n">title</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/tools/ToolsPyQt.html#addGroupBox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.tools.ToolsPyQt.addGroupBox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a group box to a grid layout</p>
+<p>Another grid layout is created to fill the group box.</p>
+<p>The function raises an error if the length of <code class="docutils literal notranslate"><span class="pre">position</span></code> is not 2 or 4.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layout</strong> (<em>QtWidgets.QGridLayout</em>) – parent layout where the group box is added</p></li>
+<li><p><strong>position</strong> (<em>tuple of integers</em>) – position of the group box in the parent layout, length 2
+<code class="docutils literal notranslate"><span class="pre">(row,</span> <span class="pre">col)</span></code> or 4 <code class="docutils literal notranslate"><span class="pre">(row,</span> <span class="pre">col,</span> <span class="pre">rowspan,</span> <span class="pre">colspan)</span></code></p></li>
+<li><p><strong>title</strong> (<em>str</em>) – group box title</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>grid</strong> (<em>QtWidgets.QGridLayout</em>) – layout filling the group box</p></li>
+<li><p><strong>group_box</strong> (<em>QtWidgets.QGroupBox</em>)</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="visiannot.tools.ToolsPyQt.addLineEditList">
+<code class="sig-prename descclassname">visiannot.tools.ToolsPyQt.</code><code class="sig-name descname">addLineEditList</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">grid</span></em>, <em class="sig-param"><span class="n">pos</span></em>, <em class="sig-param"><span class="n">nb_rows</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/tools/ToolsPyQt.html#addLineEditList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.tools.ToolsPyQt.addLineEditList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a list of line edits to a layout</p>
+<p>The line edits are contained in an instance of QtWidgets.QGroupBox filled
+by an instance of QtWidgets.QGridLayout, see
+<a class="reference internal" href="#visiannot.tools.ToolsPyQt.addGroupBox" title="visiannot.tools.ToolsPyQt.addGroupBox"><code class="xref py py-func docutils literal notranslate"><span class="pre">ToolsPyQt.addGroupBox()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid</strong> (<em>QtWidgets.QGridLayout</em>) – parent layout where the line edits are added</p></li>
+<li><p><strong>pos</strong> (<em>tuple of integers</em>) – position of the group box containing the spin boxes in the
+parent layout, length 2 <code class="docutils literal notranslate"><span class="pre">(row,</span> <span class="pre">col)</span></code> or 4
+<code class="docutils literal notranslate"><span class="pre">(row,</span> <span class="pre">col,</span> <span class="pre">rowspan,</span> <span class="pre">colspan)</span></code></p></li>
+<li><p><strong>nb_rows</strong> (<em>int</em>) – number of rows in the list of line edits</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – name of the group box containing the spin boxes</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>grid_sub</strong> – instance of QtWidgets.QGridLayout containing the
+instances of QLineEdit</p></li>
+<li><p><strong>goup_box</strong>  – instance of QtWidgets.QGroupBox containing the
+instances of QLineEdit</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="visiannot.tools.ToolsPyQt.addPushButton">
+<code class="sig-prename descclassname">visiannot.tools.ToolsPyQt.</code><code class="sig-name descname">addPushButton</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">layout</span></em>, <em class="sig-param"><span class="n">position</span></em>, <em class="sig-param"><span class="n">text</span></em>, <em class="sig-param"><span class="n">width</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">flag_enable_key_interaction</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">color</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/tools/ToolsPyQt.html#addPushButton"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.tools.ToolsPyQt.addPushButton" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a push button to a grid layout</p>
+<p>The function raises an error if the length of <code class="docutils literal notranslate"><span class="pre">position</span></code> is not 2 or 4.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layout</strong> (<em>QtWidgets.QGridLayout</em>) – parent layout where the push button is added</p></li>
+<li><p><strong>position</strong> (<em>tuple of integers</em>) – position of the button in the parent layout, length 2
+<code class="docutils literal notranslate"><span class="pre">(row,</span> <span class="pre">col)</span></code> or 4 <code class="docutils literal notranslate"><span class="pre">(row,</span> <span class="pre">col,</span> <span class="pre">rowspan,</span> <span class="pre">colspan)</span></code></p></li>
+<li><p><strong>text</strong> (<em>str</em>) – text displayed in the push button</p></li>
+<li><p><strong>width</strong> (<em>int</em>) – width of the push button in pixels, set to <code class="docutils literal notranslate"><span class="pre">0</span></code> for
+automatic</p></li>
+<li><p><strong>flag_enable_key_interaction</strong> (<em>bool</em>) – specify if key press interaction is
+enabled</p></li>
+<li><p><strong>color</strong> (<em>tuple</em>) – color in RGB format</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>push button item (instance of <em>QtWidgets.QPushButton</em> or
+<a class="reference internal" href="#visiannot.tools.ToolsPyQt.PushButton" title="visiannot.tools.ToolsPyQt.PushButton"><code class="xref py py-class docutils literal notranslate"><span class="pre">ToolsPyQt.PushButton</span></code></a>)</p>
+</dd>
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="visiannot.tools.ToolsPyQt.addRadioButton">
+<code class="sig-prename descclassname">visiannot.tools.ToolsPyQt.</code><code class="sig-name descname">addRadioButton</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">layout</span></em>, <em class="sig-param"><span class="n">position</span></em>, <em class="sig-param"><span class="n">text</span></em>, <em class="sig-param"><span class="n">flag_checked</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">color</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/tools/ToolsPyQt.html#addRadioButton"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.tools.ToolsPyQt.addRadioButton" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a radio button to a grid layout</p>
+<p>The function raises an error if the length of <code class="docutils literal notranslate"><span class="pre">position</span></code> is not 2 or 4.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layout</strong> (<em>QtWidgets.QGridLayout</em>) – parent layout where the radio button is added</p></li>
+<li><p><strong>position</strong> (<em>tuple of integers</em>) – position of the button in the parent layout, length 2
+<code class="docutils literal notranslate"><span class="pre">(row,</span> <span class="pre">col)</span></code> or 4 <code class="docutils literal notranslate"><span class="pre">(row,</span> <span class="pre">col,</span> <span class="pre">rowspan,</span> <span class="pre">colspan)</span></code></p></li>
+<li><p><strong>text</strong> (<em>str</em>) – text displayed next to the radio button</p></li>
+<li><p><strong>flag_checked</strong> (<em>bool</em>) – specify if button is initially checked</p></li>
+<li><p><strong>color</strong> (<em>tuple</em>) – color in RGB format</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>radio button item</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>QtWidgets.QRadioButton</p>
+</dd>
+<dt class="field-even">Author</dt>
+<dd class="field-even"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="visiannot.tools.ToolsPyQt.addScrollArea">
+<code class="sig-prename descclassname">visiannot.tools.ToolsPyQt.</code><code class="sig-name descname">addScrollArea</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">layout</span></em>, <em class="sig-param"><span class="n">position</span></em>, <em class="sig-param"><span class="n">width</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">height</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">flag_ignore_wheel_event</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/tools/ToolsPyQt.html#addScrollArea"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.tools.ToolsPyQt.addScrollArea" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a scroll area to a grid layout</p>
+<p>The scroll area is added to the parent layout. A specific layout (instance
+of QtWidgets.QGridLayout) is created for the scroll area.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layout</strong> (<em>QtWidgets.QGridLayout</em>) – parent layout where the scroll area is added</p></li>
+<li><p><strong>position</strong> (<em>tuple of integers</em>) – position of the items in the parent layout to be included
+in the scroll area, length 2 <code class="docutils literal notranslate"><span class="pre">(row,</span> <span class="pre">col)</span></code> or 4
+<code class="docutils literal notranslate"><span class="pre">(row,</span> <span class="pre">col,</span> <span class="pre">rowspan,</span> <span class="pre">colspan)</span></code></p></li>
+<li><p><strong>width</strong> (<em>int</em><em> or </em><em>float</em>) – width of the scroll area in pixels, set to <code class="docutils literal notranslate"><span class="pre">0</span></code> if
+automatic</p></li>
+<li><p><strong>height</strong> (<em>int</em><em> or </em><em>float</em>) – height of the scroll area in pixels, set to <code class="docutils literal notranslate"><span class="pre">0</span></code> if
+automatic</p></li>
+<li><p><strong>flag_ignore_wheel_event</strong> (<em>bool</em>) – specify if wheel event is ignored</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>scroll_lay</strong> (<em>QtWidgets.QGridLayout</em>) – layout filling the scroll
+area</p></li>
+<li><p><strong>scroll_area</strong> (<em>QtWidgets.QScrollArea</em>) – scroll area item</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p>To add a widget to the scroll area, use <code class="docutils literal notranslate"><span class="pre">scroll_lay.addWidget(widget)</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="visiannot.tools.ToolsPyQt.addSpinBoxTable">
+<code class="sig-prename descclassname">visiannot.tools.ToolsPyQt.</code><code class="sig-name descname">addSpinBoxTable</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">grid</span></em>, <em class="sig-param"><span class="n">pos</span></em>, <em class="sig-param"><span class="n">nb_rows</span></em>, <em class="sig-param"><span class="n">nb_cols</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/tools/ToolsPyQt.html#addSpinBoxTable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.tools.ToolsPyQt.addSpinBoxTable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a table of spin boxes to an instance of QtWidgets.QGridLayout</p>
+<p>The spin boxes are contained in an instance of QtWidgets.QGroupBox filled
+by an instance of QtWidgets.QGridLayout, see func:<cite>.ToolsPyQt.addGroupBox</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid</strong> (<em>QtWidgets.QGridLayout</em>) – parent layout where the spin boxes are added</p></li>
+<li><p><strong>pos</strong> (<em>tuple of integers</em>) – position of the group box containing the spin boxes in the
+parent layout, length 2 <code class="docutils literal notranslate"><span class="pre">(row,</span> <span class="pre">col)</span></code> or 4
+<code class="docutils literal notranslate"><span class="pre">(row,</span> <span class="pre">col,</span> <span class="pre">rowspan,</span> <span class="pre">colspan)</span></code></p></li>
+<li><p><strong>nb_rows</strong> (<em>int</em>) – number of rows in the table of spin boxes</p></li>
+<li><p><strong>nb_cols</strong> (<em>int</em>) – number of columns in the table of spin boxes</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – name of the group box containing the spin boxes</p></li>
+<li><p><strong>params</strong> (<em>dict</em><em> or </em><em>list</em>) – keyword arguments of the constructor of QtWidgets.QSpinBox
+(e.g. {“minimum”: 0, “maximum”: 255}), it might be a nested list of
+length <code class="docutils literal notranslate"><span class="pre">nb_rows</span></code> x <code class="docutils literal notranslate"><span class="pre">nb_cols</span></code> if the parameters differ from on spin
+box to another</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>grid_sub</strong> – instance of QtWidgets.QGridLayout containing the
+table of spin boxes</p></li>
+<li><p><strong>goup_box</strong>  – instance of QtWidgets.QGroupBox containing the table
+of spin boxes</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="visiannot.tools.ToolsPyQt.addWidgetButtonGroup">
+<code class="sig-prename descclassname">visiannot.tools.ToolsPyQt.</code><code class="sig-name descname">addWidgetButtonGroup</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lay</span></em>, <em class="sig-param"><span class="n">widget_position</span></em>, <em class="sig-param"><span class="n">label_list</span></em>, <em class="sig-param"><span class="n">button_type</span><span class="o">=</span><span class="default_value">'radio'</span></em>, <em class="sig-param"><span class="n">color_list</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">box_title</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">flag_horizontal</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">nb_table</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/tools/ToolsPyQt.html#addWidgetButtonGroup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.tools.ToolsPyQt.addWidgetButtonGroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a group box with a group of buttons and adds it to a parent layout</p>
+<p>The buttons are added in the order of the input label list. It may be
+eihter a row or a column of buttons (<code class="docutils literal notranslate"><span class="pre">nb_table</span> <span class="pre">==</span> <span class="pre">0</span></code>), or a table of
+buttons (<code class="docutils literal notranslate"><span class="pre">nb_table</span> <span class="pre">!=</span> <span class="pre">0</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lay</strong> (<em>QtWidgets.QGridLayout</em>) – parent layout where the group box is added</p></li>
+<li><p><strong>widget_position</strong> (<em>tuple of integers</em>) – position of the group box in the parent layout,
+length 2 <code class="docutils literal notranslate"><span class="pre">(row,</span> <span class="pre">col)</span></code> or 4 <code class="docutils literal notranslate"><span class="pre">(row,</span> <span class="pre">col,</span> <span class="pre">rowspan,</span> <span class="pre">colspan)</span></code></p></li>
+<li><p><strong>label_list</strong> (<em>list</em>) – string labels of the buttons</p></li>
+<li><p><strong>button_type</strong> (<em>str</em>) – type of the buttons (<code class="docutils literal notranslate"><span class="pre">&quot;radio&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;push&quot;</span></code> or
+<code class="docutils literal notranslate"><span class="pre">&quot;check_box&quot;</span></code>), in case of <code class="docutils literal notranslate"><span class="pre">&quot;radio&quot;</span></code> first button is checked, in
+case of <code class="docutils literal notranslate"><span class="pre">&quot;check_box&quot;</span></code> exclusivity is set to False and no button is
+checked</p></li>
+<li><p><strong>color_list</strong> (<em>list</em>) – RGB color for each button</p></li>
+<li><p><strong>box_title</strong> (<em>str</em>) – title of the group box containing the radio buttons</p></li>
+<li><p><strong>flag_horizontal</strong> (<em>bool</em>) – specify if buttons are displayed horizontally</p></li>
+<li><p><strong>nb_table</strong> (<em>int</em>) – number of buttons on a single row, set to <code class="docutils literal notranslate"><span class="pre">0</span></code> if all
+buttons on 1 row, if the length of <code class="docutils literal notranslate"><span class="pre">label_list</span></code> is greater than
+<code class="docutils literal notranslate"><span class="pre">nb_table</span></code>, then the buttons are added on several rows</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of the funtion that adds the button to the
+layout filling the group box (<a class="reference internal" href="#visiannot.tools.ToolsPyQt.addRadioButton" title="visiannot.tools.ToolsPyQt.addRadioButton"><code class="xref py py-func docutils literal notranslate"><span class="pre">ToolsPyQt.addRadioButton()</span></code></a>,
+<a class="reference internal" href="#visiannot.tools.ToolsPyQt.addPushButton" title="visiannot.tools.ToolsPyQt.addPushButton"><code class="xref py py-func docutils literal notranslate"><span class="pre">ToolsPyQt.addPushButton()</span></code></a> or <a class="reference internal" href="#visiannot.tools.ToolsPyQt.addCheckBox" title="visiannot.tools.ToolsPyQt.addCheckBox"><code class="xref py py-func docutils literal notranslate"><span class="pre">ToolsPyQt.addCheckBox()</span></code></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>grid</strong> (<em>QtWidgets.QGridLayout</em>) – layout filling the group box</p></li>
+<li><p><strong>group_box</strong> (<em>QtWidgets.QGroupBox</em>) – widget added to the parent
+layout</p></li>
+<li><p><strong>group_button</strong> (<em>QtWidgets.QButtonGroup</em>) – item containing the
+buttons</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="visiannot.tools.ToolsPyQt.addWidgetToLayout">
+<code class="sig-prename descclassname">visiannot.tools.ToolsPyQt.</code><code class="sig-name descname">addWidgetToLayout</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lay</span></em>, <em class="sig-param"><span class="n">wid</span></em>, <em class="sig-param"><span class="n">wid_pos</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/tools/ToolsPyQt.html#addWidgetToLayout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.tools.ToolsPyQt.addWidgetToLayout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a widget to a layout</p>
+<p>an instance of QtWidgets.QGridLayout (or any )</p>
+<p>It raises an error if the widget position is not a tuple/list of length 2
+or 4.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lay</strong> (<em>QtWidgets.QGridLayout</em>) – parent layout where the widget is added (may be any other
+layout class with a method <code class="docutils literal notranslate"><span class="pre">addWidget</span></code>)</p></li>
+<li><p><strong>wid</strong> – widget to be added, it must be an instance of a sub-class of
+QtWidgets.QWidget</p></li>
+<li><p><strong>wid_pos</strong> (<em>tuple of integers</em>) – position of the widget in the parent layout, length 2
+<code class="docutils literal notranslate"><span class="pre">(row,</span> <span class="pre">col)</span></code> or 4 <code class="docutils literal notranslate"><span class="pre">(row,</span> <span class="pre">col,</span> <span class="pre">rowspan,</span> <span class="pre">colspan)</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Author</dt>
+<dd class="field-even"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="visiannot.tools.ToolsPyQt.createWindow">
+<code class="sig-prename descclassname">visiannot.tools.ToolsPyQt.</code><code class="sig-name descname">createWindow</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">size</span><span class="o">=</span><span class="default_value">(0, 0)</span></em>, <em class="sig-param"><span class="n">title</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">bg_color</span><span class="o">=</span><span class="default_value">(240, 240, 240)</span></em>, <em class="sig-param"><span class="n">flag_show</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/tools/ToolsPyQt.html#createWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.tools.ToolsPyQt.createWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a window</p>
+<p>The geometry of the window can be updated afterward, see
+<a class="reference external" href="http://doc.qt.io/qt-4.8/application-windows.html#window-geometry">http://doc.qt.io/qt-4.8/application-windows.html#window-geometry</a> for
+details.</p>
+<p>If pyqtgraph items are to be added in the window, the background color
+won’t apply to them. To get the same background color for pyqtgraph items,
+the following line must be added:
+<code class="docutils literal notranslate"><span class="pre">pyqtgraph.setConfigOption('background',color)</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>size</strong> (<em>tuple</em>) – size of the window in pixels, length 2 <code class="docutils literal notranslate"><span class="pre">(width,</span> <span class="pre">height)</span></code>,
+set one value to 0 in order to have the window maximized in the
+corresponding direction</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – window title</p></li>
+<li><p><strong>bg_color</strong> (<em>tuple</em><em> or </em><em>list</em>) – background color of the window, either (RGB) or (RGBA)</p></li>
+<li><p><strong>flag_show</strong> (<em>bool</em>) – specify if the window must be displayed</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>win</strong> (<em>QtWidgets.QWidget</em>) – window container</p></li>
+<li><p><strong>layout</strong> (<em>QtWidgets.QGridLayout</em>) – layout filling the window</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="visiannot.tools.ToolsPyQt.deleteWidgetsFromLayout">
+<code class="sig-prename descclassname">visiannot.tools.ToolsPyQt.</code><code class="sig-name descname">deleteWidgetsFromLayout</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">grid</span></em>, <em class="sig-param"><span class="n">nb_items_to_delete</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/tools/ToolsPyQt.html#deleteWidgetsFromLayout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.tools.ToolsPyQt.deleteWidgetsFromLayout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes a specified number of widgets in a grid layout</p>
+<p>The widgets are deleted in the inverse order of creation in the parent
+layout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid</strong> (<em>QtWidgets.QGridLayout</em>) – parent layout where widgets must be deleted</p></li>
+<li><p><strong>nb_items_to_delete</strong> (<em>int</em>) – number of widgets to delete</p></li>
+</ul>
+</dd>
+<dt class="field-even">Author</dt>
+<dd class="field-even"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="visiannot.tools.ToolsPyQt.infiniteLoopDisplay">
+<code class="sig-prename descclassname">visiannot.tools.ToolsPyQt.</code><code class="sig-name descname">infiniteLoopDisplay</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">app</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/tools/ToolsPyQt.html#infiniteLoopDisplay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.tools.ToolsPyQt.infiniteLoopDisplay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an infinite loop for a given GUI application, so that the window
+does not disappear right after being created</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>app</strong> – instance of QtCore.QCoreApplication or QtWidgets.QApplication</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="visiannot.tools.ToolsPyQt.initializeDisplay">
+<code class="sig-prename descclassname">visiannot.tools.ToolsPyQt.</code><code class="sig-name descname">initializeDisplay</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/tools/ToolsPyQt.html#initializeDisplay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.tools.ToolsPyQt.initializeDisplay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a GUI application for display</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>instance of QtCore.QCoreApplication or QtWidgets.QApplication</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="visiannot.tools.ToolsPyQt.setLineEditList">
+<code class="sig-prename descclassname">visiannot.tools.ToolsPyQt.</code><code class="sig-name descname">setLineEditList</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">grid</span></em>, <em class="sig-param"><span class="n">value_list</span></em>, <em class="sig-param"><span class="n">mode</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/tools/ToolsPyQt.html#setLineEditList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.tools.ToolsPyQt.setLineEditList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the values of a list of QLineEdit from a list of lists (mode 0) or
+sets the values of a list of lists from the values of a list of QLineEdit
+(mode 1)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid</strong> (<em>QtWidgets.QGridLayout</em>) – layout containing only the edit lines</p></li>
+<li><p><strong>value_list</strong> (<em>list</em>) – in case of mode 0, each element is a value for setting
+the corresponding line edit – in case of mode 1, let it be an empty
+list</p></li>
+<li><p><strong>mode</strong> (<em>int</em>) – either 0 or 1</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of values contained in the list of QLineEdit
+(same as input argument <code class="docutils literal notranslate"><span class="pre">value_list</span></code> in case of mode 0)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+<dt class="field-even">Author</dt>
+<dd class="field-even"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="visiannot.tools.ToolsPyQt.setSpinBoxTable">
+<code class="sig-prename descclassname">visiannot.tools.ToolsPyQt.</code><code class="sig-name descname">setSpinBoxTable</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">grid</span></em>, <em class="sig-param"><span class="n">value_list_list</span></em>, <em class="sig-param"><span class="n">flag_display</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/tools/ToolsPyQt.html#setSpinBoxTable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.tools.ToolsPyQt.setSpinBoxTable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the values of a table of spin boxes from an input list of lists
+or returns the values of a table of spin boxes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid</strong> (<em>QtWidgets.QGridLayout</em>) – layout containing only the table of spin boxes, see
+<a class="reference internal" href="#visiannot.tools.ToolsPyQt.addSpinBoxTable" title="visiannot.tools.ToolsPyQt.addSpinBoxTable"><code class="xref py py-func docutils literal notranslate"><span class="pre">ToolsPyQt.addSpinBoxTable()</span></code></a> for creating one</p></li>
+<li><p><strong>value_list_list</strong> (<em>list</em>) – in case of <code class="docutils literal notranslate"><span class="pre">flag_display</span></code> set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, each
+element is a list of values for setting the table of spin boxes –
+otherwise, let it be an empty list</p></li>
+<li><p><strong>flag_display</strong> (<em>bool</em>) – specify if displaying values in the table of spin
+boxes</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>each element is a list containing the values in the table of spin
+boxes (same as input argument <code class="docutils literal notranslate"><span class="pre">value_list_list</span></code> in case of
+<code class="docutils literal notranslate"><span class="pre">flag_display</span></code> set to <code class="docutils literal notranslate"><span class="pre">True</span></code>)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+<dt class="field-even">Author</dt>
+<dd class="field-even"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="visiannot.tools.ToolsPyQt.setStyleSheet">
+<code class="sig-prename descclassname">visiannot.tools.ToolsPyQt.</code><code class="sig-name descname">setStyleSheet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">app</span></em>, <em class="sig-param"><span class="n">font_name</span></em>, <em class="sig-param"><span class="n">font_size</span></em>, <em class="sig-param"><span class="n">font_color</span></em>, <em class="sig-param"><span class="n">qobj_list</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/visiannot/tools/ToolsPyQt.html#setStyleSheet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visiannot.tools.ToolsPyQt.setStyleSheet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the style sheet for a list of Qt classes in a QApplication</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>app</strong> (<em>QtCore.QCoreApplication</em><em> or </em><em>QtWidgets.QApplication</em>) – GUI application in which the style sheet must be set</p></li>
+<li><p><strong>font_name</strong> (<em>str</em>) – font name</p></li>
+<li><p><strong>font_size</strong> (<em>int</em><em> or </em><em>float</em>) – size of the font in pt</p></li>
+<li><p><strong>font_color</strong> (<em>tuple</em><em> or </em><em>list</em>) – color (RGB) of the font</p></li>
+<li><p><strong>qobj_list</strong> (<em>list</em>) – each element is a string of the Qt class on which the
+style sheet is applied</p></li>
+</ul>
+</dd>
+<dt class="field-even">Author</dt>
+<dd class="field-even"><p>Raphael Weber</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../ToolsPyqtgraph/index.html" class="btn btn-neutral float-right" title="visiannot.tools.ToolsPyqtgraph" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../ToolsImage/index.html" class="btn btn-neutral float-left" title="visiannot.tools.ToolsImage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020-2021, Université Rennes 1
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
