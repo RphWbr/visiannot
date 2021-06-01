@@ -11,7 +11,6 @@ setup(
     packages=['visiannot'],
     package_dir={'': 'visiannot'},
     install_requires=[
-        'collections',
         'configobj',
         'opencv-python',
         'h5py',
