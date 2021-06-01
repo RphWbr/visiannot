@@ -1,32 +1,39 @@
 from setuptools import setup
 
+with open("README.md", 'r') as f:
+    long_description = f.read()
+
 setup(
     name='visiannot',
     version='0.2.0',    
     description='Graphical user interface for visualization and annotation of video and signal data',
-    url='',
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    url='https://github.com/RphWbr/visiannot',
     author='Raphael Weber',
     author_email='raphael.weber@univ-rennes1.fr',
     license='CeCILL',
     packages=['visiannot'],
     package_dir={'': 'visiannot'},
     install_requires=[
-        'configobj',
-        'opencv-python',
-        'h5py',
-        'numpy',
-        'PyQt5',
-        'pyqtgraph',
-        'pytz',
-        'scipy',
+        'configobj>=5.0.6',
+        'opencv-python>=3.4.8.29',
+        'h5py>=2.10.0',
+        'numpy>=1.18.5',
+        'PyQt5>=5.14.1',
+        'pyqtgraph>=0.11.0',
+        'pytz>=2019.3',
+        'scipy>=1.5.3',
     ],
 
     classifiers=[
-        'Development Status :: 1 - Planning',
+        'Development Status :: 4 - Beta',
+        'Operating System :: OS Independent',
         'Intended Audience :: Science/Research',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'License :: OSI Approved :: CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)'
     ],
 )
