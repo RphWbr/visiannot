@@ -1,11 +1,11 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 with open("README.md", 'r') as f:
     long_description = f.read()
 
 setup(
     name='visiannot',
-    version='0.2.0',    
+    version='0.0.6',    
     description='Graphical user interface for visualization and annotation of video and signal data',
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -13,8 +13,16 @@ setup(
     author='Raphael Weber',
     author_email='raphael.weber@univ-rennes1.fr',
     license='CeCILL',
-    packages=['visiannot'],
-    package_dir={'': 'visiannot'},
+    # package_dir={'': 'visiannot'},
+    # packages=find_packages(where='visiannot'),
+    packages=[
+        'visiannot',
+        'visiannot.visiannot',
+        'visiannot.visiannot.components',
+        'visiannot.configuration',
+        'visiannot.tools'
+    ],
+    include_package_data=True,
     install_requires=[
         'configobj>=5.0.6',
         'opencv-python>=3.4.8.29',
@@ -25,6 +33,7 @@ setup(
         'pytz>=2019.3',
         'scipy>=1.5.3',
     ],
+    python_requires='>=3.6, <4',
 
     classifiers=[
         'Development Status :: 4 - Beta',
