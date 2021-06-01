@@ -21,7 +21,9 @@ The main features are:
 - Multi-label image extraction
 - Configuration via a graphical user interface
 
-![Screenshot of ViSiAnnoT](visiannot.png)
+.. figure:: doc/source/images/layout_mode_2.png
+
+  Screenshot of ViSiAnnoT
 
 
 Depedencies
