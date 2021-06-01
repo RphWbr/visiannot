@@ -1,0 +1,25 @@
+include *.PNG
+include *.py
+include *.txt
+recursive-include doc *.PNG
+recursive-include doc *.buildinfo
+recursive-include doc *.css
+recursive-include doc *.doctree
+recursive-include doc *.eot
+recursive-include doc *.html
+recursive-include doc *.inv
+recursive-include doc *.js
+recursive-include doc *.otf
+recursive-include doc *.pickle
+recursive-include doc *.png
+recursive-include doc *.py
+recursive-include doc *.rst
+recursive-include doc *.svg
+recursive-include doc *.ttf
+recursive-include doc *.txt
+recursive-include doc *.woff
+recursive-include doc *.woff2
+recursive-include doc Makefile
+recursive-include visiannot *.jpg
+recursive-include visiannot *.py
+recursive-include visiannot *.txt
