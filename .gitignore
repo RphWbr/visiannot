@@ -8,3 +8,8 @@
 # temporary directory for signal synchronization
 sig-tmp
 
+# distribution / packaging
+build
+dist
+**/*.egg-info
+
