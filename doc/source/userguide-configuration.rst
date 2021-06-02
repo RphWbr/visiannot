@@ -392,7 +392,7 @@ The user must click on the push button "Add" in order to create a new video conf
 
 .. _fig-config-video:
 
-.. figure:: images/configuration_video.PNG
+.. figure:: images/configuration_video.png
 
   Example of video configuration
 
@@ -419,7 +419,7 @@ The user must click on the push button "Add" in order to create a new signal con
 
 .. _fig-config-signal:
 
-.. figure:: images/configuration_signal.PNG
+.. figure:: images/configuration_signal.png
 
   Example of signal configuration
 
@@ -439,7 +439,7 @@ The user can manage the threshold configuration by clicking on the push button "
 
 .. _fig-config-threshold:
 
-.. figure:: images/configuration_threshold.PNG
+.. figure:: images/configuration_threshold.png
 
   Example of threshold configuration
 
@@ -468,7 +468,7 @@ Once an interval configuration is added, there are 8 fields to fill in:
 
 .. _fig-config-intervals:
 
-.. figure:: images/configuration_intervals.PNG
+.. figure:: images/configuration_intervals.png
 
   Example of intervals configuration
 
