@@ -13,3 +13,6 @@ build
 dist
 **/*.egg-info
 
+# documentation sphinx
+doc/build
+
