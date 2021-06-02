@@ -45,7 +45,7 @@ The instance of :class:`.ViSiAnnoT` must be stored in a variable in order to hav
 
 .. _fig-example-video:
 
-.. figure:: _images/example_video.png
+.. figure:: images/example_video.png
 
   Screenshot of ViSiAnnoT used as a video player
 
@@ -132,7 +132,7 @@ The keyword argument ``pause_status`` is set to True so that the video playback 
 
 .. _fig-example-signal:
 
-.. figure:: _images/example_signal.png
+.. figure:: images/example_signal.png
 
   Screenshot of ViSiAnnoT used as a signal viewer
 
@@ -170,7 +170,7 @@ The beginning datetime is not contained in the audio file name, so one of the th
 
 .. _fig-example-audio:
 
-.. figure:: _images/example_audio.png
+.. figure:: images/example_audio.png
 
   Screenshot of ViSiAnnoT used as an audio signal viewer
 
@@ -183,7 +183,7 @@ Based on :numref:`fig-example-signal`, :numref:`fig-example-signal-zoom` illustr
 
 .. _fig-example-signal-zoom:
 
-.. figure:: _images/example_signal_zoom.png
+.. figure:: images/example_signal_zoom.png
 
   Screenshot of ViSiAnnoT used as a signal viewer after zoom
 
@@ -244,7 +244,7 @@ The threshold configuration dictionary ``threshold_dict`` specifies on which sig
 
 .. _fig-example-threshold:
 
-.. figure:: _images/example_thresholds.png
+.. figure:: images/example_thresholds.png
 
   Detail of a screenshot of ViSiAnnoT used as a signal viewer with two thresholds
 
@@ -313,7 +313,7 @@ In this example, two types of intervals are defined on the ``"ECG"`` plot. A spe
 
 .. _fig-example-intervals:
 
-.. figure:: _images/example_intervals.png
+.. figure:: images/example_intervals.png
 
   Detail of a screenshot of ViSiAnnoT used as a signal viewer with additional temporal intervals
 
@@ -366,7 +366,7 @@ Here is an example::
 
 .. _fig-example-combined:
 
-.. figure:: _images/example_combined.png
+.. figure:: images/example_combined.png
 
   Screenshot of ViSiAnnoT used as a combined video and signal visualizer
 
@@ -383,7 +383,7 @@ Third, there is a tool for defining a custom temporal range, as shown in :numref
 
 .. _fig-example-custom-interval:
 
-.. figure:: _images/custom_interval.png
+.. figure:: images/custom_interval.png
 
   Tool for defining a custom temporal range
 
@@ -401,7 +401,7 @@ In this context, there are two additional buttons that allow to switch easily fr
 
 .. _fig-file-selection:
 
-.. figure:: _images/file_selection.png
+.. figure:: images/file_selection.png
 
   Buttons and combo box for file selection in a long recording
 
@@ -518,7 +518,7 @@ There are two labels (dictionary keys), to which is associated a color (dictiona
 
 .. _fig-annot-event:
 
-.. figure:: _images/annotation_event_tool.png
+.. figure:: images/annotation_event_tool.png
 
   Events annotation tool
 
@@ -534,7 +534,7 @@ The "Display mode" radio buttons allow to choose what to display:
 
 .. _fig-example-annotation:
 
-.. figure:: _images/example_annotation.png
+.. figure:: images/example_annotation.png
 
   Detail of a screenshot of ViSiAnnoT with annotations displayed, each color corresponding to one label
 
@@ -542,7 +542,7 @@ It is possible to display the duration of the annotated intervals by clicking wi
 
 .. _fig-annot-event-desc:
 
-.. figure:: _images/annotation_event_description.png
+.. figure:: images/annotation_event_description.png
 
   Detail of a screenshot of ViSiAnnoT with annotations displayed, two of them with duration displayed
 
@@ -620,7 +620,7 @@ When creating an instance of *ViSiAnnoT* or *ViSiAnnoTLongRec*, the configuratio
 
 .. _fig-annot-im:
 
-.. figure:: _images/annotation_image_tool.png
+.. figure:: images/annotation_image_tool.png
 
   Image extraction tool
 
@@ -691,19 +691,19 @@ Here is an example of combined video and signal visualization in the context of 
 
 Mode 1 puts the emphasis on the video. If there is not enough space left for the signals, a scroll area is created.
 
-.. figure:: _images/layout_mode_1.png
+.. figure:: images/layout_mode_1.png
 
   Layout mode 1
 
 Mode 2 puts the emphasis on the signal.
 
-.. figure:: _images/layout_mode_2.png
+.. figure:: images/layout_mode_2.png
 
   Layout mode 2
 
 Mode 3 provides a more compact display since the following features are disabled: selection of truncated temporal range, selection of temporal range from cursor, and custom selection of temporal range.
 
-.. figure:: _images/layout_mode_3.png
+.. figure:: images/layout_mode_3.png
 
   Layout mode 3
 

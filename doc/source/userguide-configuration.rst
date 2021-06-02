@@ -392,7 +392,7 @@ The user must click on the push button "Add" in order to create a new video conf
 
 .. _fig-config-video:
 
-.. figure:: _images/configuration_video.png
+.. figure:: images/configuration_video.png
 
   Example of video configuration
 
@@ -419,7 +419,7 @@ The user must click on the push button "Add" in order to create a new signal con
 
 .. _fig-config-signal:
 
-.. figure:: _images/configuration_signal.png
+.. figure:: images/configuration_signal.png
 
   Example of signal configuration
 
@@ -428,7 +428,7 @@ The user must click on the push button "Add" in order to create a new signal con
 
 .. _fig-config-audio:
 
-.. figure:: _images/configuration_audio.png
+.. figure:: images/configuration_audio.png
 
   Example of audio signal configuration
 
@@ -439,7 +439,7 @@ The user can manage the threshold configuration by clicking on the push button "
 
 .. _fig-config-threshold:
 
-.. figure:: _images/configuration_threshold.png
+.. figure:: images/configuration_threshold.png
 
   Example of threshold configuration
 
@@ -468,7 +468,7 @@ Once an interval configuration is added, there are 8 fields to fill in:
 
 .. _fig-config-intervals:
 
-.. figure:: _images/configuration_intervals.png
+.. figure:: images/configuration_intervals.png
 
   Example of intervals configuration
 
@@ -481,7 +481,7 @@ The events annotation configuration is contained in the third group box named "A
 
 .. _fig-annotevent:
 
-.. figure:: _images/configuration_annotevent.png
+.. figure:: images/configuration_annotevent.png
 
   Screenshot of the event annotation configuration
 
@@ -497,7 +497,7 @@ The image extraction configuration is contained in the fourth group box named "A
 
 .. _fig-annotimage:
 
-.. figure:: _images/configuration_annotimage.png
+.. figure:: images/configuration_annotimage.png
 
   Screenshot of the image annotation configuration
 
@@ -511,7 +511,7 @@ The general configuration is contained in the fifth group box named "General". F
 
 .. _fig-general:
 
-.. figure:: _images/configuration_general.png
+.. figure:: images/configuration_general.png
 
   Screenshot of the general configuration
 

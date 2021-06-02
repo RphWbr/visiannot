@@ -49,7 +49,7 @@ Here is an example for basic 2D plot::
 
 which renders the window as shown below.
 
-.. figure:: _images/pyqtgr_ex1-1.png
+.. figure:: images/pyqtgr_ex1-1.png
 
   Example of plot
 
@@ -83,7 +83,7 @@ In order to display the grids on the widget, we need to add the following lines 
 
 This renders the following window.
 
-.. figure:: _images/pyqtgr_ex1-2.png
+.. figure:: images/pyqtgr_ex1-2.png
 
   Example of plot with grids
 
@@ -135,13 +135,13 @@ Taking the same example, here is how to add a legend::
 
 which renders the window as shown below.
 
-.. figure:: _images/pyqtgr_ex2.png
+.. figure:: images/pyqtgr_ex2.png
 
   Example of basic 2D plot with legend
 
 By default, the legend is inside the widget at the bottom right corner. With the keyword argument ``offset`` we can change this position inside the widget. It also possible to put the legend in a separate widget with the following line: ``ToolsPyqtgraph.addLegendTo2DWidget(wid, legend_dict, position='right', legend_wid_size=(50, 0))``. It renders the following window.
 
-.. figure:: _images/pyqtgr_ex2bis.png
+.. figure:: images/pyqtgr_ex2bis.png
 
   Example of plot with legend
 
@@ -189,7 +189,7 @@ It is possible to customize the aspect of the ticks and ticks text of the axes. 
 
 which renders the window as shown below.
 
-.. figure:: _images/pyqtgr_ex3.png
+.. figure:: images/pyqtgr_ex3.png
 
   Example of basic 2D plot with custom axes
 
@@ -199,7 +199,7 @@ We have also used the keyword arguments ``widget_title`` and ``title_style`` in 
 
 It renders the following window. We note that it overwrites the color of the bottom axis label.
 
-.. figure:: _images/pyqtgr_ex3bis.png
+.. figure:: images/pyqtgr_ex3bis.png
 
   Example of plot with custom axes
 
@@ -253,7 +253,7 @@ Here is an example of a scatter plot with a text item associated to each point::
 
 which renders the window as shown below.
 
-.. figure:: _images/pyqtgr_ex4.png
+.. figure:: images/pyqtgr_ex4.png
 
   Example of scatter plot with text items
 
@@ -312,7 +312,7 @@ Let assume that we retrieve the temporal evolution of a value for each subject o
 
 which renders the window as shown below.
 
-.. figure:: _images/pyqtgr_ex5.png
+.. figure:: images/pyqtgr_ex5.png
 
   Example of plot with mean/std
 
@@ -510,7 +510,7 @@ Callback management can be used to define a user interaction with mouse click, a
 
 which renders a window as shown below.
 
-.. figure:: _images/pyqtgr_ex6.png
+.. figure:: images/pyqtgr_ex6.png
 
   Example of mouse interaction
 
@@ -595,7 +595,7 @@ Here is an example of a color map along with a color bar::
 
 which renders the window as shown below.
 
-.. figure:: _images/pyqtgr_ex7.png
+.. figure:: images/pyqtgr_ex7.png
 
   Example of color map
 
