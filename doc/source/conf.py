@@ -16,9 +16,12 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
-from os.path import abspath
+from os.path import abspath, join
 import sys
 sys.path.insert(0, abspath('.'))
+sys.path.insert(0, abspath(join('..', '..')))
+
+import visiannot
 
 
 ### in order to automatically generate APIreference index files,
@@ -65,10 +68,11 @@ project = 'ViSiAnnoT'
 copyright = '2020-2021, Université Rennes 1'
 author = 'Raphael Weber'
 
-# The short X.Y version
-version = '0.2'
 # The full version, including alpha/beta/rc tags
-release = '0.2.0'
+release = visiannot.__version__
+
+# The short X.Y version
+version = '.'.join(release.split('.')[:2])
 
 
 # -- General configuration ---------------------------------------------------
