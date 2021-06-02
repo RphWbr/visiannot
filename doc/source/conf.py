@@ -22,6 +22,7 @@ sys.path.insert(0, abspath('.'))
 sys.path.insert(0, abspath(join('..', '..')))
 
 import visiannot
+from datetime import datetime
 
 
 ### in order to automatically generate APIreference index files,
@@ -65,7 +66,7 @@ from summaryGroups import setup
 # -- Project information -----------------------------------------------------
 
 project = 'ViSiAnnoT'
-copyright = '2020-2021, Université Rennes 1'
+copyright = '2020-%s, Université Rennes 1' % datetime.today().year
 author = 'Raphael Weber'
 
 # The full version, including alpha/beta/rc tags
@@ -149,6 +150,8 @@ html_theme = 'sphinx_rtd_theme'
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'ViSiAnnoTdoc'
+
+html_static_path = ['images']
 
 
 # -- Options for LaTeX output ------------------------------------------------
