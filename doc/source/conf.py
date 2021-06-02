@@ -35,14 +35,14 @@ for the creation of the ViSiAnnoT GUI.
 The summary of the modules can be found at the top of their respective page.
 """
 
-from toolsSphinxDoc.autoDocAPI import generateIndexFiles
+from autoDocAPI import generateIndexFiles
 generateIndexFiles(
     "visiannot", "../..", text_top=text_top, text_bottom=text_bottom
 )
 
-from toolsSphinxDoc.summaryGroups import setPackageName
+from summaryGroups import setPackageName
 setPackageName("visiannot")
-from toolsSphinxDoc.summaryGroups import setup
+from summaryGroups import setup
 
 
 # -- Project information -----------------------------------------------------
