@@ -4,6 +4,7 @@ from linecache import getline
 from importlib import import_module
 from os.path import isfile, split
 from os import getcwd
+import numpy as np
 
 # global variables
 MODULE_NAME = "cfg"
