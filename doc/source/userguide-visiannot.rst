@@ -166,7 +166,7 @@ The signal frequency is automatically retrieved from the wav file, so in the con
 
 The beginning datetime is not contained in the audio file name, so one of the three related variables is set to ``None`` and a default datetime is defined (2000/01/01 at 00:00:00).
 
-:numref:`fig-example-signal` shows a screenshot of the resulting window.
+:numref:`fig-example-audio` shows a screenshot of the resulting window.
 
 .. _fig-example-audio:
 
