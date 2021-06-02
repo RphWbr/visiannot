@@ -84,7 +84,7 @@ Next step is to create widgets and add them to the grid layout. The widgets are 
 
 which renders a window as shown below.
 
-.. figure:: images/pyqt_ex1.png
+.. figure:: _images/pyqt_ex1.png
 
   Example of widgets creation
 
@@ -103,7 +103,7 @@ The positioning of the widget in the layout is specified by the zero-indexed tup
 
 The figure below shows the same window as above with the position of the widgets outlined.
 
-.. figure:: images/pyqt_ex1bis.png
+.. figure:: _images/pyqt_ex1bis.png
 
   Example of widgets creation with the position of the widgets in the layout
 
@@ -140,7 +140,7 @@ The case of radio button is a bit particular. There is no reason to add a single
 
 which renders a window as shown below.
 
-.. figure:: images/pyqt_ex2.png
+.. figure:: _images/pyqt_ex2.png
 
   Example of button groups
 
@@ -192,7 +192,7 @@ It is possible to set the values in a table of spin boxes directly in a script w
 
 which renders the window as shown below.
 
-.. figure:: images/pyqt_ex3.png
+.. figure:: _images/pyqt_ex3.png
 
   Example of a table of spin boxes with values set
 
@@ -264,7 +264,7 @@ Here is a simple example::
 
 which renders a window as shown below.
 
-.. figure:: images/pyqt_ex4.png
+.. figure:: _images/pyqt_ex4.png
 
   Example for callback management
 
@@ -454,7 +454,7 @@ We give here a more complex example with two windows: master and slave. The mast
 
 which renders the windows as shown below.
 
-.. figure:: images/pyqt_ex5.png
+.. figure:: _images/pyqt_ex5.png
 
   Example for callback management
 
@@ -508,7 +508,7 @@ If we need to add a lot of widgets in a window, we may exceed the window size an
 
 which renders the window as shown below.
 
-.. figure:: images/pyqt_ex6.png
+.. figure:: _images/pyqt_ex6.png
 
   Example of scroll area
 
