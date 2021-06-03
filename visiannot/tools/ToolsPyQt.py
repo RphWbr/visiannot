@@ -125,8 +125,6 @@ def addSpinBoxTable(grid, pos, nb_rows, nb_cols, name="", params={}):
           table of spin boxes
         - **goup_box**  -- instance of QtWidgets.QGroupBox containing the table
           of spin boxes
-
-    :author: Raphael Weber
     """
 
     # create group box
@@ -166,8 +164,6 @@ def setSpinBoxTable(grid, value_list_list, flag_display):
         boxes (same as input argument ``value_list_list`` in case of
         ``flag_display`` set to ``True``)
     :rtype: list
-
-    :author: Raphael Weber
     """
 
     # if setting value_list_list, reset its value
@@ -234,8 +230,6 @@ def addLineEditList(grid, pos, nb_rows, name=""):
           instances of QLineEdit
         - **goup_box**  -- instance of QtWidgets.QGroupBox containing the
           instances of QLineEdit
-
-    :author: Raphael Weber
     """
 
     # create group box
@@ -267,8 +261,6 @@ def setLineEditList(grid, value_list, mode):
     :returns: list of values contained in the list of QLineEdit
         (same as input argument ``value_list`` in case of mode 0)
     :rtype: list
-
-    :author: Raphael Weber
     """
 
     # check mode
@@ -317,8 +309,6 @@ def addWidgetToLayout(lay, wid, wid_pos):
     :param wid_pos: position of the widget in the parent layout, length 2
         ``(row, col)`` or 4 ``(row, col, rowspan, colspan)``
     :type wid_pos: tuple of integers
-
-    :author: Raphael Weber
     """
 
     wpl = len(wid_pos)
@@ -351,8 +341,6 @@ def addGroupBox(layout, position, title=""):
     :returns:
         - **grid** (*QtWidgets.QGridLayout*) -- layout filling the group box
         - **group_box** (*QtWidgets.QGroupBox*)
-
-    :author: Raphael Weber
     """
 
     # create the group box
@@ -392,8 +380,6 @@ def addPushButton(layout, position, text,
 
     :returns: push button item (instance of *QtWidgets.QPushButton* or
         :class:`.ToolsPyQt.PushButton`)
-
-    :author: Raphael Weber
     """
 
     # create push button
@@ -442,8 +428,6 @@ def addRadioButton(layout, position, text, flag_checked=False, color=None):
 
     :returns: radio button item
     :rtype: QtWidgets.QRadioButton
-
-    :author: Raphael Weber
     """
 
     # create radio button
@@ -485,8 +469,6 @@ def addCheckBox(layout, position, text, flag_checked=False, color=None):
 
     :returns: check box item
     :rtype: QtWidgets.QCheckBox
-
-    :author: Raphael Weber
     """
 
     # create radio button
@@ -536,8 +518,6 @@ def addScrollArea(
         - **scroll_area** (*QtWidgets.QScrollArea*) -- scroll area item
 
     To add a widget to the scroll area, use ``scroll_lay.addWidget(widget)``.
-
-    :author: Raphael Weber
     """
 
     # create scroll area
@@ -597,8 +577,6 @@ def createWindow(
     :returns:
         - **win** (*QtWidgets.QWidget*) -- window container
         - **layout** (*QtWidgets.QGridLayout*) -- layout filling the window
-
-    :author: Raphael Weber
     """
 
     # create the window and the layout to fill it
@@ -683,8 +661,6 @@ def addWidgetButtonGroup(
           layout
         - **group_button** (*QtWidgets.QButtonGroup*) -- item containing the
           buttons
-
-    :author: Raphael Weber
     """
 
     # create group box containing the radio buttons
@@ -758,8 +734,6 @@ def addComboBox(
           layout
         - **combo_box** (:class:`.ToolsPyQt.ComboBox` or *QtWidgets.QComboBox*)
           - combo box item
-
-    :author: Raphael Weber
     """
 
     # create combo box
@@ -800,8 +774,6 @@ def deleteWidgetsFromLayout(grid, nb_items_to_delete):
     :type grid: QtWidgets.QGridLayout
     :param nb_items_to_delete: number of widgets to delete
     :type nb_items_to_delete: int
-
-    :author: Raphael Weber
     """
 
     nb_items = grid.count()
@@ -830,8 +802,6 @@ def setStyleSheet(app, font_name, font_size, font_color, qobj_list):
     :param qobj_list: each element is a string of the Qt class on which the
         style sheet is applied
     :type qobj_list: list
-
-    :author: Raphael Weber
     """
 
     # get style sheet string

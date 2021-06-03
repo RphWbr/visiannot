@@ -69,8 +69,6 @@ class ConfigurationWindow():
         When values are modified manually in the window, these dictionaries are
         not updated. The method :meth:`.setConfigurationDictionaries` must
         be called to do so.
-
-        :author: Raphael Weber
         """
 
         #: (*dict*) Each value is an instances of :class:`Configuration`
@@ -424,8 +422,6 @@ class ConfigurationWindow():
             layout, length 2 ``(row, col)`` or
             4 ``(row, col, rowspan, colspan)``
         :type widget_position: tuple of integers
-
-        :author: Raphael Weber
         """
 
         # create general configuration group box
@@ -615,8 +611,6 @@ class ConfigurationWindow():
         :param kwargs: keyword arguments of :class:`.Configuration` constructor
             (excepted ``parent_config`` which is the first positional argument
             of this method)
-
-        :author: Raphael Weber
         """
 
         # create configuration window
@@ -678,8 +672,6 @@ class ConfigurationWindow():
 
         :param button_id: index of the button that has been pushed
         :type button_id: int
-
-        :author: Raphael Weber
         """
 
         self.children_win_list[button_id].show()
@@ -724,8 +716,6 @@ class ConfigurationWindow():
 
         :param button_id: index of the button that has been pushed
         :type button_id: int
-
-        :author: Raphael Weber
         """
 
         # load
@@ -805,8 +795,6 @@ class ConfigurationWindow():
 
         :returns: configuration dictionary, with the same keys as ``key_dict``
         :rtype: dict
-
-        :author: Raphael Weber
         """
 
         # load file
@@ -846,8 +834,6 @@ class ConfigurationWindow():
 
         :param path: path to the configuration file to load
         :type path: str
-
-        :author: Raphael Weber
         """
 
         # load configuration file
@@ -876,8 +862,6 @@ class ConfigurationWindow():
         """
         Deletes the whole configuration display and replaces it with the
         current values of the attribute dictionaries
-
-        :author: Raphael Weber
         """
 
         # reset general
@@ -897,8 +881,6 @@ class ConfigurationWindow():
 
         :param path: path to the configuration file to create
         :type path: str
-
-        :author: Raphael Weber
         """
 
         # set configuration dictionaries
@@ -931,8 +913,6 @@ class ConfigurationWindow():
         - :attr:`.general_dict`
         - ``ConfigurationWindow.meta_dict[config_type].dict`` for config_type
           in :attr:`.config_type_list`
-
-        :author: Raphael Weber
         """
 
         self.setGeneralConfiguration(False)
@@ -952,8 +932,6 @@ class ConfigurationWindow():
             configuration widget, if ``False`` then it sets the values of
             :attr:`.general_dict`
         :type flag_display: bool
-
-        :author: Raphael Weber
         """
 
         # loop on elements
@@ -1090,8 +1068,6 @@ class ConfigurationWindow():
 
         :returns: list of lists
         :rtype: list
-
-        :author: Raphael Weber
         """
 
         dic_list = ConfigurationWindow.convertDictToList(dic)

@@ -137,8 +137,6 @@ class Configuration():
         :param children_config_name_list: list of strings with the name of
             children configurations
         :type children_config_name_list: list
-
-        :author: Raphael Weber
         """
 
         #: (*QtWidgets.QGridLayout*) See first positional argument of
@@ -458,8 +456,6 @@ class Configuration():
 
         :param config_child: child configuration
         :type config_child: :class:`.Configuration`
-
-        :author: Raphael Weber
         """
 
         self.children_configuration_list.append(config_child)
@@ -492,8 +488,6 @@ class Configuration():
         :type position: tuple
         :param children_config_name_list: names of the children configurations
         :type children_config_name_list: list
-
-        :author: Raphael Weber
         """
 
         # create configuration group box
@@ -545,8 +539,6 @@ class Configuration():
 
         :param help_text: text to be displayed
         :type help_text: str
-
-        :author: Raphael Weber
         """
 
         # create window and layout
@@ -584,8 +576,6 @@ class Configuration():
         :param row_ind: index of the row in the configuration grid from which
             to retrieve the (sub-)configuration list
         :type row_ind: int
-
-        :author: Raphael Weber
         """
 
         # check if configuration key is in the configuration grid
@@ -672,8 +662,6 @@ class Configuration():
 
         NB: make sure that :attr:`.type` is in
         :attr:`.ConfigurationWindow.config_type_list`.
-
-        :author: Raphael Weber
         """
 
         # reset configuration dictionary
@@ -733,8 +721,6 @@ class Configuration():
 
         :param button_id: index of the button that has been pushed
         :type button_id: int
-
-        :author: Raphael Weber
         """
 
         # get configuration grid index and sub-configuration index
@@ -803,8 +789,6 @@ class Configuration():
 
         :param button_id: index of the button that has been pushed
         :type button_id: int
-
-        :author: Raphael Weber
         """
 
         # intialize boolean to specify if looking for identical directory
@@ -907,8 +891,6 @@ class Configuration():
         :param start_col_ind: index of the column in the configuration grid
             where to start to add widgets elements of the configuration list
         :type start_col_ind: int
-
-        :author: Raphael Weber
         """
 
         # initialize column index of widget to add
@@ -983,8 +965,6 @@ class Configuration():
             (sub-)configuration, by default the last configuration grid of
             :attr:`.config_grid_list` is chosen
         :type config_id: int
-
-        :author: Raphael Weber
         """
 
         # check if configuration key is in the configuration grid
@@ -1072,8 +1052,6 @@ class Configuration():
         Each item of ``config_dict`` corresponds to one configuration, implying
         one created configuration grid. Value is a configuration list, which is
         nested if :attr:`.nb_level` is equal to ``2``, see :attr:`.dict`.
-
-        :author: Raphael Weber
         """
 
         # initialize row index in the grid where to add the configuration grid
@@ -1148,8 +1126,6 @@ class Configuration():
 
         :param text: updated configuration key
         :type text: str
-
-        :author: Raphael Weber
         """
 
         # get index of the changed configuration grid
@@ -1197,8 +1173,6 @@ class Configuration():
 
         :param button_id: index of the button that has been pushed
         :type button_id: int
-
-        :author: Raphael Weber
         """
 
         # update configuration dictionary with current values filled in
@@ -1246,8 +1220,6 @@ class Configuration():
         - :attr:`.config_grid_list`
         - :attr:`.config_group_box_list`
         - :attr:`.nb_sub_list`
-
-        :author: Raphael Weber
         """
 
         # delete the configuration widgets

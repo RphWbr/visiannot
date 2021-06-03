@@ -43,8 +43,6 @@ def getBeginningEndingDateTimeFromList(
           datetime.datetime (beginning date-time of the files)
         - **ending_datetime_list** (*list*) -- instances of datetime.datetime
           (ending date-time of the files)
-
-    :author: Raphael Weber
     """
 
     beginning_datetime_list = []
@@ -122,8 +120,6 @@ def getDatetimeFromPath(
 
     :returns: datetime
     :rtype: datetime.datetime
-
-    :author: Raphael Weber
     """
 
     if datetime_del is None or datetime_pos is None or datetime_fmt is None:
@@ -151,8 +147,6 @@ def convertSectimeToTime(time):
         - **minute** (*int*)
         - **second** (*int*)
         - **millisecond** (*int*)
-
-    :author: Raphael Weber
     """
 
     hour = int(time / 3600)
@@ -177,8 +171,6 @@ def convertFrameToTime(frame_nb, fps):
         - **minute** (*int*)
         - **second** (*int*)
         - **millisecond** (*int*)
-
-    :author: Raphael Weber
     """
 
     return convertSectimeToTime(float(frame_nb) / fps)
@@ -199,8 +191,6 @@ def convertTimeToString(hour, minute, sec, msec=0):
 
     :returns: time with format "HH:MM:SS.sss"
     :rtype: str
-
-    :author: Raphael Weber
     """
 
     return '{:>02}:{:>02}:{:>02}.{:>03}'.format(hour, minute, sec, msec)
@@ -219,8 +209,6 @@ def convertDatetimeToString(date_time, fmt=0):
 
     :returns: date-time string
     :rtype: str
-
-    :author: Raphael Weber
     """
 
     date_string = '{:>04}-{:>02}-{:>02}'.format(
@@ -250,8 +238,6 @@ def convertFrameToString(frame_nb, fps):
 
     :returns: time with format "HH:MM:SS.sss"
     :rtype: str
-
-    :author: Raphael Weber
     """
 
     hour, minute, sec, msec = convertFrameToTime(frame_nb, fps)
@@ -273,8 +259,6 @@ def convertStringToDatetime(datetime_str, fmt, time_zone=None):
 
     :returns: datetime
     :rtype: datetime.datetime
-
-    :author: Raphael Weber
     """
 
     # convert string to datetime
@@ -308,8 +292,6 @@ def convertStringColonToFrame(time_string, fps):
 
     :returns: frame number
     :rtype: int
-
-    :author: Raphael Weber
     """
 
     time_string = time_string.split(':')
@@ -371,8 +353,6 @@ def convertTimeToFrame(fps, hour=0, minute=0, sec=0, msec=0):
 
     :returns: frame number
     :rtype: int
-
-    :author: Raphael Weber
     """
 
     return int(fps * (3600 * hour + 60 * minute + sec + msec / 1000))
@@ -401,8 +381,6 @@ def convertAbsoluteDatetimeStringToFrame(
 
     :returns: frame number
     :rtype: int
-
-    :author: Raphael Weber
     """
 
     date_time = convertStringToDatetime(content, "format_T", **kwargs)
@@ -427,8 +405,6 @@ def convertAbsoluteDatetimeToFrame(date_time, fps, beginning_datetime):
 
     :returns: frame number
     :rtype: int
-
-    :author: Raphael Weber
     """
 
     seconds = (date_time - beginning_datetime).total_seconds()
@@ -455,8 +431,6 @@ def convertFrameToAbsoluteDatetime(frame_nb, fps, beginning_datetime):
 
     :returns: absolute datetime
     :rtype: datetime.datetime
-
-    :author: Raphael Weber
     """
 
     hour, minute, sec, msec = convertFrameToTime(frame_nb, fps)
@@ -484,8 +458,6 @@ def convertFrameToAbsoluteTimeString(frame_nb, fps, beginning_datetime):
 
     :returns: absolute time "HH:MM:SS.sss" (date not provided)
     :rtype: str
-
-    :author: Raphael Weber
     """
 
     date_time = convertFrameToAbsoluteDatetime(
@@ -513,8 +485,6 @@ def convertMsecToAbsoluteTimeString(msec, beginning_datetime):
 
     :returns: absolute time "HH:MM:SS.sss" (date not provided)
     :rtype: str
-
-    :author: Raphael Weber
     """
 
     date_time = beginning_datetime + timedelta(milliseconds=msec)

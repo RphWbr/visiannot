@@ -179,8 +179,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             - ``"progress"``
         :type poswid_dict: dict
         :param kwargs: keyword arguments of :class:`.ViSiAnnoT` constructor
-
-        :author: Raphael Weber
         """
 
         # check input dictionaries are empty
@@ -669,8 +667,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
               first file in the long recording. Each element corresponds to one
               signal/interval and is a list with 4 elements (path to the data
               file, key to access data, frequency, plot style)
-
-        :author: Raphael Weber
         """
 
         # initialize list of configuration for the whole recording
@@ -796,8 +792,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
               the first file in the long recording. Each element corresponds to
               one interval and is a list with 7 elements (see keyword argument
               ``interval_dict`` of :class:`.ViSiAnnoT` constructor)
-
-        :author: Raphael Weber
         """
 
         # dictionary containing the curent signals configuration
@@ -887,8 +881,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
         :returns: paths to the created synchronization files
         :rtype: list
-
-        :author: Raphael Weber
         """
 
         # initialize list of synchronization files names
@@ -994,8 +986,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
         :returns: specify if the file has been effectively changed
         :rtype: bool
-
-        :author: Raphael Weber
         """
 
         # set new recording
@@ -1035,8 +1025,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
     def previousRecording(self):
         """
         Loads previous file in the long recording
-
-        :author: Raphael Weber
         """
 
         self.changeFileInLongRec(
@@ -1052,8 +1040,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
         Connected to the signal ``sigMouseClicked`` of the attribute ``scene``
         of :attr:`.ViSiAnnoTLongRec.wid_previous`.
-
-        :author: Raphael Weber
         """
 
         self.changeFileInLongRec(self.rec_id - 1, 0)
@@ -1065,8 +1051,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
         :returns: specify if the file has been effectively changed
         :rtype: bool
-
-        :author: Raphael Weber
         """
 
         ok = self.changeFileInLongRec(
@@ -1083,8 +1067,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
         Connected to the signal ``sigMouseClicked`` of the attribute ``scene``
         of :attr:`.ViSiAnnoTLongRec.wid_next`.
-
-        :author: Raphael Weber
         """
 
         self.changeFileInLongRec(self.rec_id + 1, 0)
@@ -1102,8 +1084,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
         :returns: specify if the new file has been effectively loaded
         :rtype: bool
-
-        :author: Raphael Weber
         """
 
         # check recording id
@@ -1186,8 +1166,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         :param ite_rec: index of the new file in the long recording selected
             in the combo box
         :type ite_rec: int
-
-        :author: Raphael Weber
         """
 
         # change recording

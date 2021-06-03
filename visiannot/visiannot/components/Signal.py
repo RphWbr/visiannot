@@ -42,8 +42,6 @@ class Signal():
         :type plot_style: dict
         :param legend_text: legend associated to the signal plot
         :type legend_text: str
-
-        :author: Raphael Weber
         """
 
         if data is None:
@@ -146,8 +144,6 @@ class Signal():
 
         :returns: signal data in the range [first_frame_ms:last_frame_ms]
         :rtype: numpy array
-
-        :author: Raphael Weber
         """
 
         # get start index
@@ -204,8 +200,6 @@ class Signal():
         :param new_freq: new frequency of the signal, make sure that it is
             littler than the current frequency
         :type new_freq: int or float
-
-        :author: Raphael Weber
         """
 
         # downsampling factor

@@ -19,8 +19,6 @@ class ViSiAnnoTLongRecFromConfigGUI(ViSiAnnoTLongRecFromConfigFile):
     """
     Subclass of :class:`.ViSiAnnoTLongRecFromConfigFile` for launching
     configuration GUI before launching ViSiAnnoT
-
-    :author: Raphael Weber
     """
 
     def __init__(self):

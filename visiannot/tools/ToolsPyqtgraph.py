@@ -119,8 +119,6 @@ class ProgressWidget(pg.PlotWidget):
         :type ticks_size: float or int
         :param ticks_offset: ticks text offset
         :type ticks_offset: int
-
-        :author: Raphael Weber
         """
 
         # PlotWidget initialization
@@ -265,8 +263,6 @@ class ProgressWidget(pg.PlotWidget):
 
         :param ev: emitted when the mouse is clicked/moved
         :type ev: QtGui.QMouseEvent
-
-        :author: Raphael Weber
         """
 
         # check if left button is clicked and dragging not launched
@@ -290,8 +286,6 @@ class ProgressWidget(pg.PlotWidget):
 
         :param ev: emitted when the mouse is clicked/moved
         :type ev: QtGui.QMouseEvent
-
-        :author: Raphael Weber
         """
 
         # check if dragging is launched
@@ -312,8 +306,6 @@ class ProgressWidget(pg.PlotWidget):
 
         :param ev: emitted when the mouse is clicked/moved
         :type ev: QtGui.QMouseEvent
-
-        :author: Raphael Weber
         """
 
         # check if left button release and if dragging is launched
@@ -421,8 +413,6 @@ def create2DWidget(
 
     :returns: widget
     :rtype: pyqtgraph.PlotWidget
-
-    :author: Raphael Weber
     """
 
     # create the widget
@@ -503,8 +493,6 @@ def createWidgetImage(lay, widget_position, im=None, title=None,
     :returns:
         - **widget** (:class:`.ToolsPyqtgraph.PlotWidget`) -- image container
         - **img** (*pyqtgraph.ImageItem*) -- image item
-
-    :author: Raphael Weber
     """
 
     # create the widget
@@ -540,8 +528,6 @@ def createWidgetLogo(lay, widget_position, im, box_size=None):
 
     :returns: widget containing the image
     :rtype: ToolsPyqtgraph.PlotWidget
-
-    :author: Raphael Weber
     """
 
     widget, _ = createWidgetImage(lay, widget_position, im=im)
@@ -594,8 +580,6 @@ def createWidgetSignal(
 
     :returns: widget containing the signals plots
     :rtype: ToolsPyQt.SignalWidget
-
-    :author: Raphael Weber
     """
 
     # create the widget
@@ -660,8 +644,6 @@ def setTicksTextStyle(axis_item, color="#000", size=9, offset=0):
     :type size: float or int
     :param offset: text offset
     :type offset: int
-
-    :author: Raphael Weber
     """
 
     # set ticks color
@@ -692,8 +674,6 @@ def deleteNaNForPlot(data):
         if the input array is 1D (shape :math:`(n,)`), then the first column of
         the output array contains the index of each point in the input array
     :rtype: numpy array
-
-    :author: Raphael Weber
     """
 
     if isinstance(data, list) or isinstance(data, tuple):
@@ -751,8 +731,6 @@ def addPlotTo2DWidget(
     :returns: plot item (or a list of pyqtgraph.PlotDataItem in case
         ``nan_void`` is true)
     :rtype: pyqtgraph.PlotDataItem
-
-    :author: Raphael Weber
     """
 
     if flag_clear:
@@ -804,8 +782,6 @@ def basic2DPlot(
         - **widget** (*pyqtgraph.PlotWidget*) -- 2D widget filling the whole
           layout
         - **plot** (*pyqtgraph.PlotDataItem*) -- plot item
-
-    :author: Raphael Weber
     """
 
     win, lay = createWindow(**opts_win_dict)
@@ -836,8 +812,6 @@ def basicImagePlot(im, **kwargs):
         - **widget** (*pyqtgraph.PlotWidget*) -- 2D widget filling the whole
           layout
         - **img** (*pyqtgraph.ImageItem*) -- image item
-
-    :author: Raphael Weber
     """
 
     win, lay = createWindow(**kwargs)
@@ -886,8 +860,6 @@ def addLegendTo2DWidget(
         - **legend** (*-pyqtgraph.LegendItem*) -- legend item
         - **legend_widget** (*pyqtgraph.PlotWidget*) -- widget containing the
           legend item if it has been created (otherwise ``None``)
-
-    :author: Raphael Weber
     """
 
     if position == 'inside':
@@ -1005,8 +977,6 @@ def addTextItemTo2DWidget(
         - **text_item** (*pyqtgraph.TextItem*)
         - **arrow_item** (*pyqtgraph.ArrowItem*) -- may be ``None`` if arrow
           not specified
-
-    :author: Raphael Weber
     """
 
     # create text item
@@ -1089,8 +1059,6 @@ def createWidgetColorBar(
           containing the color bar
         - **bar_img_item** (*pyqtgraph.ImageItem*) -- image item of the color
           bar
-
-    :author: Raphael Weber
     """
 
     # legend color bar image
@@ -1181,8 +1149,6 @@ def addMeanStdPlotTo2DWidget(
         - **text_item_list** (*list*) -- text items (pyqtgraph.TextItem) of the
           number of samples at each point, empty list if ``n_population_list``
           is empty
-
-    :author: Raphael Weber
     """
 
     # check shape

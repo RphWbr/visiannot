@@ -35,8 +35,6 @@ class WindowPopUp(QWidget):
         :type width: int
         :param height: window height in pixels
         :type height: int
-
-        :author: Raphael Weber
         """
 
         # create window
@@ -66,8 +64,6 @@ class WindowPopUp(QWidget):
         :param scroll_lay: layout filling the scroll that must contain the
             label
         :type scroll_lay: QtWidgets.QGridLayout
-
-        :author: Raphael Weber
         """
 
         # create label
@@ -89,8 +85,6 @@ class WindowAbout(WindowPopUp):
     def __init__(self):
         """
         Pop-up window with information about **ViSiAnnoT**
-
-        :author: Raphael Weber
         """
 
         # call base class constructor
@@ -150,8 +144,6 @@ class WindowLicense(WindowPopUp):
     def __init__(self):
         """
         Pop-up window with **ViSiAnnoT** License
-
-        :author: Raphael Weber
         """
 
         # call base class constructor

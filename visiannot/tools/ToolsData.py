@@ -37,8 +37,6 @@ def getWorkingDirectory(path):
 
     :param path: typically ``__file``
     :type path: str
-
-    :author: Raphael Weber
     """
 
     if hasattr(sys, "_MEIPASS"):
@@ -151,8 +149,6 @@ def getDataInterval(path, key=""):
     :returns: numpy array of shape :math:`(n_{intervals},2)` with intervals in
         frames number
     :rtype: numpy array
-
-    :author: Raphael Weber
     """
 
     if isfile(path):
@@ -192,8 +188,6 @@ def getDataIntervalAsTimeSeries(path, n_samples, key=""):
     :returns: numpy array of shape :math:`(n_{samples},)` with intervals as a
         time series of 0 and 1
     :rtype: numpy array
-
-    :author: Raphael Weber
     """
 
     if isfile(path):
@@ -243,8 +237,6 @@ def getDataGeneric(path, key="", **kwargs):
     :rtype: numpy array
 
     It raises an exception if the format is not supported.
-
-    :author: Raphael Weber
     """
 
     ext = path.split('.')[-1]
@@ -282,8 +274,6 @@ def getDataMat(path, key):
 
     :returns: data
     :rtype: numpy array
-
-    :author: Raphael Weber
     """
 
     # try opening with loadmat, otherwise with h5py
@@ -306,8 +296,6 @@ def getAttributeH5(path, key_path):
     :type key_path: str
 
     :returns: attribute
-
-    :author: Raphael Weber
     """
 
     dataset_path, key = split(key_path)
@@ -334,8 +322,6 @@ def getAttributeGeneric(path, key):
     If the file is not mat or h5, it returns key.
 
     :returns: attribute
-
-    :author: Raphael Weber
     """
 
     ext = path.split('.')[-1]
@@ -370,8 +356,6 @@ def recursiveReadH5(parent_item):
 
     :returns: all data contained in ``parent_item``
     :rtype: dict or numpy array
-
-    :author: Raphael Weber
     """
 
     # check if parent item is a dataset
@@ -414,8 +398,6 @@ def getDataH5(path, root_path='/'):
     - (*numpy array*) -- in case ``root_path`` points to a H5 dataset
     - ``None`` -- in case ``root_path`` points to a location that is not in the
       file
-
-    :author: Raphael Weber
     """
 
     with File(path, 'r') as f:

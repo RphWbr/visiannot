@@ -344,8 +344,6 @@ class ViSiAnnoT():
         :param height_widget_signal: minimum height in pixel of the signal
             widgets
         :type height_widget_signal: int
-
-        :author: Raphael Weber
         """
 
         # check input dictionaries are empty
@@ -1277,8 +1275,6 @@ class ViSiAnnoT():
 
         :returns: list of strings
         :rtype: list
-
-        :author: Raphael Weber
         """
 
         trunc_list = []
@@ -1325,8 +1321,6 @@ class ViSiAnnoT():
             - ``(first_frame, last_frame, freq)``, the temporal range is
               expressed in number of frames sampled at the frequency ``freq``
         :type temporal_info: list
-
-        :author: Raphael Weber
         """
 
         start = temporal_info[0]
@@ -1444,8 +1438,6 @@ class ViSiAnnoT():
         :type poswid_dict: dict
         :param font_title: font of the widget title
         :type font_title: dict
-
-        :author: Raphael Weber
         """
 
         for video_id, (video_path, _, _, _) in video_dict.items():
@@ -1521,8 +1513,6 @@ class ViSiAnnoT():
         :param height_widget_signal: minimum height in pixels of the signal
             widgets
         :type height_widget_signal: int
-
-        :author: Raphael Weber
         """
 
         # get current range in milliseconds
@@ -1640,8 +1630,6 @@ class ViSiAnnoT():
         :returns: RGB image of the current frame, shape
             :math:`(width, height, 3)`
         :rtype: numpy array
-
-        :author: Raphael Weber
         """
 
         # check data video
@@ -1675,8 +1663,6 @@ class ViSiAnnoT():
 
         It updates the attribute :attr:`.im_dict` with the image at
         the current frame.
-
-        :author: Raphael Weber
         """
 
         # check if the process still goes on
@@ -1696,8 +1682,6 @@ class ViSiAnnoT():
 
         It sets the value of :attr:`.flag_processing` to ``False`` so
         that the thread :attr:`.update_frame_thread` is stopped.
-
-        :author: Raphael Weber
         """
 
         self.timer.stop()
@@ -1780,8 +1764,6 @@ class ViSiAnnoT():
         ``False``.
 
         It increments the value of :attr:`.frame_id`.
-
-        :author: Raphael Weber
         """
 
         # in order to get processing time for updating plot
@@ -1813,8 +1795,6 @@ class ViSiAnnoT():
 
         :param frame_id: new current frame index
         :type frame_id: int
-
-        :author: Raphael Weber
         """
 
         # update frame ID
@@ -1834,8 +1814,6 @@ class ViSiAnnoT():
         Updates the title of the progress bar :attr:`.wid_progress`
         with the values of the current temporal range defined by
         :attr:`.first_frame` and :attr:`.last_frame`
-
-        :author: Raphael Weber
         """
 
         current_range_string = ToolsDateTime.convertFrameToString(
@@ -1875,8 +1853,6 @@ class ViSiAnnoT():
 
         The attribute :attr:`.current_cursor_list` is set in order to
         update the position of the temporal cursor in the signal widgets.
-
-        :author: Raphael Weber
         """
 
         # check if frame_id overtakes the current range
@@ -1966,8 +1942,6 @@ class ViSiAnnoT():
         :param flag_reset_combo_from_cursor: specify if the combo box
             :attr:`.combo_from_cursor` must be reset
         :type flag_reset_combo_from_cursor: bool
-
-        :author: Raphael Weber
         """
 
         # reset combo boxes
@@ -2117,8 +2091,6 @@ class ViSiAnnoT():
             same region), first element displayed in the progress bar widget,
             remaining elements displayed in the widget signals
         :rtype: list
-
-        :author: Raphael Weber
         """
 
         region_list = []
@@ -2172,8 +2144,6 @@ class ViSiAnnoT():
 
         :returns: instances of pyqtgraph.LinearRegionItem
         :rtype: list
-
-        :author: Raphael Weber
         """
 
         region_list = []
@@ -2225,8 +2195,6 @@ class ViSiAnnoT():
             a signal widget, same length and order as
             :attr:`wid_data_list`
         :rtype: list
-
-        :author: Raphael Weber
         """
 
         # initialize list of text items
@@ -2271,8 +2239,6 @@ class ViSiAnnoT():
 
         :returns: region item displayed in the widget
         :rtype: pyqtgraph.LinearRegionItem
-
-        :author: Raphael Weber
         """
 
         # pen disabled for linux compatibility
@@ -2312,8 +2278,6 @@ class ViSiAnnoT():
         Connected to the signal ``sigPlotChanged`` of the scatter plot item of
         :attr:`.wid_progress` (accessed with the method
         :meth:`graphicsoverlayer.ToolsPyqtgraph.ProgressWidget.getProgressPlot`).
-
-        :author: Raphael Weber
         """
 
         # check if dragging
@@ -2354,8 +2318,6 @@ class ViSiAnnoT():
 
         :param cursor: temporal cursor that is dragged
         :type cursor: pyqtgraph.InfiniteLine
-
-        :author: Raphael Weber
         """
 
         # update frame id (convert frame id from signal to ref)
@@ -2374,8 +2336,6 @@ class ViSiAnnoT():
         :param position: frame number (sampled at the reference frequency
             :attr:`.ViSiAnnoT.fps`)
         :type position: int
-
-        :author: Raphael Weber
         """
 
         # check if temporal_position is in the current range
@@ -2406,8 +2366,6 @@ class ViSiAnnoT():
 
         :param ev: emitted when the mouse is clicked/moved
         :type ev: QtGui.QMouseEvent
-
-        :author: Raphael Weber
         """
 
         keyboard_modifiers = ev.modifiers()
@@ -2450,8 +2408,6 @@ class ViSiAnnoT():
             signal widget, it returns ``[]`` if the mouse clicked on a label
             item (most likely the widget title)
         :rtype: list
-
-        :author: Raphael Weber
         """
 
         # check what is being clicked
@@ -2484,8 +2440,6 @@ class ViSiAnnoT():
             - **position_ms** (*float*) -- position of the mouse on the X axis
               in milliseconds, ``-1`` if the mouse clicked on a label item
               (most likely the widget title)
-
-        :author: Raphael Weber
         """
 
         # check what is being clicked
@@ -2514,8 +2468,6 @@ class ViSiAnnoT():
         :type pos_frame: int
         :param pos_ms: mouse position on the X axis in milliseconds
         :type pos_ms: int
-
-        :author: Raphael Weber
         """
 
         keyboard_modifiers = ev.modifiers()
@@ -2625,8 +2577,6 @@ class ViSiAnnoT():
         It sets :attr:`.first_frame` to ``0`` and
         :attr:`.last_frame` to :attr:`.nframes`. Then it
         calls the method :meth:`.updateSignalPlot`.
-
-        :author: Raphael Weber
         """
 
         # update range: all video
@@ -2643,8 +2593,6 @@ class ViSiAnnoT():
 
         Connected to the signal ``sigMouseClicked`` of the scene attribute of
         :attr:`.wid_zoomin`.
-
-        :author: Raphael Weber
         """
 
         # get current X axis range
@@ -2680,8 +2628,6 @@ class ViSiAnnoT():
 
         Connected to the signal ``sigMouseClicked`` of the scene attribute of
         :attr:`.wid_zoomout`.
-
-        :author: Raphael Weber
         """
 
         # get current X axis range
@@ -2722,8 +2668,6 @@ class ViSiAnnoT():
 
         Connected to the signal ``clicked`` of
         :attr:`.annotimage_push_button`.
-
-        :author: Raphael Weber
         """
 
         # get current label
@@ -2787,8 +2731,6 @@ class ViSiAnnoT():
 
         :param new_label: new annotation label
         :type new_label: str
-
-        :author: Raphael Weber
         """
 
         # update current label
@@ -2846,8 +2788,6 @@ class ViSiAnnoT():
         :returns: paths of the annotation files, each element corresponds to an
             annotation type (see :attr:`.annotevent_type_list`)
         :rtype: list
-
-        :author: Raphael Weber
         """
 
         annotevent_path_list = []
@@ -2875,8 +2815,6 @@ class ViSiAnnoT():
         :param annot_position: specify if start timestamp (``0``) or end
             timestamp (``1``)
         :type annot_position: int
-
-        :author: Raphael Weber
         """
 
         if (annot_position == 0 or annot_position == 1) and \
@@ -2903,8 +2841,6 @@ class ViSiAnnoT():
 
         It sets ``ViSiAnnoT.annotevent_array[ViSiAnnoT.annotevent_current_label_id]``
         to zeros.
-
-        :author: Raphael Weber
         """
 
         # reset the beginning and ending times of the annotated interval
@@ -2925,8 +2861,6 @@ class ViSiAnnoT():
 
         If the annotation start timestamp or end timestamp is not defined, then
         nothing happens.
-
-        :author: Raphael Weber
         """
 
         # check if beginning time or ending of the annotated interval is empty
@@ -2995,8 +2929,6 @@ class ViSiAnnoT():
         :returns: index of the annotation (i.e. line number in the annotation
             file), returns ``-1`` if no annotation at ``position``
         :rtype: int
-
-        :author: Raphael Weber
         """
 
         # initialize output
@@ -3048,8 +2980,6 @@ class ViSiAnnoT():
         :param pos_ms: mouse position on the X axis of the signal widget in
             milliseconds
         :type pos_ms: float
-
-        :author: Raphael Weber
         """
 
         # get annotation ID that has been clicked
@@ -3130,8 +3060,6 @@ class ViSiAnnoT():
             :attr:`.ViSiAnnoT.fps`) corresponding to the mouse position on the
             X axis of the signal widgets
         :type position: int
-
-        :author: Raphael Weber
         """
 
         # get annotated event ID
@@ -3152,8 +3080,6 @@ class ViSiAnnoT():
         :type path: str
         :param line_id: number of the line to delete (zero-indexed)
         :type line_id: int
-
-        :author: Raphael Weber
         """
 
         # read annotation file lines
@@ -3173,8 +3099,6 @@ class ViSiAnnoT():
 
         :param annot_id: index of the annotation to delete
         :type annot_id: int
-
-        :author: Raphael Weber
         """
 
         # delete annotation in the txt file
@@ -3219,8 +3143,6 @@ class ViSiAnnoT():
     def annotEventShow(self):
         """
         Mananges the display of events annotation (on/off)
-
-        :author: Raphael Weber
         """
 
         # if display mode is off, put it on
@@ -3259,8 +3181,6 @@ class ViSiAnnoT():
 
         :param button_id: index of the button that has been pushed
         :type button_id: int
-
-        :author: Raphael Weber
         """
 
         # set beginning time of the annotated interval
@@ -3303,8 +3223,6 @@ class ViSiAnnoT():
         Connected to the signal ``buttonClicked`` of
         :attr:`.annotevent_button_group_radio_disp` and
         :attr:`.annotevent_button_group_check_custom`.
-
-        :author: Raphael Weber
         """
 
         # check if display mode is on
@@ -3385,8 +3303,6 @@ class ViSiAnnoT():
         """
         Clears the display of events annotation for all labels (but does not
         delete the annotations)
-
-        :author: Raphael Weber
         """
 
         # loop on labels
@@ -3401,8 +3317,6 @@ class ViSiAnnoT():
         :param label_id: index of the label in the list
             :attr:`.ViSiAnnoT.annotevent_label_list`
         :type label_id: int
-
-        :author: Raphael Weber
         """
 
         # clear annotations display
@@ -3423,8 +3337,6 @@ class ViSiAnnoT():
     def clearAllAnnotEventDescriptions(self):
         """
         Clears the display of all the descriptions of events annotation
-
-        :author: Raphael Weber
         """
 
         for description_dict in self.annotevent_description_dict.values():
@@ -3449,8 +3361,6 @@ class ViSiAnnoT():
         :type bound_2: str
         :param kwargs: keyword arguments of
             :meth:`.ViSiAnnoT.addRegionToWidgets`
-
-        :author: Raphael Weber
         """
 
         # convert bounds to frame numbers
@@ -3504,8 +3414,6 @@ class ViSiAnnoT():
         :param ite_trunc: index of the selected value in the combo box
             :attr:`.combo_trunc`
         :type ite_trunc: int
-
-        :author: Raphael Weber
         """
 
         # check if the value selected in the combo box is not the first one
@@ -3540,8 +3448,6 @@ class ViSiAnnoT():
         :param ite_combo: index of the selected value in the combo box
             :attr:`.combo_from_cursor`
         :type ite_combo: int
-
-        :author: Raphael Weber
         """
 
         # check if the value selected in the combo box is not empty
@@ -3567,8 +3473,6 @@ class ViSiAnnoT():
         frame :attr:`.ViSiAnnoT.frame_id`
 
         Connected to the signal ``clicked`` of :attr:`.ViSiAnnoT.current_push`.
-
-        :author: Raphael Weber
         """
 
         current_datetime = ToolsDateTime.convertFrameToAbsoluteDatetime(
@@ -3600,8 +3504,6 @@ class ViSiAnnoT():
 
         Connected to the signal ``clicked`` of
         :attr:`.time_edit_push`.
-
-        :author: Raphael Weber
         """
 
         # get duration time edit
@@ -3733,8 +3635,6 @@ class ViSiAnnoT():
 
         :param ev: emmited when a key is pressed
         :type ev: QtGui.QKeyEvent
-
-        :author: Raphael Weber
         """
 
         keyboard_modifiers = ev.modifiers()
@@ -3841,8 +3741,6 @@ class ViSiAnnoT():
 
         :param ev: emmited when a key is released
         :type ev: QtGui.QKeyEvent
-
-        :author: Raphael Weber
         """
 
         # get released key
@@ -3883,8 +3781,6 @@ class ViSiAnnoT():
         :param widget_position: position of the widget in the layout, length 2
             ``(row, col)`` or 4 ``(row, col, rowspan, colspan)``
         :type widget_position: list or tuple
-
-        :author: Raphael Weber
         """
 
         # create group box
@@ -3941,8 +3837,6 @@ class ViSiAnnoT():
         :type ticks_size: float
         :param ticks_offset: ticks text offset
         :type ticks_offset: int
-
-        :author: Raphael Weber
         """
 
         # create widget containing the progress bar
@@ -3990,8 +3884,6 @@ class ViSiAnnoT():
         :param widget_position: position of the widget in the layout, length 2
             ``(row, col)`` or 4 ``(row, col, rowspan, colspan)``
         :type widget_position: list or tuple
-
-        :author: Raphael Weber
         """
 
         # create group box
@@ -4084,8 +3976,6 @@ class ViSiAnnoT():
         :type widget_position: list or tuple
         :param flag_horizontal: specify if radio buttons are horizontal
         :type flag_horizontal: bool
-
-        :author: Raphael Weber
         """
 
         # create widget with radio buttons (annotation labels)
@@ -4170,8 +4060,6 @@ class ViSiAnnoT():
         :param interval_dict: same as keyword argument of :class:`.ViSiAnnoT`
             constructor
         :type interval_dict: dict
-
-        :author: Raphael Weber
         """
 
         # ******************************************************************* #
@@ -4429,8 +4317,6 @@ class ViSiAnnoT():
         :returns:
             - **path** (*str*) -- path to the signal file
             - **start_sec** (*int*) -- start second
-
-        :author: Raphael Weber
         """
 
         # get data file name and starting second
@@ -4464,8 +4350,6 @@ class ViSiAnnoT():
 
         :returns: signal data synchronized with video
         :rtype: numpy array
-
-        :author: Raphael Weber
         """
 
         # read temporary file

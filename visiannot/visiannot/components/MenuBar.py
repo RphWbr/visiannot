@@ -13,8 +13,6 @@ Module defining :class:`.MenuBar`
 from . import WindowsPopUp
 from PyQt5.QtWidgets import QMenuBar, QAction
 import webbrowser
-from os.path import normpath, sep, join, abspath
-import sys
 
 
 class MenuBar(QMenuBar):
@@ -30,8 +28,6 @@ class MenuBar(QMenuBar):
 
         In order to add a menu or an action, the method
         :meth:`.addMenuAndActions` may be used.
-
-        :author: Raphael Weber
         """
 
         # call parent class constructor
@@ -74,8 +70,6 @@ class MenuBar(QMenuBar):
             corresponds one action, key is the action name, value is the slot
             method to be called when activating the action
         :type action_dict: dict
-
-        :author: Raphael Weber
         """
 
         # add menu to menu bar

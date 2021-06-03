@@ -27,8 +27,6 @@ class ViSiAnnoTLongRecFromConfigFile(ViSiAnnoTLongRec):
     :param path_config: path to the configuration file, it may be directly a
         configuration dictionary
     :type path_config: str or dict
-
-    :author: Raphael Weber
     """
 
     def __init__(self, path_config):

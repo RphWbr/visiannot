@@ -41,8 +41,6 @@ def transformImage(im, RGB_combination="BGR", flag_transpose=True):
 
     If ``im`` is not a numpy array or is not a 3D array, then the output is
     ``im``.
-
-    :author: Raphael Weber
     """
 
     if not isinstance(im, np.ndarray) or im.ndim != 3:
@@ -78,8 +76,6 @@ def readImage(path):
 
     :returns: RGB image array of shape :math:`(width, height, 3)`
     :rtype: numpy array
-
-    :author: Raphael Weber
     """
 
     im = imread(path)
@@ -102,8 +98,6 @@ def getDataVideo(path):
         - **date_time** (*datetime.datetime*) -- beginning date-time of the
           video file (this information must be provided in the name of the
           video file, see :func:`.ToolsDateTime.getFileDatetimeString`)
-
-    :author: Raphael Weber
     """
 
     # get video data

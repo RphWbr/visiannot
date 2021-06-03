@@ -26,8 +26,6 @@ def getAudioWaveFrequency(path):
         - **data_wave** (*wave.Wave_read*) -- see
           https://docs.python.org/3/library/wave.html#wave-read-objects
         - **freq** (*int* or *float*) -- frequency
-
-    :author: Raphael Weber
     """
 
     # get audio wave
@@ -55,8 +53,6 @@ def getDataAudio(path, channel_id=0):
         - **data_audio** (*numpy array*) -- audio signal, with all channels
           if ``channel_id`` is set to ``-1``
         - **freq** (*int*) -- frequency
-
-    :author: Raphael Weber
     """
 
     # get audio wave and frequency
@@ -99,8 +95,6 @@ def convertKeyToChannelId(key_data):
 
     :returns: channel ID
     :rtype: int
-
-    :author: Raphael Weber
     """
 
     key_data_lower = key_data.lower()

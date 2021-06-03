@@ -31,8 +31,6 @@ def readAnnotation(path, delimiter=" - "):
         time of the annotation and the second column is the end time of the
         annotation, or shape :math:`(0,2)` if empty annotation
     :rtype: numpy array
-
-    :author: Raphael Weber
     """
 
     annot_array = np.loadtxt(path, dtype=str, delimiter=delimiter, ndmin=2)
@@ -115,8 +113,6 @@ def readAnnotFrames(path, nb_files=-1, delimiter=" - "):
          [],
          [],
          []]
-
-    :author: Raphael Weber
     """
 
     # initialize output dictionary
@@ -189,8 +185,6 @@ def convertAnnotArray(
 
     :returns: 1D numpy array with the annotation as a time series of 0 and 1
     :rtype: numpy array
-
-    :author: Raphael Weber
     """
 
     # compute factor between predictions frame rate and video frame rate
