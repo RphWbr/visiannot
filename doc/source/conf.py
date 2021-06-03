@@ -21,7 +21,7 @@ import sys
 
 path = dirname(abspath(__file__))
 sys.path.insert(0, abspath('.'))
-sys.path.insert(0, abspath(join(path, '..', '..')))
+# sys.path.insert(0, abspath(join(path, '..', '..')))
 
 from visiannot import __version__ as version
 from datetime import datetime
