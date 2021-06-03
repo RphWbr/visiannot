@@ -27,6 +27,12 @@ from visiannot import __version__ as version
 from datetime import datetime
 
 
+from summaryGroups import setPackageName
+setPackageName("visiannot")
+from summaryGroups import setup
+
+
+
 # -- Project information -----------------------------------------------------
 
 project = 'ViSiAnnoT'
