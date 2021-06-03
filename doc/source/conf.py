@@ -22,6 +22,7 @@ import sys
 path = dirname(abspath(__file__))
 sys.path.insert(0, abspath('.'))
 sys.path.insert(0, abspath(join(path, '..', '..')))
+sys.path.insert(0, abspath(join(path, '..', '..', 'visiannot')))
 
 import visiannot
 from datetime import datetime
