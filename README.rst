@@ -88,4 +88,4 @@ If you encounter a bug, feel free to raise an issue on [GitHub](https://github.c
 Used by
 -------
 
-**ViSiAnnoT** has been used in several clinical studies during the time of initial developments, with a particular focus in pediatrics. In particular, it has been used in a study on quiet sleep organization that has been published in the following article, where is introduced **ViSiAnnoT**: [Quiet Sleep Organization of Very Preterm Infants Is Correlated With Postnatal Maturation](https://www.frontiersin.org/articles/10.3389/fped.2020.559658/full).
+**ViSiAnnoT** has been used in several clinical studies during the time of initial developments, with a particular focus in pediatrics. In particular, it has been used in a study on quiet sleep organization that has been published in the following article, where is introduced **ViSiAnnoT**: `Quiet Sleep Organization of Very Preterm Infants Is Correlated With Postnatal Maturation <https://www.frontiersin.org/articles/10.3389/fped.2020.559658/full>`_.
