@@ -27,14 +27,15 @@ The main features are:
 Documentation
 -------------
 
-Documentation is hosted on [ReadTheDocs](https://visiannot.readthedocs.io/en/latest/index.html).
+Documentation is hosted on `ReadTheDocs <https://visiannot.readthedocs.io/en/latest/index.html>`_.
 
 
 
 Installation
 ------------
 
-**Pip**
+Pip
+^^^
 
 The easiest way is to install **ViSiAnnoT** with ``pip``:
 
@@ -43,7 +44,8 @@ The easiest way is to install **ViSiAnnoT** with ``pip``:
 You may need to call ``pip3`` instead.
 
 
-**From source**
+From source
+^^^^^^^^^^^
 
 You may install **ViSiAnnoT** from source:
 
@@ -52,7 +54,8 @@ You may install **ViSiAnnoT** from source:
     $ pip install .
 
 
-**Depedencies**
+Depedencies
+^^^^^^^^^^^
 
 **ViSiAnnoT** requires Python 3.6+.
 
@@ -60,14 +63,14 @@ It is cross-platform and has been tested on Windows 7/10, Ubuntu 16/18/20 and Ma
 
 The following packages are required and are automatically installed with ``pip``: 
 
-* [configobj](https://pypi.org/project/configobj/) (saving and loading configuration files)
-* [opencv-python](https://opencv.org/)
-* [h5py](https://pypi.org/project/h5py/)
-* [numpy](https://numpy.org/)
-* [PyQt5](https://pypi.org/project/PyQt5/) (GUI creation)
-* [pyqtgraph](http://pyqtgraph.org/) (video and signal plots)
-* [pytz](https://pypi.org/project/pytz/) (used for date-time comparison)
-* [scipy](https://www.scipy.org/)
+* `configobj <https://pypi.org/project/configobj/>`_ (saving and loading configuration files)
+* `opencv-python <https://opencv.org/>`_
+* `h5py <https://pypi.org/project/h5py/>`_()
+* `numpy <https://numpy.org/>`_
+* `PyQt5 <https://pypi.org/project/PyQt5/>`_ (GUI creation)
+* `pyqtgraph <http://pyqtgraph.org/>`_ (video and signal plots)
+* `pytz <https://pypi.org/project/pytz/>`_ (used for date-time comparison)
+* `scipy <https://www.scipy.org/>`_
 
 
 Support
