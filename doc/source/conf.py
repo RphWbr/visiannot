@@ -24,7 +24,7 @@ sys.path.insert(0, abspath('.'))
 sys.path.insert(0, abspath(join(path, '..', '..')))
 sys.path.insert(0, abspath(join(path, '..', '..', 'visiannot')))
 
-import visiannot
+from visiannot import __version__ as version
 from datetime import datetime
 
 
@@ -73,11 +73,11 @@ copyright = '2020-%s, Université Rennes 1' % datetime.today().year
 author = 'Raphael Weber'
 
 # The full version, including alpha/beta/rc tags
-release = visiannot.__version__
+release = version
 
 # The short X.Y version
-# version = '.'.join(release.split('.')[:2])
-version = '0.0.9'
+# version = '.'.join(version.split('.')[:2])
+version = '0.0.10'
 
 
 # -- General configuration ---------------------------------------------------
