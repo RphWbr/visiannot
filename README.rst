@@ -66,8 +66,8 @@ It is cross-platform and has been tested on Windows 7/10, Ubuntu 16/18/20 and Ma
 The following packages are required and are automatically installed with ``pip``: 
 
 * `configobj <https://pypi.org/project/configobj/>`_ (saving and loading configuration files)
-* `opencv-python <https://opencv.org/>`_
-* `h5py <https://pypi.org/project/h5py/>`_()
+* `opencv <https://opencv.org/>`_
+* `h5py <https://pypi.org/project/h5py/>`_
 * `numpy <https://numpy.org/>`_
 * `PyQt5 <https://pypi.org/project/PyQt5/>`_ (GUI creation)
 * `pyqtgraph <http://pyqtgraph.org/>`_ (video and signal plots)
