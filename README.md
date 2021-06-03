@@ -34,7 +34,7 @@ Documentation is hosted on [ReadTheDocs](https://visiannot.readthedocs.io/en/lat
 
 ### Pip
 
-The easiest way is to install **ViSiAnnoT** with ``pip``::
+The easiest way is to install **ViSiAnnoT** with ``pip``:
 
     $ pip install visiannot
 
@@ -43,7 +43,7 @@ You may need to call ``pip3`` instead.
 
 ### From source
 
-You may install **ViSiAnnoT** from source::
+You may install **ViSiAnnoT** from source:
 
     $ git clone https://github.com/RphWbr/visiannot
     $ cd visiannot
