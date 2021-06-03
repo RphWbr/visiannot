@@ -1,12 +1,19 @@
-from setuptools import setup, find_packages
+from setuptools import setup
+from visiannot import __version__ as version
+
+
+description = """\
+Graphical user interface for visualization and annotation of
+video and signal data
+"""
 
 with open("README.md", 'r') as f:
     long_description = f.read()
 
 setup(
     name='visiannot',
-    version='0.0.10',    
-    description='Graphical user interface for visualization and annotation of video and signal data',
+    version=version,    
+    description=description,
     long_description=long_description,
     long_description_content_type="text/markdown",
     url='https://github.com/RphWbr/visiannot',
