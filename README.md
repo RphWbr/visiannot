@@ -1,5 +1,4 @@
-ViSiAnnoT
-=========
+# ViSiAnnoT
 
 **ViSiAnnoT** (Video Signal Annotation Tool) is a package that provides a graphical user interface for the visualization and annotation of video and signal data.
 
@@ -24,46 +23,60 @@ The main features are:
 ![Screenshot of ViSiAnnoT](doc/source/images/layout_mode_2.PNG)
 
 
-Depedencies
------------
+## Documentation
 
-It mainly relies on [PyQt5](https://pypi.org/project/PyQt5/) for the GUI, on [PyQtGraph](http://pyqtgraph.org/) for video and signal plots and on [OpenCV](https://opencv.org/) for loading video data. Saving and loading configuration files is achieved with [Configobj](https://pypi.org/project/configobj/). [Pytz](https://pypi.org/project/pytz/) is used for date-time comparison. [H5py](https://pypi.org/project/h5py/) is used for reading hdf5 files.
-
-The other packages are rather common in most Python distributions.
-
-Here is an exhaustive list of required packages: 
-
-* ast
-* collections
-* configobj
-* cv2
-* datetime
-* glob
-* h5py
-* numpy
-* os
-* pickle
-* PyQt5
-* pyqtgraph
-* pytz
-* scipy
-* shutil
-* sys
-* threading
-* time
-* wave
+Documentation is hosted on [ReadTheDocs](https://visiannot.readthedocs.io/en/latest/index.html).
 
 
-Installation
+
+## Installation
 ------------
-TODO
+
+### Pip
+
+The easiest way is to install **ViSiAnnoT** with ``pip``::
+
+    $ pip install visiannot
+
+You may need to call ``pip3`` instead.
 
 
-Documentation
--------------
-TODO
+### From source
+
+You may install **ViSiAnnoT** from source::
+
+    $ git clone https://github.com/RphWbr/visiannot
+    $ cd visiannot
+    $ pip install .
 
 
-Used by
--------
+### Depedencies
+
+**ViSiAnnoT** requires Python 3.6+.
+
+It is cross-platform and has been tested on Windows 7/10, Ubuntu 16/18/20 and MacOS Mojave/Catalina.
+
+The following packages are required and are automatically installed with ``pip``: 
+
+* [configobj](https://pypi.org/project/configobj/) (saving and loading configuration files)
+* [opencv-python](https://opencv.org/)
+* [h5py](https://pypi.org/project/h5py/)
+* [numpy](https://numpy.org/)
+* [PyQt5](https://pypi.org/project/PyQt5/) (GUI creation)
+* [pyqtgraph](http://pyqtgraph.org/) (video and signal plots)
+* [pytz](https://pypi.org/project/pytz/) (used for date-time comparison)
+* [scipy](https://www.scipy.org/)
+
+
+## Support
+
+This package is developed at the LTSI Lab, INSERM-1099, located at Université Rennes 1, France.
+
+For any enquiry, please send an email to raphael.weber@univ-rennes1.fr.
+
+If you encounter a bug, feel free to raise an issue on [GitHub](https://github.com/RphWbr/visiannot/issues).
+
+
+## Used by
+
 **ViSiAnnoT** has been used in several clinical studies during the time of initial developments, with a particular focus in pediatrics. In particular, it has been used in a study on quiet sleep organization that has been published in the following article, where is introduced **ViSiAnnoT**: [Quiet Sleep Organization of Very Preterm Infants Is Correlated With Postnatal Maturation](https://www.frontiersin.org/articles/10.3389/fped.2020.559658/full).

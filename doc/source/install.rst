@@ -2,44 +2,40 @@
 Installation
 ============
 
-Clone repository
-================
+Pip
+===
 
-TODO
+The easiest way is to install **ViSiAnnoT** with ``pip``::
+
+    $ pip install visiannot
+
+You may need to call ``pip3`` instead.
 
 
-Pip install
+From source
 ===========
 
-TODO
+You may install **ViSiAnnoT** from source::
+
+    $ git clone https://github.com/RphWbr/visiannot
+    $ cd visiannot
+    $ pip install .
 
 
 Depedencies
 ===========
 
-**ViSiAnnoT** was initially developped using Python 3.5.4 on Windows 7, then using Python 3.8.5 on Ubuntu 20. It is cross-platform and has been tested on Windows 7/10, Ubuntu 16/18/20 and MacOS Mojave/Catalina.
+**ViSiAnnoT** requires Python 3.6+.
 
-It mainly relies on `PyQt5 <https://pypi.org/project/PyQt5/>`_ for the GUI, on `PyQtGraph <http://pyqtgraph.org/>`_ for video and signal plots and on `OpenCV <https://opencv.org/>`_ for loading video data. Saving and loading configuration files is achieved with `Configobj <https://pypi.org/project/configobj/>`_. `Pytz <https://pypi.org/project/pytz/>`_ is used for date-time comparison. `H5py <https://pypi.org/project/h5py/>`_ is used for reading hdf5 files.
+It is cross-platform and has been tested on Windows 7/10, Ubuntu 16/18/20 and MacOS Mojave/Catalina.
 
-The other packages are rather common in most Python distributions.
+The following packages are required and are automatically installed with ``pip``: 
 
-Here is an exhaustive list of required packages: 
-
-* ast
-* collections
-* configobj
-* cv2
-* datetime
-* glob
-* h5py
-* numpy
-* os
-* PyQt5
-* pyqtgraph
-* pytz
-* scipy
-* shutil
-* sys
-* threading
-* time
-* wave
+* `configobj <https://pypi.org/project/configobj/>`_ (saving and loading configuration files)
+* `opencv-python <https://opencv.org/>`_
+* `h5py <https://pypi.org/project/h5py/>`_
+* `numpy <https://numpy.org/>`_
+* `PyQt5 <https://pypi.org/project/PyQt5/>`_ (GUI creation)
+* `pyqtgraph <http://pyqtgraph.org/>`_ (video and signal plots)
+* `pytz <https://pypi.org/project/pytz/>`_ (used for date-time comparison)
+* `scipy <https://www.scipy.org/>`_

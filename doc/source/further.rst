@@ -10,3 +10,4 @@ Further developments could include the following:
 * Additional annotation tools
 * Performance optimization for real-time video playback
 * Split :class:`.ViSiAnnoT` into several classes
+* Set up Python tests

@@ -14,6 +14,7 @@ Welcome to ViSiAnnoT's documentation!
    intro
    license
    install
+   support
    userguide-visiannot
    userguide-configuration
    userguide-toolspyqt
