@@ -82,7 +82,7 @@ This package is developed at the LTSI Lab, INSERM-1099, located at Université R
 
 For any enquiry, please send an email to raphael.weber@univ-rennes1.fr.
 
-If you encounter a bug, feel free to raise an issue on [GitHub](https://github.com/RphWbr/visiannot/issues).
+If you encounter a bug, feel free to raise an issue on `GitHub <https://github.com/RphWbr/visiannot/issues>`_.
 
 
 Used by
