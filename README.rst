@@ -5,21 +5,21 @@ ViSiAnnoT
 
 The main features are:
 
-- Simultaneous visualization of several videos
-- Simultaneous visualization of several signals
+* Simultaneous visualization of several videos
+* Simultaneous visualization of several signals
 
-    - Regularly sampled or not
-    - Zoom on signals
-    - Plot thresholds on signals
-    - Plot temporal intervals on signals
-- Combined visualization of videos and signals
-- Management of long recordings (split in several files)
+    * Regularly sampled or not
+    * Zoom on signals
+    * Plot thresholds on signals
+    * Plot temporal intervals on signals
+* Combined visualization of videos and signals
+* Management of long recordings (split in several files)
 
-    - Automatic synchronization between the different modalities
-    - Tools for fast navigation
-- Multi-label annotation of temporal events
-- Multi-label image extraction
-- Configuration via a graphical user interface
+    * Automatic synchronization between the different modalities
+    * Tools for fast navigation
+* Multi-label annotation of temporal events
+* Multi-label image extraction
+* Configuration via a graphical user interface
 
 ![Screenshot of ViSiAnnoT](doc/source/images/layout_mode_2.png)
 
