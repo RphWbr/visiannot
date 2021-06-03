@@ -97,22 +97,8 @@ class MenuBar(QMenuBar):
     def openDocumentation():
         """
         Static method for launching the default web browser and loading
-        **ViSiAnnoT** HTML documentation
+        **ViSiAnnoT** ReadTheDocs documentation
         """
 
-        # check if ViSiAnnoT launched as an executable
-        if hasattr(sys, "_MEIPASS"):
-            dir_tmp_exe = abspath(getattr(sys, "_MEIPASS"))
-            doc_path = join(dir_tmp_exe, "doc_html", "index.html")
-
-        else:
-            component_list = normpath(__file__).split(sep)[:-4]
-            doc_parent_dir = join(*component_list)
-            if component_list[0] == '':
-                doc_parent_dir = '/' + doc_parent_dir
-
-            doc_path = join(
-                doc_parent_dir, "doc", "build", "html", "index.html"
-            )
-
-        webbrowser.open(doc_path, new=2)
+        url = "https://visiannot.readthedocs.io/en/latest/"
+        webbrowser.open(url, new=2)
