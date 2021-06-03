@@ -8,7 +8,7 @@ Package for visualization and annotation of video and signal data
 Université Rennes 1.
 """
 
-__version__ = "0.0.12"
+__version__ = "0.0.13"
 __authors__ = "Raphaël Weber"
 
 

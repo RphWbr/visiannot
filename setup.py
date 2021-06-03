@@ -2,12 +2,11 @@ from setuptools import setup
 from visiannot import __version__ as version
 
 
-description = """\
-Graphical user interface for visualization and annotation of
-video and signal data
+description = """
+Graphical user interface for visualization and annotation of video and signal data
 """
 
-with open("README.md", 'r') as f:
+with open("README.rst", 'r') as f:
     long_description = f.read()
 
 setup(
