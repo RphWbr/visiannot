@@ -16,10 +16,12 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
-from os.path import abspath, join
+from os.path import abspath, join, dirname
 import sys
+
+path = dirname(abspath(__file__))
 sys.path.insert(0, abspath('.'))
-sys.path.insert(0, abspath(join('..', '..')))
+sys.path.insert(0, abspath(join(path, '..', '..')))
 
 import visiannot
 from datetime import datetime
