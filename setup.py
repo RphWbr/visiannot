@@ -5,7 +5,7 @@ with open("README.md", 'r') as f:
 
 setup(
     name='visiannot',
-    version='0.0.6',    
+    version='0.0.7',    
     description='Graphical user interface for visualization and annotation of video and signal data',
     long_description=long_description,
     long_description_content_type="text/markdown",
