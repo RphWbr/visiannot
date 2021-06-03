@@ -1,4 +1,5 @@
-# ViSiAnnoT
+ViSiAnnoT
+=========
 
 **ViSiAnnoT** (Video Signal Annotation Tool) is a package that provides a graphical user interface for the visualization and annotation of video and signal data.
 
@@ -23,15 +24,17 @@ The main features are:
 ![Screenshot of ViSiAnnoT](doc/source/images/layout_mode_2.png)
 
 
-## Documentation
+Documentation
+-------------
 
 Documentation is hosted on [ReadTheDocs](https://visiannot.readthedocs.io/en/latest/index.html).
 
 
 
-## Installation
+Installation
+------------
 
-### Pip
+**Pip**
 
 The easiest way is to install **ViSiAnnoT** with ``pip``:
 
@@ -40,7 +43,7 @@ The easiest way is to install **ViSiAnnoT** with ``pip``:
 You may need to call ``pip3`` instead.
 
 
-### From source
+**From source**
 
 You may install **ViSiAnnoT** from source:
 
@@ -49,7 +52,7 @@ You may install **ViSiAnnoT** from source:
     $ pip install .
 
 
-### Depedencies
+**Depedencies**
 
 **ViSiAnnoT** requires Python 3.6+.
 
@@ -67,7 +70,8 @@ The following packages are required and are automatically installed with ``pip``
 * [scipy](https://www.scipy.org/)
 
 
-## Support
+Support
+-------
 
 This package is developed at the LTSI Lab, INSERM-1099, located at Université Rennes 1, France.
 
@@ -76,6 +80,7 @@ For any enquiry, please send an email to raphael.weber@univ-rennes1.fr.
 If you encounter a bug, feel free to raise an issue on [GitHub](https://github.com/RphWbr/visiannot/issues).
 
 
-## Used by
+Used by
+-------
 
 **ViSiAnnoT** has been used in several clinical studies during the time of initial developments, with a particular focus in pediatrics. In particular, it has been used in a study on quiet sleep organization that has been published in the following article, where is introduced **ViSiAnnoT**: [Quiet Sleep Organization of Very Preterm Infants Is Correlated With Postnatal Maturation](https://www.frontiersin.org/articles/10.3389/fped.2020.559658/full).
