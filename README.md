@@ -30,7 +30,6 @@ Documentation is hosted on [ReadTheDocs](https://visiannot.readthedocs.io/en/lat
 
 
 ## Installation
-------------
 
 ### Pip
 
