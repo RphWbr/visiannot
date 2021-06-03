@@ -14,7 +14,6 @@ setup(
     version=version,    
     description=description,
     long_description=long_description,
-    long_description_content_type="text/markdown",
     url='https://github.com/RphWbr/visiannot',
     author='Raphael Weber',
     author_email='raphael.weber@univ-rennes1.fr',
