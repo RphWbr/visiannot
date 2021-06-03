@@ -76,7 +76,8 @@ author = 'Raphael Weber'
 release = visiannot.__version__
 
 # The short X.Y version
-version = '.'.join(release.split('.')[:2])
+# version = '.'.join(release.split('.')[:2])
+version = '0.0.9'
 
 
 # -- General configuration ---------------------------------------------------
