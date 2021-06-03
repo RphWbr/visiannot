@@ -4,7 +4,6 @@ import numpy as np
 from linecache import getline
 from importlib import import_module
 from os.path import isfile, split
-from os import getcwd
 
 # global variables
 MODULE_NAME = "cfg"
@@ -13,7 +12,7 @@ MODULE_PATH = "%s/%s.py" % (split(__file__)[0], MODULE_NAME)
 # get package name as a global variable
 print(MODULE_PATH)
 if isfile(MODULE_PATH):
-    PACKAGE_NAME = import_module('.' + MODULE_NAME, "toolsSphinxDoc").PACKAGE_NAME
+    PACKAGE_NAME = import_module(MODULE_NAME).PACKAGE_NAME
     print(PACKAGE_NAME)
 
 
