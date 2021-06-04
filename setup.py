@@ -2,11 +2,9 @@ from setuptools import setup
 from visiannot import __version__ as version
 
 
-description = """
-Graphical user interface for visualization and annotation of video and signal data
-"""
+description = "Graphical user interface for visualization and annotation of video and signal data"
 
-with open("README.rst", 'r') as f:
+with open("README.md", 'r') as f:
     long_description = f.read()
 
 setup(
@@ -14,6 +12,7 @@ setup(
     version=version,    
     description=description,
     long_description=long_description,
+    long_description_content_type='text/markdown',
     url='https://github.com/RphWbr/visiannot',
     author='Raphael Weber',
     author_email='raphael.weber@univ-rennes1.fr',

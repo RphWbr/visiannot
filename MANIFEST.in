@@ -1,2 +1,3 @@
 recursive-include visiannot *.py *.jpg
-include LICENSE.txt
+include *.txt
+include *.md
