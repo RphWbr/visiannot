@@ -39,3 +39,13 @@ The following packages are required and are automatically installed with ``pip``
 * `pyqtgraph <http://pyqtgraph.org/>`_ (video and signal plots)
 * `pytz <https://pypi.org/project/pytz/>`_ (used for date-time comparison)
 * `scipy <https://www.scipy.org/>`_
+
+
+Run ViSiAnnoT
+=============
+
+Once it is installed, you can launch **ViSiAnnoT** with the following command line::
+
+    $ python3 -m visiannot
+
+First, the configuration GUI will open, see chapter :ref:`configuration`. Then the ViSiAnnoT GUI will open, see chapter :ref:`userguide-visiannot`.
