@@ -5,5 +5,5 @@ six==1.14.0
 numpy==1.18.5
 PyQt5==5.14.1
 scipy==1.5.3
-opencv-python==4.5.2
+opencv-python==4.5.2.54
 pyqtgraph==0.11.0
