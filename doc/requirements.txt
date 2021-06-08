@@ -7,3 +7,6 @@ PyQt5==5.14.1
 scipy==1.5.3
 opencv-python==4.5.2.54
 pyqtgraph==0.11.0
+h5py==2.10.0
+configobj==5.0.6
+pytz==2019.3
