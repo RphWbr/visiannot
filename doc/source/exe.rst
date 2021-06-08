@@ -55,7 +55,7 @@ Generation
               a.zipfiles,
               a.datas,
               [],
-              name='ViSiAnnoT_Sensitact',
+              name='ViSiAnnoT',
               debug=False,
               bootloader_ignore_signals=False,
               strip=False,
