@@ -2,4 +2,5 @@
 
 from visiannot.visiannot import ViSiAnnoTLongRecFromConfigGUI
 
-win_visiannot = ViSiAnnoTLongRecFromConfigGUI()
+if __name__ == '__main__':
+    win_visiannot = ViSiAnnoTLongRecFromConfigGUI()
