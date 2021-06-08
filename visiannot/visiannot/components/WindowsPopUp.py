@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright Université Rennes 1
+# Copyright Université Rennes 1 / INSERM
 # Contributor: Raphael Weber
 #
 # Under CeCILL license
@@ -154,7 +154,7 @@ class WindowLicense(WindowPopUp):
 
         # license label
         license_text = """
-            Copyright Université Rennes 1 (2018)
+            Copyright Université Rennes 1 / INSERM (2018)
             Contributor: Raphaël Weber
 
             raphael.weber@univ-rennes1.fr

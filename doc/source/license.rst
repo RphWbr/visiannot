@@ -1,7 +1,7 @@
 =======
 License
 =======
-Copyright Université Rennes 1 (2018)
+Copyright Université Rennes 1 / INSERM (2018)
 
 Contributor: Raphaël Weber
 

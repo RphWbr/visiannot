@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright Université Rennes 1
+# Copyright Université Rennes 1 / INSERM
 # Contributor: Raphael Weber
 #
 # Under CeCILL license
