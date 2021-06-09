@@ -77,7 +77,7 @@ Once it is installed, you can launch **ViSiAnnoT** with the following command li
 
     $ python3 -m visiannot
 
-First, the configuration GUI will open, see [dedicated user guide](https://visiannot.readthedocs.io/en/latest/userguide-configuration.html). Then the ViSiAnnoT GUI will open, see [dedicated user guide](https://visiannot.readthedocs.io/en/latest/userguide-visiannot.html).
+First, the configuration GUI will open, see [dedicated user guide](https://visiannot.readthedocs.io/en/latest/userguide-configuration.html#configuration-with-the-graphical-user-interface). Then the ViSiAnnoT GUI will open, see [dedicated user guide](https://visiannot.readthedocs.io/en/latest/userguide-visiannot.html).
 
 
 Support
