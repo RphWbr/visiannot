@@ -70,6 +70,16 @@ The following packages are required and are automatically installed with ``pip``
 * [scipy](https://www.scipy.org/)
 
 
+Run ViSiAnnoT
+-------------
+
+Once it is installed, you can launch **ViSiAnnoT** with the following command line::
+
+    $ python3 -m visiannot
+
+First, the configuration GUI will open, see [dedicated user guide](https://visiannot.readthedocs.io/en/latest/userguide-configuration.html). Then the ViSiAnnoT GUI will open, see [dedicated user guide](https://visiannot.readthedocs.io/en/latest/userguide-visiannot.html).
+
+
 Support
 -------
 
