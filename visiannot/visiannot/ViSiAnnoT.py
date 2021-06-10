@@ -4091,7 +4091,7 @@ class ViSiAnnoT():
             else:
                 self.video_data_dict[video_id] = None
                 nframes = 0
-                fps = 0
+                fps = -1
                 beginning_datetime = None
 
             # update lists
@@ -4131,9 +4131,9 @@ class ViSiAnnoT():
 
             # check coherence
             for fps in fps_list[1:]:
-                if self.fps != fps:
+                if self.fps != fps and fps >= 0:
                     if '' not in video_dict.values():
-                        raise Exception('The 2 videos do not have the same FPS. %s - %s' % (list(video_dict.values())[0], path_video))
+                        raise Exception('The 2 videos do not have the same FPS. %s - %s' % (list(video_dict.values())[0][0], path_video))
 
 
         # ******************************************************************* #

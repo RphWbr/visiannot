@@ -296,21 +296,40 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             for ite_vid in range(nb_vid_max):
                 # loop on cameras (skipping first camera because of reference)
                 for ite_id in range(1, nb_camera):
-                    # get delta in seconds between the current camera and the
-                    # first camera
-                    delta = (
-                        video_datetime_list[ite_id][ite_vid] -
-                        video_datetime_list[0][ite_vid]
-                    ).total_seconds()
+                    flag_missing_first = False
+                    flag_missing_current = False
 
-                    # check if delta is more than 1 second
-                    if abs(delta) > 1:
-                        # check if missing file for current camera
-                        if delta > 0:
+                    # check if above first camera range
+                    if ite_vid >= len(video_datetime_list[0]):
+                        flag_missing_first = True
+
+                    elif ite_vid >= len(video_datetime_list[ite_id]):
+                        flag_missing_current = True
+
+                    else:
+                        # get delta in seconds between the current camera and the
+                        # first camera
+                        delta = (
+                            video_datetime_list[ite_id][ite_vid] -
+                            video_datetime_list[0][ite_vid]
+                        ).total_seconds()
+
+                        # check if delta is more than 1 second
+                        if abs(delta) > 1:
+                            # check if missing file for current camera
+                            if delta > 0:
+                                flag_missing_current = True
+
+                            # missing file for first camera
+                            else:
+                                flag_missing_first = True
+
+                    # check if missing camera
+                    if flag_missing_first or flag_missing_current:
+                        if flag_missing_current:
                             ite_id_tmp = ite_id
                             ite_id_tmp_comp = 0
 
-                        # missing file for first camera
                         else:
                             ite_id_tmp = 0
                             ite_id_tmp_comp = ite_id
