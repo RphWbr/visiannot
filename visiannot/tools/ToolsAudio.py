@@ -70,14 +70,20 @@ def getDataAudio(path, channel_id=0):
         np_type = np.int32
     elif byte_length == 16:
         np_type = np.int64
+    else:
+        np_type = None
 
-    data_audio = np.fromstring(data_audio, dtype=np_type).reshape(
-        (data_wave.getnframes(), data_wave.getnchannels())
-    )
+    if np_type is None:
+        data_audio = np.empty((0,))
 
-    # get specific channel if necessary
-    if channel_id >= 0:
-        data_audio = data_audio[:, channel_id]
+    else:
+        data_audio = np.fromstring(data_audio, dtype=np_type).reshape(
+            (data_wave.getnframes(), data_wave.getnchannels())
+        )
+
+        # get specific channel if necessary
+        if channel_id >= 0:
+            data_audio = data_audio[:, channel_id]
 
     return data_wave, data_audio, freq
 
