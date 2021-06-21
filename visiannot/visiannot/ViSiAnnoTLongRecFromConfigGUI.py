@@ -19,11 +19,14 @@ class ViSiAnnoTLongRecFromConfigGUI(ViSiAnnoTLongRecFromConfigFile):
     """
     Subclass of :class:`.ViSiAnnoTLongRecFromConfigFile` for launching
     configuration GUI before launching ViSiAnnoT
+
+    :param kwargs: keyword arguments of the constructor of
+        :class:`.ConfigurationWindow`
     """
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         # configuration GUI
-        win_config = ConfigurationWindow()
+        win_config = ConfigurationWindow(**kwargs)
 
         # get configuration dictionaries
         config_dict = {"General": win_config.general_dict}
