@@ -342,7 +342,7 @@ class ConfigurationWindow():
 
         # load configuration file if it exists
         if os.path.isfile(path):
-            self.load()
+            self.load(path)
             self.resetDisplay()
             print("Configuration file loaded")
 
