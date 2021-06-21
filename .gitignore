@@ -4,6 +4,7 @@
 # configuration files
 *.ini
 !Config_examples/*.ini
+!example/example.ini
 
 # temporary directory for signal synchronization
 sig-tmp
