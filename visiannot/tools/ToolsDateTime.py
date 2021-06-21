@@ -267,7 +267,9 @@ def convertStringToDatetime(datetime_str, fmt, time_zone=None):
 
     elif fmt == "format_T":
         date_time = datetime.strptime(datetime_str[:19], "%Y-%m-%dT%H:%M:%S")
-        date_time.replace(microsecond=int(datetime_str[20:]))
+        date_time = date_time.replace(
+            microsecond=int(datetime_str[20:]) * 1000
+        )
 
     else:
         date_time = datetime.strptime(datetime_str, fmt)
