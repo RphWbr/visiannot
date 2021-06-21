@@ -79,6 +79,8 @@ Once it is installed, you can launch **ViSiAnnoT** with the following command li
 
 First, the configuration GUI will open, see [dedicated user guide](https://visiannot.readthedocs.io/en/latest/userguide-configuration.html#configuration-with-the-graphical-user-interface). Then the ViSiAnnoT GUI will open, see [dedicated user guide](https://visiannot.readthedocs.io/en/latest/userguide-visiannot.html).
 
+In order to familiarize with **ViSiAnnoT**, an example of dataset is provided on [GitHub](https://github.com/RphWbr/visiannot-example). You may download or clone this repository on your computer.
+
 
 Support
 -------

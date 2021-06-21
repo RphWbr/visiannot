@@ -49,3 +49,5 @@ Once it is installed, you can launch **ViSiAnnoT** with the following command li
     $ python3 -m visiannot
 
 First, the configuration GUI will open, see chapter :ref:`configuration`. Then the ViSiAnnoT GUI will open, see chapter :ref:`userguide-visiannot`.
+
+In order to familiarize with **ViSiAnnoT**, an example of dataset is provided on `GitHub <https://github.com/RphWbr/visiannot-example>`_. You may download or clone this repository on your computer.
