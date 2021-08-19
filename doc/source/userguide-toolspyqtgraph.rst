@@ -128,7 +128,7 @@ Taking the same example, here is how to add a legend::
 	)
 
 	# add legend
-	legend_dict = {"Plot 1": plot_1, "Plot 2": plot_2}
+	legend_dict = {plot_1: "Plot 1", plot_2: "Plot 2"}
 	ToolsPyqtgraph.addLegendTo2DWidget(wid, legend_dict, offset=(50, 80))
 
 	infiniteLoopDisplay(app)

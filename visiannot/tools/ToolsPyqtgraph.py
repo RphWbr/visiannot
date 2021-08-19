@@ -836,8 +836,8 @@ def addLegendTo2DWidget(
 
     :param widget: widget containing the plot items to legend
     :type widget: pyqtgraph.PlotWidget
-    :param item_dict: plot items to legend, key is the legend label and value
-        is the associated plot item
+    :param item_dict: plot items to legend, key is the plot item and value
+        is the associated legend text
     :type item_dict: dict
     :param size: size of the legend item, length 2 ``(width, height)``
     :type size: tuple
@@ -923,7 +923,7 @@ def addLegendTo2DWidget(
 
 
     # set the legend item to the corresponding item and label
-    for item_label, item in item_dict.items():
+    for item, item_label in item_dict.items():
         legend.addItem(item, item_label)
 
     return legend, legend_widget
