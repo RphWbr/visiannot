@@ -15,7 +15,8 @@ See https://pyqtgraph.readthedocs.io/en/latest
 
 import pyqtgraph as pg
 from PyQt5 import QtCore
-from PyQt5.QtGui import QFont, QSizePolicy
+from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import QSizePolicy
 from .ToolsPyQt import createWindow, addWidgetToLayout, initializeDisplay
 import numpy as np
 
