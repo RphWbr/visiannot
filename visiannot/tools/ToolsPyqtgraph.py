@@ -932,7 +932,7 @@ def addLegendTo2DWidget(
 
 def addTextItemTo2DWidget(
     widget, pos, flag_arrow=False,
-    opts_text_dict={"color": "#000000", "anchor": (0.5, 0.5)},
+    opts_text_dict={"color": 'k', "anchor": (0.5, 0.5)},
     opts_arrow_dict={
         'headLen': 15, 'tipAngle': 20, 'pen': '#000000', 'brush': '#000000'
     }
