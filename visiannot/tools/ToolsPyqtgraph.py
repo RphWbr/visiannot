@@ -474,8 +474,10 @@ def create2DWidget(
     return widget
 
 
-def createWidgetImage(lay, widget_position, im=None, title=None,
-                      title_style={'color': '#000', 'size': '9pt'}):
+def createWidgetImage(
+    lay, widget_position, im=None, title=None,
+    title_style={'color': '#000', 'size': '9pt'}
+):
     """
     Creates a widget containing an image and adds it to a grid layout
 
