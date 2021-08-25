@@ -826,8 +826,7 @@ def basicImagePlot(im, **kwargs):
 
 
 def addLegendTo2DWidget(
-    widget, item_dict, size=None, offset=(0, 0), position='inside',
-    legend_wid_size=(0, 0)
+    widget, item_dict, position='inside', legend_wid_size=(0, 0), **kwargs
 ):
     """
     Adds a legend to a 2D widget
@@ -840,10 +839,6 @@ def addLegendTo2DWidget(
     :param item_dict: plot items to legend, key is the plot item and value
         is the associated legend text
     :type item_dict: dict
-    :param size: size of the legend item, length 2 ``(width, height)``
-    :type size: tuple
-    :param offset: offset position in pixels of the legend item in the widget
-    :type offset: tuple
     :param position: legend mode
 
         - ``"inside"``:  legend item inside the widget
@@ -856,6 +851,9 @@ def addLegendTo2DWidget(
         ``(width, height)`` in case ``position`` is ``"right"`` or
         ``"bottom"``
     :type legend_wid_size: tuple
+    :param kwargs: keyword arguments of ``pyqtgraph.LegendItem`` constructor,
+        see
+        https://pyqtgraph.readthedocs.io/en/latest/graphicsItems/legenditem.html
 
     :returns:
         - **legend** (*-pyqtgraph.LegendItem*) -- legend item
@@ -865,7 +863,7 @@ def addLegendTo2DWidget(
 
     if position == 'inside':
         # create legend
-        legend = pg.LegendItem(size=size, offset=offset)
+        legend = pg.LegendItem(**kwargs)
         legend.setParentItem(widget.graphicsItem())
         legend_widget = None
 
@@ -919,7 +917,7 @@ def addLegendTo2DWidget(
                 win_children_list[win_children_list.index(widget) + 1]
 
         # create legend
-        legend = pg.LegendItem(size=size, offset=offset)
+        legend = pg.LegendItem(**kwargs)
         legend.setParentItem(legend_widget.graphicsItem())
 
 
@@ -931,14 +929,14 @@ def addLegendTo2DWidget(
 
 
 def addTextItemTo2DWidget(
-    widget, pos, text='', color="#000000", html=None, anchor=(0.5, 0.5),
-    border=None, fill=None, angle=0, flag_arrow=False, arrow_angle=0,
-    arrow_style={
+    widget, pos, flag_arrow=False,
+    opts_text_dict={"color": "#000000", "anchor": (0.5, 0.5)},
+    opts_arrow_dict={
         'headLen': 15, 'tipAngle': 20, 'pen': '#000000', 'brush': '#000000'
     }
 ):
     """
-    Adds a text item to a 2D widget
+    Adds a text item to a 2D widget, possibly along with an arrow
 
     For details about color, see
     https://pyqtgraph.readthedocs.io/en/latest/functions.html#color-pen-and-brush-functions
@@ -947,32 +945,23 @@ def addTextItemTo2DWidget(
     :type widget: pyqtgraph.PlotWidget
     :param pos: position of the text item in the widget, length 2 ``(x, y)``
     :type pos: tuple
-    :param text: text to display
-    :type text: str
-    :param color: text color, may be a tuple with RGB or a HEX string
-    :type color: str or tuple
-    :param html: html text to display, it overwrites ``text`` and ``color``
-    :type html: str
-    :param anchor: coordinate of the text item that is anchored to its position
-        ``pos`` (``(0, 0)`` => top left, ``(1, 0)`` => top right, ``(1, 0)`` =>
-        bottom left, ``(1, 1)`` => bottom right
-    :type anchor: tuple
-    :param border: color of the border, may be a tuple with RGB or a HEX
-        string
-    :type border: str or tuple
-    :param fill: color used when filling within the border, may be a tuple with
-        RGB or a HEX
-    :type fill: str or tuple
-    :param angle: angle in degrees to rotate the text item
-    :type angle: float
     :param flag_arrow: specify if an arrow must be added
     :type flag_arrow: bool
-    :param arrow_angle: angle in degrees to rotate the arrow
-        (arrow pointing to the left)
-    :type arrow_angle: float
-    :param arrow_style: see
-        https://pyqtgraph.readthedocs.io/en/latest/graphicsItems/arrowitem.html#pyqtgraph.ArrowItem.setStyle
-    :type arrow_style: dict
+    :param opts_text_dict: keyword arguments of the constructor of
+        ``pyqtgraph.TextItem``, see
+        https://pyqtgraph.readthedocs.io/en/latest/graphicsItems/textitem.html?highlight=textitem#pyqtgraph.TextItem
+    :type opts_text_dict: dict
+    :param opts_arrow_dict: keyword arguments of the constructor of
+        ``pyqtgraph.ArrowItem``, see
+        https://pyqtgraph.readthedocs.io/en/latest/graphicsItems/arrowitem.html?highlight=arrowitem#pyqtgraph.ArrowItem
+    :type opts_arrow_dict: dict
+
+    Regarding ``anchor`` argument in ``TextItem``, ``(0, 0)`` => top left,
+    ``(1, 0)`` => top right, ``(1, 0)`` => bottom left, ``(1, 1)`` => bottom
+    right.
+
+    Regarding ``opts_arrow_dict``, the position of the arrow item is specified
+    by the keyword argument ``pos``.
 
     :returns:
         - **text_item** (*pyqtgraph.TextItem*)
@@ -981,10 +970,7 @@ def addTextItemTo2DWidget(
     """
 
     # create text item
-    text_item = pg.TextItem(
-        text=text, color=color, html=html, anchor=anchor, border=border,
-        fill=fill, angle=angle
-    )
+    text_item = pg.TextItem(**opts_text_dict)
 
     # set the text item position
     text_item.setPos(pos[0], pos[1])
@@ -994,8 +980,7 @@ def addTextItemTo2DWidget(
 
     # create an arrow item if specified and add it to the widget
     if flag_arrow:
-        arrow_item = pg.ArrowItem(pos=pos, angle=arrow_angle)
-        arrow_item.setStyle(**arrow_style)
+        arrow_item = pg.ArrowItem(**opts_arrow_dict)
         widget.addItem(arrow_item)
     else:
         arrow_item = None
