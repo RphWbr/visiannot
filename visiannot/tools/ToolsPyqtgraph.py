@@ -931,7 +931,7 @@ def addLegendTo2DWidget(
 
 
 def addTextItemTo2DWidget(
-    widget, pos, flag_arrow=False,
+    widget, pos, flag_arrow=False, text_alignement=None,
     opts_text_dict={"color": 'k', "anchor": (0.5, 0.5)},
     opts_arrow_dict={
         'headLen': 15, 'tipAngle': 20, 'pen': '#000000', 'brush': '#000000'
@@ -949,6 +949,11 @@ def addTextItemTo2DWidget(
     :type pos: tuple
     :param flag_arrow: specify if an arrow must be added
     :type flag_arrow: bool
+    :param text_alignement: flag for specifying text alignement, particularly
+        useful in case of multi-line text, see
+        https://doc.qt.io/qt-5/qt.html#AlignmentFlag-enum for the possible
+        values, for example: ``Qt.AlignCenter``, imported as
+        ``from PyQt5.QtCore import Qt``
     :param opts_text_dict: keyword arguments of the constructor of
         ``pyqtgraph.TextItem``, see
         https://pyqtgraph.readthedocs.io/en/latest/graphicsItems/textitem.html?highlight=textitem#pyqtgraph.TextItem
@@ -973,6 +978,15 @@ def addTextItemTo2DWidget(
 
     # create text item
     text_item = pg.TextItem(**opts_text_dict)
+
+    # text alignement
+    if text_alignement is not None:
+        option = text_item.textItem.document().defaultTextOption()
+        option.setAlignment(text_alignement)
+        text_item.textItem.document().setDefaultTextOption(option)
+        text_item.textItem.setTextWidth(
+            text_item.textItem.boundingRect().width()
+        )
 
     # set the text item position
     text_item.setPos(pos[0], pos[1])
