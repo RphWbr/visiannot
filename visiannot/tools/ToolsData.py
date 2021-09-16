@@ -35,7 +35,7 @@ def getWorkingDirectory(path):
     returns the path to the temporary directory created by PyInstaller where
     are putted source code and related data files.
 
-    :param path: typically ``__file``
+    :param path: typically ``__file__``
     :type path: str
     """
 
