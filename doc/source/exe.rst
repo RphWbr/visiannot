@@ -7,9 +7,7 @@ Prerequisites
 
 There exists several tools for freezing a Python application into a standalone executable. Here we describe how to create a standalone executable of a ViSiAnnoT script with **PyInstaller**.
 
-First, the package `PyInstaller <https://www.pyinstaller.org>`_ must be installed.
-
-PyInstaller uses hooks in order to put the needed packages into the standalone executable. The problem is that it may also add hooks that are not needed, leading to a very big file. For this reason, it is advised to work with virtual environment when generating a standalone executable. One possibility is to follow these steps:
+**PyInstaller** uses hooks in order to put the needed packages into the standalone executable. The problem is that it may also add hooks that are not needed, leading to a very big file. For this reason, it is advised to work with virtual environment when generating a standalone executable. One possibility is to follow these steps:
 
 * Install a basic `Python <https://www.python.org/downloads/>`_ with only the core packages,
 * Create a virtual environment dedicated to **ViSiAnnoT** and switch to this virtual environment,
