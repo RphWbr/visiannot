@@ -14,6 +14,7 @@ PyInstaller uses hooks in order to put the needed packages into the standalone e
 * Install a basic `Python <https://www.python.org/downloads/>`_ with only the core packages,
 * Create a virtual environment dedicated to **ViSiAnnoT** and switch to this virtual environment,
 * Install **ViSiAnnoT** package and all depedencies,
+* Install `PyInstaller <https://www.pyinstaller.org>`_,
 * Check if the script runs with no error,
 * Generate the standalone executable.
 
