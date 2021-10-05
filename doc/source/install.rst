@@ -22,8 +22,8 @@ You may install **ViSiAnnoT** from source::
     $ pip install .
 
 
-Depedencies
-===========
+Dependencies
+============
 
 **ViSiAnnoT** requires Python 3.6+.
 
