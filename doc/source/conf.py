@@ -42,9 +42,6 @@ author = 'Raphael Weber'
 # The full version, including alpha/beta/rc tags
 release = version
 
-# The short X.Y version
-version = '.'.join(version.split('.')[:2])
-
 
 # -- General configuration ---------------------------------------------------
 
