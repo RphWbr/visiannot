@@ -51,11 +51,6 @@ def writeAutosummaryDirective(index_path):
         f.write(".. autosummary::\n")
 
 
-def writeAutoclasssummDirective(index_path, class_full_name):
-    with open(index_path, 'a') as f:
-        f.write(".. autoclasssumm:: %s\n\n" % class_full_name)
-
-
 def writeAutoModuleDirective(index_path, module_full_name):
     with open(index_path, 'a') as f:
         f.write(".. automodule:: %s\n\n" % module_full_name)
@@ -111,9 +106,6 @@ def writeAPIClasses(index_path, module_full_name, class_list):
 
         # write sub-title for class
         writeSection(index_path, "Class %s" % class_name, level=2)
-
-        # write directive for autoclasssumm
-        writeAutoclasssummDirective(index_path, class_full_name)
 
         # write directive for autoclass
         writeAutoclassDirective(index_path, class_full_name)
