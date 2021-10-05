@@ -19,8 +19,6 @@ API
 Class ViSiAnnoT
 ---------------
 
-.. autoclasssumm:: visiannot.visiannot.ViSiAnnoT.ViSiAnnoT
-
 .. autoclass:: visiannot.visiannot.ViSiAnnoT.ViSiAnnoT
    :members:
    :undoc-members:

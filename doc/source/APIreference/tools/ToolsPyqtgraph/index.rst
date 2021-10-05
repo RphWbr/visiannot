@@ -43,8 +43,6 @@ API
 Class PlotItemCustom
 --------------------
 
-.. autoclasssumm:: visiannot.tools.ToolsPyqtgraph.PlotItemCustom
-
 .. autoclass:: visiannot.tools.ToolsPyqtgraph.PlotItemCustom
    :members:
    :undoc-members:
@@ -54,8 +52,6 @@ Class PlotItemCustom
 Class ProgressWidget
 --------------------
 
-.. autoclasssumm:: visiannot.tools.ToolsPyqtgraph.ProgressWidget
-
 .. autoclass:: visiannot.tools.ToolsPyqtgraph.ProgressWidget
    :members:
    :undoc-members:
@@ -64,8 +60,6 @@ Class ProgressWidget
 
 Class SignalWidget
 ------------------
-
-.. autoclasssumm:: visiannot.tools.ToolsPyqtgraph.SignalWidget
 
 .. autoclass:: visiannot.tools.ToolsPyqtgraph.SignalWidget
    :members:

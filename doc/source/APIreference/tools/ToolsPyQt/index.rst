@@ -43,8 +43,6 @@ API
 Class ComboBox
 --------------
 
-.. autoclasssumm:: visiannot.tools.ToolsPyQt.ComboBox
-
 .. autoclass:: visiannot.tools.ToolsPyQt.ComboBox
    :members:
    :undoc-members:
@@ -54,8 +52,6 @@ Class ComboBox
 Class PushButton
 ----------------
 
-.. autoclasssumm:: visiannot.tools.ToolsPyQt.PushButton
-
 .. autoclass:: visiannot.tools.ToolsPyQt.PushButton
    :members:
    :undoc-members:
@@ -64,8 +60,6 @@ Class PushButton
 
 Class ScrollArea
 ----------------
-
-.. autoclasssumm:: visiannot.tools.ToolsPyQt.ScrollArea
 
 .. autoclass:: visiannot.tools.ToolsPyQt.ScrollArea
    :members:

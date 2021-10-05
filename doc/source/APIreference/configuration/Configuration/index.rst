@@ -19,8 +19,6 @@ API
 Class Configuration
 -------------------
 
-.. autoclasssumm:: visiannot.configuration.Configuration.Configuration
-
 .. autoclass:: visiannot.configuration.Configuration.Configuration
    :members:
    :undoc-members:

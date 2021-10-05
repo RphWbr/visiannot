@@ -19,8 +19,6 @@ API
 Class MenuBar
 -------------
 
-.. autoclasssumm:: visiannot.visiannot.components.MenuBar.MenuBar
-
 .. autoclass:: visiannot.visiannot.components.MenuBar.MenuBar
    :members:
    :undoc-members:

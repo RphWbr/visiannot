@@ -21,8 +21,6 @@ API
 Class WindowAbout
 -----------------
 
-.. autoclasssumm:: visiannot.visiannot.components.WindowsPopUp.WindowAbout
-
 .. autoclass:: visiannot.visiannot.components.WindowsPopUp.WindowAbout
    :members:
    :undoc-members:
@@ -32,8 +30,6 @@ Class WindowAbout
 Class WindowLicense
 -------------------
 
-.. autoclasssumm:: visiannot.visiannot.components.WindowsPopUp.WindowLicense
-
 .. autoclass:: visiannot.visiannot.components.WindowsPopUp.WindowLicense
    :members:
    :undoc-members:
@@ -42,8 +38,6 @@ Class WindowLicense
 
 Class WindowPopUp
 -----------------
-
-.. autoclasssumm:: visiannot.visiannot.components.WindowsPopUp.WindowPopUp
 
 .. autoclass:: visiannot.visiannot.components.WindowsPopUp.WindowPopUp
    :members:

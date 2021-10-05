@@ -19,8 +19,6 @@ API
 Class ViSiAnnoTLongRec
 ----------------------
 
-.. autoclasssumm:: visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec
-
 .. autoclass:: visiannot.visiannot.ViSiAnnoTLongRec.ViSiAnnoTLongRec
    :members:
    :undoc-members:

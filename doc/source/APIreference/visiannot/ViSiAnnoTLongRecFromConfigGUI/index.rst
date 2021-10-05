@@ -19,8 +19,6 @@ API
 Class ViSiAnnoTLongRecFromConfigGUI
 -----------------------------------
 
-.. autoclasssumm:: visiannot.visiannot.ViSiAnnoTLongRecFromConfigGUI.ViSiAnnoTLongRecFromConfigGUI
-
 .. autoclass:: visiannot.visiannot.ViSiAnnoTLongRecFromConfigGUI.ViSiAnnoTLongRecFromConfigGUI
    :members:
    :undoc-members:

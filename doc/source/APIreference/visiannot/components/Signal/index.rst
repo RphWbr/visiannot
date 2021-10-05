@@ -19,8 +19,6 @@ API
 Class Signal
 ------------
 
-.. autoclasssumm:: visiannot.visiannot.components.Signal.Signal
-
 .. autoclass:: visiannot.visiannot.components.Signal.Signal
    :members:
    :undoc-members:

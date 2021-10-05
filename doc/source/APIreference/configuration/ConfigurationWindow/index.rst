@@ -19,8 +19,6 @@ API
 Class ConfigurationWindow
 -------------------------
 
-.. autoclasssumm:: visiannot.configuration.ConfigurationWindow.ConfigurationWindow
-
 .. autoclass:: visiannot.configuration.ConfigurationWindow.ConfigurationWindow
    :members:
    :undoc-members:
