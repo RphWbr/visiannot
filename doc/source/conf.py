@@ -64,6 +64,11 @@ autodoc_member_order = 'groupwise'
 autoclass_content = 'init'
 numfig = True
 
+# option of autodocsumm, so that summary table is shown after class docstring
+# autoclass directive
+autodoc_default_options = {'autosummary': True}
+
+
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
