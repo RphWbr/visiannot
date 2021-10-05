@@ -16,3 +16,5 @@ dist
 # documentation sphinx
 doc/build
 
+# OS specific hidden files
+**/._*
