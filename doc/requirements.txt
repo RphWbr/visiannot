@@ -10,3 +10,4 @@ pyqtgraph==0.11.0
 h5py==2.10.0
 configobj==5.0.6
 pytz==2019.3
+docutils==0.16
