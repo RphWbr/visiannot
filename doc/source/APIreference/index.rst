@@ -25,4 +25,3 @@ The sub-package **visiannot** contains modules where are defined the classes
 for the creation of the ViSiAnnoT GUI.
 
 The summary of the modules can be found at the top of their respective page.
-
