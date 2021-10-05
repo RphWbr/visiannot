@@ -51,27 +51,27 @@ The tree view of source files is reported below::
   |__ .gitignore
   |__ MANIFEST.in
 
-The package :mod:`.visiannot` is structured as follows:
+The package **visiannot** is structured as follows:
 
-* The sub-package :mod:`.configuration` contains modules where are defined the classes for the GUI configuration tool,
+* The sub-package **visiannot.configuration** contains modules where are defined the classes for the GUI configuration tool,
 
-* The sub-package :mod:`.tools` contains the following modules:
+* The sub-package **visiannot.tools** contains the following modules:
 
-  * :mod:`.ToolsAnnotation.py`: functions for reading annotation files,
+  * :mod:`.ToolsAnnotation`: functions for reading annotation files,
 
-  * :mod:`ToolsAudio.py`: functions for loading audio files,
+  * :mod:`.ToolsAudio`: functions for loading audio files,
 
-  * :mod:`ToolsData.py`: functions for loading data in format txt, h5 or mat as well as doing some basic processing,
+  * :mod:`.ToolsData`: functions for loading data in format txt, h5 or mat as well as doing some basic processing,
 
-  * :mod:`ToolsDateTime.py`: functions for converting and formatting date/times,
+  * :mod:`.ToolsDateTime`: functions for converting and formatting date/times,
 
-  * :mod:`ToolsImage.py`: functions for loading images and video data,
+  * :mod:`.ToolsImage`: functions for loading images and video data,
 
-  * :mod:`ToolsPyQt.py`: **PyQt5** sub-classes and functions that ease GUI creation,
+  * :mod:`.ToolsPyQt`: **PyQt5** sub-classes and functions that ease GUI creation,
 
-  * :mod:`ToolsPyqtgraph.py`: **Pyqtgraph** sub-classes and functions that ease creation of scientific graphics,
+  * :mod:`.ToolsPyqtgraph`: **Pyqtgraph** sub-classes and functions that ease creation of scientific graphics,
 
-* The sub-package :mod:`.visiannot.visiannot` contains the modules where are defined the GUI for multimodal data visualization and annotation, as well as the sub-package :mod:`.components` that contain modules where are defined classes of the GUI components.
+* The sub-package **visiannot.visiannot** contains the modules where are defined the GUI for multimodal data visualization and annotation, as well as the sub-package **visiannot.components** that contain modules where are defined classes of the GUI components.
 
 The folder **doc** contains the files for generating the html documentation with `Sphinx <https://www.sphinx-doc.org/en/master/index.html>`_.
 
