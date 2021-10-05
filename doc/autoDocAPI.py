@@ -232,15 +232,14 @@ def generateIndexFilesRecursive(
 
 
 def generateIndexFiles(
-    package_name, package_dir, doc_dir='.', flag_append_main_index_file=True,
-    text_top='', text_bottom=''
+    package_name, package_dir, doc_dir='source', text_top='', text_bottom='',
+    flag_ignore_main=True
 ):
     path.insert(0, abspath(package_dir))
     setrecursionlimit(1500)
 
     # check if main index file must be appended
-    if flag_append_main_index_file:
-        appendMainIndexFile("%s/index.rst" % doc_dir)
+    appendMainIndexFile("%s/index.rst" % doc_dir)
 
     # get directory containing the index files
     doc_dir = "%s/%s" % (doc_dir, INDEX_ROOT_NAME)
@@ -270,13 +269,17 @@ def generateIndexFiles(
 
     # loop on modules and sub-packages
     for sub_package_name in package.__all__:
-        # write a link to sub-package index in the toc tree
-        writeTocTreeIndex(index_path, sub_package_name)
+        if flag_ignore_main and sub_package_name == "__main__":
+            pass
 
-        # create index files for sub-package
-        generateIndexFilesRecursive(
-            ".%s" % sub_package_name, package_name, doc_dir
-        )
+        else:
+            # write a link to sub-package index in the toc tree
+            writeTocTreeIndex(index_path, sub_package_name)
+
+            # create index files for sub-package
+            generateIndexFilesRecursive(
+                ".%s" % sub_package_name, package_name, doc_dir
+            )
 
     # write bottom text
     if len(text_bottom) > 0:
@@ -305,3 +308,32 @@ def appendMainIndexFile(index_path):
 
     with open(index_path, 'w') as f:
         f.writelines(content_list)
+
+
+if __name__ == "__main__":
+    """
+    in order to automatically generate APIreference index files,
+    this script must be launched before generating documentation
+    """
+
+    text_top = "The package **visiannot** is made up of three sub-packages:\n"
+
+    text_bottom = """
+The sub-package **configuration** contains modules where are defined the
+classes for the creation of the configuration GUI.
+
+The sub-package **tools** contains modules with functions that may be used
+outside of **ViSiAnnoT**. In particular, the modules **ToolsPyQt** and
+**ToolsPyqtgraph** are an overlayer of **PyQt5** and **pyqtgraph**
+respectively. They may be used in order to ease the creation of a GUI and
+scientific graphics respectively. See chapters :ref:`toolspyqt` and
+:ref:`toolspyqtgraph`.
+
+The sub-package **visiannot** contains modules where are defined the classes
+for the creation of the ViSiAnnoT GUI.
+
+The summary of the modules can be found at the top of their respective page."""
+
+    generateIndexFiles(
+        "visiannot", "..", text_top=text_top, text_bottom=text_bottom
+    )
