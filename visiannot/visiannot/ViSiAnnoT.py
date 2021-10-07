@@ -756,6 +756,9 @@ class ViSiAnnoT():
         #: (*int*) Index of the current frame
         self.frame_id = 0
 
+        #: (*dict*) Index of the previous frame for each video_id
+        self.previous_frame_id = {}
+
         #: (*int*) First frame that is displayed in the signal plots
         self.first_frame = 0
 
@@ -1447,6 +1450,8 @@ class ViSiAnnoT():
                 file_name = os.path.splitext(os.path.basename(video_path))[0]
                 self.vid_file_name_dict[video_id] = file_name
 
+                self.previous_frame_id[video_id] = None
+
                 # create widget
                 self.wid_vid_dict[video_id], self.img_vid_dict[video_id] = \
                     ToolsPyqtgraph.createWidgetImage(
@@ -1455,8 +1460,8 @@ class ViSiAnnoT():
                 )
 
                 # initialize image arrays
-                self.im_dict[video_id] = self.getVideoData(
-                    self.video_data_dict[video_id]
+                ret = self.getVideoData(
+                    self.video_data_dict[video_id], video_id
                 )
 
                 # display first frame
@@ -1620,7 +1625,7 @@ class ViSiAnnoT():
                     wid.addItem(infinite_line)
 
 
-    def getVideoData(self, data_video):
+    def getVideoData(self, data_video, video_id):
         """
         Gets video frame at the current frame :attr:`.frame_id`
 
@@ -1634,11 +1639,18 @@ class ViSiAnnoT():
 
         # check data video
         if data_video is not None:
-            # set the video stream at the current frame
-            data_video.set(1, self.frame_id)
+            if self.previous_frame_id[video_id] == self.frame_id - 1:
+                pass
+            elif self.previous_frame_id[video_id] == self.frame_id:
+                sleep(0.00001)
+                return 1
+            else:
+                # set the video stream at the current frame
+                data_video.set(1, self.frame_id)
 
             # read image
             ret, im = data_video.read()
+            self.previous_frame_id[video_id] = self.frame_id
 
         else:
             ret = False
@@ -1648,11 +1660,13 @@ class ViSiAnnoT():
             # cv2 returns BGR => converted to RGB
             # cv2 returns image with shape (height,width,3) => transposed to
             # (width, height, 3) for display
-            return ToolsImage.transformImage(im)
+            self.im_dict[video_id] = ToolsImage.transformImage(im)
+            return 0
 
         else:
             # if no image read, returns black image
-            return np.zeros((100, 100, 3))
+            self.im_dict[video_id] = np.zeros((100, 100, 3))
+            return 2
 
 
     def updateVideoFrame(self):
@@ -1670,7 +1684,7 @@ class ViSiAnnoT():
             if not self.flag_pause_status:
                 # update images at the current frame
                 for video_id, data_video in self.video_data_dict.items():
-                    self.im_dict[video_id] = self.getVideoData(data_video)
+                    ret = self.getVideoData(data_video, video_id)
             else:
                 sleep(0.001)
 
@@ -1803,7 +1817,7 @@ class ViSiAnnoT():
         # get image if pause status is true
         if self.flag_pause_status:
             for video_id, data_video in self.video_data_dict.items():
-                self.im_dict[video_id] = self.getVideoData(data_video)
+                ret = self.getVideoData(data_video, video_id)
 
         # plot frame id position
         self.plotFrameIdPosition()
