@@ -1639,7 +1639,6 @@ class ViSiAnnoT():
 
         # check data video
         if data_video is not None:
-            print(f"previous = {self.previous_frame_id[video_id]}, present = {self.frame_id - 1}")
             if self.previous_frame_id[video_id] == self.frame_id - 1:
                 pass
             elif self.previous_frame_id[video_id] == self.frame_id:
