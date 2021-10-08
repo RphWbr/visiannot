@@ -325,7 +325,7 @@ class ConfigurationWindow():
             "nb_ticks": 10,
             "trunc_duration": [0, 0],
             "time_zone": "Europe/Paris",
-            "annot_dir_base": "Annotations",
+            "annot_dir": "Annotations",
             "from_cursor_list": [],
             "ticks_size": 12,
             "ticks_color": (93, 91, 89),
@@ -364,8 +364,7 @@ class ConfigurationWindow():
             #: - ``"trunc_duration"``: (*list*) length 2 *(minute, second)*
             #: - ``"time_zone"``: (*str*) time zone (complying with pytz
             #:   package)
-            #: - ``"annot_dir_base"``: (*str*) base directory of the
-            #:   annotations
+            #: - ``"annot_dir"``: (*str*) directory of the annotations
             #: - ``"from_cursor_list"``: (*list*) each element is a list of
             #:   length 2 *(minute, second)*
             #: - ``"ticks_size"``: (*int*) size of the ticks text in signal
@@ -499,7 +498,7 @@ class ConfigurationWindow():
                 "Background color (signal plots)", "bg_color_plot", "spin", 3,
                 {"minimum": 0, "maximum": 255}
             ),
-            ("Annotations base directory", "annot_dir_base", "edit", 1, {})
+            ("Annotations directory", "annot_dir", "edit", 1, {})
         ]
 
         # get number of rows in the widget
@@ -557,7 +556,7 @@ class ConfigurationWindow():
                 ToolsPyQt.addWidgetToLayout(self.general_lay, widget, wid_pos)
 
         # get index of row with annotation base directory
-        i = [key for _, key, _, _, _ in elt_list].index("annot_dir_base")
+        i = [key for _, key, _, _, _ in elt_list].index("annot_dir")
 
         # create push button used to change the directory of anntotations
         self.general_push_button = ToolsPyQt.addPushButton(
@@ -686,7 +685,7 @@ class ConfigurationWindow():
         """
 
         # get text edit
-        pos = self.general_config_position_dict["annot_dir_base"][0]
+        pos = self.general_config_position_dict["annot_dir"][0]
         edit_dir = self.general_lay.itemAtPosition(pos[0], pos[1]).widget()
 
         # open dialog window

@@ -552,22 +552,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         # *********************** launch ViSiAnnoT ************************** #
         # ******************************************************************* #
 
-        # check if any video
-        if any(video_dict_current):
-            #: (*str*) Base name of the annotation files
-            #:
-            #: Label and annotation type is added when loading/saving
-            #: annotation files)
-            self.annot_file_base = os.path.splitext(
-                os.path.basename(list(video_dict_current.values())[0][0])
-            )[0]
-
-        else:
-            # get base name of annotation files
-            self.annot_file_base = os.path.splitext(
-                os.path.basename(list(signal_dict_current.values())[0][0][0])
-            )[0]
-
         # lauch ViSiAnnoT for first video/signal file
         ViSiAnnoT.__init__(
             self, video_dict_current, signal_dict_current,

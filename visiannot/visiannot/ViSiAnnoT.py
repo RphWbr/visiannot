@@ -50,7 +50,7 @@ class ViSiAnnoT():
         from_cursor_list=[],
         zoom_factor=2,
         nb_ticks=10,
-        annot_dir_base="Annotations",
+        annot_dir="Annotations",
         down_freq=500,
         flag_pause_status=False,
         max_points=5000,
@@ -294,9 +294,9 @@ class ViSiAnnoT():
         :param nb_ticks: number of temporal ticks on the X axis of the signals
             widgets
         :type nb_ticks: int
-        :param annot_dir_base: base directory where to save annotations, a
-            sub-directory is automatically created for the recording
-        :type annot_dir_base: str
+        :param annot_dir: directory where to save annotations, automatically
+            created if it does not exist
+        :type annot_dir: str
         :param down_freq: maximum signal frequency to plot, if a signal has a
             frequency strictly higher than ``down_freq``, then the signal is
             downsampled to ``down_freq``
@@ -492,31 +492,17 @@ class ViSiAnnoT():
         # ***************** annotation files management ********************* #
         # ******************************************************************* #
 
-        # check if not long recording
-        if not self.flag_long_rec:
-            # check if any video
-            if any(video_dict):
-                #: (*str*) Base name of the annotation files
-                #:
-                #: Label and annotation type is added when loading/saving
-                #: annotation files)
-                self.annot_file_base = os.path.splitext(
-                    os.path.basename(list(video_dict.values())[0][0])
-                )[0]
-
-            else:
-                # get base name of annotation files
-                self.annot_file_base = os.path.splitext(
-                    os.path.basename(list(signal_dict.values())[0][0][0])
-                )[0]
-
         #: (*str*) Directory where the annotations are saved
         #:
-        #: A sub-directory is automatically created: %s_annotations, where %s
-        #: is the name of the first video file (or signal file if no video).
-        self.annot_dir = "%s/%s_annotations" % (
-            annot_dir_base, self.annot_file_base
-        )
+        #: Specified by the keyword argument ``annot_dir``
+        self.annot_dir = annot_dir
+
+        #: (*str*) Base name of the annotation files
+        #:
+        #: It is defined as the basename of the annotation directory
+        #: :attr:`.annot_dir`. When loading/saving annotation files, the label
+        #: is appended to the file name.
+        self.annot_file_base = os.path.basename(self.annot_dir)
 
 
         # ******************************************************************* #
@@ -1746,11 +1732,6 @@ class ViSiAnnoT():
                 annot_path_list[0] == protected_name_0 and \
                     annot_path_list[1] == protected_name_1:
                 rmtree(self.annot_dir)
-
-            # check if parent annotation directory is empty
-            parent_dir = os.path.split(self.annot_dir)[0]
-            if os.listdir(parent_dir) == []:
-                rmtree(parent_dir)
 
         # close videos
         print("close videos (if any)")
