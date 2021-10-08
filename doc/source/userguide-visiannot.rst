@@ -546,56 +546,11 @@ It is possible to display the duration of the annotated intervals by clicking wi
 
   Detail of a screenshot of ViSiAnnoT with annotations displayed, two of them with duration displayed
 
-Storage of events annotation files
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-In the constructor of :class:`.ViSiAnnoT`, the keyword argument ``annot_dir_base`` specifies the base directory where to store annotation files. By default it is the directory ``"Annotations"``, located at the current working directory from where **ViSiAnnoT** is launched. Then, a sub-directory is created specifically for the video/signal file, or long recording, that is annotated.
+Storage of events annotation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+In the constructor of :class:`.ViSiAnnoT`, the keyword argument ``annot_dir`` specifies the directory where to store annotation files. By default it is the directory "*Annotations*", located at the current working directory from where **ViSiAnnoT** is launched.
 
-Below is described how the sub-directory is named depending on the context in which **ViSiAnnoT** is launched.
-
-**Single video file**
-
-**ViSiAnnoT** is launched with the class :class:`.ViSiAnnoT` and there is only a set of synchronized videos to visualize. The sub-directory is ``"%s_annotations"`` where ``%s`` is the basename of the file of the first camera in ``video_dict``.
-
-If we come back to the example of :ref:`video`, the annotations would be stored in the directory ``"Annotations/2017-12-19T11-33-46_color_annotations"``.
-
-
-**Single signal file**
-
-**ViSiAnnoT** is launched with the class :class:`.ViSiAnnoT` and there is only a set of synchronized signals to visualize. The sub-directory is ``"%s_annotations"`` where ``%s`` is the basename of the file of the first signal in ``signal_dict``.
-
-If we come back to the example of :ref:`signal_ex`, the annotations would be stored in the directory ``"Annotations/20170423T002840_ecg_annotations"``.
-
-
-**Long recording with video files**
-
-**ViSiAnnoT** is launched with the class :class:`.ViSiAnnoTLongRec` and there are videos to visualize. The sub-directory is ``"%s_annotations"`` where ``%s`` is the basename of the first file of the first camera in ``video_dict``.
-
-For example, there are two cameras and the long recording is composed of three files:
-
-* cam1_2020-01-01T00-00-00.mp4 / cam2_2020-01-01T00-00-00.mp4
-* cam1_2020-01-01T00-15-00.mp4 / cam2_2020-01-01T00-15-00.mp4
-* cam1_2020-01-01T00-30-00.mp4 / cam2_2020-01-01T00-30-00.mp4
-
-``"cam1"`` is the first camera in ``video_dict``. The annotations would be stored in the directory ``"Annotations/cam1_2020-01-01T00-00-00_annotations"``.
-
-If there are also signals to visualize, whether it is synchronized with video or not, then the annotation directory remains the same.
-
-**Long recording without video files**
-
-**ViSiAnnoT** is launched with the class :class:`.ViSiAnnoTLongRec` and there are only signals to visualize. The sub-directory is ``"%s_annotations"`` where ``%s`` is the basename of the first file of the first signal in ``video_dict``.
-
-For example, there are two signals and the long recording is composed of three files:
-
-* sig1_2020-01-01T00-00-00.txt / sig2_2020-01-01T00-00-00.h5
-* sig1_2020-01-01T00-15-00.mp4 / sig2_2020-01-01T00-15-00.h5
-* sig1_2020-01-01T00-30-00.mp4 / sig2_2020-01-01T00-30-00.h5
-
-``"sig1"`` is the first signal in ``signal_dict``. The annotations would be stored in the directory ``"Annotations/sig1_2020-01-01T00-00-00_annotations"``.
-
-
-Description of events annotation files
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-For each label, two text files are created with the intervals of the annotated events. They both have the same content but formatted in a different way: ``datetime`` and ``frame``.
+For each label, two text files are created with the intervals of the annotated events. They both have the same content but formatted in a different way: ``datetime`` and ``frame``. The name of the annotation file is respectively ``BASENAME_LABEL-datetime`` and ``BASENAME_LABEL-frame``, where ``BASENAME`` is the basename of the annotation directory and ``LABEL`` is the label.
 
 Each line in an annotation file corresponds to an annotated event: ``TS1 - TS2``, where ``TS1`` (resp. ``TS2``) is the start (resp. stop) timestamp of the annotated event.
 
@@ -624,9 +579,7 @@ When creating an instance of *ViSiAnnoT* or *ViSiAnnoTLongRec*, the configuratio
 
   Image extraction tool
 
-The extracted images are stored in the same base directory than events annotation files. There is the base directory specified by the keyword argument ``annot_base_dir`` in :class:`.ViSiAnnoT` constructor, by default ``"Annotations"``. Then a sub-directory is created: ``"Annotations/%s_annotations"``, where ``%s`` is the basename of the (first) file of the first modality (see above).
-
-For each label, a sub-directory is created: ``"Annotations/%s_annotations/label"``. In this sub-directory are stored the extracted images. The image file name is ``"%s_%d.png"``, where ``%s`` is the video file name and ``%d`` is the frame index of the image.
+The extracted images are stored in the same directory than events annotation files. For each label, a sub-directory is created, named after the label, where are stored the extracted images. The image file name is ``"%s_%d.png"``, where ``%s`` is the video file name and ``%d`` is the frame index of the image.
 
 
 .. _sec-layout:
