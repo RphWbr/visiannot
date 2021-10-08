@@ -741,8 +741,9 @@ class ConfigurationWindow():
             )[0]
 
             # write configuration file
-            self.writeConfigObjFile(path)
-            print("Configuration file written")
+            if path != '':
+                self.writeConfigObjFile(path)
+                print("Configuration file written")
 
         # done
         elif button_id == 2:
