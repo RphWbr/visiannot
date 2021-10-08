@@ -270,7 +270,7 @@ In a Python script, the general configuration is specified with the keyword argu
     font_size_title = 8
     nb_table_annot = 10
     time_zone = 'Europe/Paris'
-    annot_dir_base = 'Annotations'
+    annot_dir = 'Annotations'
     ticks_offset = 5
     font_name = 'Times'
     trunc_duration = [0, 0]
@@ -555,7 +555,7 @@ The "Background color" spin boxes specify the background color of ViSiAnnoT wind
 
 The "Background color (signal plot)" spin boxes specify the background color of ViSiAnnoT plots.
 
-The "Annotations base directory" line edit specifies the base directory where to save the annotations (both events and image extraction). A sub-directory is automatically created with the recording name (*i.e.* the name of the folder containing the video files). So the base directory can be the same for several recordings.
+The "Annotations directory" line edit specifies the directory where to save the annotations (both events and image extraction). **Make sure to change this directory when switching to another recording**.
 
 The "from cursor durations" spin boxes table specifies the list of temporal range durations for defining a new temporal range beginning at the current temporal cursor (see section :ref:`sec-fast-nav`).
 
