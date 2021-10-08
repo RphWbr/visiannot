@@ -17,7 +17,6 @@ import pyqtgraph as pg
 from PyQt5 import QtCore
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QSizePolicy
-from PyQt5.QtWidgets import QFileDialog
 from .ToolsPyQt import createWindow, addWidgetToLayout, initializeDisplay
 import numpy as np
 
@@ -361,27 +360,6 @@ def initializeDisplayAndBgColor(color=(255, 255, 255)):
     setBackgroundColor(color=color)
 
     return app
-
-
-def getDirectoryDialog(desc_text="Select directory", dir_root=None):
-    """
-    Opens a dialog window in order to select a directory
-
-    :param desc_text: short description text to be displayed as the dialog
-        window title
-    :type desc_text: str
-    :param dir_root: initial directory where to go when launching the dialog
-        window, default current working directory
-    :type dir_root: str
-    """
-
-    app = initializeDisplay()
-    dir_selected = QFileDialog.getExistingDirectory(
-        None, desc_text, dir_root, QFileDialog.ShowDirsOnly
-    )
-    app.quit()
-
-    return dir_selected
 
 
 def create2DWidget(

@@ -15,6 +15,7 @@ https://doc.qt.io/qt-5/reference-overview.html
 
 
 from PyQt5 import QtWidgets, QtGui, QtCore
+from PyQt5.QtWidgets import QFileDialog
 from sys import flags, argv
 
 
@@ -93,6 +94,27 @@ def infiniteLoopDisplay(app):
 
     if (flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
         app.instance().exec_()
+
+
+def getDirectoryDialog(desc_text="Select directory", dir_root=None):
+    """
+    Opens a dialog window in order to select a directory
+
+    :param desc_text: short description text to be displayed as the dialog
+        window title
+    :type desc_text: str
+    :param dir_root: initial directory where to go when launching the dialog
+        window, default current working directory
+    :type dir_root: str
+    """
+
+    app = initializeDisplay()
+    dir_selected = QFileDialog.getExistingDirectory(
+        None, desc_text, dir_root, QFileDialog.ShowDirsOnly
+    )
+    app.quit()
+
+    return dir_selected
 
 
 def addSpinBoxTable(grid, pos, nb_rows, nb_cols, name="", params={}):
