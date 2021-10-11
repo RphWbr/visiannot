@@ -97,19 +97,21 @@ if __name__ == '__main__':
     )
 
     parser.add_argument(
-        "--flag_config_gui",
-        "-fconf",
-        type=int,
-        help="boolean (0 or 1) to specify if configuration GUI must be launched, default 1",
-        default=1
+        "--no_config_gui",
+        "-ncg",
+        action="store",
+        nargs='?',
+        help="specify if configuration GUI must be launched",
+        default=0
     )
 
     parser.add_argument(
-        "--flag_visi_gui",
-        "-fvisi",
-        type=int,
-        help="boolean (0 or 1) to specify if ViSiAnnoT GUI must be launched, default 1",
-        default=1
+        "--no_visi_gui",
+        "-nvg",
+        action="store",
+        nargs='?',
+        help="specify if ViSiAnnoT GUI must be launched",
+        default=0
     )
 
     parser.add_argument(
@@ -122,10 +124,9 @@ if __name__ == '__main__':
 
     args = parser.parse_known_args()
     config_path = abspath(args[0].config_path)
-    flag_config_gui = args[0].flag_config_gui
-    flag_visi_gui = args[0].flag_visi_gui
+    no_config_gui = args[0].no_config_gui
+    no_visi_gui = args[0].no_visi_gui
     config_update_function_name = args[0].config_update_function_name
-
 
     ####################
     # launch ViSiAnnoT #
@@ -151,16 +152,16 @@ if __name__ == '__main__':
             config_path = config_update_function(config_path)
 
     # check if configuration GUI
-    if flag_config_gui:
+    if no_config_gui is not None:
         # check if ViSiAnnoT GUI
-        if flag_visi_gui:
+        if no_visi_gui is not None:
             win_visi = ViSiAnnoTLongRecFromConfigGUI(path=config_path)
 
         else:
             # only configuration GUI
             win_config = ConfigurationWindow(path=config_path)
 
-    elif flag_visi_gui:
+    elif no_visi_gui is not None:
         # only ViSiAnnoT GUI
         win_visi = ViSiAnnoTLongRecFromConfigFile(config_path)
 
