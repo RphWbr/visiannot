@@ -1,6 +1,10 @@
 # byte-compiled / optimized / DLL files
 **/__pycache__
 
+# executable generation
+exe_generation/build
+exe_generation/dist
+
 # configuration files
 *.ini
 !Config_examples/*.ini
