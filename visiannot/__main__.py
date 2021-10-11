@@ -89,16 +89,16 @@ if __name__ == '__main__':
     parser = ArgumentParser()
 
     parser.add_argument(
-        "--config_path",
-        "-conf",
+        "--config-path",
+        "-c",
         type=str,
         help="path to the configuration file, default ''",
         default=''
     )
 
     parser.add_argument(
-        "--no_config_gui",
-        "-ncg",
+        "--no-config-gui",
+        "-n",
         action="store",
         nargs='?',
         help="specify if configuration GUI must be launched",
@@ -106,8 +106,8 @@ if __name__ == '__main__':
     )
 
     parser.add_argument(
-        "--no_visi_gui",
-        "-nvg",
+        "--no-visi-gui",
+        "-m",
         action="store",
         nargs='?',
         help="specify if ViSiAnnoT GUI must be launched",
@@ -115,8 +115,8 @@ if __name__ == '__main__':
     )
 
     parser.add_argument(
-        "--config_update_function_name",
-        "-conf_update",
+        "--config-update-function",
+        "-u",
         type=str,
         help="name of a function to call before launching ViSiAnnoT (one positional argument: configuration path / returns updated configuration dictionary), module_name.function_name or package_name.subpackage_name.function.name",
         default=''
@@ -126,18 +126,18 @@ if __name__ == '__main__':
     config_path = abspath(args[0].config_path)
     no_config_gui = args[0].no_config_gui
     no_visi_gui = args[0].no_visi_gui
-    config_update_function_name = args[0].config_update_function_name
+    config_update_function = args[0].config_update_function
 
     ####################
     # launch ViSiAnnoT #
     ####################
 
     # check if calling function before launching ViSiAnnoT
-    if config_update_function_name != '':
+    if config_update_function != '':
         # get name of package/module and path/name of function in
         # package/module
         config_update_function_name_split = \
-            config_update_function_name.split('.')
+            config_update_function.split('.')
         package_name = '.'.join(config_update_function_name_split[:-1])
         function_name = config_update_function_name_split[-1]
 
