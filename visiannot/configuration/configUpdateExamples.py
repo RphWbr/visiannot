@@ -35,7 +35,7 @@ def updateDataAndAnnotationDirectory(config_path):
 
     - First field of the "Video" and "Signal" sub-configurations (data
       directory)
-    - Key ``annot_dir``in section ``General``(annotation directory).
+    - Key ``annot_dir`` in section ``General`` (annotation directory).
 
     The annotation directory is updated as follows:
     ``annotBase/recName/patID``, where ``annotBase`` is the initial value of
