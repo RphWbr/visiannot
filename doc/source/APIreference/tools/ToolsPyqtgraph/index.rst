@@ -32,7 +32,6 @@ Functions
    visiannot.tools.ToolsPyqtgraph.createWidgetLogo
    visiannot.tools.ToolsPyqtgraph.createWidgetSignal
    visiannot.tools.ToolsPyqtgraph.deleteNaNForPlot
-   visiannot.tools.ToolsPyqtgraph.getDirectoryDialog
    visiannot.tools.ToolsPyqtgraph.initializeDisplayAndBgColor
    visiannot.tools.ToolsPyqtgraph.setBackgroundColor
    visiannot.tools.ToolsPyqtgraph.setTicksTextStyle
@@ -83,7 +82,6 @@ Functions
 .. autofunction:: visiannot.tools.ToolsPyqtgraph.createWidgetLogo
 .. autofunction:: visiannot.tools.ToolsPyqtgraph.createWidgetSignal
 .. autofunction:: visiannot.tools.ToolsPyqtgraph.deleteNaNForPlot
-.. autofunction:: visiannot.tools.ToolsPyqtgraph.getDirectoryDialog
 .. autofunction:: visiannot.tools.ToolsPyqtgraph.initializeDisplayAndBgColor
 .. autofunction:: visiannot.tools.ToolsPyqtgraph.setBackgroundColor
 .. autofunction:: visiannot.tools.ToolsPyqtgraph.setTicksTextStyle

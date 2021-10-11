@@ -31,6 +31,7 @@ Functions
    visiannot.tools.ToolsPyQt.addWidgetToLayout
    visiannot.tools.ToolsPyQt.createWindow
    visiannot.tools.ToolsPyQt.deleteWidgetsFromLayout
+   visiannot.tools.ToolsPyQt.getDirectoryDialog
    visiannot.tools.ToolsPyQt.infiniteLoopDisplay
    visiannot.tools.ToolsPyQt.initializeDisplay
    visiannot.tools.ToolsPyQt.setLineEditList
@@ -82,6 +83,7 @@ Functions
 .. autofunction:: visiannot.tools.ToolsPyQt.addWidgetToLayout
 .. autofunction:: visiannot.tools.ToolsPyQt.createWindow
 .. autofunction:: visiannot.tools.ToolsPyQt.deleteWidgetsFromLayout
+.. autofunction:: visiannot.tools.ToolsPyQt.getDirectoryDialog
 .. autofunction:: visiannot.tools.ToolsPyQt.infiniteLoopDisplay
 .. autofunction:: visiannot.tools.ToolsPyQt.initializeDisplay
 .. autofunction:: visiannot.tools.ToolsPyQt.setLineEditList
