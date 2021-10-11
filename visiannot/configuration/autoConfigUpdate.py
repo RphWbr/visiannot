@@ -76,7 +76,7 @@ def updateDataAndAnnotationDirectory(config_path):
     rec_name = basename(dir_data)
     bb = rec_name.split("_")[0]
     config_dict["General"]["annot_dir"] = "%s/%s/%s" % (
-        config_dict["General"]["annot_dir"], rec_name, bb
+        config_dict["General"]["annot_dir"], bb, rec_name
     )
 
     return config_dict
