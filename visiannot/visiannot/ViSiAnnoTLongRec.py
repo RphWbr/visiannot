@@ -995,6 +995,10 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         ok = self.prepareNewRecording(rec_id)
 
         if ok:
+            # reset previous frame id
+            for video_id in self.previous_frame_id.keys():
+                self.previous_frame_id[video_id] = None
+
             # update frame id
             self.updateFrameId(new_frame_id)
 
