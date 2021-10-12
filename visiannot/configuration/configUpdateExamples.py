@@ -33,7 +33,7 @@ def updateDataAndAnnotationDirectory(config_path):
     Once the data directory is selected, the following field are updated in the
     configuration dictionary:
 
-    - First field of the "Video" and "Signal" sub-configurations (data
+    - First field of the ``Video`` and ``Signal`` sub-configurations (data
       directory)
     - Key ``annot_dir`` in section ``General`` (annotation directory).
 
@@ -72,11 +72,11 @@ def updateDataAndAnnotationDirectory(config_path):
             for value_list in value_list_list:
                 value_list[0] = dir_data
 
-    # get baby id
+    # get patient id
     rec_name = basename(dir_data)
-    bb = rec_name.split("_")[0]
+    pat_id = rec_name.split("_")[0]
     config_dict["General"]["annot_dir"] = "%s/%s/%s" % (
-        config_dict["General"]["annot_dir"], bb, rec_name
+        config_dict["General"]["annot_dir"], pat_id, rec_name
     )
 
     return config_dict
