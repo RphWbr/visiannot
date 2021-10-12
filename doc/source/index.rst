@@ -19,6 +19,7 @@ Welcome to ViSiAnnoT's documentation!
    userguide-configuration
    userguide-toolspyqt
    userguide-toolspyqtgraph
+   customization
    exe
    software
    further

@@ -41,6 +41,8 @@ The following packages are required and are automatically installed with ``pip``
 * `scipy <https://www.scipy.org/>`_
 
 
+.. _run:
+
 Run ViSiAnnoT
 =============
 
@@ -51,3 +53,21 @@ Once it is installed, you can launch **ViSiAnnoT** with the following command li
 First, the configuration GUI will open, see chapter :ref:`configuration`. Then the ViSiAnnoT GUI will open, see chapter :ref:`userguide-visiannot`.
 
 In order to familiarize with **ViSiAnnoT**, an example of dataset is provided on `GitHub <https://github.com/RphWbr/visiannot-example>`_. You may download or clone this repository on your computer.
+
+There are several optional arguments, run ``python3 -m visiannot -h`` to get help. Below we give some examples on how to use them.
+
+Specify a configuration file to load::
+
+    $ python3 -m visiannot -c path/to/config.ini
+
+Disable configuration GUI (only ViSiAnnoT GUI is launched)::
+
+    $ python3 -m visiannot -c path/to/config.ini -n
+
+Disable ViSiAnnoT GUI (only configuration GUI is launched)::
+
+    $ python3 -m visiannot -m
+
+Call a function in order to automatically update the configuration before launching the GUIs (see :ref:`customization` for details)::
+
+    $ python3 -m visiannot -c path/to/config.ini -u visiannot.configuration.configUpdateExamples.updateDataAndAnnotationDirectory

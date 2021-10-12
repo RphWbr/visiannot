@@ -1724,7 +1724,7 @@ class ViSiAnnoT():
                         os.remove(annot_path)
 
             # update the list of files/folders in the annotation directory
-            annot_path_list = os.listdir(self.annot_dir)
+            annot_path_list = sorted(os.listdir(self.annot_dir))
 
             # check if empty annotation directory (or only filled with
             # event annotation of protected label)

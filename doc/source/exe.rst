@@ -13,60 +13,28 @@ There exists several tools for freezing a Python application into a standalone e
 * Create a virtual environment dedicated to **ViSiAnnoT** and switch to this virtual environment,
 * Install **ViSiAnnoT** package and all depedencies,
 * Install `PyInstaller <https://www.pyinstaller.org>`_,
-* Check if the script runs with no error,
+* Check if **ViSiAnnoT** runs wihtout error: ``python3 -m visiannot`` (see :ref:`run`),
 * Generate the standalone executable.
 
 
 Generation
 ==========
 
-* (optional) Create a directory "visiannot_exe"
-* Create the file ``visiannot.spec``::
+In a console:
 
-    # -*- mode: python -*-
+* Two options for the first step
 
-    block_cipher = None
+    * If you have cloned the repository, go to the directory "*exe_generation*"
+    * Otherwise
 
-    pkg_dir = '/dir/to/parent/visiannot/package'
-
-    # list of files to include into the standalone executable
-    data_list = [
-        ('%s/Images/*.jpg' % pkg_dir, 'Images'),
-        ('%s/components/Images/*.jpg' % pkg_dir, 'Images'),
-    ]
-
-    a = Analysis(['/path/to/main_visiannot.py'],
-                 binaries=[],
-                 datas=data_list,
-                 hiddenimports=[],
-                 hookspath=[],
-                 runtime_hooks=[],
-                 excludes=[],
-                 win_no_prefer_redirects=False,
-                 win_private_assemblies=False,
-                 cipher=block_cipher,
-                 noarchive=False)
-    pyz = PYZ(a.pure, a.zipped_data,
-                 cipher=block_cipher)
-    exe = EXE(pyz,
-              a.scripts,
-              a.binaries,
-              a.zipfiles,
-              a.datas,
-              [],
-              name='ViSiAnnoT',
-              debug=False,
-              bootloader_ignore_signals=False,
-              strip=False,
-              upx=True,
-              runtime_tmpdir=None,
-              console=True)
-
-* The following variables must be set:
-    
-    * ``pkg_dir`` is the path to the directory containing **ViSiAnnoT** package
-    * ``'/path/to/main_visiannot.py'`` is the path to the application script to freeze into a standalone executable
-* Open a console and place yourself where is located ``visiannot.spec``
+        * Download the specification file `visiannot.spec <https://github.com/RphWbr/visiannot/blob/main/exe_generation/visiannot.spec>`_ and copy it to the directory where you want to generate the standalone executable
+        * In ``visiannot.spec``, set the variable ``pkg_dir`` to the path to the directory containing the package **visiannot**
 * (optional) Activate python virtual environment
-* Run the following command: ``python3 -m PyInstaller visiannot.spec``, it may be necessary to replace ``python3`` by ``python`` depending on the alias defined on your computer
-* A directory named ``dist`` is automatically created and contains the executable standalone
+* Run the following command: ``python3 -m PyInstaller visiannot.spec``
+* A directory named ``dist`` is automatically created and contains the standalone executable
+
+
+Specify options
+===============
+
+As seen in :ref:`run`, it is possible to specify different options when launching **ViSiAnnoT**. Once the standalone executable is generated, you may create a shortcut with a specific target for the options.

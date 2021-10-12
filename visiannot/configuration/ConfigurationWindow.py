@@ -27,8 +27,8 @@ class ConfigurationWindow():
         :class:`.ViSiAnnoTLongRec`
 
         :param path: path to the configuration file to load when
-            creating the window
-        :type path: str
+            creating the window, it might be a configuration dictionary
+        :type path: str or dict
 
         The window is composed of 5 main widgets:
 
@@ -340,53 +340,44 @@ class ConfigurationWindow():
             "height_widget_signal": 150
         }
 
-        # load configuration file if it exists
-        if os.path.isfile(path):
-            self.load(path)
-            self.resetDisplay()
-            print("Configuration file loaded")
+        #: (*dict*) General configuration
+        #:
+        #: The keys and values are:
+        #:
+        #: - ``"flag_synchro"``: (*bool*) specify if the signals are
+        #:   synchronized with video
+        #: - ``"flag_pause_status"``: (*bool*) specify if the video is
+        #:   paused at launching
+        #: - ``"layout_mode"``: (*int*) either 0, 1 or 2
+        #: - ``"zoom_factor"``: (*int*)
+        #: - ``"down_freq"``: (*float*)
+        #: - ``"max_points"``: (*int*)
+        #: - ``"nb_ticks"``: (*int*)
+        #: - ``"trunc_duration"``: (*list*) length 2 *(minute, second)*
+        #: - ``"time_zone"``: (*str*) time zone (complying with pytz
+        #:   package)
+        #: - ``"annot_dir"``: (*str*) directory of the annotations
+        #: - ``"from_cursor_list"``: (*list*) each element is a list of
+        #:   length 2 *(minute, second)*
+        #: - ``"ticks_size"``: (*int*) size of the ticks text in signal
+        #:   plots
+        #: - ``"ticks_color"``: (*list*) RGB color of ticks
+        #: - ``"ticks_offset"``: (*int*) space in pixels between ticks and
+        #:   associated values
+        #: - ``"font_name"``: (*str*) font of the text in ViSiAnnoT
+        #: - ``"font_size"``: (*int*) font size in ViSiAnnoT
+        #: - ``"font_size_title"``: (*int*) font size in ViSiAnnoT (title
+        #:   of video widget and progress bar widget)
+        #: - ``"font_color"``: (*list*) RGB color of font in ViSiAnnoT
+        #: - ``"nb_table_annot"``: (*int*) maximum number of labels in one
+        #:   row in annotation widgets
+        #: - ``"bg_color"``: (*list*) RGB color of background in ViSiAnnoT
+        #: - ``"bg_color_plot"``: (*list*) RGB color of background color of
+        #:   signal plots
+        self.general_dict = None
 
-        # create default configuration (only general configuration)
-        else:
-            #: (*dict*) General configuration
-            #:
-            #: The keys and values are:
-            #:
-            #: - ``"flag_synchro"``: (*bool*) specify if the signals are
-            #:   synchronized with video
-            #: - ``"flag_pause_status"``: (*bool*) specify if the video is
-            #:   paused at launching
-            #: - ``"layout_mode"``: (*int*) either 0, 1 or 2
-            #: - ``"zoom_factor"``: (*int*)
-            #: - ``"down_freq"``: (*float*)
-            #: - ``"max_points"``: (*int*)
-            #: - ``"nb_ticks"``: (*int*)
-            #: - ``"trunc_duration"``: (*list*) length 2 *(minute, second)*
-            #: - ``"time_zone"``: (*str*) time zone (complying with pytz
-            #:   package)
-            #: - ``"annot_dir"``: (*str*) directory of the annotations
-            #: - ``"from_cursor_list"``: (*list*) each element is a list of
-            #:   length 2 *(minute, second)*
-            #: - ``"ticks_size"``: (*int*) size of the ticks text in signal
-            #:   plots
-            #: - ``"ticks_color"``: (*list*) RGB color of ticks
-            #: - ``"ticks_offset"``: (*int*) space in pixels between ticks and
-            #:   associated values
-            #: - ``"font_name"``: (*str*) font of the text in ViSiAnnoT
-            #: - ``"font_size"``: (*int*) font size in ViSiAnnoT
-            #: - ``"font_size_title"``: (*int*) font size in ViSiAnnoT (title
-            #:   of video widget and progress bar widget)
-            #: - ``"font_color"``: (*list*) RGB color of font in ViSiAnnoT
-            #: - ``"nb_table_annot"``: (*int*) maximum number of labels in one
-            #:   row in annotation widgets
-            #: - ``"bg_color"``: (*list*) RGB color of background in ViSiAnnoT
-            #: - ``"bg_color_plot"``: (*list*) RGB color of background color of
-            #:   signal plots
-            self.general_dict = self.general_dict_default.copy()
-
-            # display general configuration values
-            self.setGeneralConfiguration(True)
-
+        # load configuration
+        self.load(path)
 
         # infinite loop
         ToolsPyQt.infiniteLoopDisplay(self.app)
@@ -728,8 +719,6 @@ class ConfigurationWindow():
             # load configuration file
             if path != "":
                 self.load(path)
-                self.resetDisplay()
-                print("Configuration file loaded")
 
         # save
         elif button_id == 1:
@@ -836,8 +825,22 @@ class ConfigurationWindow():
         :type path: str
         """
 
-        # load configuration file
-        config_dict = ConfigurationWindow.loadConfigFile(path)
+        # check type
+        if isinstance(path, str):
+            # check if file exists
+            if os.path.isfile(path):
+                # load configuration file
+                config_dict = ConfigurationWindow.loadConfigFile(path)
+                print("Configuration file loaded")
+
+            else:
+                # default configuration
+                config_dict = {}
+                print("Configuration file not found, default configuration")
+
+        else:
+            # configuration dictionary passed as argument instead of a path
+            config_dict = path
 
         # get general configuration
         if "General" in config_dict:
@@ -850,12 +853,15 @@ class ConfigurationWindow():
 
         else:
             # get default general configuration
-            self.general_dict = self.general_dict_default
+            self.general_dict = self.general_dict_default.copy()
 
         # update meta_dict attribute
         for config_type in self.config_type_list:
             if config_type in config_dict.keys():
                 self.meta_dict[config_type].dict = config_dict[config_type]
+
+        # display configuration
+        self.resetDisplay()
 
 
     def resetDisplay(self):
