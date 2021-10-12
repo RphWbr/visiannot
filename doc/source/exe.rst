@@ -24,9 +24,10 @@ In a console:
 
 * Two options for the first step
 
-    * If you have cloned the repository, go to the directory ``exe_generation``
+    * If you have cloned the repository, go to the directory "*exe_generation*"
     * Otherwise
-        * Download the specification file [visiannot.spec](https://github.com/RphWbr/visiannot/blob/main/exe_generation/visiannot.spec) and copy it to the directory where you want to generate the standalone executable
+
+        * Download the specification file `visiannot.spec <https://github.com/RphWbr/visiannot/blob/main/exe_generation/visiannot.spec>`_ and copy it to the directory where you want to generate the standalone executable
         * In ``visiannot.spec``, set the variable ``pkg_dir`` to the path to the directory containing the package **visiannot**
 * (optional) Activate python virtual environment
 * Run the following command: ``python3 -m PyInstaller visiannot.spec``
