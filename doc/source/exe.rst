@@ -13,7 +13,7 @@ There exists several tools for freezing a Python application into a standalone e
 * Create a virtual environment dedicated to **ViSiAnnoT** and switch to this virtual environment,
 * Install **ViSiAnnoT** package and all depedencies,
 * Install `PyInstaller <https://www.pyinstaller.org>`_,
-* Check if **ViSiAnnoT** runs wihtout error: ``python3 -m visiannot``(see :ref:`run`),
+* Check if **ViSiAnnoT** runs wihtout error: ``python3 -m visiannot`` (see :ref:`run`),
 * Generate the standalone executable.
 
 

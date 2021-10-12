@@ -62,7 +62,7 @@ Specify a configuration file to load::
 
 Disable configuration GUI (only ViSiAnnoT GUI is launched)::
 
-    $ python3 -m visiannot -n
+    $ python3 -m visiannot -c path/to/config.ini -n
 
 Disable ViSiAnnoT GUI (only configuration GUI is launched)::
 

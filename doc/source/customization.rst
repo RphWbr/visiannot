@@ -4,11 +4,11 @@
 Customization
 =============
 
-As seen in :ref:`run`, it is possible to call a function to automatically update the configuration before launching the GUIs::
+It is possible to call a function to automatically update the configuration before launching the GUIs::
 
-    $ python3 -m visiannot -c path/to/config.ini -u visiannot.configuration.configUpdateExamples.updateDataAndAnnotationDirectory
+    $ python3 -m visiannot -c path/to/config.ini -n -u visiannot.configuration.configUpdateExamples.updateDataAndAnnotationDirectory
 
-The option ``-c`` specifies the path to the configuration file to load. Then, with the option ``-u``, we give the path to a function in **visiannot** package that updates the loaded configuration dictionary. The update function may be in a module that is not in a package (``moduleName.functionName``). It must have one positional argument (path to the configuration file) and must return the updated configuration dictionary.
+The option ``-c`` specifies the path to the configuration file to load. The option ``-n`` disables configuration GUI. With the option ``-u``, we give the path to a function in **visiannot** package that updates the loaded configuration dictionary. The update function may be in a module that is not in a package (``moduleName.functionName``). It must have one positional argument (path to the configuration file) and must return the updated configuration dictionary.
 
 Let's give an example to illustrate the effect of the configuration update function. We have a dataset organized as follows::
 
@@ -38,7 +38,7 @@ Let's give an example to illustrate the effect of the configuration update funct
 
 There is a folder for each subject, with a sub-folder for each recording. A recording is made up of two video files and two signal files that are not synchronized.
 
-We want the annotations to be stored as follows::
+We want the annotations to be stored as follows (two labels, "Label1" and "Label2")::
 
     |__ Annnotations
         |__ Subject01
@@ -68,5 +68,7 @@ Thanks to the option ``-u``, it is possible to automate this process of configur
 * Update first field of each signal configuration in the configuration dictionary with the selected directory,
 * Get the annotation directory defined as ``annotDirBase/patID/recName``, where ``annotDirBase`` is the initial value of the annotation directory in the configuration file, ``recName`` is the basename of the selected directory (e.g. "Subject02_2021-01-03T01-00-00") and ``patID`` is the patient ID (e.g. "Subject02"),
 * Update the field ``annot_dir`` in the section ``General`` of the configuration dictionary with the new annotation directory.
+
+In order to have the dialog window to open at particular location at launch, it is possible to add the key ``data_dir_base`` in the section ``General`` of the configuration file.
 
 **NB**: only the configuration dictionary is updated in the function, the configuration file remains unchanged, implying that it is not needed to reset the value of ``annot_dir`` in the configuration file after each launch.
