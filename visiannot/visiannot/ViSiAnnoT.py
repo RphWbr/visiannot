@@ -1793,9 +1793,9 @@ class ViSiAnnoT():
         update the position of the temporal cursor in the signal widgets.
         """
 
-        # check if frame_id overtakes the current range
+        # check if frame id overtakes the current range
         if self.frame_id >= self.last_frame:
-            # check if frame id overtakes the video
+            # check if frame id overtakes the reference file
             if self.frame_id >= self.nframes:
                 if not self.flag_long_rec:
                     # single recording
@@ -1808,23 +1808,21 @@ class ViSiAnnoT():
                         self.frame_id = self.nframes - 1
 
             else:
-                # define new range (with same temporal width as previously)
+                # get width of the current temporal range
                 temporal_width = self.last_frame - self.first_frame
-                print(self.frame_id, self.first_frame, self.last_frame)
-                print(temporal_width)
-                if temporal_width + self.last_frame >= self.nframes:
-                    print(1)
+
+                # frame id is in the last temporal range window
+                if self.frame_id + temporal_width > self.nframes:
                     self.first_frame = self.nframes - temporal_width
                     self.last_frame = self.nframes
 
-                elif temporal_width + self.last_frame < self.frame_id:
-                    print(2)
-                    self.first_frame = self.frame_id
+                # frame id is in the next temporal range window
+                elif self.frame_id < self.last_frame + temporal_width:
+                    self.first_frame = self.last_frame
                     self.last_frame = self.first_frame + temporal_width
 
                 else:
-                    print(3)
-                    self.first_frame = self.last_frame
+                    self.first_frame = self.frame_id
                     self.last_frame = self.first_frame + temporal_width
 
                 # update signals plot
@@ -1838,18 +1836,21 @@ class ViSiAnnoT():
                 self.previousRecording()
 
             else:
-                # define new range (with same temporal width as previously)
+                # get width of the current temporal range
                 temporal_width = self.last_frame - self.first_frame
-                if self.first_frame - temporal_width < 0:
+
+                # frame id is the first temporal range window
+                if self.frame_id - temporal_width < 0:
                     self.first_frame = 0
                     self.last_frame = temporal_width
 
-                elif self.first_frame - temporal_width > self.frame_id:
-                    self.last_frame = self.frame_id
+                # frame id is in the previous temporal range window
+                elif self.frame_id > self.first_frame - temporal_width:
+                    self.last_frame = self.first_frame
                     self.first_frame = self.last_frame - temporal_width
 
                 else:
-                    self.last_frame = self.first_frame
+                    self.last_frame = self.frame_id
                     self.first_frame = self.last_frame - temporal_width
 
                 # update signals plots
