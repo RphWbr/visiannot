@@ -1015,8 +1015,9 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             self.updateSignalPlot()
 
             # update progress bar
-            self.wid_progress.getProgressCurve().setData(
-                [0, self.nframes], [0, 0]
+            self.wid_progress.updateFromViSiAnnoT(
+                self.nframes, self.beginning_datetime, self.frame_id,
+                self.first_frame, self.last_frame
             )
 
             # update annotation regions plot if necessary
@@ -1135,12 +1136,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             self.setAllData(
                 video_dict_current, signal_dict_current, interval_dict_current
             )
-
-            # update progress bar
-            self.setTemporalTicks(
-                self.wid_progress, (0, self.nframes, self.fps)
-            )
-            self.wid_progress.updateNFrames(self.nframes)
 
             # set recording choice combo box
             self.combo_rec_choice.setCurrentIndex(self.rec_id)

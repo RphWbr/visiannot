@@ -30,7 +30,9 @@ from ..tools import ToolsData
 from ..tools import ToolsImage
 from ..tools import ToolsAudio
 from .components.Signal import Signal
+from .components.SignalWidget import SignalWidget
 from .components.MenuBar import MenuBar
+from .components.ProgressWidget import ProgressWidget
 
 
 class ViSiAnnoT():
@@ -313,7 +315,7 @@ class ViSiAnnoT():
             :class:`.ViSiAnnoT` windows must be displayed simultaneousely, do
             not forget to store each instance of :class:`.ViSiAnnoT` in a
             variable and to set manually the infinite loop with
-            :func:`graphicsoverlayer.ToolsPyQt.infiniteLoopDisplay`
+            :func:`.infiniteLoopDisplay`
         :type flag_infinite_loop: bool
         :param bg_color: backgroud color of the GUI, RGB or HEX string
         :type bg_color: tuple or str
@@ -865,16 +867,25 @@ class ViSiAnnoT():
         if "progress" in poswid_dict.keys():
             #: (:class:`graphicsoverlayer.ToolsPyqtgraph.ProgressWidget`)
             #: Widget containing the progress bar
-            self.wid_progress = None
-
-            self.createWidgetProgress(
-                poswid_dict['progress'], title="",
+            self.wid_progress = ProgressWidget(
+                self.nframes, self.beginning_datetime, self.fps,
                 title_style=font_default_title, ticks_color=ticks_color,
-                ticks_size=ticks_size, ticks_offset=ticks_offset
+                ticks_size=ticks_size, ticks_offset=ticks_offset,
+                nb_ticks=self.nb_ticks
             )
 
-            # listen to the callbakc method
-            self.wid_progress.getProgressPlot().sigPlotChanged.connect(
+            # set current temporal range in the progress bar
+            self.wid_progress.setCurrentTemporalRange(
+                self.frame_id, self.first_frame, self.last_frame
+            )
+
+            # add the widget to the layout
+            ToolsPyQt.addWidgetToLayout(
+                self.lay, self.wid_progress, poswid_dict['progress']
+            )
+
+            # listen to the callback method
+            self.wid_progress.progress_plot.sigPlotChanged.connect(
                 self.mouseDraggedProgress
             )
 
@@ -1290,61 +1301,6 @@ class ViSiAnnoT():
         return trunc_list
 
 
-    def setTemporalTicks(self, widget, temporal_info):
-        """
-        Sets the ticks of the X axis of the widget and the X axis range
-        according to a temporal range
-
-        It creates temporal labels for ticks in the format HH:MM:SS.SSS.
-        The number of ticks is specified by :attr:`.ViSiAnnoT.nb_ticks`.
-
-        :param widget: widget where to set X axis ticks and X axis range,
-            it may be any sub-class of pyqtgraph.PlotWidget, such as
-            :class:`graphicsoverlayer.ToolsPyqtgraph.SignalWidget` or
-            :class:`graphicsoverlayer.ToolsPyqtgraph.ProgressWidget`
-        :type widget: pyqtgraph.PlotWidget
-        :param temporal_info: temporal range, there are two ways to specify it:
-
-            - ``(first_frame_ms, last_frame_ms)``, the temporal range is
-              expressed in milliseconds,
-            - ``(first_frame, last_frame, freq)``, the temporal range is
-              expressed in number of frames sampled at the frequency ``freq``
-        :type temporal_info: list
-        """
-
-        start = temporal_info[0]
-        stop = temporal_info[1]
-        temporal_range = [start + i * (stop - start) / (self.nb_ticks - 1)
-                          for i in range(self.nb_ticks - 1)] + [stop]
-
-        # X axis range
-        widget.setXRange(start, stop)
-
-        if len(temporal_info) == 3:
-            freq = temporal_info[2]
-
-            # define temporal labels
-            temporal_labels = [
-                ToolsDateTime.convertFrameToAbsoluteTimeString(
-                    frame_id, freq, self.beginning_datetime
-                ) for frame_id in temporal_range
-            ]
-
-        else:
-            # define temporal labels
-            temporal_labels = [
-                ToolsDateTime.convertMsecToAbsoluteTimeString(
-                    msec, self.beginning_datetime
-                ) for msec in temporal_range
-            ]
-
-        # set ticks
-        ticks = [[(frame, label) for frame, label in
-                  zip(temporal_range, temporal_labels)], []]
-        axis = widget.getAxis('bottom')
-        axis.setTicks(ticks)
-
-
     def getFrameIdInMs(self, frame_id):
         """
         Converts a frame number to milliseconds
@@ -1533,12 +1489,17 @@ class ViSiAnnoT():
                 y_range = []
 
             # create widget
-            wid = ToolsPyqtgraph.createWidgetSignal(
-                self.lay, pos_sig, y_range=y_range,
-                left_label=type_data, left_label_style=font_axis_label,
-                ticks_color=ticks_color, ticks_size=ticks_size,
-                ticks_offset=ticks_offset
+            wid = SignalWidget(
+                kwargs_axes={
+                    "y_range": y_range, "left_label": type_data,
+                    "left_label_style": font_axis_label,
+                    "ticks_color": ticks_color, "ticks_size": ticks_size,
+                    "ticks_offset": ticks_offset
+                }
             )
+
+            # add widget to layout
+            ToolsPyqtgraph.addWidgetToLayout(self.lay, wid, pos_sig)
 
             # add widget to scroll area
             wid.setMinimumHeight(height_widget_signal)
@@ -1567,14 +1528,14 @@ class ViSiAnnoT():
                 # plot signal in the widget
                 plot = ToolsPyqtgraph.addPlotTo2DWidget(
                     wid, data_in_current_range,
-                    flag_nan_void=True, plot_style=sig.getPlotStyle()
+                    flag_nan_void=True, plot_style=sig.plot_style
                 )
 
                 data_plot_list_tmp.append(plot)
 
                 # add legend
-                if len(sig_list) > 1 and sig.getLegendText() != "":
-                    legend.addItem(plot, sig.getLegendText())
+                if len(sig_list) > 1 and sig.legend_text != "":
+                    legend.addItem(plot, sig.legend_text)
 
             # append list of plot list
             self.data_plot_list_list.append(data_plot_list_tmp)
@@ -1590,7 +1551,10 @@ class ViSiAnnoT():
             self.current_cursor_list.append(current_cursor)
 
             # set temporal ticks and X axis range
-            self.setTemporalTicks(wid, (first_frame_ms, last_frame_ms))
+            ToolsPyqtgraph.setTemporalTicks(
+                wid, self.nb_ticks, (first_frame_ms, last_frame_ms),
+                self.beginning_datetime
+            )
 
             # check if there are intervals to plot
             if type_data in self.interval_dict.keys():
@@ -1804,27 +1768,6 @@ class ViSiAnnoT():
         self.plotFrameIdPosition()
 
 
-    def updateProgressBarTitle(self):
-        """
-        Updates the title of the progress bar :attr:`.wid_progress`
-        with the values of the current temporal range defined by
-        :attr:`.first_frame` and :attr:`.last_frame`
-        """
-
-        current_range_string = ToolsDateTime.convertFrameToString(
-            self.last_frame - self.first_frame, self.fps
-        )
-
-        frame_id_string = ToolsDateTime.convertFrameToAbsoluteDatetimeString(
-            self.frame_id, self.fps, self.beginning_datetime
-        )
-
-        self.wid_progress.setTitle(
-            '%s (frame %d) - temporal range duration: %s'
-            % (frame_id_string, self.frame_id, current_range_string)
-        )
-
-
     def plotFrameIdPosition(self):
         """
         Updates the displayed video frame and the plots of the temporal cursor
@@ -1867,15 +1810,20 @@ class ViSiAnnoT():
             else:
                 # define new range (with same temporal width as previously)
                 temporal_width = self.last_frame - self.first_frame
+                print(self.frame_id, self.first_frame, self.last_frame)
+                print(temporal_width)
                 if temporal_width + self.last_frame >= self.nframes:
+                    print(1)
                     self.first_frame = self.nframes - temporal_width
                     self.last_frame = self.nframes
 
                 elif temporal_width + self.last_frame < self.frame_id:
+                    print(2)
                     self.first_frame = self.frame_id
                     self.last_frame = self.first_frame + temporal_width
 
                 else:
+                    print(3)
                     self.first_frame = self.last_frame
                     self.last_frame = self.first_frame + temporal_width
 
@@ -1909,23 +1857,26 @@ class ViSiAnnoT():
 
         # update progress bar (if the progress bar is dragged, then there is no
         # need to update it)
-        if not self.wid_progress.getDragged():
-            self.wid_progress.getProgressPlot().setData([self.frame_id], [0])
+        if not self.wid_progress.flag_dragged:
+            self.wid_progress.setProgressPlot(self.frame_id)
 
         # update temporal cursor
         for current_cursor in self.current_cursor_list:
             current_cursor.setPos(self.getFrameIdInMs(self.frame_id))
 
         # print current frame id and current temporal width
-        self.updateProgressBarTitle()
+        self.wid_progress.updateTitle(
+            self.frame_id, self.first_frame, self.last_frame
+        )
 
         # update video image
         for video_id, img_vid in self.img_vid_dict.items():
             img_vid.setImage(self.im_dict[video_id])
 
 
-    def updateSignalPlot(self, flag_reset_combo_trunc=True,
-                         flag_reset_combo_from_cursor=True):
+    def updateSignalPlot(
+        self, flag_reset_combo_trunc=True, flag_reset_combo_from_cursor=True
+    ):
         """
         Updates the signal plots so that it spans the current temporal range
         defined by :attr:`.first_frame` and
@@ -1955,12 +1906,10 @@ class ViSiAnnoT():
         # get current range in milliseconds
         first_frame_ms, last_frame_ms = self.getCurrentRangeInMs()
 
-        # print current frame id and current temporal width
-        self.updateProgressBarTitle()
-
-        # update progress bar limits
-        self.wid_progress.getFirstLine().setValue(self.first_frame)
-        self.wid_progress.getLastLine().setValue(self.last_frame - 1)
+        # set current temporal range of progress bar
+        self.wid_progress.setCurrentTemporalRange(
+            self.frame_id, self.first_frame, self.last_frame
+        )
 
         # update plots
         for wid, sig_list, data_plot_list, current_plot, type_data in \
@@ -1987,7 +1936,10 @@ class ViSiAnnoT():
                     data_plot.setData(data_in_current_range)
 
             # X axis ticks and range
-            self.setTemporalTicks(wid, (first_frame_ms, last_frame_ms))
+            ToolsPyqtgraph.setTemporalTicks(
+                wid, self.nb_ticks, (first_frame_ms, last_frame_ms),
+                self.beginning_datetime
+            )
 
             # update temporal cursor bounds (for dragging)
             current_plot.setBounds([first_frame_ms, last_frame_ms])
@@ -2276,10 +2228,10 @@ class ViSiAnnoT():
         """
 
         # check if dragging
-        if self.wid_progress.getDragged():
+        if self.wid_progress.flag_dragged:
             # get the temporal position
             temporal_position = int(
-                self.wid_progress.getProgressPlot().getData()[0][0]
+                self.wid_progress.progress_plot.getData()[0][0]
             )
 
             # update current frame
@@ -3805,59 +3757,6 @@ class ViSiAnnoT():
 
         # add push button
         self.time_edit_push = ToolsPyQt.addPushButton(grid, (1, 2), "Ok")
-
-
-    def createWidgetProgress(
-        self, widget_position, title=None,
-        title_style={'color': '#000', 'size': '9pt'},
-        ticks_color="#000", ticks_size=9, ticks_offset=0
-    ):
-        """
-        Creates a widget with the progress bar and adds it to the layout
-        :attr:`.ViSiAnnoT.lay`
-
-        It sets the attribute :attr:`.wid_progress`.
-
-        :param widget_position: position of the widget in the layout, length 2
-            ``(row, col)`` or 4 ``(row, col, rowspan, colspan)``
-        :type widget_position: list or tuple
-        :param title: widget title
-        :type title: str
-        :param title_style: widget title style
-        :type title_style: dict
-        :param ticks_color: color of the ticks text, may be HEX string or
-            (RGB)
-        :type ticks_color: str or tuple or list
-        :param ticks_size: font size of the ticks text in pt
-        :type ticks_size: float
-        :param ticks_offset: ticks text offset
-        :type ticks_offset: int
-        """
-
-        # create widget containing the progress bar
-        self.wid_progress = ToolsPyqtgraph.ProgressWidget(
-            self.nframes, title=title, title_style=title_style,
-            ticks_color=ticks_color, ticks_size=ticks_size,
-            ticks_offset=ticks_offset
-        )
-
-        # add the widget to the layout
-        ToolsPyQt.addWidgetToLayout(
-            self.lay, self.wid_progress, widget_position
-        )
-
-        # set widget height
-        self.wid_progress.setMaximumHeight(80)
-
-        # set temporal ticks and X axis range
-        self.setTemporalTicks(self.wid_progress, (0, self.nframes, self.fps))
-
-        # set boundaries
-        self.wid_progress.getFirstLine().setValue(self.first_frame)
-        self.wid_progress.getLastLine().setValue(self.last_frame - 1)
-
-        # print current frame id and current temporal width
-        self.updateProgressBarTitle()
 
 
     def createWidgetAnnotEvent(self, widget_position, nb_table=5):
