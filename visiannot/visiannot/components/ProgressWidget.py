@@ -20,7 +20,7 @@ from ...tools.ToolsDateTime import convertFrameToString, \
 
 class ProgressWidget(pg.PlotWidget):
     def __init__(
-        self, nframes, beginning_datetime, fps, parent=None,
+        self, visi, parent=None,
         progress_style={'symbol': 'o', 'brush': '#F00', 'size': 7},
         bg_progress_style={'pen': {'color': 'b', 'width': 2}},
         line_style={'color': (0, 0, 0), 'width': 2},
@@ -39,14 +39,7 @@ class ProgressWidget(pg.PlotWidget):
         The constructor is re-implemented. It calls the constructor of
         PlotWidget and adds new attributes.
 
-        :param nframes: number of frames in the progress bar
-        :type nframes: int
-        :param beginning_datetime: beginning datetime of the reference modality
-            in the associated instance of :class:`.ViSiAnnoT`
-        :type beginning_datetime: datetime.datetime
-        :param fps: reference frequency of the associated instance of
-            :class:`.ViSiAnnoT`
-        :type fps: float
+        :param visi: associated instance of :class:`.ViSiAnnoT`
         :param parent: see
             https://pyqtgraph.readthedocs.io/en/latest/widgets/plotwidget.html
         :param progress_style: plot style of the sliding progression point
@@ -74,19 +67,12 @@ class ProgressWidget(pg.PlotWidget):
         # PlotWidget initialization
         pg.PlotWidget.__init__(self, parent)
 
-        #: (*int*) Number of frames in the progress bar
-        self.nframes = nframes
-
-        #: (*float*) Reference frequency of the associated instance of
-        #: :class:`.ViSiAnnoT`
-        self.fps = fps
+        #: (*int*) Number of frames on the progress bar (defined by the
+        #: associated instance of :class:`.ViSiAnnoT`)
+        self.nframes = visi.nframes
 
         #: (*int*) Number of ticks on the progress bar axis
         self.nb_ticks = nb_ticks
-
-        #: (*datetime.datetime*) Beginning datetime of the reference modality
-        #: in the associated instance of :class:`.ViSiAnnoT`
-        self.beginning_datetime = beginning_datetime
 
         #: (*bool*) Specify if the sliding progress point is dragged
         self.flag_dragged = False
@@ -114,6 +100,8 @@ class ProgressWidget(pg.PlotWidget):
         self.last_line = pg.InfiniteLine(pen=line_style)
         self.addItem(self.last_line)
 
+        self.setBoundaries(visi.first_frame, visi.last_frame)
+
         # disable default mouse interaction
         self.setMouseEnabled(x=False, y=False)
         self.hideButtons()
@@ -133,12 +121,18 @@ class ProgressWidget(pg.PlotWidget):
 
         # set temporal ticks and X axis range
         setTemporalTicks(
-            self, self.nb_ticks, (0, self.nframes, self.fps),
-            self.beginning_datetime
+            self, self.nb_ticks, (0, self.nframes, visi.fps),
+            visi.beginning_datetime
         )
 
         # create title
         self.setTitle(title, **title_style)
+        self.updateTitle(visi.fps, visi.beginning_datetime)
+
+        # listen to the callback method
+        self.progress_plot.sigPlotChanged.connect(
+            lambda: self.mouseDraggedProgress(visi)
+        )
 
 
     def getMouseXPosition(self, ev):
@@ -225,7 +219,6 @@ class ProgressWidget(pg.PlotWidget):
     def setBoundaries(self, first_frame, last_frame):
         """
         Sets the position of the current temporal range boundaries
-        (:attr:`.first_line` and :attr:`.last_frame`)
 
         :param first_frame: new position of the start boundary
         :type first_frame: int
@@ -237,42 +230,34 @@ class ProgressWidget(pg.PlotWidget):
         self.last_line.setValue(last_frame)
 
 
-    def updateTitle(self, frame_id, first_frame, last_frame):
+    def updateTitle(self, fps, beginning_datetime):
         """
-        Updates the title of the progress bar :attr:`.wid_progress`
-        with the values of the current temporal range defined by
-        :attr:`.first_frame` and :attr:`.last_frame`
+        Updates the title of the progress bar
+
+        :param fps: reference frequency of the associated instance of
+            :class:`.ViSiAnnoT`
+        :type fps: float
+        :param beginning_datetime: beginning datetime of the reference modality
+            of the associated instance of :class:`.ViSiAnnoT`
+        :type beginning_datetime: datetime.datetime
         """
 
         current_range_string = convertFrameToString(
-            last_frame - first_frame, self.fps
+            self.last_line.value() - self.first_line.value(), fps
+        )
+
+        temporal_position = int(
+            self.progress_plot.getData()[0][0]
         )
 
         frame_id_string = convertFrameToAbsoluteDatetimeString(
-            frame_id, self.fps, self.beginning_datetime
+            temporal_position, fps, beginning_datetime
         )
 
         self.setTitle(
             '%s (frame %d) - temporal range duration: %s'
-            % (frame_id_string, frame_id, current_range_string)
+            % (frame_id_string, temporal_position, current_range_string)
         )
-
-
-    def setCurrentTemporalRange(self, frame_id, first_frame, last_frame):
-        """
-        Sets a new current temporal range in the progress bar (boundaries and
-        title)
-
-        :param frame_id: new position of the temporal cursor
-        :type frame_id: int
-        :param first_frame: new start position of the temporal range
-        :type first_frame: int 
-        :param last_frame: new end position of the temporal range
-        :type last_frame: int
-        """
-
-        self.setBoundaries(first_frame, last_frame)
-        self.updateTitle(frame_id, first_frame, last_frame)
 
 
     def setProgressPlot(self, frame_id):
@@ -287,35 +272,75 @@ class ProgressWidget(pg.PlotWidget):
 
 
     def updateFromViSiAnnoT(
-        self, nframes, beginning_datetime, *args
+        self, nframes, first_frame, last_frame, fps, beginning_datetime
     ):
         """
-        Sets the attributes related to the associated instance of
-        :class:`.ViSiAnnoT` and updates the plot (useful for long recordings)
+        Sets the attribute :attr:`.ProgressWidget.nframes` with regards to the
+        associated instance of :class:`.ViSiAnnoT` and updates the plot (useful
+        for long recordings)
 
-        The reference frequency should not change when changing file in a long
-        recording, so no need to update it.
-
-        :param nframes: number of frames in the progress bar
+        :param nframes: new number of frames in the progress bar with regards
+            to the associated instance of :class:`.ViSiAnnoT`
         :type nframes: int
+        :param first_frame: new position of the start boundary in frame number
+        :type first_frame: int
+        :param last_frame: new position of the end boundary in frame number
+        :type last_frame: int
+        :param fps: reference frequency of the associated instance of
+            :class:`.ViSiAnnoT`
+        :type fps: float
         :param beginning_datetime: beginning datetime of the reference modality
-            in the associated instance of :class:`.ViSiAnnoT`
+            of the associated instance of :class:`.ViSiAnnoT`
         :type beginning_datetime: datetime.datetime
-        :param args: positional arguments of :meth:`.setBoundaries`
         """
 
         # set attributes
         self.nframes = nframes
-        self.beginning_datetime = beginning_datetime
 
         # set background progression bar
         self.progress_curve.setData([0, self.nframes], [0, 0])
 
         # set X axis ticks style
         setTemporalTicks(
-            self, self.nb_ticks, (0, self.nframes, self.fps),
-            self.beginning_datetime
+            self, self.nb_ticks, (0, self.nframes, fps), beginning_datetime
         )
 
-        # set boundaries and update title
-        self.setCurrentTemporalRange(*args)
+        self.setBoundaries(first_frame, last_frame)
+
+
+    def mouseDraggedProgress(self, visi):
+        """
+        Callback method for mouse dragging of the navigation point in the
+        progress bar
+
+        It updates the current frame :attr:`.ViSiAnnoT.frame_id` at the
+        current position defined by the mouse in the progress bar widget.
+
+        Connected to the signal ``sigPlotChanged`` of the scatter plot item of
+        :attr:`.wid_progress` (accessed with the method
+        :meth:`graphicsoverlayer.ToolsPyqtgraph.ProgressWidget.getProgressPlot`).
+        """
+
+        # check if dragging
+        if self.flag_dragged:
+            # get the temporal position
+            temporal_position = int(
+                self.progress_plot.getData()[0][0]
+            )
+
+            # update current frame
+            visi.updateFrameId(temporal_position)
+
+            # define new range
+            current_range = visi.last_frame - visi.first_frame
+
+            if visi.frame_id + current_range >= self.nframes:
+                visi.first_frame = self.nframes - current_range
+                visi.last_frame = self.nframes
+
+            else:
+                visi.first_frame = visi.frame_id
+                visi.last_frame = visi.first_frame + current_range
+
+            # update plots signals
+            visi.updateSignalPlot()

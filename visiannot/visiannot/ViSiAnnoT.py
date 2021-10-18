@@ -815,25 +815,14 @@ class ViSiAnnoT():
             #: (:class:`graphicsoverlayer.ToolsPyqtgraph.ProgressWidget`)
             #: Widget containing the progress bar
             self.wid_progress = ProgressWidget(
-                self.nframes, self.beginning_datetime, self.fps,
-                title_style=font_default_title, ticks_color=ticks_color,
+                self, title_style=font_default_title, ticks_color=ticks_color,
                 ticks_size=ticks_size, ticks_offset=ticks_offset,
                 nb_ticks=self.nb_ticks
-            )
-
-            # set current temporal range in the progress bar
-            self.wid_progress.setCurrentTemporalRange(
-                self.frame_id, self.first_frame, self.last_frame
             )
 
             # add the widget to the layout
             ToolsPyQt.addWidgetToLayout(
                 self.lay, self.wid_progress, poswid_dict['progress']
-            )
-
-            # listen to the callback method
-            self.wid_progress.progress_plot.sigPlotChanged.connect(
-                self.mouseDraggedProgress
             )
 
         else:
@@ -1803,19 +1792,17 @@ class ViSiAnnoT():
                 # update signals plots
                 self.updateSignalPlot()
 
+        # update temporal cursor
+        for current_cursor in self.current_cursor_list:
+            current_cursor.setPos(self.getFrameIdInMs(self.frame_id))
+
         # update progress bar (if the progress bar is dragged, then there is no
         # need to update it)
         if not self.wid_progress.flag_dragged:
             self.wid_progress.setProgressPlot(self.frame_id)
 
-        # update temporal cursor
-        for current_cursor in self.current_cursor_list:
-            current_cursor.setPos(self.getFrameIdInMs(self.frame_id))
-
-        # print current frame id and current temporal width
-        self.wid_progress.updateTitle(
-            self.frame_id, self.first_frame, self.last_frame
-        )
+        # set title of progress bar
+        self.wid_progress.updateTitle(self.fps, self.beginning_datetime)
 
         # update video image
         for video_id, img_vid in self.img_vid_dict.items():
@@ -1826,8 +1813,8 @@ class ViSiAnnoT():
         self, flag_reset_combo_trunc=True, flag_reset_combo_from_cursor=True
     ):
         """
-        Updates the signal plots so that it spans the current temporal range
-        defined by :attr:`.first_frame` and
+        Updates the signal plots and the progress bar so that they span the
+        current temporal range defined by :attr:`.first_frame` and
         :attr:`.last_frame`
 
         :param flag_reset_combo_trunc: specify if the combo box
@@ -1851,13 +1838,14 @@ class ViSiAnnoT():
             except Exception:
                 pass
 
+        # set boundaries of progress bar with current temporal range
+        self.wid_progress.setBoundaries(self.first_frame, self.last_frame)
+
+        # update title of progress bar
+        self.wid_progress.updateTitle(self.fps, self.beginning_datetime)
+
         # get current range in milliseconds
         first_frame_ms, last_frame_ms = self.getCurrentRangeInMs()
-
-        # set current temporal range of progress bar
-        self.wid_progress.setCurrentTemporalRange(
-            self.frame_id, self.first_frame, self.last_frame
-        )
 
         # update plots
         for wid, sig_list, data_plot_list, current_plot, type_data in \
@@ -2160,44 +2148,6 @@ class ViSiAnnoT():
     # *********************************************************************** #
     # Group: Methods for mouse interaction with plots (mostly callback methods)
     # *********************************************************************** #
-
-
-    def mouseDraggedProgress(self):
-        """
-        Callback method for mouse dragging of the navigation point in the
-        progress bar widget :attr:`.wid_progress`
-
-        It updates the current frame :attr:`.frame_id` at the
-        current position defined by the mouse in the progress bar widget.
-
-        Connected to the signal ``sigPlotChanged`` of the scatter plot item of
-        :attr:`.wid_progress` (accessed with the method
-        :meth:`graphicsoverlayer.ToolsPyqtgraph.ProgressWidget.getProgressPlot`).
-        """
-
-        # check if dragging
-        if self.wid_progress.flag_dragged:
-            # get the temporal position
-            temporal_position = int(
-                self.wid_progress.progress_plot.getData()[0][0]
-            )
-
-            # update current frame
-            self.updateFrameId(temporal_position)
-
-            # define new range
-            current_range = self.last_frame - self.first_frame
-
-            if self.frame_id + current_range >= self.nframes:
-                self.first_frame = self.nframes - current_range
-                self.last_frame = self.nframes
-
-            else:
-                self.first_frame = self.frame_id
-                self.last_frame = self.first_frame + current_range
-
-            # update plots signals
-            self.updateSignalPlot()
 
 
     def currentCursorDragged(self, cursor):

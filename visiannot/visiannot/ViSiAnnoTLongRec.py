@@ -1011,14 +1011,14 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 self.first_frame = max(0, self.nframes - current_range)
                 self.last_frame = self.nframes
 
-            # update signals plot
-            self.updateSignalPlot()
-
             # update progress bar
             self.wid_progress.updateFromViSiAnnoT(
-                self.nframes, self.beginning_datetime, self.frame_id,
-                self.first_frame, self.last_frame
+                self.nframes, self.first_frame, self.last_frame, self.fps,
+                self.beginning_datetime
             )
+
+            # update signals plot
+            self.updateSignalPlot()
 
             # update annotation regions plot if necessary
             if len(self.annotevent_label_list) > 0:
