@@ -595,60 +595,7 @@ class ViSiAnnoT():
 
             # create annotation file with duration of video files
             # (or first signal if no video)
-            output_path_0 = "%s/%s_%s-datetime.txt" % \
-                (self.annot_dir, self.annot_file_base,
-                    self.annotevent_protected_label)
-            output_path_1 = "%s/%s_%s-frame.txt" % \
-                (self.annot_dir, self.annot_file_base,
-                    self.annotevent_protected_label)
-
-            if not os.path.isfile(output_path_0):
-                if self.flag_long_rec:
-                    with open(output_path_0, 'w') as f:
-                        for beg_datetime, duration in zip(
-                            self.rec_beginning_datetime_list,
-                            self.rec_duration_list
-                        ):
-                            end_datetime = beg_datetime + timedelta(
-                                seconds=duration
-                            )
-
-                            beg_string = ToolsDateTime.convertDatetimeToString(
-                                beg_datetime
-                            )
-
-                            end_string = ToolsDateTime.convertDatetimeToString(
-                                end_datetime
-                            )
-
-                            f.write("%s - %s\n" % (beg_string, end_string))
-
-                    with open(output_path_1, 'w') as f:
-                        for ite_file, duration in enumerate(
-                            self.rec_duration_list
-                        ):
-                            f.write("%d_0 - %d_%d\n" % (
-                                ite_file, ite_file, int(duration * self.fps)
-                            ))
-
-                else:
-                    with open(output_path_0, 'w') as f:
-                        end_datetime = self.beginning_datetime + timedelta(
-                            seconds=self.nframes / self.fps
-                        )
-
-                        beg_string = ToolsDateTime.convertDatetimeToString(
-                            self.beginning_datetime
-                        )
-
-                        end_string = ToolsDateTime.convertDatetimeToString(
-                            end_datetime
-                        )
-
-                        f.write("%s - %s\n" % (beg_string, end_string))
-
-                    with open(output_path_1, 'w') as f:
-                        f.write("0_0 - 0_%d\n" % self.nframes)
+            self.createAnnotEventDuration()
 
         else:
             self.annotevent_path_list = []
@@ -2642,6 +2589,68 @@ class ViSiAnnoT():
     # *********************************************************************** #
     # Group: Methods for managing event annotations
     # *********************************************************************** #
+
+
+    def createAnnotEventDuration(self):
+        """
+        Creates annotation events files for the duration of each file of the
+        reference modality (only one file if not a long recording)
+        """
+
+        output_path_0 = "%s/%s_%s-datetime.txt" % \
+            (self.annot_dir, self.annot_file_base,
+                self.annotevent_protected_label)
+        output_path_1 = "%s/%s_%s-frame.txt" % \
+            (self.annot_dir, self.annot_file_base,
+                self.annotevent_protected_label)
+
+        if not os.path.isfile(output_path_0):
+            if self.flag_long_rec:
+                with open(output_path_0, 'w') as f:
+                    for beg_datetime, duration in zip(
+                        self.rec_beginning_datetime_list,
+                        self.rec_duration_list
+                    ):
+                        end_datetime = beg_datetime + timedelta(
+                            seconds=duration
+                        )
+
+                        beg_string = ToolsDateTime.convertDatetimeToString(
+                            beg_datetime
+                        )
+
+                        end_string = ToolsDateTime.convertDatetimeToString(
+                            end_datetime
+                        )
+
+                        f.write("%s - %s\n" % (beg_string, end_string))
+
+                with open(output_path_1, 'w') as f:
+                    for ite_file, duration in enumerate(
+                        self.rec_duration_list
+                    ):
+                        f.write("%d_0 - %d_%d\n" % (
+                            ite_file, ite_file, int(duration * self.fps)
+                        ))
+
+            else:
+                with open(output_path_0, 'w') as f:
+                    end_datetime = self.beginning_datetime + timedelta(
+                        seconds=self.nframes / self.fps
+                    )
+
+                    beg_string = ToolsDateTime.convertDatetimeToString(
+                        self.beginning_datetime
+                    )
+
+                    end_string = ToolsDateTime.convertDatetimeToString(
+                        end_datetime
+                    )
+
+                    f.write("%s - %s\n" % (beg_string, end_string))
+
+                with open(output_path_1, 'w') as f:
+                    f.write("0_0 - 0_%d\n" % self.nframes)
 
 
     def annotEventCallRadio(self, ev):
