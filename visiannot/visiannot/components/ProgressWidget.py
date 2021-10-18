@@ -259,6 +259,18 @@ class ProgressWidget(pg.PlotWidget):
 
 
     def setCurrentTemporalRange(self, frame_id, first_frame, last_frame):
+        """
+        Sets a new current temporal range in the progress bar (boundaries and
+        title)
+
+        :param frame_id: new position of the temporal cursor
+        :type frame_id: int
+        :param first_frame: new start position of the temporal range
+        :type first_frame: int 
+        :param last_frame: new end position of the temporal range
+        :type last_frame: int
+        """
+
         self.setBoundaries(first_frame, last_frame)
         self.updateTitle(frame_id, first_frame, last_frame)
 
