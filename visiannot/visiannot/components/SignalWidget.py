@@ -210,8 +210,9 @@ class SignalWidget(pg.PlotWidget):
         :type threshold_list: list
         """
 
-        # set bounds of the temporal cursor
-        self.cursor.setBounds([first_frame_ms, last_frame_ms])
+        # set bounds of the temporal cursor (for dragging)
+        # last_frame - 1 => prevents from moving to next temporal range window
+        self.cursor.setBounds([first_frame_ms, last_frame_ms - 1])
 
         # create legend item if necessary
         if len(sig_list) > 1:
@@ -277,7 +278,8 @@ class SignalWidget(pg.PlotWidget):
         """
 
         # update temporal cursor bounds (for dragging)
-        self.cursor.setBounds([first_frame_ms, last_frame_ms])
+        # last_frame - 1 => prevents from moving to next temporal range window
+        self.cursor.setBounds([first_frame_ms, last_frame_ms - 1])
 
         # loop on signals to plot
         for sig, sig_plot in zip(sig_list, self.plot_list):
