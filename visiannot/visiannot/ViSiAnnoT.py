@@ -1320,12 +1320,7 @@ class ViSiAnnoT():
 
         The widgets are automatically positioned below the progress bar.
 
-        It sets the following attributes:
-
-        - :attr:`.ViSiAnnoT.wid_data_list`
-        - :attr:`.ViSiAnnoT.data_plot_list_list`
-        - :attr:`.ViSiAnnoT.current_cursor_list`
-        - :attr:`.ViSiAnnoT.region_interval_dict`
+        It sets the attribute :attr:`.ViSiAnnoT.wid_sig_list`.
 
         Make sure the attributes :attr:`.ViSiAnnoT.lay`,
         :attr:`.ViSiAnnoT.sig_list_list`, :attr:`.ViSiAnnoT.sig_labels`,
@@ -1348,13 +1343,19 @@ class ViSiAnnoT():
         # convert progress bar widget position to a list
         pos_sig = list(progbar_wid_pos)
 
+        # signal widget position is defined relatively to progress bar
+        # widget position
+        pos_sig[0] += 1
+
+        # create scroll area
+        scroll_lay, _ = ToolsPyQt.addScrollArea(
+            self.lay, pos_sig, flag_ignore_wheel_event=True
+        )
+
         # loop on signals
         for ite_sig, (type_data, sig_list) in enumerate(
             zip(self.sig_labels, self.sig_list_list)
         ):
-            # get position of the widget relatively to the progress bar
-            pos_sig[0] += 1
-
             # get Y range
             if type_data in y_range_dict.keys():
                 y_range = y_range_dict[type_data]
@@ -1396,12 +1397,6 @@ class ViSiAnnoT():
             # add widget to layout
             ToolsPyqtgraph.addWidgetToLayout(self.lay, wid, pos_sig)
 
-            # create scroll area
-            if ite_sig == 0:
-                scroll_lay, _ = ToolsPyQt.addScrollArea(
-                    self.lay, pos_sig, flag_ignore_wheel_event=True
-                )
-
             # add widget to scroll area
             scroll_lay.addWidget(wid)
 
@@ -1411,6 +1406,9 @@ class ViSiAnnoT():
             # reconnect to keypress event callback, so that keypress events of
             # scroll are ignored
             wid.keyPressEvent = self.keyPress
+
+            # get position of next signal widget
+            pos_sig[0] += 1
 
 
     def getVideoData(self, data_video, video_id):
@@ -1449,11 +1447,13 @@ class ViSiAnnoT():
             # cv2 returns image with shape (height,width,3) => transposed to
             # (width, height, 3) for display
             self.im_dict[video_id] = ToolsImage.transformImage(im)
+
             return 0
 
         else:
             # if no image read, returns black image
             self.im_dict[video_id] = np.zeros((100, 100, 3))
+
             return 2
 
 
