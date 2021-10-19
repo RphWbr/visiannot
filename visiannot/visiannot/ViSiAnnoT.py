@@ -1418,18 +1418,20 @@ class ViSiAnnoT():
         :param data_video: video data to read
         :type data_video: cv2.VideoCapture
 
-        :returns: RGB image of the current frame, shape
-            :math:`(width, height, 3)`
-        :rtype: numpy array
+        :returns: code (0 success, 1 pause, 2 error)
+        :rtype: int
         """
 
         # check data video
         if data_video is not None:
             if self.previous_frame_id[video_id] == self.frame_id - 1:
                 pass
+
             elif self.previous_frame_id[video_id] == self.frame_id:
                 sleep(0.00001)
+
                 return 1
+
             else:
                 # set the video stream at the current frame
                 data_video.set(1, self.frame_id)
