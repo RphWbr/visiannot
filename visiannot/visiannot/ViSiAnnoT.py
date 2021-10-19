@@ -91,7 +91,7 @@ class ViSiAnnoT():
         :class:`.Signal`. The supported formats are txt, mat, h5 and wav. The
         set of :class:`.Signal` instances is stored in
         :attr:`.sig_list_list`. The set of widgets for plotting
-        signals is stored in :attr:`.wid_data_list`. A temporal
+        signals is stored in :attr:`.wid_sig_list`. A temporal
         cursor (instance of pyqtgraph.InfiniteLine) is plotted on each signal
         widget and is synchronized with the video playback. The set of temporal
         cursors is stored in :attr:`.current_cursor_list`.
@@ -442,7 +442,7 @@ class ViSiAnnoT():
         #: Value is a list of lists, so that several intervals files can be
         #: plotted on the same signal widget. Each sub-list has 3 elements:
         #:
-        #:  - (*numpy array*) Intervals data, shape :math:`(n_{detection}, 2)`
+        #:  - (*numpy array*) Intervals data, shape :math:`(n_{intervals}, 2)`
         #:  - (*float*) Frequency (``0`` if timestamps, ``-1`` if same as
         #:    signal)
         #:  - (*tuple*) Plot color (RGBA)
@@ -473,9 +473,9 @@ class ViSiAnnoT():
         #:
         #: Value is a list of length 2:
         #:
-        #: - integer/float with the value of the threshold (on Y axis)
-        #: - tuple with the color to plot (RGB), it can also be a
-        #:   string with HEX color
+        #: - (*float*) Value of the threshold on Y axis
+        #: - (*tuple*) Color to plot (RGB), it can also be a string with HEX
+        #:   color
         self.threshold_dict = threshold_dict
 
 
@@ -877,54 +877,17 @@ class ViSiAnnoT():
 
         # *********************** signal widgets **************************** #
         #: (*list*) Widgets for signal plot, each element is an instance of
-        #: :class:`.SignalWidget`
-        #:
-        #: Same length as :attr:`.sig_labels`.
-        self.wid_data_list = []
-
-        #: (*list*) Plot items of the signals
-        #:
-        #: Each element corresponds to a signal widget in
-        #: :attr:`.wid_data_list` (same indexing) and is a list of
-        #: plot items (pyqtgraph.PlotDataItem)
-        self.data_plot_list_list = []
-
-        #: (*list*) Temporal cursor item for each signal
-        #:
-        #: Each element is an instance of pyqtgraph.InfiniteLine.
-        self.current_cursor_list = []
-
-        #: (*dict*) Lists of region items for temporal intervals
-        #:
-        #: Key is the ID of the widget on which temporal intervals are plotted
-        #: (must be in :attr:`.sig_labels`). Value is a list of
-        #: instances of pyqtgraph.LinearRegionItem displayed on the
-        #: corresponding widget.
-        self.region_interval_dict = {}
+        #: :class:`.SignalWidget` (same length as :attr:`.sig_labels`)
+        self.wid_sig_list = []
 
         # create signal widgets and initialize signal plots
-        # (it sets the attributes self.wid_data_list,
-        # self.data_plot_list_list, self.current_cursor_list and
-        # self.region_interval_dict)
+        # it sets the attribute wid_sig_list
         self.initSignalPlot(
-            poswid_dict['progress'],
-            font_axis_label=font_default_axis_label,
-            ticks_color=ticks_color,
-            ticks_size=ticks_size,
-            ticks_offset=2,
-            y_range_dict=y_range_dict,
-            height_widget_signal=height_widget_signal
+            poswid_dict['progress'], y_range_dict=y_range_dict,
+            left_label_style=font_default_axis_label, ticks_color=ticks_color,
+            ticks_size=ticks_size, ticks_offset=2,
+            wid_height=height_widget_signal
         )
-
-        # listen to the callback methods
-        for wid, current_cursor in zip(
-            self.wid_data_list, self.current_cursor_list
-        ):
-            # mouse click on the plot => move temporal cursor
-            wid.scene().sigMouseClicked.connect(self.signalMouseClicked)
-
-            # temporal cursor dragging
-            current_cursor.sigDragged.connect(self.currentCursorDragged)
 
 
         # *********************** trunc widget ****************************** #
@@ -988,7 +951,7 @@ class ViSiAnnoT():
 
 
         # *************** widget for temporal re-scaling ******************** #
-        if len(self.wid_data_list) > 0 and \
+        if len(self.wid_sig_list) > 0 and \
             "select_from_cursor" in poswid_dict.keys() and \
                 len(self.from_cursor_list) > 0:
             #: (:class:`graphicsoverlayer.ToolsPyQt.ComboBox`) Combo box for
@@ -1008,7 +971,7 @@ class ViSiAnnoT():
 
 
         # *********************** zoom widgets ****************************** #
-        if len(self.wid_data_list) > 0 and "visi" in poswid_dict.keys():
+        if len(self.wid_sig_list) > 0 and "visi" in poswid_dict.keys():
             #: (*pyqtgraph.PlotWidget*) Widget with the visibility image
             #:
             #: Clicking on it sets the temporal range to the fullest
@@ -1021,7 +984,7 @@ class ViSiAnnoT():
             self.wid_visi.scene().sigMouseClicked.connect(self.visiAll)
 
 
-        if len(self.wid_data_list) > 0 and "zoomin" in poswid_dict.keys():
+        if len(self.wid_sig_list) > 0 and "zoomin" in poswid_dict.keys():
             #: (*pyqtgraph.PlotWidget*) Widget containing the zoomin image
             self.wid_zoomin = ToolsPyqtgraph.createWidgetLogo(
                 self.lay, poswid_dict['zoomin'], im_deco_dict["zoomin"],
@@ -1032,7 +995,7 @@ class ViSiAnnoT():
             self.wid_zoomin.scene().sigMouseClicked.connect(self.zoomIn)
 
 
-        if len(self.wid_data_list) > 0 and "zoomout" in poswid_dict.keys():
+        if len(self.wid_sig_list) > 0 and "zoomout" in poswid_dict.keys():
             #: (*pyqtgraph.PlotWidget*) Widget containing the zoomout image
             self.wid_zoomout = ToolsPyqtgraph.createWidgetLogo(
                 self.lay, poswid_dict['zoomout'], im_deco_dict["zoomout"],
@@ -1350,12 +1313,7 @@ class ViSiAnnoT():
 
 
     def initSignalPlot(
-        self, progbar_wid_pos,
-        font_axis_label={"color": "#000", "font-size": "12pt"},
-        ticks_color=(93, 91, 89), ticks_size=10, ticks_offset=2,
-        current_cursor_style={'color': "F00", 'width': 1},
-        current_cursor_dragged_style={'color': "F0F", 'width': 2},
-        y_range_dict={}, height_widget_signal=150
+        self, progbar_wid_pos, y_range_dict={}, **kwargs
     ):
         """
         Creates the signal widgets and initializes the signal plots
@@ -1377,25 +1335,11 @@ class ViSiAnnoT():
         :param progbar_wid_pos: position of the progress bar widget, length 2
             ``(row, col)`` or 4 ``(row, col, rowspan, colspan)``
         :type progbar_wid_pos: tuple of list
-        :param font_axis_label: font of the Y axis label
-        :type font_axis_label: dict
-        :param ticks_color: ticks color (RGB)
-        :type ticks_color: tuple or list
-        :param ticks_size: size of the ticks text
-        :type ticks_size: int
-        :param ticks_offset: offset between the ticks and the text
-        :type ticks_offset: int
-        :param current_cursor_style: plot style of the temporal cursor
-        :type current_cursor_style: dict
-        :param current_cursor_dragged_style: plot style of the temporal cursor
-            when dragged
-        :type current_cursor_dragged_style: dict
         :param y_range_dict: visible Y range for signal widgets, see positional
             argument ``y_range_dict`` of :class:`.ViSiAnnoT` constructor
         :type y_range_dict: dict
-        :param height_widget_signal: minimum height in pixels of the signal
-            widgets
-        :type height_widget_signal: int
+        :param kwargs: keyword arguments of the constructor of
+            :class:`.SignalWidget`, except ``y_range`` and ``left_label``
         """
 
         # get current range in milliseconds
@@ -1411,12 +1355,6 @@ class ViSiAnnoT():
             # get position of the widget relatively to the progress bar
             pos_sig[0] += 1
 
-            # create scroll area
-            if ite_sig == 0:
-                scroll_lay, _ = ToolsPyQt.addScrollArea(
-                    self.lay, pos_sig, flag_ignore_wheel_event=True
-                )
-
             # get Y range
             if type_data in y_range_dict.keys():
                 y_range = y_range_dict[type_data]
@@ -1424,67 +1362,30 @@ class ViSiAnnoT():
             else:
                 y_range = []
 
+            # get list of intervals to plot in the signal widget
+            if type_data in self.interval_dict.keys():
+                interval_list = self.interval_dict[type_data]
+
+            else:
+                interval_list = []
+
+            # get list of thresholds to plot in the signal widget
+            if type_data in self.threshold_dict.keys():
+                threshold_list = self.threshold_dict[type_data]
+
+            else:
+                threshold_list = []
+
             # create widget
             wid = SignalWidget(
-                kwargs_axes={
-                    "y_range": y_range, "left_label": type_data,
-                    "left_label_style": font_axis_label,
-                    "ticks_color": ticks_color, "ticks_size": ticks_size,
-                    "ticks_offset": ticks_offset
-                }
+                self, y_range=y_range, left_label=type_data, **kwargs
             )
 
-            # add widget to layout
-            ToolsPyqtgraph.addWidgetToLayout(self.lay, wid, pos_sig)
-
-            # add widget to scroll area
-            wid.setMinimumHeight(height_widget_signal)
-            scroll_lay.addWidget(wid)
-
-            # append widget to list of widgets
-            self.wid_data_list.append(wid)
-
-            # reconnect to keypress event callback, so that keypress events of
-            # scroll are ignored
-            wid.keyPressEvent = self.keyPress
-
-            # create legend item
-            if len(sig_list) > 1:
-                legend = pg.LegendItem(offset=(0, 10))
-                legend.setParentItem(wid.graphicsItem())
-
-            # loop on sub-signals for the widget
-            data_plot_list_tmp = []
-            for sig in sig_list:
-                # define temporal range for the signal
-                data_in_current_range = sig.getDataInRange(
-                    first_frame_ms, last_frame_ms
-                )
-
-                # plot signal in the widget
-                plot = ToolsPyqtgraph.addPlotTo2DWidget(
-                    wid, data_in_current_range,
-                    flag_nan_void=True, plot_style=sig.plot_style
-                )
-
-                data_plot_list_tmp.append(plot)
-
-                # add legend
-                if len(sig_list) > 1 and sig.legend_text != "":
-                    legend.addItem(plot, sig.legend_text)
-
-            # append list of plot list
-            self.data_plot_list_list.append(data_plot_list_tmp)
-
-            # create the infinite line for the current cursor
-            current_cursor = pg.InfiniteLine(
-                angle=90, movable=True, bounds=[0, last_frame_ms],
-                pen=current_cursor_style, hoverPen=current_cursor_dragged_style
+            # create plot items in the signal widget
+            wid.createPlotItems(
+                first_frame_ms, last_frame_ms, sig_list, interval_list,
+                threshold_list
             )
-
-            wid.addItem(current_cursor)
-            current_cursor.setPos(0)
-            self.current_cursor_list.append(current_cursor)
 
             # set temporal ticks and X axis range
             ToolsPyqtgraph.setTemporalTicks(
@@ -1492,23 +1393,24 @@ class ViSiAnnoT():
                 self.beginning_datetime
             )
 
-            # check if there are intervals to plot
-            if type_data in self.interval_dict.keys():
-                # loop on interval data
-                self.region_interval_dict[type_data] = []
-                for intervals, freq, color in self.interval_dict[type_data]:
-                    # plot intervals
-                    self.region_interval_dict[type_data] += \
-                        ViSiAnnoT.plotIntervals(intervals, wid, freq, color)
+            # add widget to layout
+            ToolsPyqtgraph.addWidgetToLayout(self.lay, wid, pos_sig)
 
-            # check if there are thresholds to plot
-            if type_data in self.threshold_dict.keys():
-                for value, color in self.threshold_dict[type_data]:
-                    infinite_line = pg.InfiniteLine(
-                        pos=value, angle=0, pen={'color': color, 'width': 1}
-                    )
+            # create scroll area
+            if ite_sig == 0:
+                scroll_lay, _ = ToolsPyQt.addScrollArea(
+                    self.lay, pos_sig, flag_ignore_wheel_event=True
+                )
 
-                    wid.addItem(infinite_line)
+            # add widget to scroll area
+            scroll_lay.addWidget(wid)
+
+            # append widget to list of widgets
+            self.wid_sig_list.append(wid)
+
+            # reconnect to keypress event callback, so that keypress events of
+            # scroll are ignored
+            wid.keyPressEvent = self.keyPress
 
 
     def getVideoData(self, data_video, video_id):
@@ -1793,8 +1695,8 @@ class ViSiAnnoT():
                 self.updateSignalPlot()
 
         # update temporal cursor
-        for current_cursor in self.current_cursor_list:
-            current_cursor.setPos(self.getFrameIdInMs(self.frame_id))
+        for wid in self.wid_sig_list:
+            wid.cursor.setPos(self.getFrameIdInMs(self.frame_id))
 
         # update progress bar (if the progress bar is dragged, then there is no
         # need to update it)
@@ -1826,17 +1728,11 @@ class ViSiAnnoT():
         """
 
         # reset combo boxes
-        if flag_reset_combo_trunc:
-            try:
-                self.combo_trunc.setCurrentIndex(0)
-            except Exception:
-                pass
+        if flag_reset_combo_trunc and hasattr(self, "combo_trunc"):
+            self.combo_trunc.setCurrentIndex(0)
 
-        if flag_reset_combo_from_cursor:
-            try:
-                self.combo_from_cursor.setCurrentIndex(0)
-            except Exception:
-                pass
+        if flag_reset_combo_from_cursor and hasattr(self, "combo_from_cursor"):
+            self.combo_from_cursor.setCurrentIndex(0)
 
         # set boundaries of progress bar with current temporal range
         self.wid_progress.setBoundaries(self.first_frame, self.last_frame)
@@ -1848,49 +1744,26 @@ class ViSiAnnoT():
         first_frame_ms, last_frame_ms = self.getCurrentRangeInMs()
 
         # update plots
-        for wid, sig_list, data_plot_list, current_plot, type_data in \
-            zip(self.wid_data_list, self.sig_list_list,
-                self.data_plot_list_list, self.current_cursor_list,
-                self.sig_labels):
-            for sig, data_plot in zip(sig_list, data_plot_list):
-                # get data in the current temporal range
-                data_in_current_range = sig.getDataInRange(
-                    first_frame_ms, last_frame_ms
-                )
+        for wid, sig_list, type_data in zip(
+            self.wid_sig_list, self.sig_list_list, self.sig_labels
+        ):
+            # check if there are intervals to plot
+            if type_data in self.interval_dict.keys():
+                interval_list = self.interval_dict[type_data]
 
-                # check if empty signal in the temporal range
-                if data_in_current_range.shape[0] == 0:
-                    data_plot.clear()
+            else:
+                interval_list = []
 
-                else:
-                    # delete NaNs
-                    data_in_current_range = ToolsPyqtgraph.deleteNaNForPlot(
-                        data_in_current_range
-                    )
+            # update plot items
+            wid.updatePlotItems(
+                first_frame_ms, last_frame_ms, sig_list, interval_list
+            )
 
-                    # signal plot
-                    data_plot.setData(data_in_current_range)
-
-            # X axis ticks and range
+            # X axis ticks
             ToolsPyqtgraph.setTemporalTicks(
                 wid, self.nb_ticks, (first_frame_ms, last_frame_ms),
                 self.beginning_datetime
             )
-
-            # update temporal cursor bounds (for dragging)
-            current_plot.setBounds([first_frame_ms, last_frame_ms])
-
-            # check if there are intervals to plot
-            if type_data in self.interval_dict.keys():
-                # clear existing regions
-                for region in self.region_interval_dict[type_data]:
-                    wid.removeItem(region)
-
-                # plot detection
-                self.region_interval_dict[type_data] = []
-                for interval, freq, color in self.interval_dict[type_data]:
-                    self.region_interval_dict[type_data] += \
-                        ViSiAnnoT.plotIntervals(interval, wid, freq, color)
 
 
     # *********************************************************************** #
@@ -1903,36 +1776,17 @@ class ViSiAnnoT():
     # *********************************************************************** #
 
 
-    @staticmethod
-    def removeItemInWidgets(wid_list, item_list):
-        """
-        Removes an item from a list of widgets
-
-        :param wid_list: widgets where to remove an item, each element must
-            have a method ``removeItem`` (for example an instance of
-            pyqtgraph.PlotWidget)
-        :type wid_list: list
-        :param item_list: items to remove from widgets, same length as
-            ``wid_list``, each element corresponds to one element of
-            ``wid_list``
-        :type item_list: list
-        """
-
-        for wid, item in zip(wid_list, item_list):
-            wid.removeItem(item)
-
-
     def addItemToSignals(self, item_list):
         """
         Displays items in the signal widgets
 
         :param item_list: items to display in the signal widgets, same length
-            as :attr:`.wid_data_list`, each element corresponds to
+            as :attr:`.wid_sig_list`, each element corresponds to
             one signal widget
         :type item_list: list
         """
 
-        for wid, item in zip(self.wid_data_list, item_list):
+        for wid, item in zip(self.wid_sig_list, item_list):
             wid.addItem(item)
 
 
@@ -1946,12 +1800,12 @@ class ViSiAnnoT():
             widgets, first element is the region item displayed in the progress
             bar widget (:attr:`.wid_progress`) and the remaining
             elements are the region items displayed in the signal widgets
-            (same order as :attr:`.wid_data_list`)
+            (same order as :attr:`.wid_sig_list`)
         :type region_list: list
         """
 
-        ViSiAnnoT.removeItemInWidgets(
-            [self.wid_progress] + self.wid_data_list, region_list
+        ToolsPyqtgraph.removeItemInWidgets(
+            [self.wid_progress] + self.wid_sig_list, region_list
         )
 
 
@@ -1959,7 +1813,7 @@ class ViSiAnnoT():
         """
         Creates and displays a region item (pyqtgraph.LinearRegionItem) for the
         progress bar (:attr:`.wid_progress`) and the signal widgets
-        (:attr:`.wid_data_list`)
+        (:attr:`.wid_sig_list`)
 
         :param bound_1: start frame of the region item (sampled at the
             reference frequency :attr:`.ViSiAnnoT.fps`)
@@ -1979,68 +1833,23 @@ class ViSiAnnoT():
         region_list = []
 
         # display region in progress bar
-        region = ViSiAnnoT.addRegionToWidget(
+        region = ToolsPyqtgraph.addRegionToWidget(
             bound_1, bound_2, self.wid_progress, color
         )
 
         region_list.append(region)
 
         # display region in each signal plot
-        for wid in self.wid_data_list:
+        for wid in self.wid_sig_list:
             # convert bounds in milliseconds
             bound_1_ms = self.getFrameIdInMs(bound_1)
             bound_2_ms = self.getFrameIdInMs(bound_2)
 
             # plot regions in signal widgets
-            region = ViSiAnnoT.addRegionToWidget(
+            region = ToolsPyqtgraph.addRegionToWidget(
                 bound_1_ms, bound_2_ms, wid, color
             )
 
-            region_list.append(region)
-
-        return region_list
-
-
-    @staticmethod
-    def plotIntervals(data_interval, wid, freq, color):
-        """
-        Plots intervals data as a region
-
-        :param data_interval: intervals to be displayed, shape
-            :math:`(n_{intervals}, 2)`, each line is an interval with start
-            frame and end frame (sampled at ``freq``, relatively to
-            :attr:`.ViSAnnoT.beginning_datetime` if used inside
-            :class:`.ViSiAnnoT`) ; the intervals might be expressed in
-            milliseconds, then ``freq`` must be set to ``0``
-
-            WARNING: test this feature in asynchronous long recording (because
-            of relative to :attr:`.ViSAnnoT.beginning_datetime`)
-        :type data_interval: numpy array
-        :param wid: widget where to plot intervals, might be any widget class
-            with a method ``addItem``
-        :type wid: pyqtgraph.PlotWidget
-        :param freq: sampling frequency of intervals frames, set it to ``0`` if
-            intervals expressed in milliseconds
-        :type freq: float
-        :param color: plot color (RGBA)
-        :type color: tuple or list
-
-        :returns: instances of pyqtgraph.LinearRegionItem
-        :rtype: list
-        """
-
-        region_list = []
-        for interval in data_interval:
-            det_0 = interval[0]
-            det_1 = interval[1]
-
-            # convert interval frames to milliseconds
-            if freq > 0:
-                det_0 = 1000.0 * det_0 / freq
-                det_1 = 1000.0 * det_1 / freq
-
-            # plot region
-            region = ViSiAnnoT.addRegionToWidget(det_0, det_1, wid, color)
             region_list.append(region)
 
         return region_list
@@ -2052,7 +1861,7 @@ class ViSiAnnoT():
     ):
         """
         Adds a text item to the signal widgets
-        (:attr:`.wid_data_list`)
+        (:attr:`.wid_sig_list`)
 
         See
         https://pyqtgraph.readthedocs.io/en/latest/functions.html#pyqtgraph.mkColor
@@ -2065,7 +1874,7 @@ class ViSiAnnoT():
             milliseconds
         :type pos_ms: float
         :param pos_y_list: position on the Y axis of the text item in each
-            signal widget, same length as :attr:`.wid_data_list`
+            signal widget, same length as :attr:`.wid_sig_list`
         :type pos_y_list: float
         :param text_color: color of the text
         :type text_color: tuple or list or str
@@ -2084,7 +1893,7 @@ class ViSiAnnoT():
         text_item_list = []
 
         # loop on signal widgets
-        for wid, pos_y in zip(self.wid_data_list, pos_y_list):
+        for wid, pos_y in zip(self.wid_sig_list, pos_y_list):
             # create text item
             text_item = pg.TextItem(text, fill='w', color=text_color,
                                     border={"color": border_color,
@@ -2102,45 +1911,6 @@ class ViSiAnnoT():
         return text_item_list
 
 
-    @staticmethod
-    def addRegionToWidget(bound_1, bound_2, wid, color):
-        """
-        Creates a region item (pyqtgraph.LinearRegionItem) and displays it in a
-        widget
-
-        :param bound_1: start value of the region item (expressed as a
-            coordinate in the X axis of the widget)
-        :type bound_1: int
-        :param bound_2: end value of the region item (expressed as a
-            coordinate in the X axis of the widget)
-        :type bound_2: int
-        :param wid: widget where to display the region item, might be any
-            widget class with a method ``addItem``
-        :type wid: pyqtgraph.PlotWidget
-        :param color: plot color (RGBA)
-        :type color: tuple or list
-
-        :returns: region item displayed in the widget
-        :rtype: pyqtgraph.LinearRegionItem
-        """
-
-        # pen disabled for linux compatibility
-        try:
-            region = pg.LinearRegionItem(movable=False, brush=color,
-                                         pen={'color': color, 'width': 1})
-
-        except Exception:
-            region = pg.LinearRegionItem(movable=False, brush=color)
-
-        # set region boundaries
-        region.setRegion([bound_1, bound_2])
-
-        # add region to widget
-        wid.addItem(region)
-
-        return region
-
-
     # *********************************************************************** #
     # End group
     # *********************************************************************** #
@@ -2150,97 +1920,6 @@ class ViSiAnnoT():
     # *********************************************************************** #
 
 
-    def currentCursorDragged(self, cursor):
-        """
-        Callback method for mouse dragging of the temporal cursor in a signal
-        widget
-
-        It updates the current frame :attr:`.frame_id` at the current
-        position of the temporal cursor.
-
-        Connected to the signal ``sigDragged`` of the elements of
-        :attr:`.current_cursor_list`.
-
-        :param cursor: temporal cursor that is dragged
-        :type cursor: pyqtgraph.InfiniteLine
-        """
-
-        # update frame id (convert frame id from signal to ref)
-        self.updateFrameId(self.convertMsToFrameRef(int(cursor.value())))
-
-
-    def currentCursorClicked(self, position):
-        """
-        Sets the current frame :attr:`.frame_id` at the specified
-        position
-
-        If the specified position is out of bounds of the current temporal
-        range defined by :attr:`.first_frame` and :attr:`.last_frame`,
-        then the current frame is not set.
-
-        :param position: frame number (sampled at the reference frequency
-            :attr:`.ViSiAnnoT.fps`)
-        :type position: int
-        """
-
-        # check if temporal_position is in the current range
-        if position >= self.first_frame and position < self.last_frame:
-            # update current frame
-            self.updateFrameId(position)
-
-
-    def signalMouseClicked(self, ev):
-        """
-        Callback method for managing mouse click on the signal widgets
-        (:attr:`.wid_data_list`)
-
-        Connected to the signal ``sigMouseClicked`` of the elements of
-        :attr:`.wid_data_list`.
-
-        On one hand, it allows to define manually a temporal interval on which
-        to zoom by calling the method :meth:`.zoomOrAnnotClicked`.
-
-        On the other hand, it allows to define a new annotation and to add it
-        the annotation file by calling the method
-        :meth:`zoomOrAnnotClicked`. Also, it allows to delete
-        manually a specific annotation by calling the method
-        :meth:`.annotEventDeleteClicked`.
-
-        It also updates the position of the temporal cursor by calling the
-        method :meth:`.currentCursorClicked`.
-
-        :param ev: emitted when the mouse is clicked/moved
-        :type ev: QtGui.QMouseEvent
-        """
-
-        keyboard_modifiers = ev.modifiers()
-
-        # map the mouse position to the plot coordinates
-        pos_frame, pos_ms = self.getMouseTemporalPosition(ev)
-
-        # check if mouse clicked on a signal widget
-        if pos_frame >= 0:
-            # check if left button clicked
-            if ev.button() == QtCore.Qt.LeftButton:
-                # crtl+shift key => delete annotation
-                if keyboard_modifiers == \
-                        (QtCore.Qt.ControlModifier | QtCore.Qt.ShiftModifier):
-                    # only when display mode is on
-                    if self.annotevent_button_label_list[3].text() == "On":
-                        self.annotEventDeleteClicked(pos_frame)
-
-                # alt key => display description
-                elif keyboard_modifiers == QtCore.Qt.AltModifier:
-                    self.annotEventDescription(ev, pos_frame, pos_ms)
-
-                # no key modifier (only left button clicked)
-                else:
-                    self.currentCursorClicked(pos_frame)
-
-            elif ev.button() == QtCore.Qt.RightButton:
-                self.zoomOrAnnotClicked(ev, pos_frame, pos_ms)
-
-
     def getMouseYPosition(self, ev):
         """
         Gets position of the mouse on the Y axis of all the signal widgets
@@ -2248,7 +1927,7 @@ class ViSiAnnoT():
         :param ev: emitted when the mouse is clicked/moved
         :type ev: QtGui.QMouseEvent
 
-        :returns: same length as :attr:`.wid_data_list`, each element
+        :returns: same length as :attr:`.wid_sig_list`, each element
             is the position of the mouse on the Y axis in the corresponding
             signal widget, it returns ``[]`` if the mouse clicked on a label
             item (most likely the widget title)
@@ -2256,50 +1935,18 @@ class ViSiAnnoT():
         """
 
         # check what is being clicked
-        for item in self.wid_data_list[0].scene().items(ev.scenePos()):
+        for item in self.wid_sig_list[0].scene().items(ev.scenePos()):
             # if widget title is checked, nothing is returned
             if type(item) is pg.graphicsItems.LabelItem.LabelItem:
                 return []
 
         # map the mouse position to the plot coordinates
         position_y_list = []
-        for wid in self.wid_data_list:
+        for wid in self.wid_sig_list:
             position_y = wid.getViewBox().mapToView(ev.pos()).y()
             position_y_list.append(position_y)
 
         return position_y_list
-
-
-    def getMouseTemporalPosition(self, ev):
-        """
-        Gets the position of the mouse on the X axis
-
-        :param ev: emitted when the mouse is clicked/moved
-        :type ev: QtGui.QMouseEvent
-
-        :returns:
-            - **position_frame** (*int*) -- position of the mouse on the X axis
-              in frame number (sampled at the reference frequency
-              :attr:`ViSiAnnoT.fps`), ``-1`` if the mouse clicked on a label
-              item (most likely the widget title)
-            - **position_ms** (*float*) -- position of the mouse on the X axis
-              in milliseconds, ``-1`` if the mouse clicked on a label item
-              (most likely the widget title)
-        """
-
-        # check what is being clicked
-        for item in self.wid_data_list[0].scene().items(ev.scenePos()):
-            # if widget title is checked, nothing is returned
-            if type(item) is pg.graphicsItems.LabelItem.LabelItem:
-                return -1, -1
-
-        # map the mouse position to the plot coordinates
-        position_ms = self.wid_data_list[0].getViewBox().mapToView(ev.pos()).x()
-
-        # convert from signal to ref
-        position_frame = self.convertMsToFrameRef(position_ms)
-
-        return position_frame, position_ms
 
 
     def zoomOrAnnotClicked(self, ev, pos_frame, pos_ms):
@@ -2390,8 +2037,8 @@ class ViSiAnnoT():
             self.region_zoom_list = []
 
             # remove zoom regions description
-            ViSiAnnoT.removeItemInWidgets(
-                self.wid_data_list, self.region_zoom_text_item_list
+            ToolsPyqtgraph.removeItemInWidgets(
+                self.wid_sig_list, self.region_zoom_text_item_list
             )
 
             self.region_zoom_text_item_list = []
@@ -2441,7 +2088,7 @@ class ViSiAnnoT():
         """
 
         # get current X axis range
-        axis = self.wid_data_list[0].getAxis('bottom')
+        axis = self.wid_sig_list[0].getAxis('bottom')
         axis_range_min, axis_range_max = axis.range[0], axis.range[1]
 
         # convert from signal to ref
@@ -2476,7 +2123,7 @@ class ViSiAnnoT():
         """
 
         # get current X axis range
-        axis = self.wid_data_list[0].getAxis('bottom')
+        axis = self.wid_sig_list[0].getAxis('bottom')
         axis_range_min, axis_range_max = axis.range[0], axis.range[1]
 
         # convert from signal to ref
@@ -2913,7 +2560,7 @@ class ViSiAnnoT():
             if annot_id in description_dict.keys():
                 # remove display
                 ViSiAnnoT.removeItemInWidgets(
-                    self.wid_data_list, description_dict[annot_id]
+                    self.wid_sig_list, description_dict[annot_id]
                 )
 
                 # delete list of description text items from dictionary
@@ -3026,14 +2673,14 @@ class ViSiAnnoT():
 
             if annot_id in description_dict.keys():
                 ViSiAnnoT.removeItemInWidgets(
-                    self.wid_data_list, description_dict[annot_id]
+                    self.wid_sig_list, description_dict[annot_id]
                 )
 
                 del description_dict[annot_id]
 
             elif annot_id == -1 and nb_annot in description_dict.keys():
                 ViSiAnnoT.removeItemInWidgets(
-                    self.wid_data_list, description_dict[nb_annot]
+                    self.wid_sig_list, description_dict[nb_annot]
                 )
 
                 del description_dict[nb_annot]
@@ -3237,7 +2884,7 @@ class ViSiAnnoT():
             for description_list in \
                     self.annotevent_description_dict[label_id].values():
                 ViSiAnnoT.removeItemInWidgets(
-                    self.wid_data_list, description_list
+                    self.wid_sig_list, description_list
                 )
 
 
@@ -3249,7 +2896,7 @@ class ViSiAnnoT():
         for description_dict in self.annotevent_description_dict.values():
             for description_list in description_dict.values():
                 ViSiAnnoT.removeItemInWidgets(
-                    self.wid_data_list, description_list
+                    self.wid_sig_list, description_list
                 )
 
         self.annotevent_description_dict = {}
@@ -3478,7 +3125,7 @@ class ViSiAnnoT():
                 start_date_time, self.fps, self.beginning_datetime
             )
 
-            if len(self.wid_data_list) > 0:
+            if len(self.wid_sig_list) > 0:
                 self.first_frame = start_frame
 
                 self.last_frame = min(
@@ -3602,13 +3249,13 @@ class ViSiAnnoT():
             if self.rec_id == self.rec_nb - 1:
                 self.updateFrameId(min(self.nframes, self.frame_id))
 
-        elif key == QtCore.Qt.Key_I and len(self.wid_data_list) > 0:
+        elif key == QtCore.Qt.Key_I and len(self.wid_sig_list) > 0:
             self.zoomIn()
 
-        elif key == QtCore.Qt.Key_O and len(self.wid_data_list) > 0:
+        elif key == QtCore.Qt.Key_O and len(self.wid_sig_list) > 0:
             self.zoomOut()
 
-        elif key == QtCore.Qt.Key_N and len(self.wid_data_list) > 0:
+        elif key == QtCore.Qt.Key_N and len(self.wid_sig_list) > 0:
             self.visiAll()
 
         elif key == QtCore.Qt.Key_A and len(self.annotevent_label_list) > 0:

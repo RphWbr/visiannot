@@ -898,3 +898,104 @@ def addMeanStdPlotTo2DWidget(
     wid.addItem(std_plot)
 
     return mean_plot, std_plot, text_item_list
+
+
+def removeItemInWidgets(wid_list, item_list):
+    """
+    Removes an item from a list of widgets
+
+    :param wid_list: widgets where to remove an item, each element must
+        have a method ``removeItem`` (for example an instance of
+        **pyqtgraph.PlotWidget**)
+    :type wid_list: list
+    :param item_list: items to remove from widgets, same length as
+        ``wid_list``, each element corresponds to one element of
+        ``wid_list``
+    :type item_list: list
+    """
+
+    for wid, item in zip(wid_list, item_list):
+        wid.removeItem(item)
+
+
+def addRegionToWidget(bound_1, bound_2, wid, color):
+    """
+    Creates a region item (**pyqtgraph.LinearRegionItem**) and displays it in a
+    widget
+
+    :param bound_1: start value of the region item (expressed as a
+        coordinate in the X axis of the widget)
+    :type bound_1: int
+    :param bound_2: end value of the region item (expressed as a
+        coordinate in the X axis of the widget)
+    :type bound_2: int
+    :param wid: widget where to display the region item, might be any
+        widget class with a method ``addItem``
+    :type wid: pyqtgraph.PlotWidget
+    :param color: plot color (RGBA)
+    :type color: tuple or list
+
+    :returns: region item displayed in the widget
+    :rtype: pyqtgraph.LinearRegionItem
+    """
+
+    # pen disabled for linux compatibility
+    try:
+        region = pg.LinearRegionItem(
+            movable=False, brush=color, pen={'color': color, 'width': 1}
+        )
+
+    except Exception:
+        region = pg.LinearRegionItem(movable=False, brush=color)
+
+    # set region boundaries
+    region.setRegion([bound_1, bound_2])
+
+    # add region to widget
+    wid.addItem(region)
+
+    return region
+
+
+def plotIntervals(data_interval, wid, freq, color):
+    """
+    Plots intervals data as a region
+
+    :param data_interval: intervals to be displayed, shape
+        :math:`(n_{intervals}, 2)`, each line is an interval with start
+        frame and end frame (sampled at ``freq``, relatively to
+        :attr:`.ViSAnnoT.beginning_datetime` if used inside
+        :class:`.ViSiAnnoT`) ; the intervals might be expressed in
+        milliseconds, then ``freq`` must be set to ``0``
+
+        WARNING: test this feature in asynchronous long recording (because
+        of relative to :attr:`.ViSAnnoT.beginning_datetime`)
+    :type data_interval: numpy array
+    :param wid: widget where to plot intervals, might be any widget class
+        with a method ``addItem``
+    :type wid: pyqtgraph.PlotWidget
+    :param freq: sampling frequency of intervals frames, set it to ``0`` if
+        intervals expressed in milliseconds
+    :type freq: float
+    :param color: plot color (RGBA)
+    :type color: tuple or list
+
+    :returns: instances of pyqtgraph.LinearRegionItem
+    :rtype: list
+    """
+
+    region_list = []
+    for interval in data_interval:
+        det_0 = interval[0]
+        det_1 = interval[1]
+
+        # convert interval frames to milliseconds
+        if freq > 0:
+            det_0 = 1000.0 * det_0 / freq
+            det_1 = 1000.0 * det_1 / freq
+
+        # plot region
+        region = addRegionToWidget(det_0, det_1, wid, color)
+        region_list.append(region)
+
+    return region_list
