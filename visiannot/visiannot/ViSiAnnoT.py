@@ -3451,9 +3451,14 @@ class ViSiAnnoT():
 
                         # 2D data => ms timestamp on first axis
                         else:
-                            inds = np.where(next_data[:, 0] >= start_sec * 1000)[0]
+                            inds = np.where(
+                                next_data[:, 0] >= start_sec * 1000
+                            )[0]
+
                             next_data = next_data[inds]
-                            next_data[:, 0] = next_data[:, 0] - start_sec * 1000
+
+                            next_data[:, 0] = \
+                                next_data[:, 0] - start_sec * 1000
 
 
                     # truncate data at the end if necessary
@@ -3466,17 +3471,31 @@ class ViSiAnnoT():
                                 data_length += data_tmp.shape[0]
 
                             # get the end frame
-                            end_frame = int(round(freq_data * self.nframes / self.fps - data_length))
+                            end_frame = int(round(
+                                freq_data * self.nframes / self.fps - data_length
+                            ))
+
                             next_data = next_data[:end_frame]
 
                         # 2D data => ms timestamp on first axis
                         else:
                             if start_sec_prev != -1:
-                                inds = np.where(next_data[:, 0] <= (self.nframes / self.fps - start_sec_prev) * 1000)[0]
+                                inds = np.where(
+                                    next_data[:, 0] <= (
+                                        self.nframes / self.fps - start_sec_prev
+                                    ) * 1000
+                                )[0]
+
                                 next_data = next_data[inds]
-                                next_data[:, 0] = next_data[:, 0] + start_sec_prev * 1000
+
+                                next_data[:, 0] = \
+                                    next_data[:, 0] + start_sec_prev * 1000
+
                             else:
-                                inds = np.where(next_data[:, 0] <= 1000 * self.nframes / self.fps)[0]
+                                inds = np.where(
+                                    next_data[:, 0] <= 1000 * self.nframes / self.fps
+                                )[0]
+
                                 next_data = next_data[inds]
 
                     start_sec_prev = -1
