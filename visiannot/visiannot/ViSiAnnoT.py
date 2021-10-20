@@ -780,6 +780,44 @@ class ViSiAnnoT():
         self.menu_bar = MenuBar(self.win, self.lay)
 
 
+        # *************** widget for truncated temporal range *************** #
+        if "select_trunc" in poswid_dict.keys():
+            #: (:class:`.TruncTemporalRangeWidget`) Widget for selecting a
+            #: truncated temporal range
+            self.wid_trunc = TruncTemporalRangeWidget(
+                self, poswid_dict['select_trunc'], trunc_duration
+            )
+
+
+        # **************** widget for custom temporal range ***************** #
+        if "select_manual" in poswid_dict.keys():
+            #: (:class:`.CustomTemporalRangeWidget`) Widget for defining a
+            #: custom temporal range
+            self.wid_time_edit = CustomTemporalRangeWidget(
+                self, poswid_dict["select_manual"]
+            )
+
+
+        # *************** widget for temporal re-scaling ******************** #
+        if len(self.sig_dict) > 0 and \
+            "select_from_cursor" in poswid_dict.keys() and \
+                len(self.from_cursor_list) > 0:
+            #: (:class:`.ToolsPyQt.ComboBox`) Combo box for
+            #: selecting a temporal range starting from the current frame (tool
+            #: for fast navigation)
+            _, _, self.combo_from_cursor = ToolsPyQt.addComboBox(
+                self.lay, poswid_dict['select_from_cursor'],
+                [""] + ['{:>02}:{:>02}'.format(from_cursor[0], from_cursor[1])
+                        for from_cursor in self.from_cursor_list],
+                box_title="Temporal range duration"
+            )
+
+            # listen to the callback method
+            self.combo_from_cursor.currentIndexChanged.connect(
+                self.callComboFromCursor
+            )
+
+
         # ********************** progress bar ******************************* #
         if "progress" in poswid_dict.keys():
             #: (:class:`.ToolsPyqtgraph.ProgressWidget`)
@@ -833,44 +871,6 @@ class ViSiAnnoT():
             ticks_size=ticks_size, ticks_offset=2,
             wid_height=height_widget_signal
         )
-
-
-        # *************** widget for truncated temporal range *************** #
-        if "select_trunc" in poswid_dict.keys():
-            #: (:class:`.TruncTemporalRangeWidget`) Widget for selecting a
-            #: truncated temporal range
-            self.wid_trunc = TruncTemporalRangeWidget(
-                self, poswid_dict['select_trunc'], trunc_duration
-            )
-
-
-        # **************** widget for custom temporal range ***************** #
-        if "select_manual" in poswid_dict.keys():
-            #: (:class:`.CustomTemporalRangeWidget`) Widget for defining a
-            #: custom temporal range
-            self.wid_time_edit = CustomTemporalRangeWidget(
-                self, poswid_dict["select_manual"]
-            )
-
-
-        # *************** widget for temporal re-scaling ******************** #
-        if len(self.wid_sig_list) > 0 and \
-            "select_from_cursor" in poswid_dict.keys() and \
-                len(self.from_cursor_list) > 0:
-            #: (:class:`.ToolsPyQt.ComboBox`) Combo box for
-            #: selecting a temporal range starting from the current frame (tool
-            #: for fast navigation)
-            _, _, self.combo_from_cursor = ToolsPyQt.addComboBox(
-                self.lay, poswid_dict['select_from_cursor'],
-                [""] + ['{:>02}:{:>02}'.format(from_cursor[0], from_cursor[1])
-                        for from_cursor in self.from_cursor_list],
-                box_title="Temporal range duration"
-            )
-
-            # listen to the callback method
-            self.combo_from_cursor.currentIndexChanged.connect(
-                self.callComboFromCursor
-            )
 
 
         # *********************** zoom widgets ****************************** #

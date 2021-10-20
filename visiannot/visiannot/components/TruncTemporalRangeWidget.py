@@ -29,44 +29,78 @@ class TruncTemporalRangeWidget():
         :type trunc_duration: tuple or list
         """
 
+        #: (*tuple* or *list*)
+        self.trunc_duration = trunc_duration
+
         #: (*int*) Number of frames correpsonding to duration of truncated
         #: temporal ranges
+        self.nframes_trunc = 0
+
+        #: (*int*) Number of splits
+        self.nb_trunc = 0
+
+        #: (:class:`.ToolsPyQt.ComboBox`) Combo box for selecting a truncated
+        #: temporal range
+        self.combo_trunc = None
+
+        # check trunc duration
+        if self.trunc_duration[0] == 0 and self.trunc_duration[1] == 0:
+            print("Duration of truncated temporal range is 0 => widget not created")
+
+        else:
+            # create combo box and add it to the layout of the associated
+            # instance of ViSiAnnoT
+            _, _, self.combo_trunc = addComboBox(
+                visi.lay, widget_position, [],
+                box_title="%dmin %ds temporal range" % tuple(trunc_duration),
+                flag_enable_key_interaction=False
+            )
+
+            # set truncated duration and combo box items
+            self.setTrunc(visi)
+
+            # initialize selected item of the combo box
+            self.combo_trunc.setCurrentIndex(1)
+
+            # set last frame of associated instance of ViSiAnnoT
+            visi.last_frame = self.nframes_trunc
+            
+            # listen to the callback method
+            self.combo_trunc.currentIndexChanged.connect(
+                lambda ite_trunc: self.callComboTrunc(ite_trunc, visi)
+            )
+
+
+    def setTrunc(self, visi):
+        """
+        Sets duration of truncated temporal ranges and combo box items
+
+        It sets the attributes :attr:`.nframes_trunc`, :attr:`.combo_trunc`
+
+        :param visi: associated instance of :class:`.ViSiAnnoT`
+        """
+
+        # get number of frames corresponding to the duration of truncated
+        # temporal ranges
         self.nframes_trunc = convertTimeToFrame(
-            visi.fps, minute=trunc_duration[0], sec=trunc_duration[1]
+            visi.fps, minute=self.trunc_duration[0], sec=self.trunc_duration[1]
         )
 
-        # check if trunc duration is above the total number of frames or
-        # default => set it to 0
+        # check if truncated duration is above the total number of frames
+        # => set it to 0
         if self.nframes_trunc > visi.nframes or self.nframes_trunc == 0:
-            print("Duration of truncated temporal range is above the total number of frames => widget not created")
-            
-            #: (*int*) Number of splits
+            print("Duration of truncated temporal range is above the current file duration => empty widget")
+            self.nframes_trunc = 0
             self.nb_trunc = 0
-
-            #: (:class:`.ToolsPyQt.ComboBox`) Combo box for selecting a
-            #: truncated temporal range
-            self.combo_trunc = None
+            self.combo_trunc.clear()
 
         else:
             # get number of splits
             self.nb_trunc = round(visi.nframes / self.nframes_trunc)
 
-            # set last frame of associated instance of ViSiAnnoT
-            visi.last_frame = self.nframes_trunc
-
-            # create combo box and add it to the layout of the associated
-            # instance of ViSiAnnoT
-            _, _, self.combo_trunc = addComboBox(
-                visi.lay, widget_position, self.getTruncIntervals(visi),
-                box_title="%dmin %ds temporal range" % tuple(trunc_duration),
-                flag_enable_key_interaction=False
-            )
-            self.combo_trunc.setCurrentIndex(1)
-
-            # listen to the callback method
-            self.combo_trunc.currentIndexChanged.connect(
-                lambda ite_trunc: self.callComboTrunc(ite_trunc, visi)
-            )
+            # set combo box items
+            self.combo_trunc.clear()
+            self.combo_trunc.addItems(self.getTruncIntervals(visi))
 
 
     def getTruncIntervals(self, visi):

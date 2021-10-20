@@ -1136,11 +1136,8 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             # set recording choice combo box
             self.combo_rec_choice.setCurrentIndex(self.rec_id)
 
-            # reset combo boxes
-            try:
-                self.combo_trunc.setCurrentIndex(0)
-            except Exception:
-                pass
+            # set combo box for truncated temporal ranges
+            self.wid_trunc.setTrunc(self)
 
             try:
                 self.combo_from_cursor.setCurrentIndex(0)
