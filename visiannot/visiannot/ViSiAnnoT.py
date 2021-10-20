@@ -36,6 +36,7 @@ from .components.CustomTemporalRangeWidget import CustomTemporalRangeWidget
 from .components.TruncTemporalRangeWidget import TruncTemporalRangeWidget
 from .components.FromCursorTemporalRangeWidget import \
     FromCursorTemporalRangeWidget
+from .components.LogoWidgets import ZoomInWidget, ZoomOutWidget, FullVisiWidget
 
 
 class ViSiAnnoT():
@@ -472,18 +473,6 @@ class ViSiAnnoT():
 
 
         # ******************************************************************* #
-        # ******************** decorative images **************************** #
-        # ******************************************************************* #
-
-        dir_path = ToolsData.getWorkingDirectory(__file__)
-
-        im_deco_dict = {}
-        for im_name in ["zoomin", "zoomout", "visibility"]:
-            im_path = "%s/Images/%s.jpg" % (dir_path, im_name)
-            im_deco_dict[im_name] = ToolsImage.readImage(im_path)
-
-
-        # ******************************************************************* #
         # ***************** annotation files management ********************* #
         # ******************************************************************* #
 
@@ -868,39 +857,34 @@ class ViSiAnnoT():
 
 
         # *********************** zoom widgets ****************************** #
-        if len(self.wid_sig_list) > 0 and "visi" in poswid_dict.keys():
-            #: (*pyqtgraph.PlotWidget*) Widget with the visibility image
-            #:
-            #: Clicking on it sets the temporal range to the fullest
-            self.wid_visi = ToolsPyqtgraph.createWidgetLogo(
-                self.lay, poswid_dict['visi'], im_deco_dict["visibility"],
-                box_size=50
+        if len(self.sig_dict) > 0 and "visi" in poswid_dict.keys():
+            #: (:class:`.FullVisiWidget`) Widget for zooming out to the full
+            #: temporal range
+            self.wid_visi = FullVisiWidget(
+                self, poswid_dict["visi"], "visibility"
             )
 
-            # listen to the callback method
-            self.wid_visi.scene().sigMouseClicked.connect(self.visiAll)
+        else:
+            self.wid_visi = None
 
-
-        if len(self.wid_sig_list) > 0 and "zoomin" in poswid_dict.keys():
-            #: (*pyqtgraph.PlotWidget*) Widget containing the zoomin image
-            self.wid_zoomin = ToolsPyqtgraph.createWidgetLogo(
-                self.lay, poswid_dict['zoomin'], im_deco_dict["zoomin"],
-                box_size=50
+        if len(self.sig_dict) > 0 and "zoomin" in poswid_dict.keys():
+            #: (:class:`.ZoomInWidget`) Widget for zooming in
+            self.wid_zoomin = ZoomInWidget(
+                self, poswid_dict["zoomin"], "zoomin", zoom_factor=zoom_factor
             )
 
-            # listen to the callback method
-            self.wid_zoomin.scene().sigMouseClicked.connect(self.zoomIn)
+        else:
+            self.wid_zoomin = None
 
-
-        if len(self.wid_sig_list) > 0 and "zoomout" in poswid_dict.keys():
-            #: (*pyqtgraph.PlotWidget*) Widget containing the zoomout image
-            self.wid_zoomout = ToolsPyqtgraph.createWidgetLogo(
-                self.lay, poswid_dict['zoomout'], im_deco_dict["zoomout"],
-                box_size=50
+        if len(self.sig_dict) > 0 and "zoomout" in poswid_dict.keys():
+            #: (:class:`.ZoomOutWidget`) Widget for zooming out
+            self.wid_zoomout = ZoomOutWidget(
+                self, poswid_dict["zoomout"], "zoomout",
+                zoom_factor=zoom_factor
             )
 
-            # listen to the callback method
-            self.wid_zoomout.scene().sigMouseClicked.connect(self.zoomOut)
+        else:
+            self.zoomout = None
 
 
         # ******************* event annotation widget *********************** #
@@ -1814,103 +1798,6 @@ class ViSiAnnoT():
     # *********************************************************************** #
 
     # *********************************************************************** #
-    # Group: Callback methods for zooming in/out
-    # *********************************************************************** #
-
-
-    def visiAll(self):
-        """
-        Callback method for resetting the temporal range (defined by
-        :attr:`.first_frame` and :attr:`.last_frame`) to
-        the fullest
-
-        Connected to the signal ``sigMouseClicked`` of the scene attribute of
-        :attr:`.wid_visi`.
-
-        It sets :attr:`.first_frame` to ``0`` and
-        :attr:`.last_frame` to :attr:`.nframes`. Then it
-        calls the method :meth:`.updateSignalPlot`.
-        """
-
-        # update range: all video
-        self.first_frame = 0
-        self.last_frame = self.nframes
-
-        # update signal plots
-        self.updateSignalPlot()
-
-
-    def zoomIn(self):
-        """
-        Callback method for zooming in
-
-        Connected to the signal ``sigMouseClicked`` of the scene attribute of
-        :attr:`.wid_zoomin`.
-        """
-
-        # get current X axis range
-        axis = self.wid_sig_list[0].getAxis('bottom')
-        axis_range_min, axis_range_max = axis.range[0], axis.range[1]
-
-        # convert from signal to ref
-        axis_range_min = self.convertMsToFrameRef(axis_range_min)
-        axis_range_max = self.convertMsToFrameRef(axis_range_max)
-
-        # check if current range is large enough for zoom in
-        if axis_range_max - axis_range_min > 5:
-            # compute the range on the left/right side of the temporal cursor
-            left = self.frame_id - axis_range_min
-            right = axis_range_max - self.frame_id
-
-            # compute the first frame and the last frame after zooming
-            self.first_frame = max(
-                int(self.frame_id - left / self.zoom_factor), self.first_frame
-            )
-
-            self.last_frame = min(
-                int(self.frame_id + right / self.zoom_factor), self.last_frame
-            )
-
-            # update signals plots
-            self.updateSignalPlot()
-
-
-    def zoomOut(self):
-        """
-        Callback method for zooming out
-
-        Connected to the signal ``sigMouseClicked`` of the scene attribute of
-        :attr:`.wid_zoomout`.
-        """
-
-        # get current X axis range
-        axis = self.wid_sig_list[0].getAxis('bottom')
-        axis_range_min, axis_range_max = axis.range[0], axis.range[1]
-
-        # convert from signal to ref
-        axis_range_min = self.convertMsToFrameRef(axis_range_min)
-        axis_range_max = self.convertMsToFrameRef(axis_range_max)
-
-        # compute the range on the left/right side of the temporal cursor
-        left = self.frame_id - axis_range_min
-        right = axis_range_max - self.frame_id
-
-        # compute the first frame and the last frame after zooming
-        self.first_frame = max(int(self.frame_id - left * self.zoom_factor), 0)
-
-        self.last_frame = min(
-            int(self.frame_id + right * self.zoom_factor), self.nframes
-        )
-
-        # update signals plots
-        self.updateSignalPlot()
-
-
-    # *********************************************************************** #
-    # End group
-    # *********************************************************************** #
-
-    # *********************************************************************** #
     # Group: Methods for managing image annotations
     # *********************************************************************** #
 
@@ -2805,13 +2692,13 @@ class ViSiAnnoT():
                 self.updateFrameId(min(self.nframes, self.frame_id))
 
         elif key == QtCore.Qt.Key_I and len(self.wid_sig_list) > 0:
-            self.zoomIn()
+            self.wid_zoomin.callback(self)
 
         elif key == QtCore.Qt.Key_O and len(self.wid_sig_list) > 0:
-            self.zoomOut()
+            self.wid_zoomout.callback(self)
 
         elif key == QtCore.Qt.Key_N and len(self.wid_sig_list) > 0:
-            self.visiAll()
+            self.wid_visi.callback(self)
 
         elif key == QtCore.Qt.Key_A and len(self.annotevent_label_list) > 0:
             self.annotEventSetTime(self.frame_id, 0)
