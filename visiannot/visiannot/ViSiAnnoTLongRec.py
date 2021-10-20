@@ -590,7 +590,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             self.lay, poswid_dict['next'], next_im, box_size=50
         )
 
-        # for documentation onyl
         #: (*QtWidgets.QComboBox*) Combo box for recording file selection
         self.combo_rec_choice = None
 

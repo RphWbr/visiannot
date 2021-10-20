@@ -355,6 +355,7 @@ class ViSiAnnoT():
         # ******************************************************************* #
         # *********************** miscellaneous ***************************** #
         # ******************************************************************* #
+
         #: (*int*) Number of temporal ticks on the X axis of the
         #: signals plots
         self.nb_ticks = nb_ticks
@@ -387,6 +388,7 @@ class ViSiAnnoT():
         # ******************************************************************* #
         # ************************ long recordings ************************** #
         # ******************************************************************* #
+
         #: (*bool*) Specify if :class:`.ViSiAnnoT` is launched in the context
         #: of :class:`.ViSiAnnoTLongRec`
         self.flag_long_rec = flag_long_rec
@@ -443,17 +445,14 @@ class ViSiAnnoT():
         #:  - (*tuple*) Plot color (RGBA)
         self.interval_dict = {}
 
-        # for documentation only
         #: (*int*) Frequency of the video (or the first signal if there is no
         #: video), it is the reference frequency
         self.fps = None
 
-        # for documentation only
         #: (*int*) Number of frames in the video (or the first signal if there
         #: is no video)
         self.nframes = None
 
-        # for documentation only
         #: (*datetime.datetime*) Beginning datetime of the video (or the first
         #: signal if there is no video)
         self.beginning_datetime = None
@@ -477,6 +476,7 @@ class ViSiAnnoT():
         # ******************************************************************* #
         # ******************** decorative images **************************** #
         # ******************************************************************* #
+
         dir_path = ToolsData.getWorkingDirectory(__file__)
 
         im_deco_dict = {}
@@ -627,6 +627,7 @@ class ViSiAnnoT():
         # ******************************************************************* #
         # ***************************** zoom ******************************** #
         # ******************************************************************* #
+
         #: (*int*) Zoom factor
         self.zoom_factor = zoom_factor
 
@@ -905,7 +906,6 @@ class ViSiAnnoT():
                 )
             ))
 
-            # only for documentation
             #: (*QtWidgets.QPushButton*) Push button for defining the starting
             #: datetime of custom temporal interval as the current frame
             self.current_push = None
@@ -914,7 +914,6 @@ class ViSiAnnoT():
             #: temporal interval
             self.edit_duration = QtWidgets.QTimeEdit()
 
-            # only for documentation
             #: (*QtWidgets.QPushButton*) Push button for validating custom
             #: temporal interval
             self.time_edit_push = None
@@ -986,17 +985,14 @@ class ViSiAnnoT():
         # ******************* event annotation widget *********************** #
         if len(self.annotevent_label_list) > 0:
             if "annot_event" in poswid_dict.keys():
-                # for documentation only
                 #: (*QtWidgets.QButtonGroup*) Set of the radio buttons with
                 #: labels of events annotation
                 self.annotevent_button_group_radio_label = None
 
-                # for documentation only
                 #: (*QtWidgets.QButtonGroup*) Set of the radio buttons with
                 #: display options of events annotation
                 self.annotevent_button_group_radio_disp = None
 
-                # for documentation only
                 #: (*QtWidgets.QButtonGroup*) Set of the check boxes for
                 #: custom display of events annotation
                 self.annotevent_button_group_check_custom = None
@@ -1067,12 +1063,10 @@ class ViSiAnnoT():
         # ******************* image annotation widget *********************** #
         if len(self.annotimage_label_list) > 0:
             if "annot_image" in poswid_dict.keys():
-                # for documentation only
                 #: (*QtWidgets.QButtonGroup*) Set of radio buttons with
                 #: labels of image extraction
                 self.annotimage_radio_button_group = None
 
-                # for documentation only
                 #: (:class:`.ToolsPyQt.PushButton`) Push
                 #: button for saving image extraction
                 self.annotimage_push_button = None
