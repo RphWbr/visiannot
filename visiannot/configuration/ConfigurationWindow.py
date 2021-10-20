@@ -16,7 +16,6 @@ import os
 from configobj import ConfigObj
 import numpy as np
 from ..tools import ToolsPyQt
-from collections import OrderedDict
 from .Configuration import Configuration
 
 
@@ -799,7 +798,7 @@ class ConfigurationWindow():
                     config_dict[key] = config[key]
 
                 else:
-                    config_dict[key] = OrderedDict()
+                    config_dict[key] = {}
                     for key_sub, dict_tmp in config[key].items():
                         config_dict[key][key_sub] = \
                             ConfigurationWindow.convertDictToListNested(

@@ -15,7 +15,6 @@ from PyQt5 import QtWidgets
 from ast import literal_eval
 import numpy as np
 from ..tools import ToolsPyQt
-from collections import OrderedDict
 
 
 class Configuration():
@@ -287,7 +286,7 @@ class Configuration():
         #:        corresponding signal widget
         #:      - (*float*) Maximum value to display on Y axis in the
         #:        corresponding signal widget
-        self.dict = OrderedDict()
+        self.dict = {}
 
         #: (*list*) Instances of QtWidgets.QGridLayout containing the
         #: configuration grids (same order as :attr:`.config_group_box_list`),
@@ -665,7 +664,7 @@ class Configuration():
         """
 
         # reset configuration dictionary
-        self.dict = OrderedDict()
+        self.dict = {}
 
         # loop on configurations
         for ite_config, (config_grid, config_group_box) in enumerate(zip(
