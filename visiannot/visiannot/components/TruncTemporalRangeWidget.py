@@ -41,7 +41,7 @@ class TruncTemporalRangeWidget():
 
         #: (:class:`.ToolsPyQt.ComboBox`) Combo box for selecting a truncated
         #: temporal range
-        self.combo_trunc = None
+        self.combo_box = None
 
         # check trunc duration
         if self.trunc_duration[0] == 0 and self.trunc_duration[1] == 0:
@@ -50,7 +50,7 @@ class TruncTemporalRangeWidget():
         else:
             # create combo box and add it to the layout of the associated
             # instance of ViSiAnnoT
-            _, _, self.combo_trunc = addComboBox(
+            _, _, self.combo_box = addComboBox(
                 visi.lay, widget_position, [],
                 box_title="%dmin %ds temporal range" % tuple(trunc_duration),
                 flag_enable_key_interaction=False
@@ -60,13 +60,13 @@ class TruncTemporalRangeWidget():
             self.setTrunc(visi)
 
             # initialize selected item of the combo box
-            self.combo_trunc.setCurrentIndex(1)
+            self.combo_box.setCurrentIndex(1)
 
             # set last frame of associated instance of ViSiAnnoT
             visi.last_frame = self.nframes_trunc
             
             # listen to the callback method
-            self.combo_trunc.currentIndexChanged.connect(
+            self.combo_box.currentIndexChanged.connect(
                 lambda ite_trunc: self.callComboTrunc(ite_trunc, visi)
             )
 
@@ -75,7 +75,7 @@ class TruncTemporalRangeWidget():
         """
         Sets duration of truncated temporal ranges and combo box items
 
-        It sets the attributes :attr:`.nframes_trunc`, :attr:`.combo_trunc`
+        It sets the attributes :attr:`.nframes_trunc`, :attr:`.combo_box`
 
         :param visi: associated instance of :class:`.ViSiAnnoT`
         """
@@ -92,15 +92,15 @@ class TruncTemporalRangeWidget():
             print("Duration of truncated temporal range is above the current file duration => empty widget")
             self.nframes_trunc = 0
             self.nb_trunc = 0
-            self.combo_trunc.clear()
+            self.combo_box.clear()
 
         else:
             # get number of splits
             self.nb_trunc = round(visi.nframes / self.nframes_trunc)
 
             # set combo box items
-            self.combo_trunc.clear()
-            self.combo_trunc.addItems(self.getTruncIntervals(visi))
+            self.combo_box.clear()
+            self.combo_box.addItems(self.getTruncIntervals(visi))
 
 
     def getTruncIntervals(self, visi):
@@ -141,19 +141,19 @@ class TruncTemporalRangeWidget():
         """
         Callback method for selecting a part of the video/signal defined by
         :attr:`.trunc_duration` via the combo box
-        :attr:`.combo_trunc`
+        :attr:`.combo_box`
 
         Connected to the signal ``currentIndexChanged`` of
-        :attr:`.combo_trunc`.
+        :attr:`.combo_box`.
 
-        It sets the temporal range (:attr:`.first_frame` and
-        :attr:`.last_frame`) with the selected value in the combo
-        box. The current frame :attr:`.frame_id` is set to the new
-        :attr:`.first_frame`. Then it calls the method
-        :meth:`.updateSignalPlot`.
+        It sets the temporal range (:attr:`.ViSiAnnoT.first_frame` and
+        :attr:`.ViSiAnnoT.last_frame`) with the selected value in the combo
+        box. The current frame :attr:`.ViSiAnnoT.frame_id` is set to the new
+        :attr:`.ViSiAnnoT.first_frame`. Then it calls the method
+        :meth:`.ViSiAnnoT.updateSignalPlot`.
 
         :param ite_trunc: index of the selected value in the combo box
-            :attr:`.combo_trunc`
+            :attr:`.combo_box`
         :type ite_trunc: int
         """
 

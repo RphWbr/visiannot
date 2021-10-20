@@ -783,6 +783,9 @@ class ViSiAnnoT():
                 self, poswid_dict['select_trunc'], trunc_duration
             )
 
+        else:
+            self.wid_trunc = None
+
 
         # **************** widget for custom temporal range ***************** #
         if "select_manual" in poswid_dict.keys():
@@ -791,6 +794,9 @@ class ViSiAnnoT():
             self.wid_time_edit = CustomTemporalRangeWidget(
                 self, poswid_dict["select_manual"]
             )
+
+        else:
+            self.wid_time_edit = None
 
 
         # *************** widget for temporal re-scaling ******************** #
@@ -803,6 +809,8 @@ class ViSiAnnoT():
                 self, poswid_dict["select_from_cursor"], from_cursor_list
             )
 
+        else:
+            self.wid_from_cursor = None
 
 
         # ********************** progress bar ******************************* #
@@ -1471,20 +1479,21 @@ class ViSiAnnoT():
         current temporal range defined by :attr:`.first_frame` and
         :attr:`.last_frame`
 
-        :param flag_reset_combo_trunc: specify if the combo box
-            :attr:`.combo_trunc` must be reset
+        :param flag_reset_combo_trunc: specify if the combo box of
+            :attr:`.wid_trunc` must be reset
         :type flag_reset_combo_trunc: bool
-        :param flag_reset_combo_from_cursor: specify if the combo box
-            :attr:`.combo_from_cursor` must be reset
+        :param flag_reset_combo_from_cursor: specify if the combo box of
+            :attr:`.wid_from_cursor` must be reset
         :type flag_reset_combo_from_cursor: bool
         """
 
         # reset combo boxes
-        if flag_reset_combo_trunc and hasattr(self, "combo_trunc"):
-            self.combo_trunc.setCurrentIndex(0)
+        if flag_reset_combo_trunc and self.wid_trunc is not None:
+            if self.wid_trunc.combo_box is not None:
+                self.wid_trunc.combo_box.setCurrentIndex(0)
 
-        if flag_reset_combo_from_cursor and hasattr(self, "combo_from_cursor"):
-            self.combo_from_cursor.setCurrentIndex(0)
+        if flag_reset_combo_from_cursor and self.wid_from_cursor is not None:
+            self.wid_from_cursor.combo_box.setCurrentIndex(0)
 
         # set boundaries of progress bar with current temporal range
         self.wid_progress.setBoundaries(self.first_frame, self.last_frame)
