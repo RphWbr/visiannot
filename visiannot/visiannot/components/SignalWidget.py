@@ -15,6 +15,7 @@ import pyqtgraph as pg
 from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtCore import Qt
 from ...tools import ToolsPyqtgraph
+from ...tools.ToolsPyQt import addWidgetToLayout
 
 
 class PlotItemCustom(pg.graphicsItems.PlotItem.PlotItem):
@@ -38,8 +39,8 @@ class PlotItemCustom(pg.graphicsItems.PlotItem.PlotItem):
 
 class SignalWidget(pg.PlotWidget):
     def __init__(
-        self, visi, parent=None, background='default', wid_height=150,
-        cursor_style={'color': "F00", 'width': 1},
+        self, visi, widget_position, parent=None, background='default',
+        wid_height=150, cursor_style={'color': "F00", 'width': 1},
         cursor_dragged_style={'color': "F0F", 'width': 2},
         **kwargs
     ):
@@ -54,6 +55,9 @@ class SignalWidget(pg.PlotWidget):
         for details about parent class.
 
         :param visi: associated instance of :class:`.ViSiAnnoT`
+        :param widget_position: position of the progress widget in the layout
+            of the associated instance of :class:`.ViSiAnnoT`
+        :type widget_position: tuple or list
         :param parent: first positional argument of **pyqtgraph.GraphicsView**
         :param background: second positional argument of
             **pyqtgraph.GraphicsView**
@@ -107,6 +111,9 @@ class SignalWidget(pg.PlotWidget):
         #: (*list*) Temporal intervals, each element is an instance of
         #: **pyqtgraph.LinearRegionItem**
         self.region_interval_list = []
+
+        # add widget to the layout of the associated instance of ViSiAnnoT
+        addWidgetToLayout(visi.lay, self, widget_position)
 
         # listen to callback
         self.scene().sigMouseClicked.connect(

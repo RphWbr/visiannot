@@ -808,14 +808,9 @@ class ViSiAnnoT():
             #: (:class:`.ToolsPyqtgraph.ProgressWidget`)
             #: Widget containing the progress bar
             self.wid_progress = ProgressWidget(
-                self, title_style=font_default_title, ticks_color=ticks_color,
-                ticks_size=ticks_size, ticks_offset=ticks_offset,
-                nb_ticks=self.nb_ticks
-            )
-
-            # add the widget to the layout
-            ToolsPyQt.addWidgetToLayout(
-                self.lay, self.wid_progress, poswid_dict['progress']
+                self, poswid_dict['progress'], title_style=font_default_title,
+                ticks_color=ticks_color, ticks_size=ticks_size,
+                ticks_offset=ticks_offset, nb_ticks=self.nb_ticks
             )
 
         else:
@@ -838,18 +833,13 @@ class ViSiAnnoT():
             if video_id in poswid_dict.keys():
                 # create widget
                 self.wid_vid_dict[video_id] = VideoWidget(
-                    video_path, **font_default_title
+                    self.lay, poswid_dict[video_id], video_path,
+                    **font_default_title
                 )
 
                 # initialize image
                 self.wid_vid_dict[video_id].setAndDisplayImage(
                     self.video_data_dict[video_id], self.frame_id
-                )
-
-                # add widget to layout
-                ToolsPyqtgraph.addWidgetToLayout(
-                    self.lay, self.wid_vid_dict[video_id],
-                    poswid_dict[video_id]
                 )
 
 
@@ -1295,7 +1285,7 @@ class ViSiAnnoT():
 
             # create widget
             wid = SignalWidget(
-                self, y_range=y_range, left_label=type_data, **kwargs
+                self, pos_sig, y_range=y_range, left_label=type_data, **kwargs
             )
 
             # create plot items in the signal widget
@@ -1309,9 +1299,6 @@ class ViSiAnnoT():
                 wid, self.nb_ticks, (first_frame_ms, last_frame_ms),
                 self.beginning_datetime
             )
-
-            # add widget to layout
-            ToolsPyqtgraph.addWidgetToLayout(self.lay, wid, pos_sig)
 
             # add widget to scroll area
             scroll_lay.addWidget(wid)

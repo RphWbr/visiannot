@@ -15,10 +15,11 @@ import pyqtgraph as pg
 import numpy as np
 from time import sleep
 from ...tools.ToolsImage import transformImage
+from ...tools.ToolsPyQt import addWidgetToLayout
 
 
 class VideoWidget(pg.PlotWidget):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, visi_lay, widget_position, *args, **kwargs):
         """
         Subclass of **pyqtgraph.PlotWidget** for displaying a video
 
@@ -26,6 +27,12 @@ class VideoWidget(pg.PlotWidget):
         :meth:`.setImage`, then the method :meth:`.displayImage` displays the
         current frame. The method :meth:`.setAndDisplayImage` combines both.
 
+        :param visi_lay: layout of the associated instance of
+            :class:`.ViSiAnnoT`
+        :type visi_lay: PyQt5.QtWidgets.QGridLayout
+        :param widget_position: position of the progress widget in the layout
+            of the associated instance of :class:`.ViSiAnnoT`
+        :type widget_position: tuple or list
         :param args: positional arguments of the method :meth:`.setWidgetTitle`
         :param kwargs: keyword arguments of the method :meth:`.setWidgetTitle`
         """
@@ -51,6 +58,9 @@ class VideoWidget(pg.PlotWidget):
         #: (*pyqtgraph.ImageItem*) Displayed image item
         self.img_item = pg.ImageItem(self.image)
         self.addItem(self.img_item)
+
+        # add widget to the layout of the associated instance of ViSiAnnoT
+        addWidgetToLayout(visi_lay, self, widget_position)
 
 
     def setImage(self, data_video, frame_id):

@@ -14,13 +14,14 @@ Module defining :class:`.ProgressWidget`
 import pyqtgraph as pg
 from PyQt5 import QtCore
 from ...tools.ToolsPyqtgraph import setTicksTextStyle, setTemporalTicks
+from ...tools.ToolsPyQt import addWidgetToLayout
 from ...tools.ToolsDateTime import convertFrameToString, \
     convertFrameToAbsoluteDatetimeString
 
 
 class ProgressWidget(pg.PlotWidget):
     def __init__(
-        self, visi, parent=None,
+        self, visi, widget_position, parent=None,
         progress_style={'symbol': 'o', 'brush': '#F00', 'size': 7},
         bg_progress_style={'pen': {'color': 'b', 'width': 2}},
         line_style={'color': (0, 0, 0), 'width': 2},
@@ -40,6 +41,9 @@ class ProgressWidget(pg.PlotWidget):
         PlotWidget and adds new attributes.
 
         :param visi: associated instance of :class:`.ViSiAnnoT`
+        :param widget_position: position of the progress widget in the layout
+            of the associated instance of :class:`.ViSiAnnoT`
+        :type widget_position: tuple or list
         :param parent: see
             https://pyqtgraph.readthedocs.io/en/latest/widgets/plotwidget.html
         :param progress_style: plot style of the sliding progression point
@@ -128,6 +132,9 @@ class ProgressWidget(pg.PlotWidget):
         # create title
         self.setTitle(title, **title_style)
         self.updateTitle(visi.fps, visi.beginning_datetime)
+
+        # add widget to the layout of the associated instance of ViSiAnnoT
+        addWidgetToLayout(visi.lay, self, widget_position)
 
         # listen to the callback method
         self.progress_plot.sigPlotChanged.connect(
