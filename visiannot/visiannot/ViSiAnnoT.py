@@ -384,15 +384,6 @@ class ViSiAnnoT():
             {'pen': {'color': '#4C9900', 'width': 1}}
         ]
 
-        #: (*list*) Data types (string) for signal widget
-        #:
-        #: It is the list of keys of ``signal_dict``
-        #: (positional argument of the constructor of :class:`.ViSiAnnoT`),
-        #:
-        #: It is used for the Y axis label of the signal widgets
-        self.sig_labels = list(signal_dict.keys())
-
-
 
         # ******************************************************************* #
         # ************************ long recordings ************************** #
@@ -428,10 +419,14 @@ class ViSiAnnoT():
         #: of :class:`.ViSiAnnoT`.
         self.video_data_dict = OrderedDict()
 
-        # only for documentation
-        #: (*list*) Each element corresponds to a signal widget and is a list
-        #: of instances of :class:`.Signal` to plot on the corresponding widget
-        self.sig_list_list = None
+        #: (*dict*) Each element corresponds to a signal widget, key is the
+        #: data type (same keys as ``signal_dict``, positional argument of the
+        #: constructor), value is a list of instances of :class:`.Signal` to
+        #: plot on the corresponding widget
+        #:
+        #: The key (data type) is used as label of the Y axis of the
+        #: corresponding widget.
+        self.sig_dict = None
 
         #: (*dict*) Intervals to plot on signals, each item corresponds to one
         #: signal widget
@@ -1282,9 +1277,8 @@ class ViSiAnnoT():
         )
 
         # loop on signals
-        for ite_sig, (type_data, sig_list) in enumerate(
-            zip(self.sig_labels, self.sig_list_list)
-        ):
+        for ite_sig, (type_data, sig_list) in \
+                enumerate(self.sig_dict.items()):
             # get Y range
             if type_data in y_range_dict.keys():
                 y_range = y_range_dict[type_data]
@@ -1632,8 +1626,8 @@ class ViSiAnnoT():
         first_frame_ms, last_frame_ms = self.getCurrentRangeInMs()
 
         # update plots
-        for wid, sig_list, type_data in zip(
-            self.wid_sig_list, self.sig_list_list, self.sig_labels
+        for wid, (type_data, sig_list) in zip(
+            self.wid_sig_list, self.sig_dict.items()
         ):
             # check if there are intervals to plot
             if type_data in self.interval_dict.keys():
@@ -3462,7 +3456,7 @@ class ViSiAnnoT():
         beginning_datetime_list = []
 
         # reset attributes
-        self.sig_list_list = []
+        self.sig_dict = {}
         self.interval_dict = {}
 
         # loop on video
@@ -3688,7 +3682,7 @@ class ViSiAnnoT():
                 sig_list_tmp.append(signal)
 
             # append list of signals
-            self.sig_list_list.append(sig_list_tmp)
+            self.sig_dict[type_data] = sig_list_tmp
 
 
     @staticmethod
