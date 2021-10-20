@@ -413,20 +413,23 @@ class ViSiAnnoT():
 
         # initialize attributes that are set in the method setAllData
 
-        #: (*dict*) Key is the camera ID, value is an instance of
-        #: cv2.VideoCapture containing the video data
+        #: (*dict*) Video data, each item corresponds to one camera
         #:
-        #: Same keys as ``video_dict``, positional argument of the constructor
-        #: of :class:`.ViSiAnnoT`.
+        #: Key is the camera ID (same keys as ``video_dict``, positional
+        #: argument of the constructor of :class:`.ViSiAnnoT`).
+        #:
+        #: Value is an instance of **cv2.VideoCapture** containing the video
+        #: data.
         self.video_data_dict = {}
 
-        #: (*dict*) Each element corresponds to a signal widget, key is the
-        #: data type (same keys as ``signal_dict``, positional argument of the
-        #: constructor), value is a list of instances of :class:`.Signal` to
-        #: plot on the corresponding widget
+        #: (*dict*) Signal data, each item corresponds to a signal widget
         #:
-        #: The key (data type) is used as label of the Y axis of the
+        #: Key is the data type (same keys as ``signal_dict``, positional
+        #: argument of the constructor), used as label of the Y axis of the
         #: corresponding widget.
+        #:
+        #: Value is a list of instances of :class:`.Signal` to plot on the
+        #: corresponding widget
         self.sig_dict = None
 
         #: (*dict*) Intervals to plot on signals, each item corresponds to one
@@ -460,10 +463,12 @@ class ViSiAnnoT():
         # set data
         self.setAllData(video_dict, signal_dict, interval_dict)
 
-        #: (*dict*) Thresholds to plot on signals widgets
+        #: (*dict*) Thresholds to plot on signals widgets, each item
+        #: corresponds to one signal widget
         #:
-        #: For a given signal, key must be the corresponding element in
-        #: :attr:`.ViSiAnnoT.sig_labels`
+        #: Key is the data type of the signal widget on which to plot (same as
+        #: in positional argument ``signal_dict`` of the constructor of
+        #: :class:`.ViSiAnnoT`)
         #:
         #: Value is a list of length 2:
         #:
@@ -1230,9 +1235,9 @@ class ViSiAnnoT():
         It sets the attribute :attr:`.ViSiAnnoT.wid_sig_list`.
 
         Make sure the attributes :attr:`.ViSiAnnoT.lay`,
-        :attr:`.ViSiAnnoT.sig_list_list`, :attr:`.ViSiAnnoT.sig_labels`,
-        :attr:`.ViSiAnnoT.threshold_dict` and :attr:`.ViSiAnnoT.interval_dict`
-        are defined before calling this method.
+        :attr:`.ViSiAnnoT.sig_dict`, :attr:`.ViSiAnnoT.threshold_dict` and
+        :attr:`.ViSiAnnoT.interval_dict` are defined before calling this
+        method.
 
         :param progbar_wid_pos: position of the progress bar widget, length 2
             ``(row, col)`` or 4 ``(row, col, rowspan, colspan)``
