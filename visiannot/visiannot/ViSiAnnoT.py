@@ -34,6 +34,8 @@ from .components.ProgressWidget import ProgressWidget
 from .components.VideoWidget import VideoWidget
 from .components.CustomTemporalRangeWidget import CustomTemporalRangeWidget
 from .components.TruncTemporalRangeWidget import TruncTemporalRangeWidget
+from .components.FromCursorTemporalRangeWidget import \
+    FromCursorTemporalRangeWidget
 
 
 class ViSiAnnoT():
@@ -651,13 +653,6 @@ class ViSiAnnoT():
         # ****************************** time ******************************* #
         # ******************************************************************* #
 
-        #: (*list*) Temporal range durations intervals starting at the current
-        #: position of the temporal cursor (tool for fast navigation)
-        #:
-        #: Each element is a list of integers with 2 elements:
-        #: ``(minute, second)``.
-        self.from_cursor_list = from_cursor_list
-
         #: (*bool*) Specify if the video is paused
         self.flag_pause_status = flag_pause_status
 
@@ -801,27 +796,18 @@ class ViSiAnnoT():
         # *************** widget for temporal re-scaling ******************** #
         if len(self.sig_dict) > 0 and \
             "select_from_cursor" in poswid_dict.keys() and \
-                len(self.from_cursor_list) > 0:
-            #: (:class:`.ToolsPyQt.ComboBox`) Combo box for
-            #: selecting a temporal range starting from the current frame (tool
-            #: for fast navigation)
-            _, _, self.combo_from_cursor = ToolsPyQt.addComboBox(
-                self.lay, poswid_dict['select_from_cursor'],
-                [""] + ['{:>02}:{:>02}'.format(from_cursor[0], from_cursor[1])
-                        for from_cursor in self.from_cursor_list],
-                box_title="Temporal range duration"
+                len(from_cursor_list) > 0:
+            #: (:class:`.FromCursorTemporalRangeWidget`) Widget for selecting
+            #: a duration of temporal range to be started at the current frame
+            self.wid_from_cursor = FromCursorTemporalRangeWidget(
+                self, poswid_dict["select_from_cursor"], from_cursor_list
             )
 
-            # listen to the callback method
-            self.combo_from_cursor.currentIndexChanged.connect(
-                self.callComboFromCursor
-            )
 
 
         # ********************** progress bar ******************************* #
         if "progress" in poswid_dict.keys():
-            #: (:class:`.ToolsPyqtgraph.ProgressWidget`)
-            #: Widget containing the progress bar
+            #: (:class:`.ProgressWidget`) Widget containing the progress bar
             self.wid_progress = ProgressWidget(
                 self, poswid_dict['progress'], title_style=font_default_title,
                 ticks_color=ticks_color, ticks_size=ticks_size,
@@ -2705,50 +2691,6 @@ class ViSiAnnoT():
 
         else:
             return []
-
-
-    # *********************************************************************** #
-    # End group
-    # *********************************************************************** #
-
-    # *********************************************************************** #
-    # Group: Callback methods for fast navigation
-    # *********************************************************************** #
-
-
-    def callComboFromCursor(self, ite_combo):
-        """
-        Callback method for selecting a pre-defined temporal range that begins
-        at the current temporal cursor position
-
-        Connected to the signal ``currentIndexChanged`` of the attribute
-        :attr:`.combo_from_cursor`.
-
-        It sets :attr:`.first_frame` to :attr:`.frame_id`
-        and :attr:`.last_frame` so that the temporal range spans the
-        selected value of the combo box :attr:`.combo_from_cursor`.
-        Then it calls the method :meth:`.updateSignalPlot`.
-
-        :param ite_combo: index of the selected value in the combo box
-            :attr:`.combo_from_cursor`
-        :type ite_combo: int
-        """
-
-        # check if the value selected in the combo box is not empty
-        if ite_combo > 0:
-            # get the value of the combo box and convert it to frame number
-            ite_combo -= 1
-            frame_interval = ToolsDateTime.convertTimeToFrame(
-                self.fps, minute=self.from_cursor_list[ite_combo][0],
-                sec=self.from_cursor_list[ite_combo][1]
-            )
-
-            # define new range
-            self.first_frame = self.frame_id
-            self.last_frame = min(self.frame_id + frame_interval, self.nframes)
-
-            # update plots signals
-            self.updateSignalPlot(flag_reset_combo_from_cursor=False)
 
 
     # *********************************************************************** #
