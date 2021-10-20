@@ -884,7 +884,7 @@ class ViSiAnnoT():
             )
 
         else:
-            self.zoomout = None
+            self.wid_zoomout = None
 
 
         # ******************* event annotation widget *********************** #
