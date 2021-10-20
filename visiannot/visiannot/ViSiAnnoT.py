@@ -33,6 +33,7 @@ from .components.MenuBar import MenuBar
 from .components.ProgressWidget import ProgressWidget
 from .components.VideoWidget import VideoWidget
 from .components.CustomTemporalRangeWidget import CustomTemporalRangeWidget
+from .components.TruncTemporalRangeWidget import TruncTemporalRangeWidget
 
 
 class ViSiAnnoT():
@@ -650,25 +651,6 @@ class ViSiAnnoT():
         # ****************************** time ******************************* #
         # ******************************************************************* #
 
-        #: (*int*) Number of frames correpsonding to
-        #: :attr:`.ViSiAnnoT.trunc_duration`
-        self.nframes_trunc = ToolsDateTime.convertTimeToFrame(
-            self.fps, minute=trunc_duration[0], sec=trunc_duration[1]
-        )
-
-        # check if trunc duration is above the total number of frames or
-        # default => set it to 0
-        if self.nframes_trunc > self.nframes or self.nframes_trunc == 0:
-            self.nframes_trunc = self.nframes
-            trunc_duration = (0, 0)
-
-        #: (*list*) Duration of file split (tool for fast navigation), 2
-        #: elements (int): ``(minute, second)``
-        self.trunc_duration = trunc_duration
-
-        #: (*int*) Number of splits in the file (tool for fast navigation)
-        self.nb_trunc = round(self.nframes / self.nframes_trunc)
-
         #: (*list*) Temporal range durations intervals starting at the current
         #: position of the temporal cursor (tool for fast navigation)
         #:
@@ -688,8 +670,8 @@ class ViSiAnnoT():
         #: (*int*) Last frame that is displayed in the signal plots
         #:
         #: Actually, the last frame that is displayed is
-        #: ``:attr:`.ViSiAnnoT.last_frame` - 1``, because of zero-indexation.
-        self.last_frame = self.nframes_trunc
+        #: ``last_frame` - 1``, because of zero-indexation.
+        self.last_frame = self.nframes
 
         #: (*bool*) Specify if the window is running
         self.flag_processing = True
@@ -853,29 +835,19 @@ class ViSiAnnoT():
         )
 
 
-        # *********************** trunc widget ****************************** #
-        if self.trunc_duration[0] != 0 or self.trunc_duration[1] != 0:
-            if "select_trunc" in poswid_dict.keys():
-                #: (:class:`.ToolsPyQt.ComboBox`) Combo box
-                #: for selecting a truncated temporal range (tool for fast
-                #: navigation)
-                _, _, self.combo_trunc = ToolsPyQt.addComboBox(
-                    self.lay, poswid_dict['select_trunc'],
-                    [""] + self.getTruncIntervals(),
-                    box_title="%dmin %ds temporal range" %
-                    tuple(self.trunc_duration)
-                )
-
-                self.combo_trunc.setCurrentIndex(1)
-
-                # listen to the callback method
-                self.combo_trunc.currentIndexChanged.connect(
-                    self.callComboTrunc
-                )
+        # *************** widget for truncated temporal range *************** #
+        if "select_trunc" in poswid_dict.keys():
+            #: (:class:`.TruncTemporalRangeWidget`) Widget for selecting a
+            #: truncated temporal range
+            self.wid_trunc = TruncTemporalRangeWidget(
+                self, poswid_dict['select_trunc'], trunc_duration
+            )
 
 
         # **************** widget for custom temporal range ***************** #
         if "select_manual" in poswid_dict.keys():
+            #: (:class:`.CustomTemporalRangeWidget`) Widget for defining a
+            #: custom temporal range
             self.wid_time_edit = CustomTemporalRangeWidget(
                 self, poswid_dict["select_manual"]
             )
@@ -1091,39 +1063,6 @@ class ViSiAnnoT():
     # *********************************************************************** #
     # Group: Miscellaneous methods
     # *********************************************************************** #
-
-
-    def getTruncIntervals(self):
-        """
-        Gets the string associated to the truncated temporal intervals defined
-        by :attr:`.ViSiAnnoT.trunc_duration` for fast navigation
-
-        :returns: list of strings
-        :rtype: list
-        """
-
-        trunc_list = []
-        for ite_trunc in range(self.nb_trunc):
-            string_1 = ToolsDateTime.convertFrameToAbsoluteTimeString(
-                ite_trunc * self.nframes_trunc, self.fps,
-                self.beginning_datetime
-            )
-
-            if (ite_trunc + 1) == self.nb_trunc:
-                string_2 = ToolsDateTime.convertFrameToAbsoluteTimeString(
-                    self.nframes, self.fps, self.beginning_datetime
-                )
-
-            else:
-                string_2 = ToolsDateTime.convertFrameToAbsoluteTimeString(
-                    (ite_trunc + 1) * self.nframes_trunc, self.fps,
-                    self.beginning_datetime
-                )
-
-            label = "%s - %s" % (string_1, string_2)
-            trunc_list.append(label)
-
-        return trunc_list
 
 
     def getFrameIdInMs(self, frame_id):
@@ -2775,42 +2714,6 @@ class ViSiAnnoT():
     # *********************************************************************** #
     # Group: Callback methods for fast navigation
     # *********************************************************************** #
-
-
-    def callComboTrunc(self, ite_trunc):
-        """
-        Callback method for selecting a part of the video/signal defined by
-        :attr:`.trunc_duration` via the combo box
-        :attr:`.combo_trunc`
-
-        Connected to the signal ``currentIndexChanged`` of
-        :attr:`.combo_trunc`.
-
-        It sets the temporal range (:attr:`.first_frame` and
-        :attr:`.last_frame`) with the selected value in the combo
-        box. The current frame :attr:`.frame_id` is set to the new
-        :attr:`.first_frame`. Then it calls the method
-        :meth:`.updateSignalPlot`.
-
-        :param ite_trunc: index of the selected value in the combo box
-            :attr:`.combo_trunc`
-        :type ite_trunc: int
-        """
-
-        # check if the value selected in the combo box is not the first one
-        # (empty one)
-        if ite_trunc > 0:
-            # define new range
-            ite_trunc -= 1
-            self.first_frame = ite_trunc * self.nframes_trunc
-            self.last_frame = min((ite_trunc + 1) * self.nframes_trunc,
-                                  self.nframes)
-
-            # update plots signals
-            self.updateSignalPlot(flag_reset_combo_trunc=False)
-
-            # update frame id
-            self.updateFrameId(ite_trunc * self.nframes_trunc)
 
 
     def callComboFromCursor(self, ite_combo):
