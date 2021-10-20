@@ -33,6 +33,7 @@ from .components.Signal import Signal
 from .components.SignalWidget import SignalWidget
 from .components.MenuBar import MenuBar
 from .components.ProgressWidget import ProgressWidget
+from .components.VideoWidget import VideoWidget
 
 
 class ViSiAnnoT():
@@ -691,9 +692,6 @@ class ViSiAnnoT():
         #: (*int*) Index of the current frame
         self.frame_id = 0
 
-        #: (*dict*) Index of the previous frame for each video_id
-        self.previous_frame_id = {}
-
         #: (*int*) First frame that is displayed in the signal plots
         self.first_frame = 0
 
@@ -832,47 +830,32 @@ class ViSiAnnoT():
         # ************************ video widgets **************************** #
         #: (*dict*) Video widgets
         #:
-        #: Key is the camera ID (string). Value is the widget
-        #: (pyqtgraph.PlotWidget) where the corresponding video is displayed.
+        #: Key is the camera ID (string). Value is an instance of
+        #: :class:`.VideoWidget` where the corresponding video is displayed.
         #:
-        #: Same keys as the position argument
+        #: Same keys as the positional argument
         #: ``video_dict`` of the constructor of :class:`.ViSiAnnoT`
         self.wid_vid_dict = {}
 
-        #: (*dict*) Image items of the current frame
-        #:
-        #: Key is the camera ID (string). Value is the image item
-        #: (pyqtgraph.ImageItem) displayed for the corresponding video
-        #:
-        #: Same keys as the position argument
-        #: ``video_dict`` of the constructor of :class:`.ViSiAnnoT`
-        self.img_vid_dict = {}
+        # loop on cameras
+        for video_id, (video_path, _, _, _) in video_dict.items():
+            # check if widget position exists
+            if video_id in poswid_dict.keys():
+                # create widget
+                self.wid_vid_dict[video_id] = VideoWidget(
+                    video_path, **font_default_title
+                )
 
-        #: (*dict*) Image arrays of the current frame
-        #:
-        #: Key is the camera ID (string). Value is a numpy array of shape
-        #: :math:`(width, height, 3)` containing the RGB image of the current
-        #: frame for the corresponding video.
-        #:
-        #: Same keys as the position argument
-        #: ``video_dict`` of the constructor of :class:`.ViSiAnnoT`
-        self.im_dict = {}
+                # initialize image
+                self.wid_vid_dict[video_id].setAndDisplayImage(
+                    self.video_data_dict[video_id], self.frame_id
+                )
 
-        #: (*dict*) Files names of the video
-        #:
-        #: Key is the camera ID (string). Value is the corresponding video
-        #: file name (strin).
-        #:
-        #: Same keys as the position argument
-        #: ``video_dict`` of the constructor of :class:`.ViSiAnnoT`
-        self.vid_file_name_dict = {}
-
-        # create video widgets and initialize video plots
-        # (it sets the attributes self.wid_vid_dict, self.img_vid_dict,
-        # self.im_dict and self.vid_file_name_dict)
-        self.initVideoPlot(
-            video_dict, poswid_dict, font_title=font_default_title
-        )
+                # add widget to layout
+                ToolsPyqtgraph.addWidgetToLayout(
+                    self.lay, self.wid_vid_dict[video_id],
+                    poswid_dict[video_id]
+                )
 
 
         # *********************** signal widgets **************************** #
@@ -1258,60 +1241,6 @@ class ViSiAnnoT():
     # *********************************************************************** #
 
 
-    def initVideoPlot(self, video_dict, poswid_dict,
-                      font_title={"color": "#000", "size": "12pt"}):
-        """
-        Creates the video widgets and initializes the video plots
-
-        It sets the following attributes:
-
-        - :attr:`.ViSiAnnoT.wid_vid_dict`
-        - :attr:`.ViSiAnnoT.img_vid_dict`
-        - :attr:`.ViSiAnnoT.im_dict`
-        - :attr:`.ViSiAnnoT.vid_file_name_dict`
-
-        Make sure the attribute :attr:`.ViSiAnnoT.lay` is created before
-        calling this method.
-
-        :param video_dict: video configuration, see positional argument
-            ``video_dict`` of :class:`.ViSiAnnoT` constructor
-        :type video_dict: dict
-        :param poswid_dict: position of the widgets in the window, see
-            positional argument ``poswid_dict`` of :class:`.ViSiAnnoT`
-            constructor
-        :type poswid_dict: dict
-        :param font_title: font of the widget title
-        :type font_title: dict
-        """
-
-        for video_id, (video_path, _, _, _) in video_dict.items():
-            # check if widget position exists
-            if video_id in poswid_dict.keys():
-                # get file name
-                file_name = os.path.splitext(os.path.basename(video_path))[0]
-                self.vid_file_name_dict[video_id] = file_name
-
-                self.previous_frame_id[video_id] = None
-
-                # create widget
-                self.wid_vid_dict[video_id], self.img_vid_dict[video_id] = \
-                    ToolsPyqtgraph.createWidgetImage(
-                        self.lay, poswid_dict[video_id],
-                        title=file_name, title_style=font_title
-                )
-
-                # initialize image arrays
-                ret = self.getVideoData(
-                    self.video_data_dict[video_id], video_id
-                )
-
-                # display first frame
-                self.img_vid_dict[video_id].setImage(self.im_dict[video_id])
-
-            else:
-                raise Exception("No widget position given for video %s => add key %s to positinal argument poswid_dict" % (video_id, video_id))
-
-
     def initSignalPlot(
         self, progbar_wid_pos, y_range_dict={}, **kwargs
     ):
@@ -1411,70 +1340,25 @@ class ViSiAnnoT():
             pos_sig[0] += 1
 
 
-    def getVideoData(self, data_video, video_id):
-        """
-        Gets video frame at the current frame :attr:`.frame_id`
-
-        :param data_video: video data to read
-        :type data_video: cv2.VideoCapture
-
-        :returns: code (0 success, 1 pause, 2 error)
-        :rtype: int
-        """
-
-        # check data video
-        if data_video is not None:
-            if self.previous_frame_id[video_id] == self.frame_id - 1:
-                pass
-
-            elif self.previous_frame_id[video_id] == self.frame_id:
-                sleep(0.00001)
-
-                return 1
-
-            else:
-                # set the video stream at the current frame
-                data_video.set(1, self.frame_id)
-
-            # read image
-            ret, im = data_video.read()
-            self.previous_frame_id[video_id] = self.frame_id
-
-        else:
-            ret = False
-
-        # check if reading is successful
-        if ret:
-            # cv2 returns BGR => converted to RGB
-            # cv2 returns image with shape (height,width,3) => transposed to
-            # (width, height, 3) for display
-            self.im_dict[video_id] = ToolsImage.transformImage(im)
-
-            return 0
-
-        else:
-            # if no image read, returns black image
-            self.im_dict[video_id] = np.zeros((100, 100, 3))
-
-            return 2
-
-
     def updateVideoFrame(self):
         """
         Reads the video stream (launched in a thread)
 
         Called by the thread :attr:`.update_frame_thread`.
 
-        It updates the attribute :attr:`.im_dict` with the image at
-        the current frame.
+        It updates the attribute :attr:`.wid_vid_dict` with the image at
+        the current frame for each camera.
         """
 
         # check if the process still goes on
         while self.flag_processing:
             if not self.flag_pause_status:
-                # update images at the current frame
+                # get image at the current frame for each camera
                 for video_id, data_video in self.video_data_dict.items():
-                    ret = self.getVideoData(data_video, video_id)
+                    self.wid_vid_dict[video_id].setImage(
+                        data_video, self.frame_id
+                    )
+
             else:
                 sleep(0.001)
 
@@ -1599,10 +1483,12 @@ class ViSiAnnoT():
         # update frame ID
         self.frame_id = frame_id
 
-        # get image if pause status is true
+        # get image for each camera if pause status is true
         if self.flag_pause_status:
             for video_id, data_video in self.video_data_dict.items():
-                ret = self.getVideoData(data_video, video_id)
+                self.wid_vid_dict[video_id].setImage(
+                    data_video, self.frame_id
+                )
 
         # plot frame id position
         self.plotFrameIdPosition()
@@ -1709,8 +1595,8 @@ class ViSiAnnoT():
         self.wid_progress.updateTitle(self.fps, self.beginning_datetime)
 
         # update video image
-        for video_id, img_vid in self.img_vid_dict.items():
-            img_vid.setImage(self.im_dict[video_id])
+        for video_id, wid_vid in self.wid_vid_dict.items():
+            wid_vid.displayImage()
 
 
     def updateSignalPlot(

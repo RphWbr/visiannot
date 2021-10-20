@@ -996,8 +996,8 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
         if ok:
             # reset previous frame id
-            for video_id in self.previous_frame_id.keys():
-                self.previous_frame_id[video_id] = None
+            for wid_vid in self.wid_vid_dict.values():
+                wid_vid.previous_frame_id = None
 
             # update frame id
             self.updateFrameId(new_frame_id)
@@ -1104,12 +1104,9 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 video_dict_current[video_id] = video_dict_list_tmp[self.rec_id]
 
                 # set video widget title
-                file_name, _ = os.path.splitext(
-                    os.path.basename(video_dict_current[video_id][0])
+                self.wid_vid_dict[video_id].setWidgetTitle(
+                    video_dict_current[video_id][0]
                 )
-
-                self.wid_vid_dict[video_id].setTitle(file_name)
-                self.vid_file_name_dict[video_id] = file_name
 
             # get new signals and intervals
             signal_dict_current = OrderedDict()
