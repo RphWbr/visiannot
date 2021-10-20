@@ -22,7 +22,6 @@ from shutil import rmtree
 from datetime import datetime, timedelta
 from math import ceil
 from pytz import timezone
-from collections import OrderedDict
 from ..tools import ToolsPyQt
 from ..tools import ToolsPyqtgraph
 from ..tools import ToolsDateTime
@@ -417,7 +416,7 @@ class ViSiAnnoT():
         #:
         #: Same keys as ``video_dict``, positional argument of the constructor
         #: of :class:`.ViSiAnnoT`.
-        self.video_data_dict = OrderedDict()
+        self.video_data_dict = {}
 
         #: (*dict*) Each element corresponds to a signal widget, key is the
         #: data type (same keys as ``signal_dict``, positional argument of the
