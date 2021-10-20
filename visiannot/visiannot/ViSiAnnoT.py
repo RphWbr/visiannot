@@ -804,7 +804,7 @@ class ViSiAnnoT():
 
         # ********************** progress bar ******************************* #
         if "progress" in poswid_dict.keys():
-            #: (:class:`graphicsoverlayer.ToolsPyqtgraph.ProgressWidget`)
+            #: (:class:`.ToolsPyqtgraph.ProgressWidget`)
             #: Widget containing the progress bar
             self.wid_progress = ProgressWidget(
                 self, title_style=font_default_title, ticks_color=ticks_color,
@@ -870,7 +870,7 @@ class ViSiAnnoT():
         # *********************** trunc widget ****************************** #
         if self.trunc_duration[0] != 0 or self.trunc_duration[1] != 0:
             if "select_trunc" in poswid_dict.keys():
-                #: (:class:`graphicsoverlayer.ToolsPyQt.ComboBox`) Combo box
+                #: (:class:`.ToolsPyQt.ComboBox`) Combo box
                 #: for selecting a truncated temporal range (tool for fast
                 #: navigation)
                 _, _, self.combo_trunc = ToolsPyQt.addComboBox(
@@ -931,7 +931,7 @@ class ViSiAnnoT():
         if len(self.wid_sig_list) > 0 and \
             "select_from_cursor" in poswid_dict.keys() and \
                 len(self.from_cursor_list) > 0:
-            #: (:class:`graphicsoverlayer.ToolsPyQt.ComboBox`) Combo box for
+            #: (:class:`.ToolsPyQt.ComboBox`) Combo box for
             #: selecting a temporal range starting from the current frame (tool
             #: for fast navigation)
             _, _, self.combo_from_cursor = ToolsPyQt.addComboBox(
@@ -1073,7 +1073,7 @@ class ViSiAnnoT():
                 self.annotimage_radio_button_group = None
 
                 # for documentation only
-                #: (:class:`graphicsoverlayer.ToolsPyQt.PushButton`) Push
+                #: (:class:`.ToolsPyQt.PushButton`) Push
                 #: button for saving image extraction
                 self.annotimage_push_button = None
 
