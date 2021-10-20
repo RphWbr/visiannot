@@ -80,31 +80,21 @@ class ViSiAnnoT():
         attributes.
 
         For a given video file, data are loaded in an instance of
-        cv2.VideoCapture. The set of video data is stored in
-        :attr:`.video_data_dict`. The set of widgets for plotting
-        video is stored in :attr:`.wid_vid_dict`. The set of current
-        video frames is stored in :attr:`.im_dict`. For plotting, the
-        video frames are converted to instances of pyqtgraph.ImageItem which
-        are stored in :attr:`.img_vid_dict`.
+        **cv2.VideoCapture**. The set of video data is stored in
+        :attr:`.video_data_dict`. The widgets for plotting video are stored in
+        :attr:`.wid_vid_dict`.
 
         For a given signal file, data are loaded in an instance of
         :class:`.Signal`. The supported formats are txt, mat, h5 and wav. The
         set of :class:`.Signal` instances is stored in
-        :attr:`.sig_list_list`. The set of widgets for plotting
-        signals is stored in :attr:`.wid_sig_list`. A temporal
-        cursor (instance of pyqtgraph.InfiniteLine) is plotted on each signal
-        widget and is synchronized with the video playback. The set of temporal
-        cursors is stored in :attr:`.current_cursor_list`.
+        :attr:`.sig_dict`. The widgets for plotting signals are stored in
+        :attr:`.wid_sig_list`.
 
         The reference frequency :attr:`.ViSiAnnoT.fps` is defined as the video
         frequency. If there is no video to display, :attr:`.ViSiAnnoT.fps` is
         defined as the frequency of the first signal to plot. The playback
         speed (both video and signal temporal cursor) is at the reference
         frequency.
-
-        The video display is initialized by the method
-        :meth:`.initVideoPlot`. The signal display is initialized by
-        the method :meth:`.initSignalPlot`.
 
         The temporal range is defined by :attr:`.first_frame` and
         :attr:`.last_frame` (sampled at :attr:`.ViSiAnnoT.fps`).
@@ -823,13 +813,13 @@ class ViSiAnnoT():
 
 
         # ************************ video widgets **************************** #
-        #: (*dict*) Video widgets
+        #: (*dict*) Video widgets, each item corresponds to one camera
         #:
-        #: Key is the camera ID (string). Value is an instance of
-        #: :class:`.VideoWidget` where the corresponding video is displayed.
+        #: Key is the camera ID (same keys as the positional argument
+        #: ``video_dict`` of the constructor of :class:`.ViSiAnnoT`).
         #:
-        #: Same keys as the positional argument
-        #: ``video_dict`` of the constructor of :class:`.ViSiAnnoT`
+        #: Value is an instance of :class:`.VideoWidget` where the
+        #: corresponding video is displayed.
         self.wid_vid_dict = {}
 
         # loop on cameras
@@ -849,8 +839,8 @@ class ViSiAnnoT():
 
 
         # *********************** signal widgets **************************** #
-        #: (*list*) Widgets for signal plot, each element is an instance of
-        #: :class:`.SignalWidget` (same length as :attr:`.sig_labels`)
+        #: (*list*) Signal widgets, each element is an instance of
+        #: :class:`.Signal` (same order as :attr:`.sig_dict`
         self.wid_sig_list = []
 
         # create signal widgets and initialize signal plots
@@ -3396,7 +3386,7 @@ class ViSiAnnoT():
         method (it can be empty):
 
         - :attr:`.video_data_dict`
-        - :attr:`.sig_list_list`
+        - :attr:`.sig_dict`
         - :attr:`.interval_dict`
 
         Otherwise the video thread throws a RunTime error.
@@ -3408,7 +3398,7 @@ class ViSiAnnoT():
         - :attr:`.nframes`
         - :attr:`.ViSiAnnoT.fps`
         - :attr:`.beginning_datetime`
-        - :attr:`.sig_list_list`
+        - :attr:`.sig_dict`
         - :attr:`.interval_dict`
         - :attr:`.data_wave`
 
