@@ -765,7 +765,7 @@ class ViSiAnnoT():
 
 
         # *************** widget for truncated temporal range *************** #
-        if "select_trunc" in poswid_dict.keys():
+        if len(self.sig_dict) > 0 and "select_trunc" in poswid_dict.keys():
             #: (:class:`.TruncTemporalRangeWidget`) Widget for selecting a
             #: truncated temporal range
             self.wid_trunc = TruncTemporalRangeWidget(
@@ -777,7 +777,7 @@ class ViSiAnnoT():
 
 
         # **************** widget for custom temporal range ***************** #
-        if "select_manual" in poswid_dict.keys():
+        if len(self.sig_dict) > 0 and "select_manual" in poswid_dict.keys():
             #: (:class:`.CustomTemporalRangeWidget`) Widget for defining a
             #: custom temporal range
             self.wid_time_edit = CustomTemporalRangeWidget(
@@ -846,14 +846,15 @@ class ViSiAnnoT():
         #: :class:`.Signal` (same order as :attr:`.sig_dict`
         self.wid_sig_list = []
 
-        # create signal widgets and initialize signal plots
-        # it sets the attribute wid_sig_list
-        self.initSignalPlot(
-            poswid_dict['progress'], y_range_dict=y_range_dict,
-            left_label_style=font_default_axis_label, ticks_color=ticks_color,
-            ticks_size=ticks_size, ticks_offset=2,
-            wid_height=height_widget_signal
-        )
+        if len(self.sig_dict) > 0:
+            # create signal widgets and initialize signal plots
+            # it sets the attribute wid_sig_list
+            self.initSignalPlot(
+                poswid_dict['progress'], y_range_dict=y_range_dict,
+                left_label_style=font_default_axis_label,
+                ticks_color=ticks_color, ticks_size=ticks_size, ticks_offset=2,
+                wid_height=height_widget_signal
+            )
 
 
         # *********************** zoom widgets ****************************** #
