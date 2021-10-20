@@ -19,9 +19,8 @@ from cv2 import imwrite
 import os
 from time import time, sleep
 from shutil import rmtree
-from datetime import datetime, timedelta
+from datetime import timedelta
 from math import ceil
-from pytz import timezone
 from ..tools import ToolsPyQt
 from ..tools import ToolsPyqtgraph
 from ..tools import ToolsDateTime
@@ -33,6 +32,7 @@ from .components.SignalWidget import SignalWidget
 from .components.MenuBar import MenuBar
 from .components.ProgressWidget import ProgressWidget
 from .components.VideoWidget import VideoWidget
+from .components.CustomTemporalRangeWidget import CustomTemporalRangeWidget
 
 
 class ViSiAnnoT():
@@ -874,41 +874,11 @@ class ViSiAnnoT():
                 )
 
 
-        # ************ widget for custom temporal re-scaling **************** #
+        # **************** widget for custom temporal range ***************** #
         if "select_manual" in poswid_dict.keys():
-            #: (*QtWidgets.QDateTimeEdit*) Editor of starting datetime of
-            #: custom temporal interval
-            self.edit_start = QtWidgets.QDateTimeEdit(QtCore.QDateTime(
-                QtCore.QDate(
-                    self.beginning_datetime.year,
-                    self.beginning_datetime.month,
-                    self.beginning_datetime.day
-                ),
-                QtCore.QTime(
-                    self.beginning_datetime.hour,
-                    self.beginning_datetime.minute,
-                    self.beginning_datetime.second
-                )
-            ))
-
-            #: (*QtWidgets.QPushButton*) Push button for defining the starting
-            #: datetime of custom temporal interval as the current frame
-            self.current_push = None
-
-            #: (*QtWidgets.QTimeEdit*) Editor of the duration of custom
-            #: temporal interval
-            self.edit_duration = QtWidgets.QTimeEdit()
-
-            #: (*QtWidgets.QPushButton*) Push button for validating custom
-            #: temporal interval
-            self.time_edit_push = None
-
-            # create widget
-            self.createWidgetTimeEdit(poswid_dict['select_manual'])
-
-            # listen to the callback methods
-            self.current_push.clicked.connect(self.timeEditCurrent)
-            self.time_edit_push.clicked.connect(self.timeEditOk)
+            self.wid_time_edit = CustomTemporalRangeWidget(
+                self, poswid_dict["select_manual"]
+            )
 
 
         # *************** widget for temporal re-scaling ******************** #
@@ -2878,132 +2848,6 @@ class ViSiAnnoT():
             self.updateSignalPlot(flag_reset_combo_from_cursor=False)
 
 
-    def timeEditCurrent(self):
-        """
-        Callback method to set :attr:`.ViSiAnnoT.edit_start` to the current
-        frame :attr:`.ViSiAnnoT.frame_id`
-
-        Connected to the signal ``clicked`` of :attr:`.ViSiAnnoT.current_push`.
-        """
-
-        current_datetime = ToolsDateTime.convertFrameToAbsoluteDatetime(
-            self.frame_id, self.fps, self.beginning_datetime
-        )
-
-        self.edit_start.setDate(
-            QtCore.QDate(current_datetime.year,
-                         current_datetime.month,
-                         current_datetime.day)
-        )
-
-        self.edit_start.setTime(
-            QtCore.QTime(current_datetime.hour,
-                         current_datetime.minute,
-                         current_datetime.second)
-        )
-
-
-    def timeEditOk(self):
-        """
-        Callback method to set the temporal range
-        (:attr:`.first_frame` and :attr:`.last_frame`) to
-        the custom temporal range (manually defined with
-        :attr:`.edit_duration` and :attr:`.edit_start`)
-
-        If :attr:`.edit_duration` is 0, then the current temporal
-        range duration is kept.
-
-        Connected to the signal ``clicked`` of
-        :attr:`.time_edit_push`.
-        """
-
-        # get duration time edit
-        duration_qtime = self.edit_duration.time()
-        duration_hour = duration_qtime.hour()
-        duration_minute = duration_qtime.minute()
-        duration_sec = duration_qtime.second()
-
-        # check duration
-        if duration_hour == 0 and duration_minute == 0 and duration_sec == 0:
-            duration_hour, duration_minute, duration_sec, _ = \
-                ToolsDateTime.convertFrameToTime(
-                    self.last_frame - self.first_frame, self.fps
-                )
-
-        # get start date-time
-        start_qdate = self.edit_start.date()
-        start_qtime = self.edit_start.time()
-        start_date_time = datetime(
-            start_qdate.year(), start_qdate.month(), start_qdate.day(),
-            start_qtime.hour(), start_qtime.minute(), start_qtime.second()
-        )
-        pst = timezone(self.time_zone)
-        start_date_time = pst.localize(start_date_time)
-
-        # get start frame
-        start_frame = ToolsDateTime.convertAbsoluteDatetimeToFrame(
-            start_date_time, self.fps, self.beginning_datetime
-        )
-
-        # check temporal coherence
-        coherence = True
-        if start_frame < 0 or start_frame >= self.nframes:
-            # check long recordings
-            if self.flag_long_rec:
-                # get recording id
-                start_rec_diff_array = np.array(
-                    [(beg_rec - start_date_time).total_seconds()
-                        for beg_rec in self.rec_beginning_datetime_list]
-                )
-
-                new_rec_id = np.where(start_rec_diff_array >= 0)[0]
-
-                if new_rec_id.shape[0] == 0:
-                    coherence = False
-                    print("wrong input: start time is above the ending of the recordings")
-
-                elif new_rec_id.shape[0] == start_rec_diff_array.shape[0]:
-                    coherence = False
-                    print("wrong input: start time is below the beginning of the recording")
-
-                else:
-                    # change recording
-                    new_rec_id = new_rec_id[0] - 1
-                    coherence = self.prepareNewRecording(new_rec_id)
-
-            else:
-                print("wrong input: start time is below the beginning of the recordings or above the ending of the recording")
-                coherence = False
-
-        # go for it
-        if coherence:
-            # define new range
-            start_frame = ToolsDateTime.convertAbsoluteDatetimeToFrame(
-                start_date_time, self.fps, self.beginning_datetime
-            )
-
-            if len(self.wid_sig_list) > 0:
-                self.first_frame = start_frame
-
-                self.last_frame = min(
-                    self.nframes,
-                    self.first_frame + ToolsDateTime.convertTimeToFrame(
-                        self.fps, duration_hour, duration_minute, duration_sec
-                    )
-                )
-
-            # udpdate current frame
-            self.updateFrameId(start_frame)
-
-            # update signals plots
-            self.updateSignalPlot()
-
-            # update annotation regions plot
-            if len(self.annotevent_label_list) > 0:
-                self.clearAnnotEventRegions()
-                self.plotAnnotEventRegions()
-
-
     # *********************************************************************** #
     # End group
     # *********************************************************************** #
@@ -3172,55 +3016,6 @@ class ViSiAnnoT():
     # *********************************************************************** #
     # Group: Methods for creating widgets
     # *********************************************************************** #
-
-
-    def createWidgetTimeEdit(self, widget_position):
-        """
-        Creates a widget for defining a custom temporal interval and adds it to
-        the layout :attr:`.ViSiAnnoT.lay`
-
-        A group box is added to the layout and the combo box is added to the
-        group box.
-
-        It sets the following attributes:
-
-        - :attr:`.edit_start`
-        - :attr:`.current_push`
-        - :attr:`.edit_duration`
-        - :attr:`.time_edit_push`
-
-        :param widget_position: position of the widget in the layout, length 2
-            ``(row, col)`` or 4 ``(row, col, rowspan, colspan)``
-        :type widget_position: list or tuple
-        """
-
-        # create group box
-        grid, _ = ToolsPyQt.addGroupBox(self.lay,
-                                        widget_position,
-                                        "Custom temporal range")
-
-        # add qlabel
-        q_label = QtWidgets.QLabel("Start date-time")
-        q_label.setAlignment(QtCore.Qt.AlignRight)
-        grid.addWidget(q_label, 0, 0)
-
-        self.edit_start.setDisplayFormat("yyyy-MM-dd - hh:mm:ss")
-        grid.addWidget(self.edit_start, 0, 1)
-
-        # add push button
-        self.current_push = ToolsPyQt.addPushButton(grid, (0, 2), "Current")
-
-        # add qlabel
-        q_label = QtWidgets.QLabel("Temporal range duration")
-        q_label.setAlignment(QtCore.Qt.AlignRight)
-        grid.addWidget(q_label, 1, 0)
-
-        # add time edit
-        self.edit_duration.setDisplayFormat("hh:mm:ss")
-        grid.addWidget(self.edit_duration, 1, 1)
-
-        # add push button
-        self.time_edit_push = ToolsPyQt.addPushButton(grid, (1, 2), "Ok")
 
 
     def createWidgetAnnotEvent(self, widget_position, nb_table=5):
