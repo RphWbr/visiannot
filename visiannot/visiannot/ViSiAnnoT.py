@@ -549,7 +549,7 @@ class ViSiAnnoT():
         #:        annotation file)
         #:      - Value is a list of instances of pyqtgraph.TextItem with the
         #:        description, same length and order as
-        #:        :attr:`.ViSiAnnoT.wid_data_list`, so that one element
+        #:        :attr:`.ViSiAnnoT.wid_sig_list`, so that one element
         #:        corresponds to one signal widget
         self.annotevent_description_dict = {}
 
@@ -630,7 +630,7 @@ class ViSiAnnoT():
         #: (*list*) Instances of pyqtgraph.TextItem with the duration of the
         #: custom manual zoom
         #:
-        #: Same length and order as :attr:`.ViSiAnnoT.wid_data_list`, so that
+        #: Same length and order as :attr:`.ViSiAnnoT.wid_sig_list`, so that
         #: one element corresponds to one signal widget
         self.region_zoom_text_item_list = []
 
@@ -920,7 +920,7 @@ class ViSiAnnoT():
                 #: Key is a label index. Value is a list of lists, each sublist
                 #: corresponds to one annotation and contains
                 #: :math:`n_{wid} + 1` region items, where :math:`n_{wid}` is
-                #: the length of :attr:`.ViSiAnnoT.wid_data_list` (number of
+                #: the length of :attr:`.ViSiAnnoT.wid_sig_list` (number of
                 #: signal widgets), the additional region item is for the
                 #: progress bar (:attr:`.ViSiAnnoT.wid_progress`).
                 #:
@@ -1628,7 +1628,7 @@ class ViSiAnnoT():
 
         :returns: instances of pyqtgraph.TextItem, each element corresponds to
             a signal widget, same length and order as
-            :attr:`wid_data_list`
+            :attr:`wid_sig_list`
         :rtype: list
         """
 
