@@ -615,9 +615,6 @@ class ViSiAnnoT():
         # ***************************** zoom ******************************** #
         # ******************************************************************* #
 
-        #: (*int*) Zoom factor
-        self.zoom_factor = zoom_factor
-
         #: (*int*) Start position (frame number) for custom manual zoom (set to
         #: -1 if not defined)
         self.zoom_pos_1 = -1
