@@ -21,8 +21,8 @@ class FromCursorTemporalRangeWidget():
         the current frame in ViSiAnnoT
 
         :param visi: associated instance of :class:`.ViSiAnnoT`
-        :param widget_position: position of the progress widget in the layout
-            of the associated instance of :class:`.ViSiAnnoT`
+        :param widget_position: position of the widget in the layout of the
+            associated instance of :class:`.ViSiAnnoT`
         :type widget_position: tuple or list
         :param from_cursor_list: durations of temporal range to be started at
             the current frame in ViSiAnnoT, each element is a list of integers

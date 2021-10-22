@@ -41,8 +41,8 @@ class ProgressWidget(pg.PlotWidget):
         PlotWidget and adds new attributes.
 
         :param visi: associated instance of :class:`.ViSiAnnoT`
-        :param widget_position: position of the progress widget in the layout
-            of the associated instance of :class:`.ViSiAnnoT`
+        :param widget_position: position of the widget in the layout of the
+            associated instance of :class:`.ViSiAnnoT`
         :type widget_position: tuple or list
         :param parent: see
             https://pyqtgraph.readthedocs.io/en/latest/widgets/plotwidget.html

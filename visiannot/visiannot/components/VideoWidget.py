@@ -30,8 +30,8 @@ class VideoWidget(pg.PlotWidget):
         :param visi_lay: layout of the associated instance of
             :class:`.ViSiAnnoT`
         :type visi_lay: PyQt5.QtWidgets.QGridLayout
-        :param widget_position: position of the progress widget in the layout
-            of the associated instance of :class:`.ViSiAnnoT`
+        :param widget_position: position of the widget in the layout of the
+            associated instance of :class:`.ViSiAnnoT`
         :type widget_position: tuple or list
         :param args: positional arguments of the method :meth:`.setWidgetTitle`
         :param kwargs: keyword arguments of the method :meth:`.setWidgetTitle`

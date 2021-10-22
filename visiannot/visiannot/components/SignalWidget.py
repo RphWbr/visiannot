@@ -55,8 +55,8 @@ class SignalWidget(pg.PlotWidget):
         for details about parent class.
 
         :param visi: associated instance of :class:`.ViSiAnnoT`
-        :param widget_position: position of the progress widget in the layout
-            of the associated instance of :class:`.ViSiAnnoT`
+        :param widget_position: position of the widget in the layout of the
+            associated instance of :class:`.ViSiAnnoT`
         :type widget_position: tuple or list
         :param parent: first positional argument of **pyqtgraph.GraphicsView**
         :param background: second positional argument of

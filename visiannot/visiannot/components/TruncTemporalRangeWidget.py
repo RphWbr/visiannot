@@ -21,8 +21,8 @@ class TruncTemporalRangeWidget():
         Widget for selecting truncated temporal range
 
         :param visi: associated instance of :class:`.ViSiAnnoT`
-        :param widget_position: position of the progress widget in the layout
-            of the associated instance of :class:`.ViSiAnnoT`
+        :param widget_position: position of the widget in the layout of the
+            associated instance of :class:`.ViSiAnnoT`
         :type widget_position: tuple or list
         :param trunc_duration: duration of the truncated temporal ranges, 2
             integer elements ``(minute, second)``

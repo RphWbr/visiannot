@@ -31,7 +31,7 @@ class AnnotEventWidget():
         Widget for event annotation
 
         :param visi: associated instance of :class:`.ViSiAnnoT`
-        :param widget_position: position of the progress widget in the layout
+        :param widget_position: position of the widget in the layout
             of the associated instance of :class:`.ViSiAnnoT`
         :type widget_position: tuple or list
         :param label_dict: key is the label, value is the associated color

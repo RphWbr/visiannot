@@ -27,8 +27,8 @@ class LogoWidget():
         click in order to activate an action
 
         :param visi: associated instance of :class:`.ViSiAnnoT`
-        :param widget_position: position of the progress widget in the layout
-            of the associated instance of :class:`.ViSiAnnoT`
+        :param widget_position: position of the widget in the layout of the
+            associated instance of :class:`.ViSiAnnoT`
         :type widget_position: tuple or list
         :param im_name: file name of the image to display in the widget, it
             must be located in the folder ``Images`` next to the module
