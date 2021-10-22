@@ -14,15 +14,14 @@ Module defining :class:`.ViSiAnnoTLongRec`
 import numpy as np
 import os
 from glob import glob
-import sys
 from ..tools import ToolsPyQt
-from ..tools import ToolsPyqtgraph
 from ..tools import ToolsDateTime
 from ..tools import ToolsData
 from ..tools import ToolsImage
 from ..tools import ToolsAudio
 from .ViSiAnnoT import ViSiAnnoT
 from .components.LogoWidgets import PreviousWidget, NextWidget
+from .components.FileSelectionWidget import FileSelectionWidget
 
 
 class ViSiAnnoTLongRec(ViSiAnnoT):
@@ -175,7 +174,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             - ``"zoomout"``
             - ``"previous"``
             - ``"next"``
-            - ``"rec_choice"``
+            - ``"file_selection"``
             - ``"progress"``
         :type poswid_dict: dict
         :param kwargs: keyword arguments of :class:`.ViSiAnnoT` constructor
@@ -307,8 +306,8 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                         flag_missing_current = True
 
                     else:
-                        # get delta in seconds between the current camera and the
-                        # first camera
+                        # get delta in seconds between the current camera and
+                        # the first camera
                         delta = (
                             video_datetime_list[ite_id][ite_vid] -
                             video_datetime_list[0][ite_vid]
@@ -512,7 +511,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 poswid_dict['zoomout'] = (4, nb_video + 2)
                 poswid_dict['previous'] = (4, nb_video + 3)
                 poswid_dict['next'] = (4, nb_video + 4)
-                poswid_dict['rec_choice'] = (4, nb_video + 5)
+                poswid_dict['file_selection'] = (4, nb_video + 5)
                 poswid_dict['progress'] = (5, 0, 1, nb_video + 6)
 
             elif layout_mode == 2:
@@ -528,7 +527,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 poswid_dict['zoomout'] = (3, nb_video + 2)
                 poswid_dict['previous'] = (3, nb_video + 3)
                 poswid_dict['next'] = (3, nb_video + 4)
-                poswid_dict['rec_choice'] = (3, nb_video + 5)
+                poswid_dict['file_selection'] = (3, nb_video + 5)
                 poswid_dict['progress'] = (4, 0, 1, nb_video + 7)
 
             elif layout_mode == 3:
@@ -541,7 +540,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 poswid_dict['zoomout'] = (1, nb_video + 3)
                 poswid_dict['previous'] = (2, nb_video + 1)
                 poswid_dict['next'] = (2, nb_video + 2)
-                poswid_dict['rec_choice'] = (2, nb_video + 3)
+                poswid_dict['file_selection'] = (2, nb_video + 3)
                 poswid_dict['progress'] = (3, 0, 1, nb_video + 4)
 
             else:
@@ -580,20 +579,12 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         else:
             self.wid_next = None
 
-        #: (*QtWidgets.QComboBox*) Combo box for recording file selection
-        self.combo_rec_choice = None
-
-        # create combo box widget
-        _, group_box, self.combo_rec_choice = ToolsPyQt.addComboBox(
-            self.lay, poswid_dict['rec_choice'],
-            [str(rec_id + 1) for rec_id in range(self.rec_nb)],
-            box_title="File ID / %d" % self.rec_nb
-        )
-
-        group_box.setMaximumWidth(100)
-
-        # listen to callbacks
-        self.combo_rec_choice.currentIndexChanged.connect(self.recChoice)
+        if "file_selection" in poswid_dict.keys():
+            #: (:class:`.FileSelectionWidget`) Widget for selecting a in a
+            #: combo box
+            self.file_selection_widget = FileSelectionWidget(
+                self, poswid_dict["file_selection"]
+            )
 
 
         # *********************** infinite loop ***************************** #
@@ -1102,7 +1093,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             )
 
             # set recording choice combo box
-            self.combo_rec_choice.setCurrentIndex(self.rec_id)
+            self.file_selection_widget.combo_box.setCurrentIndex(self.rec_id)
 
             # set items of combo box for truncated temporal ranges
             if self.wid_trunc is not None:
@@ -1116,23 +1107,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
         else:
             return False
-
-
-    def recChoice(self, ite_rec):
-        """
-        Callback method for choosing a new file in the long recording with the
-        combo box
-
-        Connected to the signal ``currentIndexChanged`` of
-        :attr:`.ViSiAnnoTLongRec.combo_rec_choice`.
-
-        :param ite_rec: index of the new file in the long recording selected
-            in the combo box
-        :type ite_rec: int
-        """
-
-        # change recording
-        self.changeFileInLongRec(ite_rec, 0)
 
 
     # *********************************************************************** #
