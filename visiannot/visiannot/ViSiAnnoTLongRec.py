@@ -723,6 +723,12 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                             path_list, key, freq, delimiter, pos, fmt, **kwargs
                         )
 
+                    # if interval data, specify in data type for the temporary
+                    # synchronization file
+                    if "flag_interval" in kwargs.keys():
+                        if kwargs["flag_interval"]:
+                            type_data = "interval-%s" % type_data
+
                     # create temporary synchronization files
                     sync_path_list = \
                         ViSiAnnoTLongRec.createSynchronizationFiles(
@@ -782,7 +788,8 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             :class:`.ViSiAnnoTLongRec` constructor
         :type interval_dict: dict
         :param kwargs: keyword arguments of the function
-            :func:`.getBeginningEndingDateTimeFromList`
+            :func:`.getBeginningEndingDateTimeFromList`, minus
+            ``flag_interval``
 
         :returns:
             - **signal_dict_current** (*list*) -- signal configuration of the
@@ -807,10 +814,11 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             # check if there are intervals
             if type_data in interval_dict.keys():
                 # get interval configuration for the data type
-                self.signal_dict_list[type_data], \
-                    signal_dict_current[type_data] = \
+                self.interval_dict_list[type_data], \
+                    interval_dict_current[type_data] = \
                     self.getSignalConfigurationSingleType(
-                        type_data, interval_dict[type_data], **kwargs
+                        type_data, interval_dict[type_data],
+                        flag_interval=True, **kwargs
                 )
 
             # get signal configuration for the data type
@@ -1019,7 +1027,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             self.updateSignalPlot()
 
             # update annotation regions plot if necessary
-            if len(self.wid_annotevent.label_list) > 0:
+            if self.wid_annotevent is not None:
                 if self.wid_annotevent.push_text_list[3].text() == "On":
                     self.wid_annotevent.clearRegions(self)
                     self.wid_annotevent.description_dict = {}

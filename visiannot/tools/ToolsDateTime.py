@@ -15,11 +15,11 @@ import os
 import numpy as np
 from datetime import datetime, timedelta
 from pytz import timezone
-from .ToolsData import getDataGeneric
+from .ToolsData import getDataGeneric, getDataIntervalAsTimeSeries
 
 
 def getBeginningEndingDateTimeFromList(
-    file_path_list, key_data, freq_data, *args, **kwargs
+    file_path_list, key_data, freq_data, *args, flag_interval=False, **kwargs
 ):
     """
     Gets the beginning and ending date-time of a list of data files
@@ -33,7 +33,9 @@ def getBeginningEndingDateTimeFromList(
     :param freq_data: data frequency
     :type freq_data: int or float
     :param args: positional arguments of :func:`.getDatetimeFromPath`, minus
-        the first one
+        the first one (``path``)
+    :param flag_interval: specify if data to load is intervals
+    :type flag_interval: bool
     :param kwargs: keyword arguments of
         :func:`.getDatetimeFromPath` (keyword argument
         ``fmt`` will be ignored here)
@@ -52,8 +54,12 @@ def getBeginningEndingDateTimeFromList(
         # get file beginning date time
         b_date_time = getDatetimeFromPath(path, *args, **kwargs)
 
-        # get data length
-        data = getDataGeneric(path, key_data)
+        # load data
+        if flag_interval:
+            data = getDataIntervalAsTimeSeries(path, key=key_data)
+
+        else:
+            data = getDataGeneric(path, key_data)
 
         # check if any data
         if data.size > 0:

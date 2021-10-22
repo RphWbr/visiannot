@@ -1975,7 +1975,8 @@ class ViSiAnnoT():
                                 # load intervals data
                                 interval = self.getDataSigTmp(
                                     path_interval, type_data, key_interval,
-                                    freq_interval, self.tmp_delimiter
+                                    freq_interval, self.tmp_delimiter,
+                                    flag_interval=True
                                 )
 
                                 # if time series, convert to intervals
@@ -2090,7 +2091,10 @@ class ViSiAnnoT():
         return path, start_sec
 
 
-    def getDataSigTmp(self, path, type_data, key_data, freq_data, delimiter):
+    def getDataSigTmp(
+        self, path, type_data, key_data, freq_data, delimiter,
+        flag_interval=False
+    ):
         """
         Gets signal data after synchronization with video
 
@@ -2106,6 +2110,8 @@ class ViSiAnnoT():
         :param delimiter: delimiter used to split the lines of the temporary
             signal files
         :type delimiter: str
+        :param flag_interval: specify if data to load is intervals
+        :type flag_interval: bool
 
         :returns: signal data synchronized with video
         :rtype: numpy array
@@ -2134,16 +2140,22 @@ class ViSiAnnoT():
                     start_sec_prev = start_sec
                 else:
                     # keyword arguments for ToolsData.getDataGeneric
+                    # used when loading audio in order to specify channel
                     kwargs = {}
-
                     if file_name.split('.')[-1] == "wav":
                         kwargs["channel_id"] = \
                             ToolsAudio.convertKeyToChannelId(key_data)
 
-                    # get data
-                    next_data = ToolsData.getDataGeneric(
-                        file_name, key_data, **kwargs
-                    )
+                    # load data
+                    if flag_interval:
+                        next_data = ToolsData.getDataIntervalAsTimeSeries(
+                            file_name, key=key_data
+                        )
+
+                    else:
+                        next_data = ToolsData.getDataGeneric(
+                            file_name, key_data, **kwargs
+                        )
 
                     # truncate data at the beginning if necessary
                     if ite_line == 0:
