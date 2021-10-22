@@ -1546,7 +1546,7 @@ class ViSiAnnoT():
             pos_y_list = self.getMouseYPosition(ev)
 
             # display zoom region duration
-            self.region_zoom_text_item_list = self.wid_annotevent.createTextItem(
+            self.region_zoom_text_item_list = self.createTextItem(
                 "%.3f s" % duration, pos_ms, pos_y_list,
                 border_color=(150, 150, 150)
             )
