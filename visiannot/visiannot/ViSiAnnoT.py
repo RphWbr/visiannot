@@ -15,11 +15,9 @@ from PyQt5 import QtCore
 import pyqtgraph as pg
 import numpy as np
 from threading import Thread
-from cv2 import imwrite
 import os
 from time import time, sleep
 from shutil import rmtree
-from math import ceil
 from ..tools import ToolsPyQt
 from ..tools import ToolsPyqtgraph
 from ..tools import ToolsDateTime
@@ -37,6 +35,7 @@ from .components.FromCursorTemporalRangeWidget import \
     FromCursorTemporalRangeWidget
 from .components.LogoWidgets import ZoomInWidget, ZoomOutWidget, FullVisiWidget
 from .components.AnnotEventWidget import AnnotEventWidget
+from .components.AnnotImageWidget import AnnotImageWidget
 
 
 class ViSiAnnoT():
@@ -379,6 +378,10 @@ class ViSiAnnoT():
             {'pen': {'color': '#4C9900', 'width': 1}}
         ]
 
+        #: (*str*) Directory where the event annotations and extracted images
+        #: are saved
+        self.annot_dir = annot_dir
+
 
         # ******************************************************************* #
         # ************************ long recordings ************************** #
@@ -471,40 +474,6 @@ class ViSiAnnoT():
         #: - (*tuple*) Color to plot (RGB), it can also be a string with HEX
         #:   color
         self.threshold_dict = threshold_dict
-
-
-        # ******************************************************************* #
-        # ***************** annotation files management ********************* #
-        # ******************************************************************* #
-
-        #: (*str*) Directory where the annotations are saved
-        #:
-        #: Specified by the keyword argument ``annot_dir``
-        self.annot_dir = annot_dir
-
-
-        # ******************************************************************* #
-        # ********************** image annotation *************************** #
-        # ******************************************************************* #
-
-        # check type (if loaded from a configuration, then dictionary instead
-        # of list)
-        if isinstance(annotimage_list, dict):
-            # convert to list
-            annotimage_list = [k for k in annotimage_list.values()]
-
-        #: (*list*) Image annotation labels (strings)
-        self.annotimage_label_list = annotimage_list
-
-        if len(self.annotimage_label_list) > 0:
-            # create directories if necessary
-            if not os.path.isdir(self.annot_dir):
-                os.makedirs(self.annot_dir)
-
-            for label in self.annotimage_label_list:
-                label_dir = "%s/%s" % (self.annot_dir, label)
-                if not os.path.isdir(label_dir):
-                    os.mkdir(label_dir)
 
 
         # ******************************************************************* #
@@ -798,37 +767,29 @@ class ViSiAnnoT():
 
 
         # ******************* image annotation widget *********************** #
-        if len(self.annotimage_label_list) > 0:
+        if len(annotimage_list) > 0:
             if "annot_image" in poswid_dict.keys():
-                #: (*QtWidgets.QButtonGroup*) Set of radio buttons with
-                #: labels of image extraction
-                self.annotimage_radio_button_group = None
-
-                #: (:class:`.ToolsPyQt.PushButton`) Push
-                #: button for saving image extraction
-                self.annotimage_push_button = None
-
-                # check if horizontal or vertical radio buttons
+                # check layout mode
                 if layout_mode == 3:
                     flag_horizontal = False
 
                 else:
                     flag_horizontal = True
 
-                # create widget
-                self.createWidgetAnnotImage(
-                    poswid_dict['annot_image'],
-                    flag_horizontal=flag_horizontal,
-                    nb_table=nb_table_annot
-                )
-
-                # listen to the callback method
-                self.annotimage_push_button.clicked.connect(
-                    self.annotImageCallPushButton
+                #: (:class:`.AnnotImageWidget`) Widget for image extraction
+                self.wid_annotimage = AnnotImageWidget(
+                    self, poswid_dict["annot_image"], annotimage_list,
+                    annot_dir, nb_table=nb_table_annot,
+                    flag_horizontal=flag_horizontal
                 )
 
             else:
-                raise Exception("No widget position given for the image annotation => add key 'annot_image' to positinal argument poswid_dict")
+                raise Exception("No widget position given for the image\
+                    annotation => add key 'annot_image' to positinal argument\
+                    poswid_dict")
+
+        else:
+            self.wid_annotimage = None
 
 
         # ******************************************************************* #
@@ -1081,7 +1042,7 @@ class ViSiAnnoT():
 
                 # check if directory of image annotation
                 if os.path.isdir(annot_path) and \
-                        annot_file_name in self.annotimage_label_list:
+                        annot_file_name in self.wid_annotimage.label_list:
                     if os.listdir(annot_path) == []:
                         rmtree(annot_path)
 
@@ -1635,40 +1596,6 @@ class ViSiAnnoT():
     # *********************************************************************** #
 
     # *********************************************************************** #
-    # Group: Methods for managing image annotations
-    # *********************************************************************** #
-
-
-    def annotImageCallPushButton(self):
-        """
-        Callback method for saving an annotated image
-
-        Connected to the signal ``clicked`` of
-        :attr:`.annotimage_push_button`.
-        """
-
-        # get current label
-        current_label = self.annotimage_radio_button_group.checkedButton().text()
-
-        # get output directory
-        output_dir = "%s/%s" % (self.annot_dir, current_label)
-
-        # loop on cameras
-        for video_id, file_name in self.vid_file_name_dict.items():
-            # read image
-            im = ToolsImage.transformImage(self.im_dict[video_id])
-
-            # save image
-            im_path = "%s/%s_%s.png" % (output_dir, file_name, self.frame_id)
-            imwrite(im_path, im)
-            print("image saved: %s" % im_path)
-
-
-    # *********************************************************************** #
-    # End group
-    # *********************************************************************** #
-
-    # *********************************************************************** #
     # Group: Callback method for key press interaction
     # *********************************************************************** #
 
@@ -1827,64 +1754,6 @@ class ViSiAnnoT():
 
             else:
                 self.menu_bar.show()
-
-
-    # *********************************************************************** #
-    # End group
-    # *********************************************************************** #
-
-    # *********************************************************************** #
-    # Group: Methods for creating widgets
-    # *********************************************************************** #
-
-
-    def createWidgetAnnotImage(
-        self, widget_position, flag_horizontal=True, nb_table=5
-    ):
-        """
-        Creates a widget with the image annotation tool and adds to the layout
-        :attr:`.ViSiAnnoT.lay`
-
-        Make sure the attribute :attr:`.annotimage_label_list` is
-        defined before calling this method.
-
-        It sets the following attributes:
-
-        - :attr:`.annotimage_radio_button_group`
-        - :attr:`.annotimage_push_button`
-
-        :param widget_position: position of the widget in the layout, length 2
-            ``(row, col)`` or 4 ``(row, col, rowspan, colspan)``
-        :type widget_position: list or tuple
-        :param flag_horizontal: specify if radio buttons are horizontal
-        :type flag_horizontal: bool
-        """
-
-        # create widget with radio buttons (annotation labels)
-        grid, _, self.annotimage_radio_button_group = \
-            ToolsPyQt.addWidgetButtonGroup(
-                self.lay, widget_position, self.annotimage_label_list,
-                button_type="radio",
-                box_title="Image extraction",
-                flag_horizontal=flag_horizontal,
-                nb_table=nb_table
-            )
-
-        # get push button position
-        if flag_horizontal:
-            pos_push_button = (
-                ceil(len(self.annotimage_label_list) / nb_table), 0
-            )
-
-        else:
-            pos_push_button = (
-                min(len(self.annotimage_label_list), nb_table), 0
-            )
-
-        # add push button
-        self.annotimage_push_button = ToolsPyQt.addPushButton(
-            grid, pos_push_button, "Save", flag_enable_key_interaction=False
-        )
 
 
     # *********************************************************************** #
