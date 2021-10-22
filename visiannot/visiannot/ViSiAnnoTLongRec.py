@@ -586,6 +586,9 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 self, poswid_dict["file_selection"]
             )
 
+        else:
+            self.file_selection_widget = None
+
 
         # *********************** infinite loop ***************************** #
         ToolsPyQt.infiniteLoopDisplay(self.app)
@@ -1093,7 +1096,10 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             )
 
             # set recording choice combo box
-            self.file_selection_widget.combo_box.setCurrentIndex(self.rec_id)
+            if self.file_selection_widget is not None:
+                self.file_selection_widget.combo_box.setCurrentIndex(
+                    self.rec_id
+                )
 
             # set items of combo box for truncated temporal ranges
             if self.wid_trunc is not None:

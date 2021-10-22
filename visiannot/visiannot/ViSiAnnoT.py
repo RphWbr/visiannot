@@ -1046,9 +1046,10 @@ class ViSiAnnoT():
 
                 # check if directory of image annotation
                 if os.path.isdir(annot_path) and \
-                        annot_file_name in self.wid_annotimage.label_list:
-                    if os.listdir(annot_path) == []:
-                        rmtree(annot_path)
+                        self.wid_annotimage is not None:
+                    if annot_file_name in self.wid_annotimage.label_list:
+                        if os.listdir(annot_path) == []:
+                            rmtree(annot_path)
 
                 # check if file of event annotation
                 elif ext == ".txt" and ("datetime" in name or "frame" in name):
@@ -1517,7 +1518,8 @@ class ViSiAnnoT():
             self.zoom_pos_1 = max(0, min(pos_frame, self.nframes - 1))
 
             # ctrl key => add annotation
-            if keyboard_modifiers == QtCore.Qt.ControlModifier:
+            if keyboard_modifiers == QtCore.Qt.ControlModifier and \
+                    self.wid_annotevent is not None:
                 self.wid_annotevent.setTimestamp(self, self.zoom_pos_1, 0)
 
         # define position 2
@@ -1526,7 +1528,8 @@ class ViSiAnnoT():
             self.zoom_pos_2 = max(0, min(pos_frame, self.nframes - 1))
 
             # ctrl key => add annotation
-            if keyboard_modifiers == QtCore.Qt.ControlModifier:
+            if keyboard_modifiers == QtCore.Qt.ControlModifier and \
+                    self.wid_annotevent is not None:
                 self.wid_annotevent.setTimestamp(self, self.zoom_pos_2, 1)
 
             # swap pos_1 and pos_2 if necessary
@@ -1556,7 +1559,8 @@ class ViSiAnnoT():
             # check if click is inside the zoom in area
             if pos_frame >= self.zoom_pos_1 and pos_frame <= self.zoom_pos_2:
                 # ctrl key => add annotation
-                if keyboard_modifiers == QtCore.Qt.ControlModifier:
+                if keyboard_modifiers == QtCore.Qt.ControlModifier and \
+                        self.wid_annotevent is not None:
                     self.wid_annotevent.add(self)
 
                 # no ctrl key => zoom
@@ -1698,30 +1702,33 @@ class ViSiAnnoT():
             if self.rec_id == self.rec_nb - 1:
                 self.updateFrameId(min(self.nframes, self.frame_id))
 
-        elif key == QtCore.Qt.Key_I and len(self.wid_sig_list) > 0:
+        elif key == QtCore.Qt.Key_I and len(self.wid_sig_list) > 0 and \
+                self.wid_zoomin is not None:
             self.wid_zoomin.callback(self)
 
-        elif key == QtCore.Qt.Key_O and len(self.wid_sig_list) > 0:
+        elif key == QtCore.Qt.Key_O and len(self.wid_sig_list) > 0 and \
+                self.wid_zoomout is not None:
             self.wid_zoomout.callback(self)
 
-        elif key == QtCore.Qt.Key_N and len(self.wid_sig_list) > 0:
+        elif key == QtCore.Qt.Key_N and len(self.wid_sig_list) > 0 and \
+                self.wid_visi is not None:
             self.wid_visi.callback(self)
 
-        elif key == QtCore.Qt.Key_A and \
-                len(self.wid_annotevent.label_list) > 0:
-            self.wid_annotevent.setTimestamp(self, self.frame_id, 0)
+        elif key == QtCore.Qt.Key_A and self.wid_annotevent is not None:
+            if len(self.wid_annotevent.label_list) > 0:
+                self.wid_annotevent.setTimestamp(self, self.frame_id, 0)
 
-        elif key == QtCore.Qt.Key_Z and \
-                len(self.wid_annotevent.label_list) > 0:
-            self.wid_annotevent.setTimestamp(self, self.frame_id, 1)
+        elif key == QtCore.Qt.Key_Z and self.wid_annotevent is not None:
+            if len(self.wid_annotevent.label_list) > 0:
+                self.wid_annotevent.setTimestamp(self, self.frame_id, 1)
 
-        elif key == QtCore.Qt.Key_E and \
-                len(self.wid_annotevent.label_list) > 0:
-            self.wid_annotevent.add(self)
+        elif key == QtCore.Qt.Key_E and self.wid_annotevent is not None:
+            if len(self.wid_annotevent.label_list) > 0:
+                self.wid_annotevent.add(self)
 
-        elif key == QtCore.Qt.Key_S and \
-                len(self.wid_annotevent.label_list) > 0:
-            self.wid_annotevent.display(self)
+        elif key == QtCore.Qt.Key_S and self.wid_annotevent is not None:
+            if len(self.wid_annotevent.label_list) > 0:
+                self.wid_annotevent.display(self)
 
         elif key == QtCore.Qt.Key_PageDown and self.flag_long_rec:
             self.changeFileInLongRec(self.rec_id - 1, 0)
@@ -1737,7 +1744,8 @@ class ViSiAnnoT():
 
         elif key == QtCore.Qt.Key_D and keyboard_modifiers == \
                 (QtCore.Qt.ControlModifier | QtCore.Qt.ShiftModifier):
-            self.wid_annotevent.clearDescriptions(self)
+            if self.wid_annotevent is not None:
+                self.wid_annotevent.clearDescriptions(self)
 
 
     def keyRelease(self, ev):
