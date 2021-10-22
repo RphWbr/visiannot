@@ -21,7 +21,7 @@ MODULE_DIR = getWorkingDirectory(__file__)
 
 
 class LogoWidget():
-    def __init__(self, visi, widget_position, im_name):
+    def __init__(self, visi, widget_position, im_name, box_size=50):
         """
         Base class of widgets with a single image on which it is possible to
         click in order to activate an action
@@ -33,6 +33,9 @@ class LogoWidget():
         :param im_name: file name of the image to display in the widget, it
             must be located in the folder ``Images`` next to the module
         :type im_path: str
+        :param box_size: see keyword argument ``box_size`` of
+            :func:`.createWidgetLogo`
+        :type box_size: int or tuple
         """
 
         # get absolute path to the image
@@ -41,7 +44,7 @@ class LogoWidget():
         # create widget with image and add it to the layout of the
         # associated instance of ViSiAnnoT
         wid = createWidgetLogo(
-            visi.lay, widget_position, readImage(im_path), box_size=50
+            visi.lay, widget_position, readImage(im_path), box_size=box_size
         )
 
         # listen to callback
@@ -158,3 +161,25 @@ class FullVisiWidget(LogoWidget):
 
         # update signal plots
         visi.updateSignalPlot()
+
+
+class PreviousWidget(LogoWidget):
+    def callback(self, visi):
+        """
+        Callback method for selecting previous file in long recording
+
+        :param visi: associated instance of :class:`.ViSiAnnoT`
+        """
+
+        visi.changeFileInLongRec(visi.rec_id - 1, 0)
+
+
+class NextWidget(LogoWidget):
+    def callback(self, visi):
+        """
+        Callback method for selecting next file in long recording
+
+        :param visi: associated instance of :class:`.ViSiAnnoT`
+        """
+
+        visi.changeFileInLongRec(visi.rec_id + 1, 0)

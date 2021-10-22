@@ -22,6 +22,7 @@ from ..tools import ToolsData
 from ..tools import ToolsImage
 from ..tools import ToolsAudio
 from .ViSiAnnoT import ViSiAnnoT
+from .components.LogoWidgets import PreviousWidget, NextWidget
 
 
 class ViSiAnnoTLongRec(ViSiAnnoT):
@@ -562,32 +563,22 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         self.rec_nb = len(self.rec_beginning_datetime_list)
 
 
-        # ******************************************************************* #
         # ******************* previous/next recording *********************** #
-        # ******************************************************************* #
-
-        # read images
-        if hasattr(sys, "_MEIPASS"):
-            dir_path = os.path.abspath(getattr(sys, "_MEIPASS"))
+        if "previous" in poswid_dict.keys():
+            #: (:class:`.PreviousWidget`) Widget for selecting previous file
+            self.wid_previous = PreviousWidget(
+                self, poswid_dict["previous"], "previous"
+            )
 
         else:
-            dir_path = os.path.dirname(os.path.realpath(__file__))
+            self.wid_previous = None
 
-        previous_path = '%s/Images/previous.jpg' % dir_path
-        next_path = '%s/Images/next.jpg' % dir_path
+        if "next" in poswid_dict.keys():
+            #: (:class:`.NextWidget`) Widget for selecting next file
+            self.wid_next = NextWidget(self, poswid_dict["next"], "next")
 
-        previous_im = ToolsImage.readImage(previous_path)
-        next_im = ToolsImage.readImage(next_path)
-
-        #: (*QtWidgets.QGridlayout*) Widget of the "previous rec" image
-        self.wid_previous = ToolsPyqtgraph.createWidgetLogo(
-            self.lay, poswid_dict['previous'], previous_im, box_size=50
-        )
-
-        #: (*QtWidgets.QGridlayout*) Widget of the "next rec" image
-        self.wid_next = ToolsPyqtgraph.createWidgetLogo(
-            self.lay, poswid_dict['next'], next_im, box_size=50
-        )
+        else:
+            self.wid_next = None
 
         #: (*QtWidgets.QComboBox*) Combo box for recording file selection
         self.combo_rec_choice = None
@@ -602,16 +593,10 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         group_box.setMaximumWidth(100)
 
         # listen to callbacks
-        self.wid_previous.scene().sigMouseClicked.connect(
-            self.mouseClickedPrevious
-        )
-        self.wid_next.scene().sigMouseClicked.connect(self.mouseClickedNext)
         self.combo_rec_choice.currentIndexChanged.connect(self.recChoice)
 
 
-        # ******************************************************************* #
         # *********************** infinite loop ***************************** #
-        # ******************************************************************* #
         ToolsPyQt.infiniteLoopDisplay(self.app)
 
         # close streams, delete temporary folders
@@ -1047,18 +1032,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         )
 
 
-    def mouseClickedPrevious(self):
-        """
-        Callback method for loading previous file in the long recording after
-        having clicked on the "previous" image
-
-        Connected to the signal ``sigMouseClicked`` of the attribute ``scene``
-        of :attr:`.ViSiAnnoTLongRec.wid_previous`.
-        """
-
-        self.changeFileInLongRec(self.rec_id - 1, 0)
-
-
     def nextRecording(self):
         """
         Loads next file in the long recording
@@ -1072,18 +1045,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         )
 
         return ok
-
-
-    def mouseClickedNext(self):
-        """
-        Callback method for loading next file in the long recording after
-        having clicked on the "next" image
-
-        Connected to the signal ``sigMouseClicked`` of the attribute ``scene``
-        of :attr:`.ViSiAnnoTLongRec.wid_next`.
-        """
-
-        self.changeFileInLongRec(self.rec_id + 1, 0)
 
 
     def prepareNewRecording(self, rec_id):
