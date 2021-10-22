@@ -172,8 +172,8 @@ See section :ref:`intervals` for details about interval configuration. In a Pyth
 
     interval_dict = {}
     interval_dict["ECG"] = [
-        ["dir/to/interval", "", 500, "I0_*.txt", '_', '0', '%Y%m%dT%H%M%S', (0, 255, 0, 50)],
-        ["dir/to/interval", "", 500, "I1_*.txt", '_', '0', '%Y%m%dT%H%M%S', (255, 200, 0, 50)]
+        ["dir/to/interval", "", 500, "I0_*.txt", '_', 0, '%Y%m%dT%H%M%S', (0, 255, 0, 50)],
+        ["dir/to/interval", "", 500, "I1_*.txt", '_', 0, '%Y%m%dT%H%M%S', (255, 200, 0, 50)]
     ]
 
 Intervals must be plotted only the signal widget "ECG" with two interval types. In the configuration file, we create a section named "Interval", composed of as much sub-sections as signal widgets on which to plot intervals. Each sub-section is composed of as much sub-sub-sections as interval types to plot on the corresponding signal widget. Here is the equivalent interval configuration::
@@ -202,7 +202,7 @@ Intervals must be plotted only the signal widget "ECG" with two interval types. 
 Same configuration with a more compact writing::
 
     [Interval]
-    ECG = [["dir/to/interval", "", 500, "I0_*.txt", '_', '0', '%Y%m%dT%H%M%S', [0, 255, 0, 50]], ["dir/to/interval", "", 500, "I1_*.txt", '_', '0', '%Y%m%dT%H%M%S', [255, 200, 0, 50]]]
+    ECG = [["dir/to/interval", "", 500, "I0_*.txt", '_', 0, '%Y%m%dT%H%M%S', [0, 255, 0, 50]], ["dir/to/interval", "", 500, "I1_*.txt", '_', 0, '%Y%m%dT%H%M%S', [255, 200, 0, 50]]]
 
 
 Events annotation
@@ -245,9 +245,9 @@ See section :ref:`image-extraction` for details about image extraction configura
 In the configuration file, we create a section named "AnnotImage"::
 
     [AnnotImage]
-    k0 = Label-A
-    k1 = Label-B
-    k2 = Label-C
+    k0 = "Label-A"
+    k1 = "Label-B"
+    k2 = "Label-C"
 
 We must keep the dictionary structure because of the structure of the class :class:`.Configuration`. Nevertheless, it is converted to a list inside :class:`.ViSiAnnoT`.
 
