@@ -15,7 +15,6 @@ import numpy as np
 import os
 from glob import glob
 import sys
-from collections import OrderedDict
 from ..tools import ToolsPyQt
 from ..tools import ToolsPyqtgraph
 from ..tools import ToolsDateTime
@@ -207,10 +206,10 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         #: in the long recording, where each element is a configuration list
         #: (see first positional argument of :class:`.ViSiAnnoT` constructor
         #: for details about configuration list)
-        self.video_dict_list = OrderedDict()
+        self.video_dict_list = {}
 
         # dictionary containing the current video file path
-        video_dict_current = OrderedDict()
+        video_dict_current = {}
 
         # nested list of video paths
         video_path_list = []
@@ -469,7 +468,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         #: element is a configuration list (see second positional argument of
         #: :class:`.ViSiAnnoT` constructor for details about the configuration
         #: list).
-        self.signal_dict_list = OrderedDict()
+        self.signal_dict_list = {}
 
         #: (*dict*) Each item corresponds to one signal widget on which to plot
         #: intervals, key is the data type of the widget, value is a nested
@@ -480,7 +479,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         #: each element is a configuration list (see second keyword argument
         #: ``interval_dict`` of :class:`.ViSiAnnoT` constructor for details
         #: about the configuration list).
-        self.interval_dict_list = OrderedDict()
+        self.interval_dict_list = {}
 
         # get signal configuration
         signal_dict_current, interval_dict_current = \
@@ -797,11 +796,11 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         """
 
         # dictionary containing the curent signals configuration
-        signal_dict_current = OrderedDict()
+        signal_dict_current = {}
 
         # dictionary containing the current files of intervals and the color to
         # plot
-        interval_dict_current = OrderedDict()
+        interval_dict_current = {}
 
         # loop on data types
         for type_data, data_info_list in signal_dict.items():
@@ -1098,7 +1097,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             self.rec_id = rec_id
 
             # get new video data
-            video_dict_current = OrderedDict()
+            video_dict_current = {}
             for video_id, video_dict_list_tmp in self.video_dict_list.items():
                 video_dict_current[video_id] = video_dict_list_tmp[self.rec_id]
 
@@ -1108,8 +1107,8 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 )
 
             # get new signals and intervals
-            signal_dict_current = OrderedDict()
-            interval_dict_current = OrderedDict()
+            signal_dict_current = {}
+            interval_dict_current = {}
             for type_data in self.signal_dict_list.keys():
                 # signal
                 signal_dict_current[type_data] = []
