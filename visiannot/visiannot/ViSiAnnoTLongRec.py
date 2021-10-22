@@ -1020,11 +1020,11 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             self.updateSignalPlot()
 
             # update annotation regions plot if necessary
-            if len(self.annotevent_label_list) > 0:
-                if self.annotevent_button_label_list[3].text() == "On":
-                    self.clearAnnotEventRegions()
-                    self.annotevent_description_dict = {}
-                    self.plotAnnotEventRegions()
+            if len(self.wid_annotevent.label_list) > 0:
+                if self.wid_annotevent.push_text_list[3].text() == "On":
+                    self.wid_annotevent.clearRegions(self)
+                    self.wid_annotevent.description_dict = {}
+                    self.wid_annotevent.plotRegions(self)
 
         return ok
 

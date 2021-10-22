@@ -11,7 +11,7 @@ Module defining :class:`.ViSiAnnoT`
 """
 
 
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtCore
 import pyqtgraph as pg
 import numpy as np
 from threading import Thread
@@ -19,7 +19,6 @@ from cv2 import imwrite
 import os
 from time import time, sleep
 from shutil import rmtree
-from datetime import timedelta
 from math import ceil
 from ..tools import ToolsPyQt
 from ..tools import ToolsPyqtgraph
@@ -37,6 +36,7 @@ from .components.TruncTemporalRangeWidget import TruncTemporalRangeWidget
 from .components.FromCursorTemporalRangeWidget import \
     FromCursorTemporalRangeWidget
 from .components.LogoWidgets import ZoomInWidget, ZoomOutWidget, FullVisiWidget
+from .components.AnnotEventWidget import AnnotEventWidget
 
 
 class ViSiAnnoT():
@@ -199,8 +199,9 @@ class ViSiAnnoT():
                 ]
                 }
         :type signal_dict: dict
-        :param annotevent_dict: events annotation configuration.
-            Key is the label (string). Value is the associated color (RGBA).
+        :param annotevent_dict: events annotation configuration,
+            key is the label (string), value is the associated color (RGB or
+            RGBA)
         :type annotevent_dict: dict
         :param annotimage_list: labels for image extraction
         :type annotimage_list: list
@@ -480,111 +481,6 @@ class ViSiAnnoT():
         #:
         #: Specified by the keyword argument ``annot_dir``
         self.annot_dir = annot_dir
-
-        #: (*str*) Base name of the annotation files
-        #:
-        #: It is defined as the basename of the annotation directory
-        #: :attr:`.annot_dir`. When loading/saving annotation files, the label
-        #: is appended to the file name.
-        self.annot_file_base = os.path.basename(self.annot_dir)
-
-
-        # ******************************************************************* #
-        # ********************** event annotation *************************** #
-        # ******************************************************************* #
-
-        #: (*str*) Label automatically created for getting duration of video
-        #: files (or first signal if no video)
-        #:
-        #: It cannot be used for manual annotation, so it is ignored if
-        #: specified by the user in the keyword argument ``annotevent_dict`` of
-        #: :class:`.ViSiAnnoT` constructor.
-        self.annotevent_protected_label = "DURATION"
-
-        # check if protected label in list of labels
-        if self.annotevent_protected_label in annotevent_dict.keys():
-            del annotevent_dict[self.annotevent_protected_label]
-            print(
-                "Label %s for events annotation is protected and cannot be\
-                used for manual annotation, so it is ignored" %
-                self.annotevent_protected_label
-            )
-
-        #: (*list*) Labels of the event annotation (string)
-        self.annotevent_label_list = list(annotevent_dict.keys())
-
-        #: (*list*) Colors of the event annotation labels
-        #:
-        #: each element is a list of length 4 with the RGBA color, or length 3
-        #: with the RGB color (in this case transparency A is set to 100)
-        self.annotevent_color_list = list(annotevent_dict.values())
-
-        # add transparency for color if needed
-        for annot_color in self.annotevent_color_list:
-            if isinstance(annot_color, list) and len(annot_color) == 3:
-                annot_color.append(80)
-
-        #: (*numpy array*) Array with unsaved annotated events
-        #:
-        #: Shape :math:`(n_{annot}, 2, 2)`, where :math:`n_{annot}` is the
-        #: length of :attr:`.ViSiAnnoT.annotevent_label_list`.
-        #: For a given label with index ``n`` in
-        #: :attr:`.ViSiAnnoT.annotevent_label_list`, the sub-array
-        #: ``self.annotevent_array[n]`` is organized as follows:
-        #:
-        #: =====================  =================================================
-        #: start datetime string  start frame index in the format "rec-id_frame-id"
-        #: end datetime string    end frame index in the format "rec-id_frame-id"
-        #: =====================  =================================================
-        self.annotevent_array = np.zeros(
-            (len(self.annotevent_label_list), 2, 2), dtype=object
-        )
-
-        #: (*dict*) Event annotations descriptions to be displayed
-        #:
-        #: Key is the index of a label in
-        #: :attr:`.ViSiAnnoT.annotevent_label_list`. Value is a dictionary:
-        #:
-        #:      - Key is an integer with the annotation ID (index in the
-        #:        annotation file)
-        #:      - Value is a list of instances of pyqtgraph.TextItem with the
-        #:        description, same length and order as
-        #:        :attr:`.ViSiAnnoT.wid_sig_list`, so that one element
-        #:        corresponds to one signal widget
-        self.annotevent_description_dict = {}
-
-        #: (*list*) Way of storing event annotations
-        #:
-        #: Two elements:
-        #:
-        #: - ``"datetime"``: datetime string in the format
-        #:   %Y-%M-%DT%h-%m-%s.%ms
-        #: - ``"frame"``: rec-id_frame-id
-        self.annotevent_type_list = ["datetime", "frame"]
-
-        if len(self.annotevent_label_list) > 0:
-            #: (*list*) Files names of event annotation
-            #:
-            #: Same length as :attr:`.ViSiAnnoT.annotevent_type_list`, there is
-            #: one file for each annotation type.
-            self.annotevent_path_list = self.annotEventGetPathList(
-                self.annotevent_label_list[0]
-            )
-
-            # create directory if necessary
-            if not os.path.isdir(self.annot_dir):
-                os.makedirs(self.annot_dir)
-
-            # create annotation file with duration of video files
-            # (or first signal if no video)
-            self.createAnnotEventDuration()
-
-        else:
-            self.annotevent_path_list = []
-
-        #: (*int*) Index of the currently selected label, with respect to the
-        #: list :attr:`.ViSiAnnoT.annotevent_type_list`
-        self.annotevent_current_label_id = 0
 
 
         # ******************************************************************* #
@@ -886,81 +782,19 @@ class ViSiAnnoT():
 
 
         # ******************* event annotation widget *********************** #
-        if len(self.annotevent_label_list) > 0:
+        if len(annotevent_dict) > 0:
             if "annot_event" in poswid_dict.keys():
-                #: (*QtWidgets.QButtonGroup*) Set of the radio buttons with
-                #: labels of events annotation
-                self.annotevent_button_group_radio_label = None
-
-                #: (*QtWidgets.QButtonGroup*) Set of the radio buttons with
-                #: display options of events annotation
-                self.annotevent_button_group_radio_disp = None
-
-                #: (*QtWidgets.QButtonGroup*) Set of the check boxes for
-                #: custom display of events annotation
-                self.annotevent_button_group_check_custom = None
-
-                #: (*QtWidgets.QButtonGroup*) Set of push buttons for
-                #: events annotation (Sart, Stop, Add, Delete last, Display)
-                self.annotevent_button_group_push = QtWidgets.QButtonGroup()
-
-                #: (*list*) Instances of QtWidgets.QLabel containing the text
-                #: next to the push buttons grouped in
-                #: :attr:`.ViSiAnnoT.annotevent_button_group_push`
-                self.annotevent_button_label_list = []
-
-                # create widget for events annotation
-                self.createWidgetAnnotEvent(
-                    poswid_dict['annot_event'], nb_table=nb_table_annot
-                )
-
-                #: (*dict*) Lists of region items (pyqtgraph.LinearRegionItem)
-                #: for the display of event annotations
-                #:
-                #: Key is a label index. Value is a list of lists, each sublist
-                #: corresponds to one annotation and contains
-                #: :math:`n_{wid} + 1` region items, where :math:`n_{wid}` is
-                #: the length of :attr:`.ViSiAnnoT.wid_sig_list` (number of
-                #: signal widgets), the additional region item is for the
-                #: progress bar (:attr:`.ViSiAnnoT.wid_progress`).
-                #:
-                #: For example, for 3 signal widgets and for a given label with
-                #: 2 annotations, the value of the dictionary would be::
-                #:
-                #:      [
-                #:          [
-                #:              annot1_widProgress, annot1_wid1, annot1_wid2,
-                #:              annot1_wid3
-                #:          ],
-                #:          [
-                #:              annot2_widProgress, annot2_wid1, annot2_wid2,
-                #:              annot2_wid3
-                #:          ]
-                #:      ]
-                self.region_annotation_dict = {}
-
-                # plot annotations
-                self.plotAnnotEventRegions()
-
-                # listen to the callback methods
-                self.annotevent_button_group_push.buttonClicked[int].connect(
-                    self.annotEventCallPushButton
-                )
-
-                self.annotevent_button_group_radio_label.buttonClicked.connect(
-                    self.annotEventCallRadio
-                )
-
-                self.annotevent_button_group_radio_disp.buttonClicked.connect(
-                    self.plotAnnotEventRegions
-                )
-
-                self.annotevent_button_group_check_custom.buttonClicked.connect(
-                    self.plotAnnotEventRegions
+                #: (:class:`.AnnotEventWidget`) Widget for events annotation
+                self.wid_annotevent = AnnotEventWidget(
+                    self, poswid_dict["annot_event"], annotevent_dict,
+                    annot_dir, nb_table=nb_table_annot
                 )
 
             else:
                 raise Exception("No widget position given for the event annotation => add key 'annot_event' to positinal argument poswid_dict")
+
+        else:
+            self.wid_annotevent = None
 
 
         # ******************* image annotation widget *********************** #
@@ -1232,17 +1066,10 @@ class ViSiAnnoT():
 
         # check if annotation directory exists
         if os.path.isdir(self.annot_dir):
-            # get list of files/folders in the annotation directory
             print("delete empty annotation folders/files if necessary")
-            annot_path_list = os.listdir(self.annot_dir)
 
-            # get file name of event annotation of protected label
-            protected_name_0 = "%s_%s-datetime.txt" % (
-                self.annot_file_base, self.annotevent_protected_label
-            )
-            protected_name_1 = "%s_%s-frame.txt" % (
-                self.annot_file_base, self.annotevent_protected_label
-            )
+            # get list of files/folders in the annotation directory
+            annot_path_list = os.listdir(self.annot_dir)
 
             # loop on annotation files/folders
             for annot_file_name in annot_path_list:
@@ -1265,15 +1092,27 @@ class ViSiAnnoT():
                         # remove empty file
                         os.remove(annot_path)
 
-            # update the list of files/folders in the annotation directory
-            annot_path_list = sorted(os.listdir(self.annot_dir))
+            # check if event annotation
+            if self.wid_annotevent is not None:
+                # update the list of files/folders in the annotation directory
+                annot_path_list = sorted(os.listdir(self.annot_dir))
 
-            # check if empty annotation directory (or only filled with
-            # event annotation of protected label)
-            if len(annot_path_list) == 0 or len(annot_path_list) == 2 and \
-                annot_path_list[0] == protected_name_0 and \
-                    annot_path_list[1] == protected_name_1:
-                rmtree(self.annot_dir)
+                # get file name of event annotation of protected label
+                protected_name_0 = "%s_%s-datetime.txt" % (
+                    self.wid_annotevent.file_name_base,
+                    self.wid_annotevent.protected_label
+                )
+                protected_name_1 = "%s_%s-frame.txt" % (
+                    self.wid_annotevent.file_name_base,
+                    self.wid_annotevent.protected_label
+                )
+
+                # check if empty annotation directory (or only filled with
+                # event annotation of protected label)
+                if len(annot_path_list) == 0 or len(annot_path_list) == 2 and \
+                    annot_path_list[0] == protected_name_0 and \
+                        annot_path_list[1] == protected_name_1:
+                    rmtree(self.annot_dir)
 
         # close videos
         print("close videos (if any)")
@@ -1627,8 +1466,7 @@ class ViSiAnnoT():
         :type border_width: int
 
         :returns: instances of pyqtgraph.TextItem, each element corresponds to
-            a signal widget, same length and order as
-            :attr:`wid_sig_list`
+            a signal widget, same length and order as :attr:`wid_sig_list`
         :rtype: list
         """
 
@@ -1638,9 +1476,10 @@ class ViSiAnnoT():
         # loop on signal widgets
         for wid, pos_y in zip(self.wid_sig_list, pos_y_list):
             # create text item
-            text_item = pg.TextItem(text, fill='w', color=text_color,
-                                    border={"color": border_color,
-                                            "width": border_width})
+            text_item = pg.TextItem(
+                text, fill='w', color=text_color,
+                border={"color": border_color, "width": border_width}
+            )
 
             # set text item position
             text_item.setPos(pos_ms, pos_y)
@@ -1714,7 +1553,7 @@ class ViSiAnnoT():
 
             # ctrl key => add annotation
             if keyboard_modifiers == QtCore.Qt.ControlModifier:
-                self.annotEventSetTime(self.zoom_pos_1, 0)
+                self.wid_annotevent.setTimestamp(self, self.zoom_pos_1, 0)
 
         # define position 2
         elif self.zoom_pos_2 == -1:
@@ -1723,7 +1562,7 @@ class ViSiAnnoT():
 
             # ctrl key => add annotation
             if keyboard_modifiers == QtCore.Qt.ControlModifier:
-                self.annotEventSetTime(self.zoom_pos_2, 1)
+                self.wid_annotevent.setTimestamp(self, self.zoom_pos_2, 1)
 
             # swap pos_1 and pos_2 if necessary
             if self.zoom_pos_1 > self.zoom_pos_2:
@@ -1742,7 +1581,7 @@ class ViSiAnnoT():
             pos_y_list = self.getMouseYPosition(ev)
 
             # display zoom region duration
-            self.region_zoom_text_item_list = self.createTextItem(
+            self.region_zoom_text_item_list = self.wid_annotevent.createTextItem(
                 "%.3f s" % duration, pos_ms, pos_y_list,
                 border_color=(150, 150, 150)
             )
@@ -1753,7 +1592,7 @@ class ViSiAnnoT():
             if pos_frame >= self.zoom_pos_1 and pos_frame <= self.zoom_pos_2:
                 # ctrl key => add annotation
                 if keyboard_modifiers == QtCore.Qt.ControlModifier:
-                    self.annotEventAdd()
+                    self.wid_annotevent.add(self)
 
                 # no ctrl key => zoom
                 else:
@@ -1771,9 +1610,9 @@ class ViSiAnnoT():
 
             # in case the click is outside the zoom in area
             else:
-                if self.annotevent_array.size > 0:
+                if self.wid_annotevent.annot_array.size > 0:
                     # reset annotation times
-                    self.annotEventResetTime()
+                    self.wid_annotevent.resetTimestamp()
 
             # remove zoom regions
             self.removeRegionInWidgets(self.region_zoom_list)
@@ -1823,768 +1662,6 @@ class ViSiAnnoT():
             im_path = "%s/%s_%s.png" % (output_dir, file_name, self.frame_id)
             imwrite(im_path, im)
             print("image saved: %s" % im_path)
-
-
-    # *********************************************************************** #
-    # End group
-    # *********************************************************************** #
-
-    # *********************************************************************** #
-    # Group: Methods for managing event annotations
-    # *********************************************************************** #
-
-
-    def createAnnotEventDuration(self):
-        """
-        Creates annotation events files for the duration of each file of the
-        reference modality (only one file if not a long recording)
-        """
-
-        output_path_0 = "%s/%s_%s-datetime.txt" % \
-            (self.annot_dir, self.annot_file_base,
-                self.annotevent_protected_label)
-        output_path_1 = "%s/%s_%s-frame.txt" % \
-            (self.annot_dir, self.annot_file_base,
-                self.annotevent_protected_label)
-
-        if not os.path.isfile(output_path_0):
-            if self.flag_long_rec:
-                with open(output_path_0, 'w') as f:
-                    for beg_datetime, duration in zip(
-                        self.rec_beginning_datetime_list,
-                        self.rec_duration_list
-                    ):
-                        end_datetime = beg_datetime + timedelta(
-                            seconds=duration
-                        )
-
-                        beg_string = ToolsDateTime.convertDatetimeToString(
-                            beg_datetime
-                        )
-
-                        end_string = ToolsDateTime.convertDatetimeToString(
-                            end_datetime
-                        )
-
-                        f.write("%s - %s\n" % (beg_string, end_string))
-
-                with open(output_path_1, 'w') as f:
-                    for ite_file, duration in enumerate(
-                        self.rec_duration_list
-                    ):
-                        f.write("%d_0 - %d_%d\n" % (
-                            ite_file, ite_file, int(duration * self.fps)
-                        ))
-
-            else:
-                with open(output_path_0, 'w') as f:
-                    end_datetime = self.beginning_datetime + timedelta(
-                        seconds=self.nframes / self.fps
-                    )
-
-                    beg_string = ToolsDateTime.convertDatetimeToString(
-                        self.beginning_datetime
-                    )
-
-                    end_string = ToolsDateTime.convertDatetimeToString(
-                        end_datetime
-                    )
-
-                    f.write("%s - %s\n" % (beg_string, end_string))
-
-                with open(output_path_1, 'w') as f:
-                    f.write("0_0 - 0_%d\n" % self.nframes)
-
-
-    def annotEventCallRadio(self, ev):
-        """
-        Callback method for changing event annotation label with the radio
-        buttons
-
-        Connected to the signal ``buttonClicked`` of
-        :attr:`.annotevent_button_group_radio_label`.
-
-        It calls the method :meth:`.annotEventChangeLabel` with
-        ``ev.text()`` as input.
-
-        :param ev: radio button that has been clicked
-        :type ev: QtWidgets.QRadioButton
-        """
-
-        # get the new annotation file name
-        self.annotEventChangeLabel(ev.text())
-
-
-    def annotEventChangeLabel(self, new_label):
-        """
-        Changes event annotation label (loads new annotation file)
-
-        It sets the value of the following attributes:
-
-        - :attr:`.current_label_id` with the index of the new
-          annotation label in :attr:`.annotevent_label_list`
-        - :attr:`.annotevent_path_list` with the new list of
-          annotation file paths (by calling
-          :meth:`.annotEventGetPathList`)
-
-        It also manages the display of the annotations.
-
-        :param new_label: new annotation label
-        :type new_label: str
-        """
-
-        # update current label
-        self.annotevent_current_label_id = \
-            self.annotevent_label_list.index(new_label)
-
-        # get the new annotation file name
-        self.annotevent_path_list = self.annotEventGetPathList(new_label)
-
-        # get number of annotation already stored
-        if os.path.isfile(self.annotevent_path_list[0]):
-            lines = ToolsData.getTxtLines(self.annotevent_path_list[0])
-            nb_annot = len(lines)
-
-        else:
-            nb_annot = 0
-
-        # update label with the number of annotations
-        self.annotevent_button_label_list[2].setText("Nb: %d" % nb_annot)
-
-        # update label with the start and end time
-        non_zero_array = np.count_nonzero(
-            self.annotevent_array[self.annotevent_current_label_id], axis=1
-        )
-
-        if non_zero_array[0] < 2:
-            self.annotevent_button_label_list[0].setText(
-                "YYYY-MM-DD hh:mm:ss.sss"
-            )
-        else:
-            self.annotevent_button_label_list[0].setText(
-                self.annotevent_array[self.annotevent_current_label_id, 0, 0]
-            )
-
-        if non_zero_array[1] < 2:
-            self.annotevent_button_label_list[1].setText(
-                "YYYY-MM-DD hh:mm:ss.sss"
-            )
-        else:
-            self.annotevent_button_label_list[1].setText(
-                self.annotevent_array[self.annotevent_current_label_id, 1, 0]
-            )
-
-        # plot annotations
-        self.plotAnnotEventRegions()
-
-
-    def annotEventGetPathList(self, label):
-        """
-        Gets the path of the annotation files corresponding to the input label
-
-        :param label: event annotation label
-        :type label: str
-
-        :returns: paths of the annotation files, each element corresponds to an
-            annotation type (see :attr:`.annotevent_type_list`)
-        :rtype: list
-        """
-
-        annotevent_path_list = []
-        for annot_type in self.annotevent_type_list:
-            annotevent_path_list.append(
-                '%s/%s_%s-%s.txt' % (
-                    self.annot_dir, self.annot_file_base, label, annot_type
-                )
-            )
-
-        return annotevent_path_list
-
-
-    def annotEventSetTime(self, frame_id, annot_position):
-        """
-        Sets an annotation value for the current label, either start or end
-        timestamp of the event annotation
-
-        It sets the values of
-        ``ViSiAnnoT.annotevent_array[ViSiAnnoT.current_label_id, annot_position]``.
-
-        :param frame_id: frame number of the annotation timestamp (sampled at
-            the reference frequency :attr:`.ViSiAnnoT.fps`)
-        :type frame_id: int
-        :param annot_position: specify if start timestamp (``0``) or end
-            timestamp (``1``)
-        :type annot_position: int
-        """
-
-        if (annot_position == 0 or annot_position == 1) and \
-                len(self.annotevent_label_list) > 0:
-            # set the beginning time of the annotated interval to
-            # the current frame
-            self.annotevent_array[self.annotevent_current_label_id, annot_position, 0] = \
-                ToolsDateTime.convertFrameToAbsoluteDatetimeString(
-                    frame_id, self.fps, self.beginning_datetime
-            )
-
-            self.annotevent_array[self.annotevent_current_label_id, annot_position, 1] = \
-                '%d_%d' % (self.rec_id, frame_id)
-
-            # display the beginning time of the annotated interval
-            self.annotevent_button_label_list[annot_position].setText(
-                self.annotevent_array[self.annotevent_current_label_id, annot_position, 0]
-            )
-
-
-    def annotEventResetTime(self):
-        """
-        Resets the annotations value for the current label
-
-        It sets ``ViSiAnnoT.annotevent_array[ViSiAnnoT.annotevent_current_label_id]``
-        to zeros.
-        """
-
-        # reset the beginning and ending times of the annotated interval
-        self.annotevent_array[self.annotevent_current_label_id] = \
-            np.zeros((2, 2))
-
-        # reset the displayed beginning and ending times of the annotated interval
-        self.annotevent_button_label_list[0].setText("YYYY-MM-DD hh:mm:ss.sss")
-        self.annotevent_button_label_list[1].setText("YYYY-MM-DD hh:mm:ss.sss")
-
-
-    def annotEventAdd(self):
-        """
-        Adds an event annotation to the current label
-
-        It writes in the annotation files
-        (:attr:`.annotevent_path_list`).
-
-        If the annotation start timestamp or end timestamp is not defined, then
-        nothing happens.
-        """
-
-        # check if beginning time or ending of the annotated interval is empty
-        if np.count_nonzero(self.annotevent_array[self.annotevent_current_label_id]) < 4:
-            print("Empty annotation !!! Cannot write file.")
-
-        # otherwise all good
-        else:
-            # convert annotation to datetime
-            annot_datetime_0 = ToolsDateTime.convertStringToDatetime(
-                self.annotevent_array[self.annotevent_current_label_id, 0, 0],
-                "format_T", time_zone=self.time_zone
-            )
-
-            annot_datetime_1 = ToolsDateTime.convertStringToDatetime(
-                self.annotevent_array[self.annotevent_current_label_id, 1, 0],
-                "format_T", time_zone=self.time_zone
-            )
-
-            # check if annotation must be reversed
-            if (annot_datetime_1 - annot_datetime_0).total_seconds() < 0:
-                self.annotevent_array[self.annotevent_current_label_id, [0, 1]] = \
-                    self.annotevent_array[self.annotevent_current_label_id, [1, 0]]
-
-            # append the annotated interval to the annotation file
-            for ite_annot_type, annot_path in enumerate(
-                self.annotevent_path_list
-            ):
-                with open(annot_path, 'a') as file:
-                    file.write(
-                        "%s - %s\n" % (
-                            self.annotevent_array[self.annotevent_current_label_id, 0, ite_annot_type],
-                            self.annotevent_array[self.annotevent_current_label_id, 1, ite_annot_type]
-                        )
-                    )
-
-            # update the number of annotations
-            nb_annot = int(self.annotevent_button_label_list[2].text().split(': ')[1]) + 1
-            self.annotevent_button_label_list[2].setText("Nb: %d" % nb_annot)
-
-            # if display mode is on, display the appended interval
-            if self.annotevent_button_label_list[3].text() == "On" and \
-                self.annotevent_current_label_id in \
-                    self.region_annotation_dict.keys():
-                region_list = self.annotEventAddRegion(
-                    self.annotevent_array[self.annotevent_current_label_id, 0, 0],
-                    self.annotevent_array[self.annotevent_current_label_id, 1, 0],
-                    color=self.annotevent_color_list[self.annotevent_current_label_id]
-                )
-
-                self.region_annotation_dict[self.annotevent_current_label_id].append(region_list)
-
-            # reset the beginning and ending times of the annotated interval
-            self.annotEventResetTime()
-
-
-    def annotEventIdFromPosition(self, position):
-        """
-        Looks for the index of the annotation at the given position (for the
-        current label)
-
-        :param position: frame number (sampled at the reference frequency
-            :attr:`.ViSiAnnoT.fps`)
-        :type position: int
-
-        :returns: index of the annotation (i.e. line number in the annotation
-            file), returns ``-1`` if no annotation at ``position``
-        :rtype: int
-        """
-
-        # initialize output
-        annot_id = -1
-
-        # check if annotation file exists
-        if os.path.isfile(self.annotevent_path_list[0]):
-            # convert mouse position to datetime
-            position_date_time = ToolsDateTime.convertFrameToAbsoluteDatetime(
-                position, self.fps, self.beginning_datetime
-            )
-
-            # get annotations for current label
-            lines = ToolsData.getTxtLines(self.annotevent_path_list[0])
-
-            # loop on annotations
-            for ite_annot, line in enumerate(lines):
-                # get annotation
-                line = line.replace("\n", "")
-
-                start_date_time = ToolsDateTime.convertStringToDatetime(
-                    line.split(" - ")[0], "format_T", time_zone=self.time_zone
-                )
-
-                end_date_time = ToolsDateTime.convertStringToDatetime(
-                    line.split(" - ")[1], "format_T", time_zone=self.time_zone
-                )
-
-                # check if mouse position is in the annotation interval
-                if (position_date_time - start_date_time).total_seconds() >= 0 and \
-                        (end_date_time - position_date_time).total_seconds() >= 0:
-                    annot_id = ite_annot
-                    break
-
-        return annot_id
-
-
-    def annotEventDescription(self, ev, pos_frame, pos_ms):
-        """
-        Creates and displays text items in signal widgets with the description
-        of the event annotation that has been clicked on
-
-        :param ev: radio button that has been clicked
-        :type ev: QtWidgets.QRadioButton
-        :param pos_frame: frame number (sampled at the reference frequency
-            :attr:`ViSiAnnoT.fps`) corresponding to the mouse position on the X
-            axis of the signal widget
-        :type pos_frame: int
-        :param pos_ms: mouse position on the X axis of the signal widget in
-            milliseconds
-        :type pos_ms: float
-        """
-
-        # get annotation ID that has been clicked
-        annot_id = self.annotEventIdFromPosition(pos_frame)
-
-        # check if mouse clicked on an annotation
-        if annot_id >= 0:
-            # get dictionary with description text items for the current label
-            if self.annotevent_current_label_id in \
-                    self.annotevent_description_dict.keys():
-                description_dict = self.annotevent_description_dict[
-                    self.annotevent_current_label_id
-                ]
-
-            # create dictionary with description items for the current label
-            else:
-                description_dict = {}
-
-                self.annotevent_description_dict[
-                    self.annotevent_current_label_id
-                ] = description_dict
-
-            # check if description already displayed
-            if annot_id in description_dict.keys():
-                # remove display
-                ViSiAnnoT.removeItemInWidgets(
-                    self.wid_sig_list, description_dict[annot_id]
-                )
-
-                # delete list of description text items from dictionary
-                del description_dict[annot_id]
-
-            else:
-                # get list of Y position of the mouse in each signal widget
-                pos_y_list = self.getMouseYPosition(ev)
-
-                # get date-time string annotation
-                annot = ToolsData.getTxtLines(
-                    self.annotevent_path_list[0]
-                )[annot_id]
-
-                # get date-time start/stop of the annotation
-                start, stop = annot.replace("\n", "").split(" - ")
-
-                # convert date-time string to datetime
-                start = ToolsDateTime.convertStringToDatetime(
-                    start, "format_T", time_zone=self.time_zone
-                )
-
-                stop = ToolsDateTime.convertStringToDatetime(
-                    stop, "format_T", time_zone=self.time_zone
-                )
-
-                # compute annotation duration
-                duration = (stop - start).total_seconds()
-
-                # get annotation description
-                description = "%s - %.3f s" % (
-                    self.annotevent_label_list[self.annotevent_current_label_id],
-                    duration
-                )
-
-                # get description color
-                color = self.annotevent_color_list[self.annotevent_current_label_id]
-
-                # create list of description text items for the annotation
-                self.annotevent_description_dict[self.annotevent_current_label_id][annot_id] = \
-                    self.createTextItem(
-                        description, pos_ms, pos_y_list, border_color=color
-                )
-
-
-    def annotEventDeleteClicked(self, position):
-        """
-        Deletes an annotion that is clicked with mouse
-
-        :param position: frame number (sampled at the reference frequency
-            :attr:`.ViSiAnnoT.fps`) corresponding to the mouse position on the
-            X axis of the signal widgets
-        :type position: int
-        """
-
-        # get annotated event ID
-        annot_id = self.annotEventIdFromPosition(position)
-
-        # check if an annotated event must be deleted
-        if annot_id >= 0:
-            # delete annotation
-            self.annotEventDelete(annot_id)
-
-
-    @staticmethod
-    def deleteLineInFile(path, line_id):
-        """
-        Class method for deleting a line in a txt file
-
-        :param path: path to the text file
-        :type path: str
-        :param line_id: number of the line to delete (zero-indexed)
-        :type line_id: int
-        """
-
-        # read annotation file lines
-        lines = ToolsData.getTxtLines(path)
-
-        # remove specified line
-        del lines[line_id]
-
-        # rewrite annotation file
-        with open(path, 'w') as file:
-            file.writelines(lines)
-
-
-    def annotEventDelete(self, annot_id):
-        """
-        Deletes a specific annotation for the current label
-
-        :param annot_id: index of the annotation to delete
-        :type annot_id: int
-        """
-
-        # delete annotation in the txt file
-        for annot_path in self.annotevent_path_list:
-            ViSiAnnoT.deleteLineInFile(annot_path, annot_id)
-
-        # update number of annotations
-        nb_annot = int(self.annotevent_button_label_list[2].text().split(': ')[1])
-        nb_annot = max(0, nb_annot - 1)
-        self.annotevent_button_label_list[2].setText("Nb: %d" % nb_annot)
-
-        # delete annotation description if necessary
-        if self.annotevent_current_label_id in \
-                self.annotevent_description_dict.keys():
-            description_dict = self.annotevent_description_dict[
-                self.annotevent_current_label_id
-            ]
-
-            if annot_id in description_dict.keys():
-                ViSiAnnoT.removeItemInWidgets(
-                    self.wid_sig_list, description_dict[annot_id]
-                )
-
-                del description_dict[annot_id]
-
-            elif annot_id == -1 and nb_annot in description_dict.keys():
-                ViSiAnnoT.removeItemInWidgets(
-                    self.wid_sig_list, description_dict[nb_annot]
-                )
-
-                del description_dict[nb_annot]
-
-        # if display mode is on, remove the deleted annotation
-        if self.annotevent_button_label_list[3].text() == "On":
-            self.removeRegionInWidgets(
-                self.region_annotation_dict[self.annotevent_current_label_id][annot_id]
-            )
-
-            del self.region_annotation_dict[self.annotevent_current_label_id][annot_id]
-
-
-    def annotEventShow(self):
-        """
-        Mananges the display of events annotation (on/off)
-        """
-
-        # if display mode is off, put it on
-        if self.annotevent_button_label_list[3].text() == "Off":
-            # notify that display mode is now on
-            self.annotevent_button_label_list[3].setText("On")
-
-            # display regions from the annotation file
-            self.plotAnnotEventRegions()
-
-        # display mode is on, put it off
-        else:
-            self.clearAnnotEventRegions()
-
-            # notify that display mode is now off
-            self.annotevent_button_label_list[3].setText("Off")
-
-
-    def annotEventCallPushButton(self, button_id):
-        """
-        Callback method managing events annotation with push buttons
-
-        Connected to the signal ``buttonClicked[int]`` of the attribute
-        attr:`.annotevent_button_group_push`.
-
-        There are 5 buttons and they have an effect on the current label:
-
-        - ``button_id == 0``: set annotation beginning datetime at the current
-          frame :attr:`.frame_id`
-        - ``button_id == 1``: set annotation ending datetime with the current
-          frame :attr;`.frame_id`
-        - ``button_id == 2``: add annotation defined by the current beginning
-          and ending datetimes
-        - ``button_id == 3``: delete last annotation
-        - ``button_id == 4``: on/off display
-
-        :param button_id: index of the button that has been pushed
-        :type button_id: int
-        """
-
-        # set beginning time of the annotated interval
-        if button_id == 0:
-            self.annotEventSetTime(self.frame_id, 0)
-
-        # set ending time of the annotated interval
-        elif button_id == 1:
-            self.annotEventSetTime(self.frame_id, 1)
-
-        # add the annotated interval to the annotation file
-        elif button_id == 2:
-            self.annotEventAdd()
-
-        # delete last annotation
-        elif button_id == 3:
-            # check if annotation file exists and annotation file is not empty
-            if os.path.isfile(self.annotevent_path_list[0]) and \
-                    int(self.annotevent_button_label_list[2].text().split(': ')[1]) > 0:
-                self.annotEventDelete(-1)
-
-            else:
-                print("Cannot delete annotation since annotation file does not exist or is empty.")
-
-        # display the annotated intervals
-        elif button_id == 4:
-            self.annotEventShow()
-
-
-    def plotAnnotEventRegions(self):
-        """
-        Plots events annotations, either only for the current label, or for all
-        lables (depending on the check box "Display all labels")
-
-        Make sure that the attribute :attr:`.region_annotation_dict`
-        is already created.
-
-        It checks if the display mode is on before plotting.
-
-        Connected to the signal ``buttonClicked`` of
-        :attr:`.annotevent_button_group_radio_disp` and
-        :attr:`.annotevent_button_group_check_custom`.
-        """
-
-        # check if display mode is on
-        if self.annotevent_button_label_list[3].text() == "On":
-            # get display mode
-            button_id = self.annotevent_button_group_radio_disp.checkedId()
-
-            # display current label
-            if button_id == 0:
-                plot_dict = {
-                    self.annotevent_current_label_id:
-                    self.annotevent_color_list[self.annotevent_current_label_id]
-                }
-
-            # display all labels
-            elif button_id == 1:
-                plot_dict = {}
-                for label_id, color in enumerate(self.annotevent_color_list):
-                    plot_dict[label_id] = color
-
-            # display custom
-            elif button_id == 2:
-                plot_dict = {}
-                for label_id, color in enumerate(self.annotevent_color_list):
-                    if self.annotevent_button_group_check_custom.button(label_id).isChecked():
-                        plot_dict[label_id] = color
-
-            # loop on labels already plotted
-            label_id_list = list(self.region_annotation_dict.keys())
-            for label_id in label_id_list:
-                # if label not to be plotted anymore
-                if label_id not in plot_dict.keys():
-                    # clear display
-                    self.clearAnnotEventRegionsSingleLabel(label_id)
-
-            # loop on labels to plot
-            for label_id, color in plot_dict.items():
-                # check if label not already displayed
-                if label_id not in self.region_annotation_dict.keys():
-                    # get annotation path
-                    label = self.annotevent_label_list[label_id]
-                    annot_path = self.annotEventGetPathList(label)[0]
-
-                    # initialize list of region items for the label
-                    region_annotation_list = []
-
-                    # check if annotation file exists
-                    if os.path.isfile(annot_path):
-                        # read annotation file
-                        lines = ToolsData.getTxtLines(annot_path)
-
-                        # loop on annotations
-                        for annot_line in lines:
-                            # display region
-                            annot_line_content = annot_line.split(' - ')
-
-                            region_list = self.annotEventAddRegion(
-                                annot_line_content[0],
-                                annot_line_content[1].replace("\n", ""),
-                                color=color
-                            )
-
-                            # append list of region items for the label
-                            region_annotation_list.append(region_list)
-
-                    # update dictionary of region items
-                    self.region_annotation_dict[label_id] = \
-                        region_annotation_list
-
-                    # display annotations description
-                    if label_id in self.annotevent_description_dict.keys():
-                        for description_list in \
-                                self.annotevent_description_dict[label_id].values():
-                            self.addItemToSignals(description_list)
-
-
-    def clearAnnotEventRegions(self):
-        """
-        Clears the display of events annotation for all labels (but does not
-        delete the annotations)
-        """
-
-        # loop on labels
-        for label_id in range(len(self.annotevent_label_list)):
-            self.clearAnnotEventRegionsSingleLabel(label_id)
-
-
-    def clearAnnotEventRegionsSingleLabel(self, label_id):
-        """
-        Clears the display of events annotation for a specific label
-
-        :param label_id: index of the label in the list
-            :attr:`.ViSiAnnoT.annotevent_label_list`
-        :type label_id: int
-        """
-
-        # clear annotations display
-        if label_id in self.region_annotation_dict.keys():
-            for region_list in self.region_annotation_dict[label_id]:
-                self.removeRegionInWidgets(region_list)
-            del self.region_annotation_dict[label_id]
-
-        # clear descriptions display
-        if label_id in self.annotevent_description_dict:
-            for description_list in \
-                    self.annotevent_description_dict[label_id].values():
-                ViSiAnnoT.removeItemInWidgets(
-                    self.wid_sig_list, description_list
-                )
-
-
-    def clearAllAnnotEventDescriptions(self):
-        """
-        Clears the display of all the descriptions of events annotation
-        """
-
-        for description_dict in self.annotevent_description_dict.values():
-            for description_list in description_dict.values():
-                ViSiAnnoT.removeItemInWidgets(
-                    self.wid_sig_list, description_list
-                )
-
-        self.annotevent_description_dict = {}
-
-
-    def annotEventAddRegion(self, bound_1, bound_2, **kwargs):
-        """
-        Displays a region in the progress bar and the signal widgets
-
-        It converts the bounds to frame numbers and then calls the
-        method :meth:`.ViSiAnnoT.addRegionToWidgets`.
-
-        :param bound_1: start datetime of the region
-        :type bound_1: str
-        :param bound_2: end datetime of the region
-        :type bound_2: str
-        :param kwargs: keyword arguments of
-            :meth:`.ViSiAnnoT.addRegionToWidgets`
-        """
-
-        # convert bounds to frame numbers
-        frame_1 = ToolsDateTime.convertAbsoluteDatetimeStringToFrame(
-            bound_1, self.fps, self.beginning_datetime,
-            time_zone=self.time_zone
-        )
-
-        frame_2 = ToolsDateTime.convertAbsoluteDatetimeStringToFrame(
-            bound_2, self.fps, self.beginning_datetime,
-            time_zone=self.time_zone
-        )
-
-        # check date-time (useful for longRec)
-        if frame_1 >= 0 and frame_1 < self.nframes \
-            or frame_2 >= 0 and frame_2 < self.nframes \
-                or frame_1 < 0 and frame_2 >= self.nframes:
-            # display region in each signal plot
-            region_list = self.addRegionToWidgets(frame_1, frame_2, **kwargs)
-
-            return region_list
-
-        else:
-            return []
 
 
     # *********************************************************************** #
@@ -2698,17 +1775,21 @@ class ViSiAnnoT():
         elif key == QtCore.Qt.Key_N and len(self.wid_sig_list) > 0:
             self.wid_visi.callback(self)
 
-        elif key == QtCore.Qt.Key_A and len(self.annotevent_label_list) > 0:
-            self.annotEventSetTime(self.frame_id, 0)
+        elif key == QtCore.Qt.Key_A and \
+                len(self.wid_annotevent.label_list) > 0:
+            self.wid_annotevent.setTimestamp(self, self.frame_id, 0)
 
-        elif key == QtCore.Qt.Key_Z and len(self.annotevent_label_list) > 0:
-            self.annotEventSetTime(self.frame_id, 1)
+        elif key == QtCore.Qt.Key_Z and \
+                len(self.wid_annotevent.label_list) > 0:
+            self.wid_annotevent.setTimestamp(self, self.frame_id, 1)
 
-        elif key == QtCore.Qt.Key_E and len(self.annotevent_label_list) > 0:
-            self.annotEventAdd()
+        elif key == QtCore.Qt.Key_E and \
+                len(self.wid_annotevent.label_list) > 0:
+            self.wid_annotevent.add(self)
 
-        elif key == QtCore.Qt.Key_S and len(self.annotevent_label_list) > 0:
-            self.annotEventShow()
+        elif key == QtCore.Qt.Key_S and \
+                len(self.wid_annotevent.label_list) > 0:
+            self.wid_annotevent.display(self)
 
         elif key == QtCore.Qt.Key_PageDown and self.flag_long_rec:
             self.changeFileInLongRec(self.rec_id - 1, 0)
@@ -2724,7 +1805,7 @@ class ViSiAnnoT():
 
         elif key == QtCore.Qt.Key_D and keyboard_modifiers == \
                 (QtCore.Qt.ControlModifier | QtCore.Qt.ShiftModifier):
-            self.clearAllAnnotEventDescriptions()
+            self.wid_annotevent.clearDescriptions(self)
 
 
     def keyRelease(self, ev):
@@ -2755,97 +1836,6 @@ class ViSiAnnoT():
     # *********************************************************************** #
     # Group: Methods for creating widgets
     # *********************************************************************** #
-
-
-    def createWidgetAnnotEvent(self, widget_position, nb_table=5):
-        """
-        Creates a widget with the events annotation tool and adds it to the
-        layout :attr:`.ViSiAnnoT.lay`
-
-        Make sure the attribute :attr:`.annotevent_label_list` is
-        defined before calling this method.
-
-        It sets the following attributes:
-
-        - :attr:`.annotevent_button_group_radio_label`
-        - :attr:`.annotevent_button_group_push` (must be initialized)
-        - :attr:`.annotevent_button_label_list` (must be initialized)
-        - :attr:`.annotevent_button_group_radio_disp`
-        - :attr:`.annotevent_button_group_check_custom`
-
-        :param widget_position: position of the widget in the layout, length 2
-            ``(row, col)`` or 4 ``(row, col, rowspan, colspan)``
-        :type widget_position: list or tuple
-        """
-
-        # create group box
-        grid, _ = ToolsPyQt.addGroupBox(self.lay, widget_position,
-                                        title="Events annotation")
-
-        # create widget with radio buttons (annotation labels)
-        _, _, self.annotevent_button_group_radio_label = \
-            ToolsPyQt.addWidgetButtonGroup(
-                grid, (0, 0, 1, 2), self.annotevent_label_list,
-                color_list=self.annotevent_color_list,
-                box_title="Current label selection",
-                nb_table=nb_table
-            )
-
-        # get number of annotations already stored (default first label)
-        if os.path.isfile(self.annotevent_path_list[0]):
-            lines = ToolsData.getTxtLines(self.annotevent_path_list[0])
-            nb_annot = len(lines)
-        else:
-            nb_annot = 0
-
-        # create push buttons with a label next to it
-        button_text_list = ["Start", "Stop", "Add", "Delete last", "Display"]
-        button_label_list = [
-            "YYYY-MM-DD hh:mm:ss.sss",
-            "YYYY-MM-DD hh:mm:ss.sss",
-            "Nb: %d" % nb_annot,
-            "",
-            "On"
-        ]
-
-        for ite_button, (text, label) in enumerate(zip(
-            button_text_list, button_label_list
-        )):
-            # add push button
-            push_button = ToolsPyQt.addPushButton(
-                grid, (1 + ite_button, 0), text,
-                flag_enable_key_interaction=False
-            )
-
-            # add push button to group for push buttons
-            self.annotevent_button_group_push.addButton(
-                push_button, ite_button
-            )
-
-            # add label next to the push button
-            if label != '':
-                q_label = QtWidgets.QLabel(label)
-                q_label.setAlignment(QtCore.Qt.AlignVCenter)
-                grid.addWidget(q_label, 1 + ite_button, 1)
-                self.annotevent_button_label_list.append(q_label)
-
-        # create widget with radio buttons (display options)
-        _, _, self.annotevent_button_group_radio_disp = \
-            ToolsPyQt.addWidgetButtonGroup(
-                grid, (2 + ite_button, 0, 1, 2),
-                ["Current label", "All labels", "Custom (below)"],
-                box_title="Display mode"
-            )
-
-        # create check boxes with labels
-        _, _, self.annotevent_button_group_check_custom = \
-            ToolsPyQt.addWidgetButtonGroup(
-                grid, (3 + ite_button, 0, 1, 2), self.annotevent_label_list,
-                color_list=self.annotevent_color_list,
-                box_title="Custom display",
-                button_type="check_box",
-                nb_table=nb_table
-            )
 
 
     def createWidgetAnnotImage(

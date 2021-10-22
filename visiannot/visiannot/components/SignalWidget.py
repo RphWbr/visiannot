@@ -357,8 +357,9 @@ class SignalWidget(pg.PlotWidget):
         On the other hand, it allows to define a new annotation and to add it
         the annotation file by calling the method
         :meth:`zoomOrAnnotClicked`. Also, it allows to delete
-        manually a specific annotation by calling the method
-        :meth:`.annotEventDeleteClicked`.
+        manually a specific event annotation by calling the method
+        :meth:`.deleteClicked` on the attribute
+        :attr:`.ViSiAnnoT.wid_annotevent`.
 
         It also updates the position of the temporal cursor by calling the
         method :meth:`.currentCursorClicked`.
@@ -385,12 +386,14 @@ class SignalWidget(pg.PlotWidget):
                 if keyboard_modifiers == \
                         (Qt.ControlModifier | Qt.ShiftModifier):
                     # only when display mode is on
-                    if visi.annotevent_button_label_list[3].text() == "On":
-                        visi.annotEventDeleteClicked(pos_frame)
+                    if visi.wid_annotevent.push_text_list[3].text() == "On":
+                        visi.wid_annotevent.deleteClicked(visi, pos_frame)
 
                 # alt key => display description
                 elif keyboard_modifiers == Qt.AltModifier:
-                    visi.annotEventDescription(ev, pos_frame, pos_ms)
+                    visi.wid_annotevent.description(
+                        visi, ev, pos_frame, pos_ms
+                    )
 
                 # no key modifier (only left button clicked)
                 else:
