@@ -108,8 +108,8 @@ class SignalWidget(pg.PlotWidget):
         self.cursor.setPos(0)
         self.addItem(self.cursor)
 
-        #: (*list*) Temporal intervals, each element is an instance of
-        #: **pyqtgraph.LinearRegionItem**
+        #: (*list*) Displayed temporal intervals, each element is a list of
+        #: instances of **pyqtgraph.LinearRegionItem**
         self.region_interval_list = []
 
         # add widget to the layout of the associated instance of ViSiAnnoT
@@ -246,9 +246,7 @@ class SignalWidget(pg.PlotWidget):
 
         # loop on intervals to plot
         for intervals, freq, color in interval_list:
-            self.region_interval_list += ToolsPyqtgraph.plotIntervals(
-                intervals, self, freq, color
-            )
+            self.plotIntervals(intervals, freq, color)
 
         # loop on thresholds to plot
         for value, color in threshold_list:
@@ -308,16 +306,63 @@ class SignalWidget(pg.PlotWidget):
                 # signal plot
                 sig_plot.setData(data_in_current_range)
 
-        # clear intervals regions
-        for region in self.region_interval_list:
-            self.removeItem(region)
-
         # plot intervals regions
-        self.region_interval_list = []
+        self.clearIntervalsRegions()
         for interval, freq, color in interval_list:
-            self.region_interval_list += ToolsPyqtgraph.plotIntervals(
-                interval, self, freq, color
+            self.plotIntervals(interval, freq, color)
+
+
+    def clearIntervalsRegions(self):
+        """
+        Clears the display of intervals regions
+
+        It sets the attribute :attr:`.region_interval_list` to an empty list.
+        """
+
+        for region_list in self.region_interval_list:
+            for region in region_list:
+                self.removeItem(region)
+
+        self.region_interval_list = []
+
+
+    def plotIntervals(self, data_interval, freq, color):
+        """
+        Plots intervals data as a region
+
+        It appends the attribute :attr:`.region_interval_list` with the
+        displayed region
+
+        :param data_interval: intervals to be displayed, shape
+            :math:`(n_{intervals}, 2)`, each line is an interval with start
+            frame and end frame (sampled at ``freq``), relatively to the start
+            timestamp of the data file) ; the intervals might be expressed in
+            milliseconds, then ``freq`` must be set to ``0``
+        :type data_interval: numpy array
+        :param freq: sampling frequency of intervals frames, set it to ``0`` if
+            intervals expressed in milliseconds
+        :type freq: float
+        :param color: plot color (RGBA)
+        :type color: tuple or list
+        """
+
+        region_list = []
+        for interval in data_interval:
+            det_0 = interval[0]
+            det_1 = interval[1]
+
+            # convert interval frames to milliseconds
+            if freq > 0:
+                det_0 = 1000.0 * det_0 / freq
+                det_1 = 1000.0 * det_1 / freq
+
+            # plot region
+            region = ToolsPyqtgraph.addRegionToWidget(
+                det_0, det_1, self, color
             )
+            region_list.append(region)
+
+        self.region_interval_list.append(region_list)
 
 
     def getMouseTemporalPosition(self, ev):
