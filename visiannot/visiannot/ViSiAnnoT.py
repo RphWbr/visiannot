@@ -1575,9 +1575,10 @@ class ViSiAnnoT():
 
             # in case the click is outside the zoom in area
             else:
-                if self.wid_annotevent.annot_array.size > 0:
-                    # reset annotation times
-                    self.wid_annotevent.resetTimestamp()
+                if self.wid_annotevent is not None:
+                    if self.wid_annotevent.annot_array.size > 0:
+                        # reset annotation times
+                        self.wid_annotevent.resetTimestamp()
 
             # remove zoom regions
             self.removeRegionInWidgets(self.region_zoom_list)
