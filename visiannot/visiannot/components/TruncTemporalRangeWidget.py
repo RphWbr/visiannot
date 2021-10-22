@@ -45,7 +45,8 @@ class TruncTemporalRangeWidget():
 
         # check trunc duration
         if self.trunc_duration[0] == 0 and self.trunc_duration[1] == 0:
-            print("Duration of truncated temporal range is 0 => widget not created")
+            print("Duration of truncated temporal range is 0 => widget not\
+                created")
 
         else:
             # create combo box and add it to the layout of the associated
@@ -89,7 +90,8 @@ class TruncTemporalRangeWidget():
         # check if truncated duration is above the total number of frames
         # => set it to 0
         if self.nframes_trunc > visi.nframes or self.nframes_trunc == 0:
-            print("Duration of truncated temporal range is above the current file duration => empty widget")
+            print("Duration of truncated temporal range is above the current\
+                file duration => empty widget")
             self.nframes_trunc = 0
             self.nb_trunc = 0
             self.combo_box.clear()
