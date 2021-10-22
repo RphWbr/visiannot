@@ -572,7 +572,8 @@ class ViSiAnnoT():
 
 
             else:
-                raise Exception("No layout configuration given - got mode %d, must be 1, 2 or 3" % layout_mode)
+                raise Exception("No layout configuration given - got mode %d,\
+                    must be 1, 2 or 3" % layout_mode)
 
 
         # ******************************************************************* #
@@ -674,7 +675,8 @@ class ViSiAnnoT():
             )
 
         else:
-            raise Exception("No widget position given for the progress bar => add key 'progress' to positional argument poswid_dict")
+            raise Exception("No widget position given for the progress bar =>\
+                add key 'progress' to positional argument poswid_dict")
 
 
         # ************************ video widgets **************************** #
@@ -760,7 +762,9 @@ class ViSiAnnoT():
                 )
 
             else:
-                raise Exception("No widget position given for the event annotation => add key 'annot_event' to positinal argument poswid_dict")
+                raise Exception("No widget position given for the event\
+                    annotation => add key 'annot_event' to positinal argument\
+                    poswid_dict")
 
         else:
             self.wid_annotevent = None
@@ -1884,7 +1888,10 @@ class ViSiAnnoT():
             for fps in fps_list[1:]:
                 if self.fps != fps and fps >= 0:
                     if '' not in video_dict.values():
-                        raise Exception('The 2 videos do not have the same FPS. %s - %s' % (list(video_dict.values())[0][0], path_video))
+                        raise Exception('The 2 videos do not have the same FPS.\
+                            %s - %s' % (
+                            list(video_dict.values())[0][0], path_video
+                        ))
 
 
         # ******************************************************************* #
