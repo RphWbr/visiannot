@@ -55,11 +55,11 @@ if __name__ == '__main__':
         default=''
     )
 
-    args = parser.parse_known_args()
-    config_path = abspath(args[0].config_path)
-    no_config_gui = args[0].no_config_gui
-    no_visi_gui = args[0].no_visi_gui
-    config_update_function = args[0].config_update_function
+    args, _ = parser.parse_known_args()
+    config_path = abspath(args.config_path)
+    no_config_gui = args.no_config_gui
+    no_visi_gui = args.no_visi_gui
+    config_update_function = args.config_update_function
 
     ####################
     # launch ViSiAnnoT #
