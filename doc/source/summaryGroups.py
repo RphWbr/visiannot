@@ -3,23 +3,9 @@
 import numpy as np
 from linecache import getline
 from importlib import import_module
-from os.path import isfile, split
-
-# global variables
-MODULE_NAME = "cfg"
-MODULE_PATH = "%s/%s.py" % (split(__file__)[0], MODULE_NAME)
-
-# get package name as a global variable
-print(MODULE_PATH)
-if isfile(MODULE_PATH):
-    PACKAGE_NAME = import_module(MODULE_NAME).PACKAGE_NAME
-    print(PACKAGE_NAME)
 
 
-def setPackageName(package_name):
-    with open(MODULE_PATH, 'w') as f:
-        f.write("# -*- coding: utf-8 -*-\n\n")
-        f.write("PACKAGE_NAME = '%s'\n" % package_name)
+PACKAGE_NAME = "visiannot"
 
 
 def groupParser(module_path):

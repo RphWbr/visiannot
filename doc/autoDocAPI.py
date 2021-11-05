@@ -8,7 +8,8 @@ from os.path import isdir, abspath
 from shutil import rmtree
 
 
-# global variable
+# global variables
+PACKAGE_NAME = "visiannot"
 INDEX_ROOT_NAME = "APIreference"
 INDEX_ROOT_TITLE = "API Reference"
 
@@ -327,5 +328,5 @@ for the creation of the ViSiAnnoT GUI.
 The summary of the modules can be found at the top of their respective page."""
 
     generateIndexFiles(
-        "visiannot", "..", text_top=text_top, text_bottom=text_bottom
+        PACKAGE_NAME, "..", text_top=text_top, text_bottom=text_bottom
     )
