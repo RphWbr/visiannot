@@ -791,22 +791,22 @@ def addComboBox(
     return grid, group_box, combo_box
 
 
-def deleteWidgetsFromLayout(grid, nb_items_to_delete):
+def deleteWidgetsFromLayout(grid, nb_items_to_delete=None):
     """
     Deletes a specified number of widgets in a grid layout
 
-    The widgets are deleted in the inverse order of creation in the parent
-    layout.
+    The widgets are deleted in the inverse order of creation in the layout.
 
-    :param grid: parent layout where widgets must be deleted
+    :param grid: layout where widgets must be deleted
     :type grid: QtWidgets.QGridLayout
-    :param nb_items_to_delete: number of widgets to delete
+    :param nb_items_to_delete: number of widgets to delete, by default all
+        widgets
     :type nb_items_to_delete: int
     """
 
     nb_items = grid.count()
 
-    if nb_items < nb_items_to_delete:
+    if nb_items_to_delete is None or nb_items < nb_items_to_delete:
         nb_items_to_delete = nb_items
 
     for i in reversed(range(nb_items - nb_items_to_delete, nb_items)):
