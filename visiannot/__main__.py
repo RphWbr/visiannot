@@ -34,7 +34,7 @@ if __name__ == '__main__':
         "-n",
         action="store",
         nargs='?',
-        help="specify if configuration GUI must be launched",
+        help="specify if configuration GUI must not be launched",
         default=0
     )
 
@@ -43,7 +43,7 @@ if __name__ == '__main__':
         "-m",
         action="store",
         nargs='?',
-        help="specify if ViSiAnnoT GUI must be launched",
+        help="specify if ViSiAnnoT GUI must not be launched",
         default=0
     )
 
