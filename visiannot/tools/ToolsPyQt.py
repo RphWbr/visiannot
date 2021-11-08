@@ -377,8 +377,10 @@ def addGroupBox(layout, position, title=""):
     return grid, group_box
 
 
-def addPushButton(layout, position, text,
-                  width=0, flag_enable_key_interaction=True, color=None):
+def addPushButton(
+    layout, position, text, width=0, flag_enable_key_interaction=True,
+    color=None
+):
     """
     Adds a push button to a grid layout
 
@@ -717,7 +719,8 @@ def addWidgetButtonGroup(
         elif button_type == "push":
             button = addPushButton(grid, position, label, **kwargs)
         else:
-            raise ValueError("Wrong type of button, got %s, it should be 'radio', 'push' or 'check_box'" % button)
+            raise ValueError("Wrong type of button, got %s, it should be\
+                'radio', 'push' or 'check_box'" % button)
 
         # add radio button to the group of radio buttons
         group_button.addButton(button, ite_label)
@@ -749,6 +752,9 @@ def addComboBox(
     :type item_list: list
     :param box_title: title of the group box containing the combo box
     :type box_title: str
+    :param flag_enable_key_interaction: specify if key press interaction is
+        enabled
+    :type flag_enable_key_interaction: bool
 
     :returns:
         - **grid** (*QtWidgets.QGridLayout*) -- layout filling the group box
