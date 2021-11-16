@@ -66,6 +66,7 @@ def convertIntervalsToTimeSeries(intervals, n_samples=0):
     the end time is set to n_samples.
 
     Example::
+
         >>> a = np.array([[4, 5], [9, 12], [16, -1]])
         >>> convertIntervalsToTimeSeries(a, 20)
         array([0., 0., 0., 0., 1., 0., 0., 0., 0., 1., 1., 1., 0., 0., 0., 0.,
@@ -104,6 +105,7 @@ def convertTimeSeriesToIntervals(data, value):
     :rtype: numpy array
 
     Example::
+
         >>> a = np.array([0, 0, 0, 0, 5, 1, 1, 1, 1, 5, 5, 5, 0, 0, 0, 0])
         >>> convertTimeSeriesToIntervals(a,0)
         array([[ 0,  4],
