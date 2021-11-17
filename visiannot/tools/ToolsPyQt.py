@@ -86,14 +86,32 @@ def initializeDisplay():
 
 def infiniteLoopDisplay(app):
     """
-    Creates an infinite loop for a given GUI application, so that the window
-    does not disappear right after being created
+    Creates an event loop for a given GUI application, so that the windows
+    do not disappear right after being created
 
-    :param app: instance of QtCore.QCoreApplication or QtWidgets.QApplication
+    :param app: GUI application
+    :type app: QtCore.QCoreApplication or QtWidgets.QApplication
     """
 
     if (flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
         app.instance().exec_()
+
+
+def infiniteLoopDisplayParallel(app, win):
+    """
+    Creates a specific event loop for a given window while an event loop is
+    already running, the specific event loop is stopped when the window is
+    closed
+
+    :param app: GUI application
+    :type app: QtCore.QCoreApplication or QtWidgets.QApplication
+    :param win: window on which the parallel event loop is applied
+    :type win: QtWidgets.QWidget
+    """
+
+    while win.isVisible():
+        app.processEvents()
+    app.processEvents()
 
 
 def getDirectoryDialog(desc_text="Select directory", dir_root=None):
