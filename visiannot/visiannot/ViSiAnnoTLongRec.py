@@ -544,7 +544,10 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 poswid_dict['progress'] = (3, 0, 1, nb_video + 4)
 
             else:
-                raise Exception("No layout configuration given - got mode %d, must be 1, 2 or 3" % layout_mode)
+                raise Exception(
+                    "No layout configuration given - got mode %d, "
+                    "must be 1, 2 or 3" % layout_mode
+                )
 
 
         # ******************************************************************* #
@@ -742,8 +745,11 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 config_current_list.append(configuration[0])
 
             elif flag_raise_exception:
-                raise Exception('wrong input data directory\ngot: %s - %s' %
-                                (type_data, data_dir))
+                raise Exception(
+                    'wrong input data directory, got: %s - %s' % (
+                        type_data, data_dir
+                    )
+                )
 
         return config_whole_rec_list, config_current_list
 
@@ -895,7 +901,8 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 # check length of signal file beginning before video
                 if data_ending_datetime_list[before_video_sig_array[-1]] > \
                         video_date_time:
-                    # update list of signal files sharing temporality with video
+                    # update list of signal files sharing temporality with
+                    # video
                     sig_file_id_list = np.hstack((
                         before_video_sig_array[-1], sig_file_id_list
                     ))

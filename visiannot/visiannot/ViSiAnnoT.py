@@ -572,8 +572,10 @@ class ViSiAnnoT():
 
 
             else:
-                raise Exception("No layout configuration given - got mode %d,\
-                    must be 1, 2 or 3" % layout_mode)
+                raise Exception(
+                    "No layout configuration given - got mode %d, "
+                    "must be 1, 2 or 3" % layout_mode
+                )
 
 
         # ******************************************************************* #
@@ -675,8 +677,10 @@ class ViSiAnnoT():
             )
 
         else:
-            raise Exception("No widget position given for the progress bar =>\
-                add key 'progress' to positional argument poswid_dict")
+            raise Exception(
+                "No widget position given for the progress bar => "
+                "add key 'progress' to positional argument poswid_dict"
+            )
 
 
         # ************************ video widgets **************************** #
@@ -762,9 +766,10 @@ class ViSiAnnoT():
                 )
 
             else:
-                raise Exception("No widget position given for the event\
-                    annotation => add key 'annot_event' to positinal argument\
-                    poswid_dict")
+                raise Exception(
+                    "No widget position given for the event annotation => "
+                    "add key 'annot_event' to positinal argument poswid_dict"
+                )
 
         else:
             self.wid_annotevent = None
@@ -788,9 +793,10 @@ class ViSiAnnoT():
                 )
 
             else:
-                raise Exception("No widget position given for the image\
-                    annotation => add key 'annot_image' to positinal argument\
-                    poswid_dict")
+                raise Exception(
+                    "No widget position given for the image annotation => "
+                    "add key 'annot_image' to positinal argument poswid_dict"
+                )
 
         else:
             self.wid_annotimage = None
@@ -1886,8 +1892,8 @@ class ViSiAnnoT():
             # get beginning datetime of the video
             self.beginning_datetime = beginning_datetime_list[ite_vid]
 
-        # check if more than 2 videos
-        if len(nframes_list) >= 2:
+        # check if more than 1 video
+        if len(nframes_list) > 1:
             # update number of frames
             self.nframes = max(nframes_list)
 
@@ -1895,10 +1901,12 @@ class ViSiAnnoT():
             for fps in fps_list[1:]:
                 if self.fps != fps and fps >= 0:
                     if '' not in video_dict.values():
-                        raise Exception('The 2 videos do not have the same FPS.\
-                            %s - %s' % (
-                            list(video_dict.values())[0][0], path_video
-                        ))
+                        raise Exception(
+                            "The 2 videos do not have the same FPS: "
+                            "%s - %s" % (
+                                list(video_dict.values())[0][0], path_video
+                            )
+                        )
 
 
         # ******************************************************************* #
@@ -1955,8 +1963,9 @@ class ViSiAnnoT():
             sig_list_tmp = []
 
             # loop on sub-signals
-            for ite_data, (path_data, key_data, freq_data, _, _, _, plot_style) \
-                    in enumerate(data_info_list):
+            for ite_data, (
+                path_data, key_data, freq_data, _, _, _, plot_style
+            ) in enumerate(data_info_list):
                 # ******************** load intervals *********************** #
                 if type_data in interval_dict.keys():
                     # initialize dictionary value
@@ -2049,7 +2058,12 @@ class ViSiAnnoT():
                     if ite_data < len(self.plot_style_list):
                         plot_style = self.plot_style_list[ite_data]
                     else:
-                        raise Exception("No plot style provided for signal %s - %s (sub-id %d) and cannot use the default style." % (type_data, key_data, ite_data))
+                        raise Exception(
+                            "No plot style provided for signal %s - %s "
+                            "(sub-id %d) and cannot use the default style" % (
+                                type_data, key_data, ite_data
+                            )
+                        )
 
                 # create an instance of Signal
                 signal = Signal(
@@ -2193,7 +2207,8 @@ class ViSiAnnoT():
 
                             # get the end frame
                             end_frame = int(round(
-                                freq_data * self.nframes / self.fps - data_length
+                                freq_data * self.nframes / self.fps -
+                                data_length
                             ))
 
                             next_data = next_data[:end_frame]
@@ -2203,7 +2218,8 @@ class ViSiAnnoT():
                             if start_sec_prev != -1:
                                 inds = np.where(
                                     next_data[:, 0] <= (
-                                        self.nframes / self.fps - start_sec_prev
+                                        self.nframes / self.fps -
+                                        start_sec_prev
                                     ) * 1000
                                 )[0]
 
@@ -2214,7 +2230,8 @@ class ViSiAnnoT():
 
                             else:
                                 inds = np.where(
-                                    next_data[:, 0] <= 1000 * self.nframes / self.fps
+                                    next_data[:, 0] <=
+                                    1000 * self.nframes / self.fps
                                 )[0]
 
                                 next_data = next_data[inds]
@@ -2226,7 +2243,8 @@ class ViSiAnnoT():
 
             # check if 2D and zero fill at the beginning
             if len(data_list) > 1:
-                if len(data_list[0].shape) == 1 and len(data_list[1].shape) == 2:
+                if len(data_list[0].shape) == 1 \
+                        and len(data_list[1].shape) == 2:
                     zero_length = data_list[0].shape[0]
                     if freq_data == 0:
                         data_list[0] = np.empty((0, 2))

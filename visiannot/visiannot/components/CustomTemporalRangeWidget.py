@@ -163,11 +163,17 @@ class CustomTemporalRangeWidget():
 
                 if new_rec_id.shape[0] == 0:
                     coherence = False
-                    print("wrong input: start time is above the ending of the recordings")
+                    print(
+                        "wrong input: start time is above the ending of the "
+                        "recordings"
+                    )
 
                 elif new_rec_id.shape[0] == start_rec_diff_array.shape[0]:
                     coherence = False
-                    print("wrong input: start time is below the beginning of the recording")
+                    print(
+                        "wrong input: start time is below the beginning of "
+                        "the recording"
+                    )
 
                 else:
                     # change recording
@@ -175,7 +181,11 @@ class CustomTemporalRangeWidget():
                     coherence = visi.prepareNewRecording(new_rec_id)
 
             else:
-                print("wrong input: start time is below the beginning of the recordings or above the ending of the recording")
+                print(
+                    "wrong input: start time is below the beginning of the "
+                    "recordings or above the ending of the recording"
+                )
+
                 coherence = False
 
         # go for it

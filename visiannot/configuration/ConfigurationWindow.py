@@ -137,7 +137,10 @@ class ConfigurationWindow():
         # ******************** create video widget ************************** #
 
         self.meta_dict["Video"] = Configuration(
-            self.lay, (0, 0), "Video", 1,
+            self.lay,
+            (0, 0),
+            "Video",
+            1,
             [
                 ("edit", 1, {}), ("edit", 1, {}), ("edit", 1, {}),
                 ("spin", 1, {"minimum": -2}), ("edit", 1, {})
@@ -148,7 +151,9 @@ class ConfigurationWindow():
             3. Timestamp delimiter\
             4. Timestamp position\
             5. Timestamp format",
-            config_base_name="vid_", pos_dir=0, flag_dir_identical=True
+            config_base_name="vid_",
+            pos_dir=0,
+            flag_dir_identical=True
         )
 
         # add configuration group box to scroll area
@@ -158,7 +163,10 @@ class ConfigurationWindow():
         # ******************** create signal widget ************************* #
 
         self.meta_dict["Signal"] = Configuration(
-            self.lay, (1, 0), "Signal", 2,
+            self.lay,
+            (1, 0),
+            "Signal",
+            2,
             [
                 ("edit", 1, {}), ("edit", 1, {}), ("edit_freq", 1, {}),
                 ("edit", 1, {}), ("edit", 1, {}), ("spin", 1, {"minimum": -2}),
@@ -174,7 +182,9 @@ class ConfigurationWindow():
             7. Timestamp position\
             8. Timestamp format\
             9. Plot style (default is None)",
-            pos_dir=0, flag_dir_identical=True, flag_key=True,
+            pos_dir=0,
+            flag_dir_identical=True,
+            flag_key=True,
             config_base_name="sig_",
             children_config_name_list=["Interval", "Threshold", "YRange"]
         )
@@ -191,7 +201,10 @@ class ConfigurationWindow():
         # **************** create annotEvent widget ************************* #
 
         self.meta_dict["AnnotEvent"] = Configuration(
-            self.lay, (2, 0), "AnnotEvent", 1,
+            self.lay,
+            (2, 0),
+            "AnnotEvent",
+            1,
             [
                 ("spin", 4, [
                     {"minimum": 0, "maximum": 255},
@@ -202,7 +215,9 @@ class ConfigurationWindow():
             ],
             (0, 0, 0, 50),
             help_text="1. Label\
-            2. Color (RGBA)", flag_key=True, config_base_name="label_"
+            2. Color (RGBA)",
+            flag_key=True,
+            config_base_name="label_"
         )
 
         # add configuration group box to scroll area
@@ -257,7 +272,9 @@ class ConfigurationWindow():
 
         # interval configuration
         self.createChildConfigurationWindow(
-            self.meta_dict["Signal"], "Interval", 2,
+            self.meta_dict["Signal"],
+            "Interval",
+            2,
             [
                 ("edit", 1, {}), ("edit", 1, {}), ("edit_freq", 1, {}),
                 ("edit", 1, {}), ("edit", 1, {}), ("edit", 1, {}),
@@ -277,13 +294,16 @@ class ConfigurationWindow():
             6. Timestamp position\
             7. Timestamp format\
             8. Color (RGBA)",
-            pos_dir=0, flag_dir_identical=True,
+            pos_dir=0,
+            flag_dir_identical=True,
             win_size=(1200, 400)
         )
 
         # threshold configuration
         self.createChildConfigurationWindow(
-            self.meta_dict["Signal"], "Threshold", 2,
+            self.meta_dict["Signal"],
+            "Threshold",
+            2,
             [
                 ("edit_float", 1, {}),
                 ("spin", 4, [
@@ -301,7 +321,9 @@ class ConfigurationWindow():
 
         # Y range configuration
         self.createChildConfigurationWindow(
-            self.meta_dict["Signal"], "YRange", 1,
+            self.meta_dict["Signal"],
+            "YRange",
+            1,
             [("edit_float", 1, {}), ("edit_float", 1, {})],
             [0, 0],
             help_text="1. Min value\

@@ -737,8 +737,10 @@ def addWidgetButtonGroup(
         elif button_type == "push":
             button = addPushButton(grid, position, label, **kwargs)
         else:
-            raise ValueError("Wrong type of button, got %s, it should be\
-                'radio', 'push' or 'check_box'" % button)
+            raise ValueError(
+                "Wrong type of button, got %s, it should be 'radio', 'push' "
+                "or 'check_box'" % button
+            )
 
         # add radio button to the group of radio buttons
         group_button.addButton(button, ite_label)
@@ -851,12 +853,9 @@ def setStyleSheet(app, font_name, font_size, font_color, qobj_list):
     """
 
     # get style sheet string
-    style_string = \
-        """color: rgb(%d,%d,%d); font: %s; font-size: %dpt""" % (font_color[0],
-                                                                 font_color[1],
-                                                                 font_color[2],
-                                                                 font_name,
-                                                                 font_size)
+    style_string = "color: rgb(%d,%d,%d); font: %s; font-size: %dpt" % (
+        font_color[0], font_color[1], font_color[2], font_name, font_size
+    )
 
     style_sheet_string = ""
     for qobj in qobj_list:

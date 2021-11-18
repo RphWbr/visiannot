@@ -590,7 +590,10 @@ class AnnotEventWidget():
                 self.delete(visi, -1)
 
             else:
-                print("Cannot delete annotation since annotation file does not exist or is empty.")
+                print(
+                    "Cannot delete annotation since annotation file does not "
+                    "exist or is empty"
+                )
 
         # display the annotated intervals
         elif button_id == 4:
@@ -836,7 +839,8 @@ class AnnotEventWidget():
             # display current label
             if button_id == 0:
                 plot_dict = {
-                    self.current_label_id: self.color_list[self.current_label_id]
+                    self.current_label_id:
+                    self.color_list[self.current_label_id]
                 }
 
             # display all labels

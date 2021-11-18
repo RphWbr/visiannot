@@ -628,8 +628,8 @@ class Configuration():
 
                         elif elt_type == "edit_float":
                             raise Warning(
-                                "Wrong value in %s configuration n°%d, \
-                                element %d, expected a float, got %s" % (
+                                "Wrong value in %s configuration n°%d, "
+                                "element %d, expected a float, got %s" % (
                                     self.type, row_ind + 1,
                                     start_col_ind + ite_elt + 1, value
                                 )

@@ -564,7 +564,7 @@ def addLegendTo2DWidget(
                               1, wid_pos[3])
 
         # check if the legend widget has already been created
-        if layout.itemAtPosition(legend_wid_pos[0], legend_wid_pos[1]) == None:
+        if layout.itemAtPosition(legend_wid_pos[0], legend_wid_pos[1]) is None:
             # create the legend widget
             legend_widget = create2DWidget(
                 layout, legend_wid_pos, axes_label_dict={}

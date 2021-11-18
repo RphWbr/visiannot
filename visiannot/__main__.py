@@ -51,7 +51,10 @@ if __name__ == '__main__':
         "--config-update-function",
         "-u",
         type=str,
-        help="name of a function to call before launching ViSiAnnoT (one positional argument: configuration path / returns updated configuration dictionary), module_name.function_name or package_name.subpackage_name.function_name",
+        help="name of a function to call before launching ViSiAnnoT (one "
+        "positional argument: configuration path / returns updated "
+        "configuration dictionary), module_name.function_name or "
+        "package_name.subpackage_name.function_name",
         default=''
     )
 
