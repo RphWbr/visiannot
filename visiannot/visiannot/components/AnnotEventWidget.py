@@ -538,9 +538,16 @@ class AnnotEventWidget():
                     line.split(" - ")[1], "format_T", time_zone=visi.time_zone
                 )
 
+                diff_start = (
+                    position_date_time - start_date_time
+                ).total_seconds()
+
+                diff_end = (
+                    end_date_time - position_date_time
+                ).total_seconds()
+
                 # check if mouse position is in the annotation interval
-                if (position_date_time - start_date_time).total_seconds() >= 0 and \
-                        (end_date_time - position_date_time).total_seconds() >= 0:
+                if diff_start >= 0 and diff_end >= 0:
                     annot_id = ite_annot
                     break
 
@@ -692,8 +699,12 @@ class AnnotEventWidget():
                 with open(annot_path, 'a') as file:
                     file.write(
                         "%s - %s\n" % (
-                            self.annot_array[self.current_label_id, 0, ite_annot_type],
-                            self.annot_array[self.current_label_id, 1, ite_annot_type]
+                            self.annot_array[
+                                self.current_label_id, 0, ite_annot_type
+                            ],
+                            self.annot_array[
+                                self.current_label_id, 1, ite_annot_type
+                            ]
                         )
                     )
 
@@ -853,7 +864,9 @@ class AnnotEventWidget():
             elif button_id == 2:
                 plot_dict = {}
                 for label_id, color in enumerate(self.color_list):
-                    if self.button_group_check_custom.button(label_id).isChecked():
+                    if self.button_group_check_custom.button(
+                        label_id
+                    ).isChecked():
                         plot_dict[label_id] = color
 
             # loop on labels already plotted

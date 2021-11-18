@@ -629,7 +629,9 @@ def createWindow(
     if len(bg_color) == 3:
         color = QtGui.QColor(bg_color[0], bg_color[1], bg_color[2])
     elif len(bg_color) == 4:
-        color = QtGui.QColor(bg_color[0], bg_color[1], bg_color[2], bg_color[3])
+        color = QtGui.QColor(
+            bg_color[0], bg_color[1], bg_color[2], bg_color[3]
+        )
 
     palette = QtGui.QPalette()
     palette.setColor(QtGui.QPalette.Window, color)
