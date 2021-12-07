@@ -2,10 +2,16 @@
 visiannot.visiannot.components.LogoWidgets
 ==========================================
 
-.. automodule:: visiannot.visiannot.components.LogoWidgets
-
 Summary
 =======
+
+.. automodule:: visiannot.visiannot.components.LogoWidgets
+
+Data
+----
+
+.. autosummary::
+   visiannot.visiannot.components.LogoWidgets.MODULE_DIR
 
 Classes
 -------
@@ -21,6 +27,11 @@ Classes
 
 API
 ===
+
+Data
+----
+
+.. autodata:: visiannot.visiannot.components.LogoWidgets.MODULE_DIR
 
 Class FullVisiWidget
 --------------------

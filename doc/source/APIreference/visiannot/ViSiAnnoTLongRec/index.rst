@@ -2,10 +2,10 @@
 visiannot.visiannot.ViSiAnnoTLongRec
 ====================================
 
-.. automodule:: visiannot.visiannot.ViSiAnnoTLongRec
-
 Summary
 =======
+
+.. automodule:: visiannot.visiannot.ViSiAnnoTLongRec
 
 Classes
 -------

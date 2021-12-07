@@ -2,10 +2,10 @@
 visiannot.configuration.configUpdateExamples
 ============================================
 
-.. automodule:: visiannot.configuration.configUpdateExamples
-
 Summary
 =======
+
+.. automodule:: visiannot.configuration.configUpdateExamples
 
 Functions
 ---------
@@ -20,3 +20,4 @@ Functions
 ---------
 
 .. autofunction:: visiannot.configuration.configUpdateExamples.updateDataAndAnnotationDirectory
+

@@ -2,10 +2,10 @@
 visiannot.tools.ToolsData
 =========================
 
-.. automodule:: visiannot.tools.ToolsData
-
 Summary
 =======
+
+.. automodule:: visiannot.tools.ToolsData
 
 Functions
 ---------
@@ -42,3 +42,4 @@ Functions
 .. autofunction:: visiannot.tools.ToolsData.getTxtLines
 .. autofunction:: visiannot.tools.ToolsData.getWorkingDirectory
 .. autofunction:: visiannot.tools.ToolsData.recursiveReadH5
+

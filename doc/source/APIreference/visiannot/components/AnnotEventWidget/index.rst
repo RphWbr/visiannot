@@ -2,10 +2,10 @@
 visiannot.visiannot.components.AnnotEventWidget
 ===============================================
 
-.. automodule:: visiannot.visiannot.components.AnnotEventWidget
-
 Summary
 =======
+
+.. automodule:: visiannot.visiannot.components.AnnotEventWidget
 
 Classes
 -------

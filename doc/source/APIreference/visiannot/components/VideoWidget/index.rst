@@ -2,10 +2,10 @@
 visiannot.visiannot.components.VideoWidget
 ==========================================
 
-.. automodule:: visiannot.visiannot.components.VideoWidget
-
 Summary
 =======
+
+.. automodule:: visiannot.visiannot.components.VideoWidget
 
 Classes
 -------

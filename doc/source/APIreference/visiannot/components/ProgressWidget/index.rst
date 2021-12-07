@@ -2,10 +2,10 @@
 visiannot.visiannot.components.ProgressWidget
 =============================================
 
-.. automodule:: visiannot.visiannot.components.ProgressWidget
-
 Summary
 =======
+
+.. automodule:: visiannot.visiannot.components.ProgressWidget
 
 Classes
 -------

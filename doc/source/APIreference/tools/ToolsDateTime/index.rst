@@ -2,10 +2,10 @@
 visiannot.tools.ToolsDateTime
 =============================
 
-.. automodule:: visiannot.tools.ToolsDateTime
-
 Summary
 =======
+
+.. automodule:: visiannot.tools.ToolsDateTime
 
 Functions
 ---------
@@ -50,3 +50,4 @@ Functions
 .. autofunction:: visiannot.tools.ToolsDateTime.convertTimeToString
 .. autofunction:: visiannot.tools.ToolsDateTime.getBeginningEndingDateTimeFromList
 .. autofunction:: visiannot.tools.ToolsDateTime.getDatetimeFromPath
+

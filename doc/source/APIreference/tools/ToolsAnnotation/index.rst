@@ -2,10 +2,10 @@
 visiannot.tools.ToolsAnnotation
 ===============================
 
-.. automodule:: visiannot.tools.ToolsAnnotation
-
 Summary
 =======
+
+.. automodule:: visiannot.tools.ToolsAnnotation
 
 Functions
 ---------
@@ -26,3 +26,4 @@ Functions
 .. autofunction:: visiannot.tools.ToolsAnnotation.convertAnnotArray
 .. autofunction:: visiannot.tools.ToolsAnnotation.readAnnotFrames
 .. autofunction:: visiannot.tools.ToolsAnnotation.readAnnotation
+

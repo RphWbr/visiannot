@@ -2,10 +2,10 @@
 visiannot.visiannot.components.CustomTemporalRangeWidget
 ========================================================
 
-.. automodule:: visiannot.visiannot.components.CustomTemporalRangeWidget
-
 Summary
 =======
+
+.. automodule:: visiannot.visiannot.components.CustomTemporalRangeWidget
 
 Classes
 -------

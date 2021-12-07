@@ -2,10 +2,10 @@
 visiannot.visiannot.components.TruncTemporalRangeWidget
 =======================================================
 
-.. automodule:: visiannot.visiannot.components.TruncTemporalRangeWidget
-
 Summary
 =======
+
+.. automodule:: visiannot.visiannot.components.TruncTemporalRangeWidget
 
 Classes
 -------

@@ -2,10 +2,10 @@
 visiannot.visiannot.components.MenuBar
 ======================================
 
-.. automodule:: visiannot.visiannot.components.MenuBar
-
 Summary
 =======
+
+.. automodule:: visiannot.visiannot.components.MenuBar
 
 Classes
 -------

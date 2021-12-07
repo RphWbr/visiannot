@@ -2,10 +2,10 @@
 visiannot.visiannot.components.FromCursorTemporalRangeWidget
 ============================================================
 
-.. automodule:: visiannot.visiannot.components.FromCursorTemporalRangeWidget
-
 Summary
 =======
+
+.. automodule:: visiannot.visiannot.components.FromCursorTemporalRangeWidget
 
 Classes
 -------

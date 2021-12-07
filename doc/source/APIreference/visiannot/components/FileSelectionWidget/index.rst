@@ -2,10 +2,10 @@
 visiannot.visiannot.components.FileSelectionWidget
 ==================================================
 
-.. automodule:: visiannot.visiannot.components.FileSelectionWidget
-
 Summary
 =======
+
+.. automodule:: visiannot.visiannot.components.FileSelectionWidget
 
 Classes
 -------

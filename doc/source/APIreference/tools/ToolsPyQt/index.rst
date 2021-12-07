@@ -2,10 +2,17 @@
 visiannot.tools.ToolsPyQt
 =========================
 
-.. automodule:: visiannot.tools.ToolsPyQt
-
 Summary
 =======
+
+.. automodule:: visiannot.tools.ToolsPyQt
+
+Data
+----
+
+.. autosummary::
+   visiannot.tools.ToolsPyQt.argv
+   visiannot.tools.ToolsPyQt.flags
 
 Classes
 -------
@@ -33,6 +40,7 @@ Functions
    visiannot.tools.ToolsPyQt.deleteWidgetsFromLayout
    visiannot.tools.ToolsPyQt.getDirectoryDialog
    visiannot.tools.ToolsPyQt.infiniteLoopDisplay
+   visiannot.tools.ToolsPyQt.infiniteLoopDisplayParallel
    visiannot.tools.ToolsPyQt.initializeDisplay
    visiannot.tools.ToolsPyQt.setLineEditList
    visiannot.tools.ToolsPyQt.setSpinBoxTable
@@ -40,6 +48,12 @@ Functions
 
 API
 ===
+
+Data
+----
+
+.. autodata:: visiannot.tools.ToolsPyQt.argv
+.. autodata:: visiannot.tools.ToolsPyQt.flags
 
 Class ComboBox
 --------------
@@ -85,7 +99,9 @@ Functions
 .. autofunction:: visiannot.tools.ToolsPyQt.deleteWidgetsFromLayout
 .. autofunction:: visiannot.tools.ToolsPyQt.getDirectoryDialog
 .. autofunction:: visiannot.tools.ToolsPyQt.infiniteLoopDisplay
+.. autofunction:: visiannot.tools.ToolsPyQt.infiniteLoopDisplayParallel
 .. autofunction:: visiannot.tools.ToolsPyQt.initializeDisplay
 .. autofunction:: visiannot.tools.ToolsPyQt.setLineEditList
 .. autofunction:: visiannot.tools.ToolsPyQt.setSpinBoxTable
 .. autofunction:: visiannot.tools.ToolsPyQt.setStyleSheet
+

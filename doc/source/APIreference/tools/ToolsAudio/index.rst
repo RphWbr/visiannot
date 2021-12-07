@@ -2,10 +2,10 @@
 visiannot.tools.ToolsAudio
 ==========================
 
-.. automodule:: visiannot.tools.ToolsAudio
-
 Summary
 =======
+
+.. automodule:: visiannot.tools.ToolsAudio
 
 Functions
 ---------
@@ -24,3 +24,4 @@ Functions
 .. autofunction:: visiannot.tools.ToolsAudio.convertKeyToChannelId
 .. autofunction:: visiannot.tools.ToolsAudio.getAudioWaveFrequency
 .. autofunction:: visiannot.tools.ToolsAudio.getDataAudio
+

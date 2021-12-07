@@ -2,10 +2,10 @@
 visiannot.visiannot.ViSiAnnoTLongRecFromConfigGUI
 =================================================
 
-.. automodule:: visiannot.visiannot.ViSiAnnoTLongRecFromConfigGUI
-
 Summary
 =======
+
+.. automodule:: visiannot.visiannot.ViSiAnnoTLongRecFromConfigGUI
 
 Classes
 -------

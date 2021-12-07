@@ -2,10 +2,10 @@
 visiannot.visiannot.components.AnnotImageWidget
 ===============================================
 
-.. automodule:: visiannot.visiannot.components.AnnotImageWidget
-
 Summary
 =======
+
+.. automodule:: visiannot.visiannot.components.AnnotImageWidget
 
 Classes
 -------

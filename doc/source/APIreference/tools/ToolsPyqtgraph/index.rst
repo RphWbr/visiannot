@@ -2,10 +2,10 @@
 visiannot.tools.ToolsPyqtgraph
 ==============================
 
-.. automodule:: visiannot.tools.ToolsPyqtgraph
-
 Summary
 =======
+
+.. automodule:: visiannot.tools.ToolsPyqtgraph
 
 Functions
 ---------
@@ -54,3 +54,4 @@ Functions
 .. autofunction:: visiannot.tools.ToolsPyqtgraph.setBackgroundColor
 .. autofunction:: visiannot.tools.ToolsPyqtgraph.setTemporalTicks
 .. autofunction:: visiannot.tools.ToolsPyqtgraph.setTicksTextStyle
+

@@ -2,10 +2,10 @@
 visiannot.visiannot.ViSiAnnoT
 =============================
 
-.. automodule:: visiannot.visiannot.ViSiAnnoT
-
 Summary
 =======
+
+.. automodule:: visiannot.visiannot.ViSiAnnoT
 
 Classes
 -------

@@ -2,10 +2,10 @@
 visiannot.visiannot.components.SignalWidget
 ===========================================
 
-.. automodule:: visiannot.visiannot.components.SignalWidget
-
 Summary
 =======
+
+.. automodule:: visiannot.visiannot.components.SignalWidget
 
 Classes
 -------
