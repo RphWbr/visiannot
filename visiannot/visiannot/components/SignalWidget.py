@@ -97,7 +97,7 @@ class SignalWidget(pg.PlotWidget):
         self.setAxesStyle(**kwargs)
 
         #: (*list*) Signal plots in the widget, each element corresponds to one
-        #: signal and is an instance of **pyqtgraph.PllotDataItem**
+        #: signal and is an instance of **pyqtgraph.PlotDataItem**
         self.plot_list = []
 
         #: (*pyqtgraph.InfiniteLine*) Temporal cursor

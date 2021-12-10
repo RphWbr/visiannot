@@ -1120,3 +1120,8 @@ class AnnotEventWidget():
                 removeItemInWidgets(visi.wid_sig_list, description_list)
 
         self.description_dict = {}
+
+
+    # *********************************************************************** #
+    # End group
+    # *********************************************************************** #

@@ -725,21 +725,26 @@ def addWidgetButtonGroup(
         if flag_horizontal:
             if nb_table == 0:
                 position = (0, ite_label)
+
             else:
                 position = (int(ite_label / nb_table), ite_label % nb_table)
         else:
             if nb_table == 0:
                 position = (ite_label, 0)
+
             else:
                 position = (ite_label % nb_table, int(ite_label / nb_table))
 
         # create button and add it to the layout
         if button_type == "radio":
             button = addRadioButton(grid, position, label, **kwargs)
+
         elif button_type == "check_box":
             button = addCheckBox(grid, position, label, **kwargs)
+
         elif button_type == "push":
             button = addPushButton(grid, position, label, **kwargs)
+
         else:
             raise ValueError(
                 "Wrong type of button, got %s, it should be 'radio', 'push' "
