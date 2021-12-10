@@ -565,8 +565,10 @@ def addScrollArea(
     # create scroll area
     if flag_ignore_wheel_event:
         scroll_area = ScrollArea()
+
     else:
         scroll_area = QtWidgets.QScrollArea()
+
     scroll_area.setWidgetResizable(True)
 
     # set size
