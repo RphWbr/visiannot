@@ -7,7 +7,7 @@
 # http://www.cecill.info
 
 """
-Module defining :class:`.Configuration`
+Module defining class :class:`.Configuration`
 """
 
 
@@ -1014,7 +1014,7 @@ class Configuration():
             config_grid, (sub_ind, col_ind), "Delete"
         )
 
-        # add to button group button
+        # add to button group
         self.button_group_del.addButton(
             push_button_del, np.cumsum(self.nb_sub_list)[-1]
         )
