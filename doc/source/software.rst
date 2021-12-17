@@ -12,6 +12,7 @@ The tree view of source files is reported below::
           |__ Configuration.py
           |__ ConfigurationWindow.py
           |__ __init__.py
+          |__ configUpdateExamples.py
       |__ visiannot/tools
           |__ ToolsAnnotation.py
           |__ ToolsAudio.py
@@ -25,16 +26,25 @@ The tree view of source files is reported below::
           |__ visiannot/visiannot/components
               |__ visiannot/visiannot/components/Images
                   |__ DIGI-NEWB.jpg
+                  |__ next.jpg
+                  |__ previous.jpg
+                  |__ visibility.jpg
+                  |__ zoomin.jpg
+                  |__ zoomout.jpg
               |__ MenuBar.py
               |__ Signal.py
               |__ WindowsPopUp.py
               |__ __init__.py
-          |__ visiannot/visiannot/Images
-              |__ next.jpg
-              |__ previous.jpg
-              |__ visibility.jpg
-              |__ zoomin.jpg
-              |__ zoomout.jpg
+              |__ AnnotEventWidget.py
+              |__ AnnotImageWidget.py
+              |__ CustomTemporalRangeWidget.py
+              |__ FileSelectionWidget.py
+              |__ FromCursorTemporalRangeWidget.py
+              |__ LogoWidgets.py
+              |__ ProgressWidget.py
+              |__ SignalWidget.py
+              |__ TruncTemporalRangeWidget.py
+              |__ VideoWidget.py
           |__ ViSiAnnoT.py
           |__ ViSiAnnoTLongRec.py
           |__ ViSiAnnoTLongRecFromConfigFile.py
@@ -42,8 +52,34 @@ The tree view of source files is reported below::
           |__ __init__.py
       |__ __init__.py
       |__ __main__.py
+  |__ exe_generation
+      |__ convert_img_to_icon.py
+      |__ visiannot.spec
   |__ doc
-      |__ ...
+      |__ doc/source
+          |__ doc/source/images
+             |__ ...
+          |__ doc/source/APIreference
+       |__ ...
+          |__ conf.py
+          |__ exe.rst
+          |__ install.rst
+          |__ software.rst
+          |__ further.rst
+          |__ userguide-toolspyqtgraph.rst
+          |__ intro.rst
+          |__ license.rst
+          |__ userguide-configuration.rst
+          |__ userguide-toolspyqt.rst
+          |__ userguide-visiannot.rst
+          |__ customization.rst
+          |__ summaryGroups.py
+          |__ cfg.py
+          |__ support.rst
+      |__ Makefile
+      |__ README.txt
+      |__ requirements.txt
+      |__ autoDocAPI.py
   |__ README.md
   |__ LICENSE.txt
   |__ setup.py
@@ -53,7 +89,7 @@ The tree view of source files is reported below::
 
 The package **visiannot** is structured as follows:
 
-* The sub-package **visiannot.configuration** contains modules where are defined the classes for the GUI configuration tool,
+* The sub-package **visiannot.configuration** contains the classes for the GUI configuration tool,
 
 * The sub-package **visiannot.tools** contains the following modules:
 
@@ -71,10 +107,15 @@ The package **visiannot** is structured as follows:
 
   * :mod:`.ToolsPyqtgraph`: **Pyqtgraph** sub-classes and functions that ease creation of scientific graphics,
 
-* The sub-package **visiannot.visiannot** contains the modules where are defined the GUI for multimodal data visualization and annotation, as well as the sub-package **visiannot.components** that contain modules where are defined classes of the GUI components.
+* The sub-package **visiannot.visiannot** contains the classes defining the GUI for multimodal data visualization and annotation, as well as the sub-package **visiannot.components** that contains the classes defining the GUI components.
 
-The folder **doc** contains the files for generating the html documentation with `Sphinx <https://www.sphinx-doc.org/en/master/index.html>`_.
+The folder **exe_generation** contains the configuration file in order to generate an executable file (see :ref:`exe`).
 
+The folder **doc** contains the files for generating local html documentation with `Sphinx <https://www.sphinx-doc.org/en/master/index.html>`_.
+
+The files *setup.py* and *MANIFEST.in* are used to publish the package on **PyPI**.
+
+The file *.readthedocs.yaml* is useful for the documentation generation on **ReadTheDocs**.
 
 
 Class diagrams
