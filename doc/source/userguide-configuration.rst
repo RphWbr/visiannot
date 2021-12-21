@@ -283,6 +283,7 @@ In a Python script, the general configuration is specified with the keyword argu
 
 If a key is not specified in the configuration file, then the keyword argument takes the default value.
 
+.. _config-gui:
 
 Configuration with the graphical user interface
 ===============================================
