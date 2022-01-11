@@ -1000,6 +1000,14 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         :rtype: bool
         """
 
+        # disable playback during file changing
+        if not self.flag_pause_status:
+            flag_reset_pause = True
+            self.flag_pause_status = True
+
+        else:
+            flag_reset_pause = False
+
         # set new file
         ok = self.prepareNewFile(rec_id)
 
@@ -1035,6 +1043,9 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                     self.wid_annotevent.clearRegions(self)
                     self.wid_annotevent.description_dict = {}
                     self.wid_annotevent.plotRegions(self)
+
+        if flag_reset_pause:
+            self.flag_pause_status = False
 
         return ok
 
