@@ -4,7 +4,7 @@ ViSiAnnoT: VIdeo and SIgnal Annotation Tool
 
 Package for visualization and annotation of video and signal data
 
-Ìnitially developed as part of the european project Digi-NewB at the LTSI lab,
+Initially developed as part of the european project Digi-NewB at the LTSI lab,
 Université Rennes 1.
 """
 
