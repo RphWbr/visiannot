@@ -1132,9 +1132,15 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
             # set recording choice combo box
             if self.file_selection_widget is not None:
+                # to prevent the combo box callback method from being called
+                # (which would imply calling method changeFileInLongRec twice
+                # if file selection not done with combo box), the combo box
+                # signal is blocked and then unblocked
+                self.file_selection_widget.combo_box.blockSignals(True)
                 self.file_selection_widget.combo_box.setCurrentIndex(
                     self.rec_id
                 )
+                self.file_selection_widget.combo_box.blockSignals(False)
 
             # set items of combo box for truncated temporal ranges
             if self.wid_trunc is not None:
