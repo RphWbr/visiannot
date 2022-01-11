@@ -14,8 +14,9 @@ import numpy as np
 
 
 class Signal():
-    def __init__(self, data, freq, max_points=np.inf,
-                 plot_style=None, legend_text=""):
+    def __init__(
+        self, data, freq, max_points=np.inf, plot_style=None, legend_text=""
+    ):
         """
         Class defining a signal to plot in :class:`.ViSiAnnoT`
 
@@ -31,89 +32,43 @@ class Signal():
             the timestamp in milliseconds and the second column contains the
             data
         :type data: numpy array
-        :param freq: signal frequency, set it to 0 if not regularly sampled
+        :param freq: signal frequency, set it to ``0`` if not regularly sampled
         :type freq: int or float
         :param max_points: maximum number of points to display in
             :class:`.ViSiAnnoT` (used in :meth:`.Signal.getDataInRange`)
         :type max_points: int
         :param plot_style: plot style of the signal, see
             https://pyqtgraph.readthedocs.io/en/latest/graphicsItems/plotdataitem.html
-            for details
         :type plot_style: dict
         :param legend_text: legend associated to the signal plot
         :type legend_text: str
         """
 
         if data is None:
-            self._data = np.empty((0, 2))
+            #: (*numpy array*) Signal data shape :math:`(n_{samples}, 2)`
+            #: (even if regularly sampled), first column contains the timestamp
+            #: in milliseconds and the second column contains the data
+            self.data = np.empty((0, 2))
 
         elif len(data.shape) == 2:
-            self._data = data
+            self.data = data
 
         elif len(data.shape) == 1:
             data_range = 1000 * np.arange(0, data.shape[0]) / freq
-            self._data = np.vstack((data_range, data)).T
+            self.data = np.vstack((data_range, data)).T
 
-        self._freq = freq
-        self._max_points = max_points
-        self._plot_style = plot_style
-        self._legend_text = legend_text
+        #: (*int*) Signal frequency (``0`` if not regularly sampled)
+        self.freq = freq
 
+        #: (*int*) Maximum number of points to display in :class:`.ViSiAnnoT`
+        self.max_points = max_points
 
-    def getData(self):
-        """
-        Get method
+        #: (*dict*) Plot style (default ``None``), see
+        #: https://pyqtgraph.readthedocs.io/en/latest/graphicsItems/plotdataitem.html
+        self.plot_style = plot_style
 
-        :returns: signal data, shape :math:`(n_{samples}, 2)` (even if
-            regularly sampled), first column contains the timestamp in
-            milliseconds and the second column contains the data
-        :rtype: numpy array
-        """
-
-        return self._data
-
-
-    def getFreq(self):
-        """
-        Get method
-
-        :returns: signal frequency (``0`` if not regularly sampled)
-        :rtype: int
-        """
-
-        return self._freq
-
-
-    def getPlotStyle(self):
-        """
-        Get method
-
-        :returns: plot style, might be ``None``
-        :rtype: dict
-        """
-
-        return self._plot_style
-
-
-    def getMaxPoints(self):
-        """
-        Get method
-
-        :returns: maximum number of points to display in :class:`.ViSiAnnoT`
-        :rtype: int
-        """
-
-        return self._max_points
-
-    def getLegendText(self):
-        """
-        Get method
-
-        :returns: legend associated to the signal plot
-        :rtype: str
-        """
-
-        return self._legend_text
+        #: (*str*) Legend associated to the signal plot
+        self.legend_text = legend_text
 
 
     def setSignal(self, *args, **kwargs):
@@ -147,22 +102,22 @@ class Signal():
         """
 
         # get start index
-        start_indexes = np.where(self._data[:, 0] > first_frame_ms)[0]
+        start_indexes = np.where(self.data[:, 0] > first_frame_ms)[0]
         if start_indexes.shape[0] == 0:
-            start_id = self._data.shape[0] - 1
+            start_id = self.data.shape[0] - 1
         else:
             # substraction with 1 in order to get the point just before,
             # it looks better like that for signals with non constant frequency
             start_id = max(0, start_indexes[0] - 1)
 
         # get stop index
-        stop_indexes = np.where(self._data[:, 0] < last_frame_ms)[0]
+        stop_indexes = np.where(self.data[:, 0] < last_frame_ms)[0]
         if stop_indexes.shape[0] == 0:
             stop_id = 0
         else:
             # addition with 2 in order to get the point just after,
             # it looks better like that for signals with non constant frequency
-            stop_id = min(self._data.shape[0], stop_indexes[-1] + 2)
+            stop_id = min(self.data.shape[0], stop_indexes[-1] + 2)
 
         # reverse start and stop index if necessary
         if start_id > stop_id:
@@ -171,20 +126,20 @@ class Signal():
         # downsampling if too much data to plot
         length = stop_id - start_id
 
-        if length <= self._max_points:
-            return self._data[start_id:stop_id]
+        if length <= self.max_points:
+            return self.data[start_id:stop_id]
 
         else:
-            step = int(length / self._max_points)
+            step = int(length / self.max_points)
 
-            if self._data.ndim == 1:
+            if self.data.ndim == 1:
                 return np.vstack((
                     np.arange(start_id, stop_id, step),
-                    self._data[start_id:stop_id:step]
+                    self.data[start_id:stop_id:step]
                 )).T
 
             else:
-                return self._data[start_id:stop_id:step]
+                return self.data[start_id:stop_id:step]
 
 
     def downsampleSignal(self, new_freq):
@@ -203,10 +158,10 @@ class Signal():
         """
 
         # downsampling factor
-        factor = int(self._freq / new_freq)
+        factor = int(self.freq / new_freq)
 
         # get data values
-        data = self._data[:, 1]
+        data = self.data[:, 1]
 
         # check if data size is divisible by downsampling factor
         if (data.shape[0] / factor).is_integer():
@@ -215,7 +170,9 @@ class Signal():
         else:
             # fill data with nan
             fill_nb = round(
-                (int(data.shape[0] / factor) + 1 - data.shape[0] / factor) * factor
+                (
+                    int(data.shape[0] / factor) + 1 - data.shape[0] / factor
+                ) * factor
             )
 
             new_data = np.hstack((data, np.nan * np.ones((fill_nb,))))
@@ -230,8 +187,8 @@ class Signal():
 
         # reset signal
         self.setSignal(
-            new_data, new_freq, plot_style=self._plot_style,
-            legend_text=self._legend_text
+            new_data, new_freq, plot_style=self.plot_style,
+            legend_text=self.legend_text
         )
 
 

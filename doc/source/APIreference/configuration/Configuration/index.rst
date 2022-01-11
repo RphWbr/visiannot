@@ -2,10 +2,10 @@
 visiannot.configuration.Configuration
 =====================================
 
-.. automodule:: visiannot.configuration.Configuration
-
 Summary
 =======
+
+.. automodule:: visiannot.configuration.Configuration
 
 Classes
 -------

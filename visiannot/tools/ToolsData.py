@@ -48,22 +48,25 @@ def getWorkingDirectory(path):
     return path_w
 
 
-def convertIntervalsToTimeSeries(intervals, nframes):
+def convertIntervalsToTimeSeries(intervals, n_samples=0):
     """
     Converts intervals as 2D array to a time series of 0 and 1 (1D array)
 
     :param intervals: intervals in frame numbers, shape
         :math:`(n_{intervals}, 2)`
     :type intervals: numpy array or list
-    :param nframes: number of frames of the time series
+    :param n_samples: number of frames of the time series, default end frame of
+        the last interval
+    :type n_samples: int
 
     :returns: intervals as a time series, shape :math:`(n_{frames},)`
     :rtype: numpy array
 
     If the end time of an interval is -1 (second column of ``intervals``, then
-    the end time is set to nframes.
+    the end time is set to n_samples.
 
     Example::
+
         >>> a = np.array([[4, 5], [9, 12], [16, -1]])
         >>> convertIntervalsToTimeSeries(a, 20)
         array([0., 0., 0., 0., 1., 0., 0., 0., 0., 1., 1., 1., 0., 0., 0., 0.,
@@ -72,10 +75,18 @@ def convertIntervalsToTimeSeries(intervals, nframes):
 
     if isinstance(intervals, np.ndarray):
         intervals = intervals.astype(int)
-    time_series = np.zeros((nframes,))
+
+    if n_samples == 0:
+        n_samples = intervals[-1, 1]
+        if n_samples == -1:
+            raise Exception("Intervals cannot be converted to time series")
+
+    time_series = np.zeros((n_samples,))
+
     for interval in intervals:
         if interval[1] == -1:
-            interval[1] = nframes
+            interval[1] = n_samples
+
         time_series[interval[0]:interval[1]] = 1
 
     return time_series
@@ -94,6 +105,7 @@ def convertTimeSeriesToIntervals(data, value):
     :rtype: numpy array
 
     Example::
+
         >>> a = np.array([0, 0, 0, 0, 5, 1, 1, 1, 1, 5, 5, 5, 0, 0, 0, 0])
         >>> convertTimeSeriesToIntervals(a,0)
         array([[ 0,  4],
@@ -153,17 +165,20 @@ def getDataInterval(path, key=""):
 
     if isfile(path):
         data_array = np.squeeze(getDataGeneric(path, key=key, ndmin=2))
+
         if data_array.ndim == 1:
             data_array = convertTimeSeriesToIntervals(data_array, 1)
+
         elif data_array.shape[0] == 0:
             data_array = np.empty((0, 2))
+
     else:
         data_array = np.empty((0, 2))
 
     return data_array
 
 
-def getDataIntervalAsTimeSeries(path, n_samples, key=""):
+def getDataIntervalAsTimeSeries(path, n_samples=0, key=""):
     """
     Loads file containing temporal intervals, output shape
     :math:`(n_{samples},)`
@@ -179,7 +194,8 @@ def getDataIntervalAsTimeSeries(path, n_samples, key=""):
 
     :param path: path to the data file
     :type path: str
-    :param n_samples: number of samples of the time series
+    :param n_samples: number of samples of the time series, see
+        :func:`.convertIntervalsToTimeSeries`
     :type n_samples: int
     :param key: key to access the data in case of mat or h5 file, for txt file
         it is ignored
@@ -191,10 +207,13 @@ def getDataIntervalAsTimeSeries(path, n_samples, key=""):
     """
 
     if isfile(path):
-        data_array = getDataGeneric(path, key=key, ndmin=2)
+        data_array = np.squeeze(getDataGeneric(path, key=key, ndmin=2))
+
         if data_array.ndim == 2:
             data_array[np.where(data_array < 0)] = 0
-            data_array = convertIntervalsToTimeSeries(data_array, n_samples)
+            data_array = convertIntervalsToTimeSeries(
+                data_array, n_samples=n_samples
+            )
 
     else:
         print("Time series full of NaN because file not found: %s" % path)

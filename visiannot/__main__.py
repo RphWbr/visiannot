@@ -34,7 +34,7 @@ if __name__ == '__main__':
         "-n",
         action="store",
         nargs='?',
-        help="specify if configuration GUI must be launched",
+        help="specify if configuration GUI must not be launched",
         default=0
     )
 
@@ -43,7 +43,7 @@ if __name__ == '__main__':
         "-m",
         action="store",
         nargs='?',
-        help="specify if ViSiAnnoT GUI must be launched",
+        help="specify if ViSiAnnoT GUI must not be launched",
         default=0
     )
 
@@ -51,15 +51,18 @@ if __name__ == '__main__':
         "--config-update-function",
         "-u",
         type=str,
-        help="name of a function to call before launching ViSiAnnoT (one positional argument: configuration path / returns updated configuration dictionary), module_name.function_name or package_name.subpackage_name.function_name",
+        help="name of a function to call before launching ViSiAnnoT (one "
+        "positional argument: configuration path / returns updated "
+        "configuration dictionary), module_name.function_name or "
+        "package_name.subpackage_name.function_name",
         default=''
     )
 
-    args = parser.parse_known_args()
-    config_path = abspath(args[0].config_path)
-    no_config_gui = args[0].no_config_gui
-    no_visi_gui = args[0].no_visi_gui
-    config_update_function = args[0].config_update_function
+    args, _ = parser.parse_known_args()
+    config_path = abspath(args.config_path)
+    no_config_gui = args.no_config_gui
+    no_visi_gui = args.no_visi_gui
+    config_update_function = args.config_update_function
 
     ####################
     # launch ViSiAnnoT #

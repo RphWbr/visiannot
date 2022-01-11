@@ -86,14 +86,32 @@ def initializeDisplay():
 
 def infiniteLoopDisplay(app):
     """
-    Creates an infinite loop for a given GUI application, so that the window
-    does not disappear right after being created
+    Creates an event loop for a given GUI application, so that the windows
+    do not disappear right after being created
 
-    :param app: instance of QtCore.QCoreApplication or QtWidgets.QApplication
+    :param app: GUI application
+    :type app: QtCore.QCoreApplication or QtWidgets.QApplication
     """
 
     if (flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
         app.instance().exec_()
+
+
+def infiniteLoopDisplayParallel(app, win):
+    """
+    Creates a specific event loop for a given window while an event loop is
+    already running, the specific event loop is stopped when the window is
+    closed
+
+    :param app: GUI application
+    :type app: QtCore.QCoreApplication or QtWidgets.QApplication
+    :param win: window on which the parallel event loop is applied
+    :type win: QtWidgets.QWidget
+    """
+
+    while win.isVisible():
+        app.processEvents()
+    app.processEvents()
 
 
 def getDirectoryDialog(desc_text="Select directory", dir_root=None):
@@ -377,8 +395,10 @@ def addGroupBox(layout, position, title=""):
     return grid, group_box
 
 
-def addPushButton(layout, position, text,
-                  width=0, flag_enable_key_interaction=True, color=None):
+def addPushButton(
+    layout, position, text, width=0, flag_enable_key_interaction=True,
+    color=None
+):
     """
     Adds a push button to a grid layout
 
@@ -545,8 +565,10 @@ def addScrollArea(
     # create scroll area
     if flag_ignore_wheel_event:
         scroll_area = ScrollArea()
+
     else:
         scroll_area = QtWidgets.QScrollArea()
+
     scroll_area.setWidgetResizable(True)
 
     # set size
@@ -609,7 +631,9 @@ def createWindow(
     if len(bg_color) == 3:
         color = QtGui.QColor(bg_color[0], bg_color[1], bg_color[2])
     elif len(bg_color) == 4:
-        color = QtGui.QColor(bg_color[0], bg_color[1], bg_color[2], bg_color[3])
+        color = QtGui.QColor(
+            bg_color[0], bg_color[1], bg_color[2], bg_color[3]
+        )
 
     palette = QtGui.QPalette()
     palette.setColor(QtGui.QPalette.Window, color)
@@ -701,23 +725,31 @@ def addWidgetButtonGroup(
         if flag_horizontal:
             if nb_table == 0:
                 position = (0, ite_label)
+
             else:
                 position = (int(ite_label / nb_table), ite_label % nb_table)
         else:
             if nb_table == 0:
                 position = (ite_label, 0)
+
             else:
                 position = (ite_label % nb_table, int(ite_label / nb_table))
 
         # create button and add it to the layout
         if button_type == "radio":
             button = addRadioButton(grid, position, label, **kwargs)
+
         elif button_type == "check_box":
             button = addCheckBox(grid, position, label, **kwargs)
+
         elif button_type == "push":
             button = addPushButton(grid, position, label, **kwargs)
+
         else:
-            raise ValueError("Wrong type of button, got %s, it should be 'radio', 'push' or 'check_box'" % button)
+            raise ValueError(
+                "Wrong type of button, got %s, it should be 'radio', 'push' "
+                "or 'check_box'" % button
+            )
 
         # add radio button to the group of radio buttons
         group_button.addButton(button, ite_label)
@@ -749,6 +781,9 @@ def addComboBox(
     :type item_list: list
     :param box_title: title of the group box containing the combo box
     :type box_title: str
+    :param flag_enable_key_interaction: specify if key press interaction is
+        enabled
+    :type flag_enable_key_interaction: bool
 
     :returns:
         - **grid** (*QtWidgets.QGridLayout*) -- layout filling the group box
@@ -785,22 +820,22 @@ def addComboBox(
     return grid, group_box, combo_box
 
 
-def deleteWidgetsFromLayout(grid, nb_items_to_delete):
+def deleteWidgetsFromLayout(grid, nb_items_to_delete=None):
     """
     Deletes a specified number of widgets in a grid layout
 
-    The widgets are deleted in the inverse order of creation in the parent
-    layout.
+    The widgets are deleted in the inverse order of creation in the layout.
 
-    :param grid: parent layout where widgets must be deleted
+    :param grid: layout where widgets must be deleted
     :type grid: QtWidgets.QGridLayout
-    :param nb_items_to_delete: number of widgets to delete
+    :param nb_items_to_delete: number of widgets to delete, by default all
+        widgets
     :type nb_items_to_delete: int
     """
 
     nb_items = grid.count()
 
-    if nb_items < nb_items_to_delete:
+    if nb_items_to_delete is None or nb_items < nb_items_to_delete:
         nb_items_to_delete = nb_items
 
     for i in reversed(range(nb_items - nb_items_to_delete, nb_items)):
@@ -827,12 +862,9 @@ def setStyleSheet(app, font_name, font_size, font_color, qobj_list):
     """
 
     # get style sheet string
-    style_string = \
-        """color: rgb(%d,%d,%d); font: %s; font-size: %dpt""" % (font_color[0],
-                                                                 font_color[1],
-                                                                 font_color[2],
-                                                                 font_name,
-                                                                 font_size)
+    style_string = "color: rgb(%d,%d,%d); font: %s; font-size: %dpt" % (
+        font_color[0], font_color[1], font_color[2], font_name, font_size
+    )
 
     style_sheet_string = ""
     for qobj in qobj_list:

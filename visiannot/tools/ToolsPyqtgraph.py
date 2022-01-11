@@ -7,327 +7,19 @@
 # http://www.cecill.info
 
 """
-Module with sub-classes and functions for scientific graphics with pyqtgraph
+Module with functions for scientific graphics with pyqtgraph
 
 See https://pyqtgraph.readthedocs.io/en/latest
 """
 
 
 import pyqtgraph as pg
-from PyQt5 import QtCore
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QSizePolicy
 from .ToolsPyQt import createWindow, addWidgetToLayout, initializeDisplay
 import numpy as np
+from .ToolsDateTime import convertFrameToAbsoluteTimeString, \
+    convertMsecToAbsoluteTimeString
 
-
-# *************************************************************************** #
-# *************************************************************************** #
-# ************************** Pyqtgraph subclass ***************************** #
-# *************************************************************************** #
-# *************************************************************************** #
-
-class PlotItemCustom(pg.graphicsItems.PlotItem.PlotItem):
-    """
-    Subclass of **pyqtgraph.graphicsItems.PlotItem.PlotItem** so that the
-    effect of "auto-range" button is applied only on Y axis
-
-    The method autoBtnClicked is re-implemented.
-
-    See https://pyqtgraph.readthedocs.io/en/latest/graphicsItems/plotitem.html
-    for details.
-    """
-
-    def autoBtnClicked(self):
-        """
-        Re-implemented
-        """
-
-        self.enableAutoRange(axis='y', enable=True)
-
-
-class SignalWidget(pg.PlotWidget):
-    def __init__(self, parent=None, background='default', **kargs):
-        """
-        Subclass of **pyqtgraph.PlotWidget** so that he effect of "auto-range"
-        button is applied only on Y axis
-
-        The constructor is re-implemented so that a PlotItemCustom instance is
-        used as the central item of the widget.
-
-        See https://pyqtgraph.readthedocs.io/en/latest/widgets/plotwidget.html
-        for details about parent class.
-        """
-
-        pg.GraphicsView.__init__(self, parent, background)
-        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.enableMouse(False)
-
-        self.plotItem = PlotItemCustom(**kargs)
-        self.setCentralItem(self.plotItem)
-
-        for m in [
-            'addItem', 'removeItem', 'autoRange', 'clear', 'setXRange',
-            'setYRange', 'setRange', 'setAspectLocked', 'setMouseEnabled',
-            'setXLink', 'setYLink', 'enableAutoRange', 'disableAutoRange',
-            'setLimits', 'register', 'unregister', 'viewRect'
-        ]:
-            setattr(self, m, getattr(self.plotItem, m))
-
-        self.plotItem.sigRangeChanged.connect(self.viewRangeChanged)
-
-
-class ProgressWidget(pg.PlotWidget):
-    def __init__(
-        self, nframes, parent=None,
-        progress_style={'symbol': 'o', 'brush': '#F00', 'size': 7},
-        bg_progress_style={'pen': {'color': 'b', 'width': 2}},
-        line_style={'color': (0, 0, 0), 'width': 2},
-        title=None, title_style={'color': '#000', 'size': '9pt'},
-        ticks_color="#000", ticks_size=9, ticks_offset=0
-    ):
-        """
-        Subclass of **pyqtgraph.PlotWidget** that defines the widget used as a
-        progression bar for video/signal navigation in :class:`.ViSiAnnoT`
-        window
-
-        See https://pyqtgraph.readthedocs.io/en/latest/widgets/plotwidget.html
-        for details about parent class.
-
-        The constructor is re-implemented. It calls the constructor of
-        PlotWidget and adds new attributes.
-
-        NB: attributes have the prefix _, so one should use the get methods to
-        access them.
-
-        :param nframes: number of frames in the progress bar
-        :type nframes: int
-        :param parent: see
-            https://pyqtgraph.readthedocs.io/en/latest/widgets/plotwidget.html
-        :param progress_style: plot style of the sliding progression point
-        :type progress_style: dict
-        :param bg_progress_style: plot style of the background progression bar
-        :type bg_progress_style: dict
-        :param line_style: plot style of the current temporal range bounds
-        :type line_style: dict
-        :param title: progress bar title
-        :type title: str
-        :param title_style: title style
-        :type title_style: dict
-        :param ticks_color: color of the ticks text in HEX string or RGB format
-        :type ticks_color: str or tuple
-        :param ticks_size: font size of the ticks text in pt
-        :type ticks_size: float or int
-        :param ticks_offset: ticks text offset
-        :type ticks_offset: int
-        """
-
-        # PlotWidget initialization
-        pg.PlotWidget.__init__(self, parent)
-
-        # input attributes
-        self._nframes = nframes
-        self._dragged = False
-
-        # add background bar
-        self._progress_curve = pg.PlotCurveItem(
-            [0, self._nframes], [0, 0], **bg_progress_style
-        )
-        self.addItem(self._progress_curve)
-
-        # add sliding progress point
-        self._progress_plot = pg.ScatterPlotItem([0], [0], **progress_style)
-        self.addItem(self._progress_plot)
-
-        # add infinite lines for first and last frames
-        # (position not initialized)
-        self._first_line = pg.InfiniteLine(pen=line_style)
-        self.addItem(self._first_line)
-        self._last_line = pg.InfiniteLine(pen=line_style)
-        self.addItem(self._last_line)
-
-        # disable default mouse interaction
-        self.setMouseEnabled(x=False, y=False)
-        self.hideButtons()
-        self.setMenuEnabled(False)
-
-        # no Y axis
-        self.showAxis('left', show=False)
-
-        # set X axis ticks style
-        setTicksTextStyle(self.getAxis('bottom'), color=ticks_color,
-                          size=ticks_size, offset=ticks_offset)
-
-        # set title
-        self.setTitle(title, **title_style)
-
-
-    def getNFrames(self):
-        """
-        Get method for attribute nframes
-
-        :returns: number of frames
-        :rtype: int
-        """
-
-        return self._nframes
-
-
-    def getProgressCurve(self):
-        """
-        Get method for attribute progress_curve
-
-        :returns: background progression bar
-        :rtype: pyqtgraph.PlotCurveItem
-        """
-
-        return self._progress_curve
-
-
-    def getDragged(self):
-        """
-        Get method for attribute dragged
-
-        :returns: specify if the sliding progress point is dragged
-        :rtype: bool
-        """
-
-        return self._dragged
-
-
-    def getProgressPlot(self):
-        """
-        Get method for attribute progress_plot
-
-        :returns: sliding progress point
-        :rtype: pyqtgraph.ScatterPlotItem
-        """
-
-        return self._progress_plot
-
-
-    def getFirstLine(self):
-        """
-        Get method for attribute first_line
-
-        :returns: start boundary of the current temporal range in the
-            associated :class:`.ViSiAnnoT` window
-        :rtype: pyqtgraph.InfiniteLine
-        """
-
-        return self._first_line
-
-
-    def getLastLine(self):
-        """
-        Get method for attribute first_line
-
-        :returns: end boundary of the current temporal range in the associated
-            :class:`.ViSiAnnoT` window
-        :rtype: pyqtgraph.InfiniteLine
-        """
-
-        return self._last_line
-
-
-    def getMouseXPosition(self, ev):
-        """
-        Computes the position of the mouse on the X axis in the progress plot
-        coordinates
-
-        :param ev: emitted when the mouse is clicked/moved
-        :type ev: QtGui.QMouseEvent
-
-        :returns: position of the mouse
-        :rtype: int
-        """
-
-        return self.getViewBox().mapToView(ev.pos()).x()
-
-
-    def updateNFrames(self, nframes):
-        """
-        Sets a new value for the number of frames in the progress bar
-
-        :param nframes: new number of frames in the progress bar
-        :type nframes: int
-        """
-
-        self._nframes = nframes
-        self._progress_curve.setData([0, self._nframes], [0, 0])
-
-
-    def mousePressEvent(self, ev):
-        """
-        Re-implemented in order to set the new position of the sliding
-        progression point and launch the mouse dragging
-
-        :param ev: emitted when the mouse is clicked/moved
-        :type ev: QtGui.QMouseEvent
-        """
-
-        # check if left button is clicked and dragging not launched
-        if ev.button() == QtCore.Qt.LeftButton and not self._dragged:
-            # get mouse position on the X axis
-            position = self.getMouseXPosition(ev)
-
-            # check boundaries
-            if position >= 0 and position < self._nframes:
-                # set new position of the sliding progress point
-                self._progress_plot.setData([position], [0])
-
-                # launch dragging
-                self._dragged = True
-
-
-    def mouseMoveEvent(self, ev):
-        """
-        Re-implemented in order to set the new position of the sliding
-        progression point while dragging
-
-        :param ev: emitted when the mouse is clicked/moved
-        :type ev: QtGui.QMouseEvent
-        """
-
-        # check if dragging is launched
-        if self._dragged:
-            # get mouse position on the X axis
-            position = self.getMouseXPosition(ev)
-
-            # check boundaries
-            if position >= 0 and position < self._nframes:
-                # set new position of the sliding progress point
-                self._progress_plot.setData([position], [0])
-
-
-    def mouseReleaseEvent(self, ev):
-        """
-        Re-implemented in order to set the new position of the sliding
-        progression point and terminate the mouse dragging
-
-        :param ev: emitted when the mouse is clicked/moved
-        :type ev: QtGui.QMouseEvent
-        """
-
-        # check if left button release and if dragging is launched
-        if ev.button() == QtCore.Qt.LeftButton and self._dragged:
-            # get mouse position on the X axis
-            position = self.getMouseXPosition(ev)
-
-            # check boundaries
-            if position >= 0 and position < self._nframes:
-                # set new position of the sliding progress point
-                self._progress_plot.setData([position], [0])
-
-            # terminate dragging
-            self._dragged = False
-
-
-# *************************************************************************** #
-# *************************************************************************** #
-# ***************************** Functions *********************************** #
-# *************************************************************************** #
-# *************************************************************************** #
 
 def setBackgroundColor(color=(255, 255, 255)):
     """
@@ -548,90 +240,6 @@ def createWidgetLogo(lay, widget_position, im, box_size=None):
     return widget
 
 
-def createWidgetSignal(
-    lay, widget_position, y_range=[], left_label='',
-    left_label_style={'color': '#000', 'font-size': '10pt'},
-    ticks_color="#000", ticks_size=9, ticks_offset=0
-):
-    """
-    Creates a widget for plotting signals (see
-    :class:`.ToolsPyqtgraph.SignalWidget) and adds it to a grid layout (used in
-    :class:`.ViSiAnnoT`)
-
-    For details about color, see
-    https://pyqtgraph.readthedocs.io/en/latest/functions.html#color-pen-and-brush-functions
-
-    :param lay: parent layout where the widget is added
-    :type lay: QtWidgets.QGridLayout
-       instance of QtWidgets.QGridLayout where the widget is added
-    :param widget_position: position of the widget in the parent layout, length
-        2 ``(row, col)`` or 4 ``(row, col, rowspan, colspan)``
-    :type widget_position: tuple
-    :param y_range: visible Y range, length 2 ``(y_min, y_max)``, set to
-        ``[]`` for auto range
-    :type y_range: tuple
-    :param left_label: label for Y axis
-    :type left_label: str
-    :param left_label_style: axis label title style
-    :type left_label_style: dict
-    :param ticks_color: color of the ticks text in HEX string or RGB format
-    :type ticks_color: str or tuple
-    :param ticks_size: font size of the ticks text in pt
-    :type ticks_size: float or int
-    :param ticks_offset: ticks text offset
-    :type ticks_offset: int
-
-    :returns: widget containing the signals plots
-    :rtype: ToolsPyQt.SignalWidget
-    """
-
-    # create the widget
-    widget = SignalWidget()
-
-    # add the widget to the layout
-    addWidgetToLayout(lay, widget, widget_position)
-
-    # disable default mouse interaction
-    widget.setMouseEnabled(x=False)
-
-    # disable plot menu
-    widget.setMenuEnabled(False)
-
-    # set axes font
-    setTicksTextStyle(
-        widget.getAxis('left'), color=ticks_color, size=ticks_size,
-        offset=ticks_offset
-    )
-
-    setTicksTextStyle(
-        widget.getAxis('bottom'), color=ticks_color, size=ticks_size,
-        offset=ticks_offset
-    )
-
-    # set Y axis label
-    widget.getAxis('left').setLabel(text=left_label, **left_label_style)
-
-    # disable auto-range on X axis
-    widget.enableAutoRange(axis='x', enable=False)
-
-    # check if Y range is to be set
-    if len(y_range) == 2 and y_range[0] < y_range[1]:
-        # set Y range
-        widget.setYRange(y_range[0], y_range[1])
-
-        # disable default mouse interaction
-        widget.setMouseEnabled(y=False)
-
-        # hide auto range button
-        widget.hideButtons()
-
-    else:
-        # enable auto-range on Y axis
-        widget.enableAutoRange(axis='y', enable=True)
-
-    return widget
-
-
 def setTicksTextStyle(axis_item, color="#000", size=9, offset=0):
     """
     Sets ticks text style of an axis item
@@ -662,6 +270,68 @@ def setTicksTextStyle(axis_item, color="#000", size=9, offset=0):
 
     # set offset
     axis_item.setStyle(tickTextOffset=offset)
+
+
+def setTemporalTicks(widget, nb_ticks, temporal_info, ref_datetime):
+    """
+    Sets the ticks of the X axis of a widget in datetime format and the X axis
+    range according to a temporal range
+
+    We assume that the unit of the X axis is in milliseconds.
+
+    It creates temporal labels for ticks in the format HH:MM:SS.SSS. The first
+    (resp. last) tick is defined by the first (resp. last) value of the
+    temporal range, which might be expressed in milliseconds or in number of
+    frames.
+
+    :param widget: widget where to set X axis ticks and X axis range,
+        it may be any sub-class of **pyqtgraph.PlotWidget**
+    :param nb_ticks: number of ticks to display on the X axis
+    :type nb_ticks: int
+    :param temporal_info: temporal range, there are two ways to specify it:
+
+        - ``(first_frame_ms, last_frame_ms)``, the temporal range is
+          expressed in milliseconds,
+        - ``(first_frame, last_frame, freq)``, the temporal range is
+          expressed in number of frames sampled at the frequency ``freq``
+    :type temporal_info: list
+    :param ref_datetime: reference datetime for temporal range (if the
+        first value of the temporal range is ``0``, then the tick value is
+        ``ref_datetime``)
+    :type ref_datetime: datetime.datetime
+    """
+
+    start = temporal_info[0]
+    stop = temporal_info[1]
+    temporal_range = [
+        start + i * (stop - start) / (nb_ticks - 1)
+        for i in range(nb_ticks - 1)
+    ] + [stop]
+
+    # X axis range
+    widget.setXRange(start, stop)
+
+    if len(temporal_info) == 3:
+        freq = temporal_info[2]
+
+        # define temporal labels
+        temporal_labels = [
+            convertFrameToAbsoluteTimeString(frame_id, freq, ref_datetime)
+            for frame_id in temporal_range
+        ]
+
+    else:
+        # define temporal labels
+        temporal_labels = [
+            convertMsecToAbsoluteTimeString(msec, ref_datetime)
+            for msec in temporal_range
+        ]
+
+    # set ticks
+    ticks = [[(frame, label) for frame, label in
+              zip(temporal_range, temporal_labels)], []]
+    axis = widget.getAxis('bottom')
+    axis.setTicks(ticks)
 
 
 def deleteNaNForPlot(data):
@@ -894,7 +564,7 @@ def addLegendTo2DWidget(
                               1, wid_pos[3])
 
         # check if the legend widget has already been created
-        if layout.itemAtPosition(legend_wid_pos[0], legend_wid_pos[1]) == None:
+        if layout.itemAtPosition(legend_wid_pos[0], legend_wid_pos[1]) is None:
             # create the legend widget
             legend_widget = create2DWidget(
                 layout, legend_wid_pos, axes_label_dict={}
@@ -1228,3 +898,60 @@ def addMeanStdPlotTo2DWidget(
     wid.addItem(std_plot)
 
     return mean_plot, std_plot, text_item_list
+
+
+def removeItemInWidgets(wid_list, item_list):
+    """
+    Removes an item from a list of widgets
+
+    :param wid_list: widgets where to remove an item, each element must
+        have a method ``removeItem`` (for example an instance of
+        **pyqtgraph.PlotWidget**)
+    :type wid_list: list
+    :param item_list: items to remove from widgets, same length as
+        ``wid_list``, each element corresponds to one element of
+        ``wid_list``
+    :type item_list: list
+    """
+
+    for wid, item in zip(wid_list, item_list):
+        wid.removeItem(item)
+
+
+def addRegionToWidget(bound_1, bound_2, wid, color):
+    """
+    Creates a region item (**pyqtgraph.LinearRegionItem**) and displays it in a
+    widget
+
+    :param bound_1: start value of the region item (expressed as a
+        coordinate in the X axis of the widget)
+    :type bound_1: int
+    :param bound_2: end value of the region item (expressed as a
+        coordinate in the X axis of the widget)
+    :type bound_2: int
+    :param wid: widget where to display the region item, might be any
+        widget class with a method ``addItem``
+    :type wid: pyqtgraph.PlotWidget
+    :param color: plot color (RGBA)
+    :type color: tuple or list
+
+    :returns: region item displayed in the widget
+    :rtype: pyqtgraph.LinearRegionItem
+    """
+
+    # pen disabled for linux compatibility
+    try:
+        region = pg.LinearRegionItem(
+            movable=False, brush=color, pen={'color': color, 'width': 1}
+        )
+
+    except Exception:
+        region = pg.LinearRegionItem(movable=False, brush=color)
+
+    # set region boundaries
+    region.setRegion([bound_1, bound_2])
+
+    # add region to widget
+    wid.addItem(region)
+
+    return region

@@ -2,10 +2,10 @@
 visiannot.visiannot.components.WindowsPopUp
 ===========================================
 
-.. automodule:: visiannot.visiannot.components.WindowsPopUp
-
 Summary
 =======
+
+.. automodule:: visiannot.visiannot.components.WindowsPopUp
 
 Classes
 -------

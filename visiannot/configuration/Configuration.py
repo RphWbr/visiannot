@@ -7,7 +7,7 @@
 # http://www.cecill.info
 
 """
-Module defining :class:`.Configuration`
+Module defining class :class:`.Configuration`
 """
 
 
@@ -15,7 +15,6 @@ from PyQt5 import QtWidgets
 from ast import literal_eval
 import numpy as np
 from ..tools import ToolsPyQt
-from collections import OrderedDict
 
 
 class Configuration():
@@ -287,7 +286,7 @@ class Configuration():
         #:        corresponding signal widget
         #:      - (*float*) Maximum value to display on Y axis in the
         #:        corresponding signal widget
-        self.dict = OrderedDict()
+        self.dict = {}
 
         #: (*list*) Instances of QtWidgets.QGridLayout containing the
         #: configuration grids (same order as :attr:`.config_group_box_list`),
@@ -629,8 +628,8 @@ class Configuration():
 
                         elif elt_type == "edit_float":
                             raise Warning(
-                                "Wrong value in %s configuration n°%d, \
-                                element %d, expected a float, got %s" % (
+                                "Wrong value in %s configuration n°%d, "
+                                "element %d, expected a float, got %s" % (
                                     self.type, row_ind + 1,
                                     start_col_ind + ite_elt + 1, value
                                 )
@@ -665,7 +664,7 @@ class Configuration():
         """
 
         # reset configuration dictionary
-        self.dict = OrderedDict()
+        self.dict = {}
 
         # loop on configurations
         for ite_config, (config_grid, config_group_box) in enumerate(zip(
@@ -1015,7 +1014,7 @@ class Configuration():
             config_grid, (sub_ind, col_ind), "Delete"
         )
 
-        # add to button group button
+        # add to button group
         self.button_group_del.addButton(
             push_button_del, np.cumsum(self.nb_sub_list)[-1]
         )

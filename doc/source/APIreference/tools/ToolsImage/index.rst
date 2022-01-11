@@ -2,10 +2,10 @@
 visiannot.tools.ToolsImage
 ==========================
 
-.. automodule:: visiannot.tools.ToolsImage
-
 Summary
 =======
+
+.. automodule:: visiannot.tools.ToolsImage
 
 Functions
 ---------
@@ -24,3 +24,4 @@ Functions
 .. autofunction:: visiannot.tools.ToolsImage.getDataVideo
 .. autofunction:: visiannot.tools.ToolsImage.readImage
 .. autofunction:: visiannot.tools.ToolsImage.transformImage
+

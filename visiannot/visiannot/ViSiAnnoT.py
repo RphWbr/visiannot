@@ -11,18 +11,13 @@ Module defining :class:`.ViSiAnnoT`
 """
 
 
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtCore
 import pyqtgraph as pg
 import numpy as np
 from threading import Thread
-from cv2 import imwrite
 import os
 from time import time, sleep
 from shutil import rmtree
-from datetime import datetime, timedelta
-from math import ceil
-from pytz import timezone
-from collections import OrderedDict
 from ..tools import ToolsPyQt
 from ..tools import ToolsPyqtgraph
 from ..tools import ToolsDateTime
@@ -30,7 +25,17 @@ from ..tools import ToolsData
 from ..tools import ToolsImage
 from ..tools import ToolsAudio
 from .components.Signal import Signal
+from .components.SignalWidget import SignalWidget
 from .components.MenuBar import MenuBar
+from .components.ProgressWidget import ProgressWidget
+from .components.VideoWidget import VideoWidget
+from .components.CustomTemporalRangeWidget import CustomTemporalRangeWidget
+from .components.TruncTemporalRangeWidget import TruncTemporalRangeWidget
+from .components.FromCursorTemporalRangeWidget import \
+    FromCursorTemporalRangeWidget
+from .components.LogoWidgets import ZoomInWidget, ZoomOutWidget, FullVisiWidget
+from .components.AnnotEventWidget import AnnotEventWidget
+from .components.AnnotImageWidget import AnnotImageWidget
 
 
 class ViSiAnnoT():
@@ -78,31 +83,21 @@ class ViSiAnnoT():
         attributes.
 
         For a given video file, data are loaded in an instance of
-        cv2.VideoCapture. The set of video data is stored in
-        :attr:`.video_data_dict`. The set of widgets for plotting
-        video is stored in :attr:`.wid_vid_dict`. The set of current
-        video frames is stored in :attr:`.im_dict`. For plotting, the
-        video frames are converted to instances of pyqtgraph.ImageItem which
-        are stored in :attr:`.img_vid_dict`.
+        **cv2.VideoCapture**. The set of video data is stored in
+        :attr:`.video_data_dict`. The widgets for plotting video are stored in
+        :attr:`.wid_vid_dict`.
 
         For a given signal file, data are loaded in an instance of
         :class:`.Signal`. The supported formats are txt, mat, h5 and wav. The
         set of :class:`.Signal` instances is stored in
-        :attr:`.sig_list_list`. The set of widgets for plotting
-        signals is stored in :attr:`.wid_data_list`. A temporal
-        cursor (instance of pyqtgraph.InfiniteLine) is plotted on each signal
-        widget and is synchronized with the video playback. The set of temporal
-        cursors is stored in :attr:`.current_cursor_list`.
+        :attr:`.sig_dict`. The widgets for plotting signals are stored in
+        :attr:`.wid_sig_list`.
 
         The reference frequency :attr:`.ViSiAnnoT.fps` is defined as the video
         frequency. If there is no video to display, :attr:`.ViSiAnnoT.fps` is
         defined as the frequency of the first signal to plot. The playback
         speed (both video and signal temporal cursor) is at the reference
         frequency.
-
-        The video display is initialized by the method
-        :meth:`.initVideoPlot`. The signal display is initialized by
-        the method :meth:`.initSignalPlot`.
 
         The temporal range is defined by :attr:`.first_frame` and
         :attr:`.last_frame` (sampled at :attr:`.ViSiAnnoT.fps`).
@@ -203,8 +198,9 @@ class ViSiAnnoT():
                 ]
                 }
         :type signal_dict: dict
-        :param annotevent_dict: events annotation configuration.
-            Key is the label (string). Value is the associated color (RGBA).
+        :param annotevent_dict: events annotation configuration,
+            key is the label (string), value is the associated color (RGB or
+            RGBA)
         :type annotevent_dict: dict
         :param annotimage_list: labels for image extraction
         :type annotimage_list: list
@@ -313,7 +309,7 @@ class ViSiAnnoT():
             :class:`.ViSiAnnoT` windows must be displayed simultaneousely, do
             not forget to store each instance of :class:`.ViSiAnnoT` in a
             variable and to set manually the infinite loop with
-            :func:`graphicsoverlayer.ToolsPyQt.infiniteLoopDisplay`
+            :func:`.infiniteLoopDisplay`
         :type flag_infinite_loop: bool
         :param bg_color: backgroud color of the GUI, RGB or HEX string
         :type bg_color: tuple or str
@@ -353,6 +349,7 @@ class ViSiAnnoT():
         # ******************************************************************* #
         # *********************** miscellaneous ***************************** #
         # ******************************************************************* #
+
         #: (*int*) Number of temporal ticks on the X axis of the
         #: signals plots
         self.nb_ticks = nb_ticks
@@ -381,19 +378,15 @@ class ViSiAnnoT():
             {'pen': {'color': '#4C9900', 'width': 1}}
         ]
 
-        #: (*list*) Data types (string) for signal widget
-        #:
-        #: It is the list of keys of ``signal_dict``
-        #: (positional argument of the constructor of :class:`.ViSiAnnoT`),
-        #:
-        #: It is used for the Y axis label of the signal widgets
-        self.sig_labels = list(signal_dict.keys())
-
+        #: (*str*) Directory where the event annotations and extracted images
+        #: are saved
+        self.annot_dir = annot_dir
 
 
         # ******************************************************************* #
         # ************************ long recordings ************************** #
         # ******************************************************************* #
+
         #: (*bool*) Specify if :class:`.ViSiAnnoT` is launched in the context
         #: of :class:`.ViSiAnnoTLongRec`
         self.flag_long_rec = flag_long_rec
@@ -418,17 +411,24 @@ class ViSiAnnoT():
 
         # initialize attributes that are set in the method setAllData
 
-        #: (*dict*) Key is the camera ID, value is an instance of
-        #: cv2.VideoCapture containing the video data
+        #: (*dict*) Video data, each item corresponds to one camera
         #:
-        #: Same keys as ``video_dict``, positional argument of the constructor
-        #: of :class:`.ViSiAnnoT`.
-        self.video_data_dict = OrderedDict()
+        #: Key is the camera ID (same keys as ``video_dict``, positional
+        #: argument of the constructor of :class:`.ViSiAnnoT`).
+        #:
+        #: Value is an instance of **cv2.VideoCapture** containing the video
+        #: data.
+        self.video_data_dict = {}
 
-        # only for documentation
-        #: (*list*) Each element corresponds to a signal widget and is a list
-        #: of instances of :class:`.Signal` to plot on the corresponding widget
-        self.sig_list_list = None
+        #: (*dict*) Signal data, each item corresponds to a signal widget
+        #:
+        #: Key is the data type (same keys as ``signal_dict``, positional
+        #: argument of the constructor), used as label of the Y axis of the
+        #: corresponding widget.
+        #:
+        #: Value is a list of instances of :class:`.Signal` to plot on the
+        #: corresponding widget
+        self.sig_dict = None
 
         #: (*dict*) Intervals to plot on signals, each item corresponds to one
         #: signal widget
@@ -440,23 +440,20 @@ class ViSiAnnoT():
         #: Value is a list of lists, so that several intervals files can be
         #: plotted on the same signal widget. Each sub-list has 3 elements:
         #:
-        #:  - (*numpy array*) Intervals data, shape :math:`(n_{detection}, 2)`
+        #:  - (*numpy array*) Intervals data, shape :math:`(n_{intervals}, 2)`
         #:  - (*float*) Frequency (``0`` if timestamps, ``-1`` if same as
         #:    signal)
         #:  - (*tuple*) Plot color (RGBA)
         self.interval_dict = {}
 
-        # for documentation only
         #: (*int*) Frequency of the video (or the first signal if there is no
         #: video), it is the reference frequency
         self.fps = None
 
-        # for documentation only
         #: (*int*) Number of frames in the video (or the first signal if there
         #: is no video)
         self.nframes = None
 
-        # for documentation only
         #: (*datetime.datetime*) Beginning datetime of the video (or the first
         #: signal if there is no video)
         self.beginning_datetime = None
@@ -464,227 +461,24 @@ class ViSiAnnoT():
         # set data
         self.setAllData(video_dict, signal_dict, interval_dict)
 
-        #: (*dict*) Thresholds to plot on signals widgets
+        #: (*dict*) Thresholds to plot on signals widgets, each item
+        #: corresponds to one signal widget
         #:
-        #: For a given signal, key must be the corresponding element in
-        #: :attr:`.ViSiAnnoT.sig_labels`
+        #: Key is the data type of the signal widget on which to plot (same as
+        #: in positional argument ``signal_dict`` of the constructor of
+        #: :class:`.ViSiAnnoT`)
         #:
         #: Value is a list of length 2:
         #:
-        #: - integer/float with the value of the threshold (on Y axis)
-        #: - tuple with the color to plot (RGB), it can also be a
-        #:   string with HEX color
+        #: - (*float*) Value of the threshold on Y axis
+        #: - (*tuple*) Color to plot (RGB), it can also be a string with HEX
+        #:   color
         self.threshold_dict = threshold_dict
-
-
-        # ******************************************************************* #
-        # ******************** decorative images **************************** #
-        # ******************************************************************* #
-        dir_path = ToolsData.getWorkingDirectory(__file__)
-
-        im_deco_dict = {}
-        for im_name in ["zoomin", "zoomout", "visibility"]:
-            im_path = "%s/Images/%s.jpg" % (dir_path, im_name)
-            im_deco_dict[im_name] = ToolsImage.readImage(im_path)
-
-
-        # ******************************************************************* #
-        # ***************** annotation files management ********************* #
-        # ******************************************************************* #
-
-        #: (*str*) Directory where the annotations are saved
-        #:
-        #: Specified by the keyword argument ``annot_dir``
-        self.annot_dir = annot_dir
-
-        #: (*str*) Base name of the annotation files
-        #:
-        #: It is defined as the basename of the annotation directory
-        #: :attr:`.annot_dir`. When loading/saving annotation files, the label
-        #: is appended to the file name.
-        self.annot_file_base = os.path.basename(self.annot_dir)
-
-
-        # ******************************************************************* #
-        # ********************** event annotation *************************** #
-        # ******************************************************************* #
-
-        #: (*str*) Label automatically created for getting duration of video
-        #: files (or first signal if no video)
-        #:
-        #: It cannot be used for manual annotation, so it is ignored if
-        #: specified by the user in the keyword argument ``annotevent_dict`` of
-        #: :class:`.ViSiAnnoT` constructor.
-        self.annotevent_protected_label = "DURATION"
-
-        # check if protected label in list of labels
-        if self.annotevent_protected_label in annotevent_dict.keys():
-            del annotevent_dict[self.annotevent_protected_label]
-            print(
-                "Label %s for events annotation is protected and cannot be\
-                used for manual annotation, so it is ignored" %
-                self.annotevent_protected_label
-            )
-
-        #: (*list*) Labels of the event annotation (string)
-        self.annotevent_label_list = list(annotevent_dict.keys())
-
-        #: (*list*) Colors of the event annotation labels
-        #:
-        #: each element is a list of length 4 with the RGBA color, or length 3
-        #: with the RGB color (in this case transparency A is set to 100)
-        self.annotevent_color_list = list(annotevent_dict.values())
-
-        # add transparency for color if needed
-        for annot_color in self.annotevent_color_list:
-            if isinstance(annot_color, list) and len(annot_color) == 3:
-                annot_color.append(80)
-
-        #: (*numpy array*) Array with unsaved annotated events
-        #:
-        #: Shape :math:`(n_{annot}, 2, 2)`, where :math:`n_{annot}` is the
-        #: length of :attr:`.ViSiAnnoT.annotevent_label_list`.
-        #: For a given label with index ``n`` in
-        #: :attr:`.ViSiAnnoT.annotevent_label_list`, the sub-array
-        #: ``self.annotevent_array[n]`` is organized as follows:
-        #:
-        #: =====================  =================================================
-        #: start datetime string  start frame index in the format "rec-id_frame-id"
-        #: end datetime string    end frame index in the format "rec-id_frame-id"
-        #: =====================  =================================================
-        self.annotevent_array = np.zeros(
-            (len(self.annotevent_label_list), 2, 2), dtype=object
-        )
-
-        #: (*dict*) Event annotations descriptions to be displayed
-        #:
-        #: Key is the index of a label in
-        #: :attr:`.ViSiAnnoT.annotevent_label_list`. Value is a dictionary:
-        #:
-        #:      - Key is an integer with the annotation ID (index in the
-        #:        annotation file)
-        #:      - Value is a list of instances of pyqtgraph.TextItem with the
-        #:        description, same length and order as
-        #:        :attr:`.ViSiAnnoT.wid_data_list`, so that one element
-        #:        corresponds to one signal widget
-        self.annotevent_description_dict = {}
-
-        #: (*list*) Way of storing event annotations
-        #:
-        #: Two elements:
-        #:
-        #: - ``"datetime"``: datetime string in the format
-        #:   %Y-%M-%DT%h-%m-%s.%ms
-        #: - ``"frame"``: rec-id_frame-id
-        self.annotevent_type_list = ["datetime", "frame"]
-
-        if len(self.annotevent_label_list) > 0:
-            #: (*list*) Files names of event annotation
-            #:
-            #: Same length as :attr:`.ViSiAnnoT.annotevent_type_list`, there is
-            #: one file for each annotation type.
-            self.annotevent_path_list = self.annotEventGetPathList(
-                self.annotevent_label_list[0]
-            )
-
-            # create directory if necessary
-            if not os.path.isdir(self.annot_dir):
-                os.makedirs(self.annot_dir)
-
-            # create annotation file with duration of video files
-            # (or first signal if no video)
-            output_path_0 = "%s/%s_%s-datetime.txt" % \
-                (self.annot_dir, self.annot_file_base,
-                    self.annotevent_protected_label)
-            output_path_1 = "%s/%s_%s-frame.txt" % \
-                (self.annot_dir, self.annot_file_base,
-                    self.annotevent_protected_label)
-
-            if not os.path.isfile(output_path_0):
-                if self.flag_long_rec:
-                    with open(output_path_0, 'w') as f:
-                        for beg_datetime, duration in zip(
-                            self.rec_beginning_datetime_list,
-                            self.rec_duration_list
-                        ):
-                            end_datetime = beg_datetime + timedelta(
-                                seconds=duration
-                            )
-
-                            beg_string = ToolsDateTime.convertDatetimeToString(
-                                beg_datetime
-                            )
-
-                            end_string = ToolsDateTime.convertDatetimeToString(
-                                end_datetime
-                            )
-
-                            f.write("%s - %s\n" % (beg_string, end_string))
-
-                    with open(output_path_1, 'w') as f:
-                        for ite_file, duration in enumerate(
-                            self.rec_duration_list
-                        ):
-                            f.write("%d_0 - %d_%d\n" % (
-                                ite_file, ite_file, int(duration * self.fps)
-                            ))
-
-                else:
-                    with open(output_path_0, 'w') as f:
-                        end_datetime = self.beginning_datetime + timedelta(
-                            seconds=self.nframes / self.fps
-                        )
-
-                        beg_string = ToolsDateTime.convertDatetimeToString(
-                            self.beginning_datetime
-                        )
-
-                        end_string = ToolsDateTime.convertDatetimeToString(
-                            end_datetime
-                        )
-
-                        f.write("%s - %s\n" % (beg_string, end_string))
-
-                    with open(output_path_1, 'w') as f:
-                        f.write("0_0 - 0_%d\n" % self.nframes)
-
-        else:
-            self.annotevent_path_list = []
-
-        #: (*int*) Index of the currently selected label, with respect to the
-        #: list :attr:`.ViSiAnnoT.annotevent_type_list`
-        self.annotevent_current_label_id = 0
-
-
-        # ******************************************************************* #
-        # ********************** image annotation *************************** #
-        # ******************************************************************* #
-
-        # check type (if loaded from a configuration, then dictionary instead
-        # of list)
-        if isinstance(annotimage_list, dict):
-            # convert to list
-            annotimage_list = [k for k in annotimage_list.values()]
-
-        #: (*list*) Image annotation labels (strings)
-        self.annotimage_label_list = annotimage_list
-
-        if len(self.annotimage_label_list) > 0:
-            # create directories if necessary
-            if not os.path.isdir(self.annot_dir):
-                os.makedirs(self.annot_dir)
-
-            for label in self.annotimage_label_list:
-                label_dir = "%s/%s" % (self.annot_dir, label)
-                if not os.path.isdir(label_dir):
-                    os.mkdir(label_dir)
 
 
         # ******************************************************************* #
         # ***************************** zoom ******************************** #
         # ******************************************************************* #
-        #: (*int*) Zoom factor
-        self.zoom_factor = zoom_factor
 
         #: (*int*) Start position (frame number) for custom manual zoom (set to
         #: -1 if not defined)
@@ -701,7 +495,7 @@ class ViSiAnnoT():
         #: (*list*) Instances of pyqtgraph.TextItem with the duration of the
         #: custom manual zoom
         #:
-        #: Same length and order as :attr:`.ViSiAnnoT.wid_data_list`, so that
+        #: Same length and order as :attr:`.ViSiAnnoT.wid_sig_list`, so that
         #: one element corresponds to one signal widget
         self.region_zoom_text_item_list = []
 
@@ -710,40 +504,11 @@ class ViSiAnnoT():
         # ****************************** time ******************************* #
         # ******************************************************************* #
 
-        #: (*int*) Number of frames correpsonding to
-        #: :attr:`.ViSiAnnoT.trunc_duration`
-        self.nframes_trunc = ToolsDateTime.convertTimeToFrame(
-            self.fps, minute=trunc_duration[0], sec=trunc_duration[1]
-        )
-
-        # check if trunc duration is above the total number of frames or
-        # default => set it to 0
-        if self.nframes_trunc > self.nframes or self.nframes_trunc == 0:
-            self.nframes_trunc = self.nframes
-            trunc_duration = (0, 0)
-
-        #: (*list*) Duration of file split (tool for fast navigation), 2
-        #: elements (int): ``(minute, second)``
-        self.trunc_duration = trunc_duration
-
-        #: (*int*) Number of splits in the file (tool for fast navigation)
-        self.nb_trunc = round(self.nframes / self.nframes_trunc)
-
-        #: (*list*) Temporal range durations intervals starting at the current
-        #: position of the temporal cursor (tool for fast navigation)
-        #:
-        #: Each element is a list of integers with 2 elements:
-        #: ``(minute, second)``.
-        self.from_cursor_list = from_cursor_list
-
         #: (*bool*) Specify if the video is paused
         self.flag_pause_status = flag_pause_status
 
         #: (*int*) Index of the current frame
         self.frame_id = 0
-
-        #: (*dict*) Index of the previous frame for each video_id
-        self.previous_frame_id = {}
 
         #: (*int*) First frame that is displayed in the signal plots
         self.first_frame = 0
@@ -751,8 +516,8 @@ class ViSiAnnoT():
         #: (*int*) Last frame that is displayed in the signal plots
         #:
         #: Actually, the last frame that is displayed is
-        #: ``:attr:`.ViSiAnnoT.last_frame` - 1``, because of zero-indexation.
-        self.last_frame = self.nframes_trunc
+        #: ``last_frame` - 1``, because of zero-indexation.
+        self.last_frame = self.nframes
 
         #: (*bool*) Specify if the window is running
         self.flag_processing = True
@@ -807,7 +572,10 @@ class ViSiAnnoT():
 
 
             else:
-                raise Exception("No layout configuration given - got mode %d, must be 1, 2 or 3" % layout_mode)
+                raise Exception(
+                    "No layout configuration given - got mode %d, "
+                    "must be 1, 2 or 3" % layout_mode
+                )
 
 
         # ******************************************************************* #
@@ -861,356 +629,177 @@ class ViSiAnnoT():
         self.menu_bar = MenuBar(self.win, self.lay)
 
 
-        # ********************** progress bar ******************************* #
-        if "progress" in poswid_dict.keys():
-            #: (:class:`graphicsoverlayer.ToolsPyqtgraph.ProgressWidget`)
-            #: Widget containing the progress bar
-            self.wid_progress = None
-
-            self.createWidgetProgress(
-                poswid_dict['progress'], title="",
-                title_style=font_default_title, ticks_color=ticks_color,
-                ticks_size=ticks_size, ticks_offset=ticks_offset
-            )
-
-            # listen to the callbakc method
-            self.wid_progress.getProgressPlot().sigPlotChanged.connect(
-                self.mouseDraggedProgress
+        # *************** widget for truncated temporal range *************** #
+        if len(self.sig_dict) > 0 and "select_trunc" in poswid_dict.keys():
+            #: (:class:`.TruncTemporalRangeWidget`) Widget for selecting a
+            #: truncated temporal range
+            self.wid_trunc = TruncTemporalRangeWidget(
+                self, poswid_dict['select_trunc'], trunc_duration
             )
 
         else:
-            raise Exception("No widget position given for the progress bar => add key 'progress' to positional argument poswid_dict")
+            self.wid_trunc = None
 
 
-        # ************************ video widgets **************************** #
-        #: (*dict*) Video widgets
-        #:
-        #: Key is the camera ID (string). Value is the widget
-        #: (pyqtgraph.PlotWidget) where the corresponding video is displayed.
-        #:
-        #: Same keys as the position argument
-        #: ``video_dict`` of the constructor of :class:`.ViSiAnnoT`
-        self.wid_vid_dict = {}
+        # **************** widget for custom temporal range ***************** #
+        if len(self.sig_dict) > 0 and "select_manual" in poswid_dict.keys():
+            #: (:class:`.CustomTemporalRangeWidget`) Widget for defining a
+            #: custom temporal range
+            self.wid_time_edit = CustomTemporalRangeWidget(
+                self, poswid_dict["select_manual"]
+            )
 
-        #: (*dict*) Image items of the current frame
-        #:
-        #: Key is the camera ID (string). Value is the image item
-        #: (pyqtgraph.ImageItem) displayed for the corresponding video
-        #:
-        #: Same keys as the position argument
-        #: ``video_dict`` of the constructor of :class:`.ViSiAnnoT`
-        self.img_vid_dict = {}
-
-        #: (*dict*) Image arrays of the current frame
-        #:
-        #: Key is the camera ID (string). Value is a numpy array of shape
-        #: :math:`(width, height, 3)` containing the RGB image of the current
-        #: frame for the corresponding video.
-        #:
-        #: Same keys as the position argument
-        #: ``video_dict`` of the constructor of :class:`.ViSiAnnoT`
-        self.im_dict = {}
-
-        #: (*dict*) Files names of the video
-        #:
-        #: Key is the camera ID (string). Value is the corresponding video
-        #: file name (strin).
-        #:
-        #: Same keys as the position argument
-        #: ``video_dict`` of the constructor of :class:`.ViSiAnnoT`
-        self.vid_file_name_dict = {}
-
-        # create video widgets and initialize video plots
-        # (it sets the attributes self.wid_vid_dict, self.img_vid_dict,
-        # self.im_dict and self.vid_file_name_dict)
-        self.initVideoPlot(
-            video_dict, poswid_dict, font_title=font_default_title
-        )
-
-
-        # *********************** signal widgets **************************** #
-        #: (*list*) Widgets for signal plot, each element is an instance of
-        #: :class:`.SignalWidget`
-        #:
-        #: Same length as :attr:`.sig_labels`.
-        self.wid_data_list = []
-
-        #: (*list*) Plot items of the signals
-        #:
-        #: Each element corresponds to a signal widget in
-        #: :attr:`.wid_data_list` (same indexing) and is a list of
-        #: plot items (pyqtgraph.PlotDataItem)
-        self.data_plot_list_list = []
-
-        #: (*list*) Temporal cursor item for each signal
-        #:
-        #: Each element is an instance of pyqtgraph.InfiniteLine.
-        self.current_cursor_list = []
-
-        #: (*dict*) Lists of region items for temporal intervals
-        #:
-        #: Key is the ID of the widget on which temporal intervals are plotted
-        #: (must be in :attr:`.sig_labels`). Value is a list of
-        #: instances of pyqtgraph.LinearRegionItem displayed on the
-        #: corresponding widget.
-        self.region_interval_dict = {}
-
-        # create signal widgets and initialize signal plots
-        # (it sets the attributes self.wid_data_list,
-        # self.data_plot_list_list, self.current_cursor_list and
-        # self.region_interval_dict)
-        self.initSignalPlot(
-            poswid_dict['progress'],
-            font_axis_label=font_default_axis_label,
-            ticks_color=ticks_color,
-            ticks_size=ticks_size,
-            ticks_offset=2,
-            y_range_dict=y_range_dict,
-            height_widget_signal=height_widget_signal
-        )
-
-        # listen to the callback methods
-        for wid, current_cursor in zip(
-            self.wid_data_list, self.current_cursor_list
-        ):
-            # mouse click on the plot => move temporal cursor
-            wid.scene().sigMouseClicked.connect(self.signalMouseClicked)
-
-            # temporal cursor dragging
-            current_cursor.sigDragged.connect(self.currentCursorDragged)
-
-
-        # *********************** trunc widget ****************************** #
-        if self.trunc_duration[0] != 0 or self.trunc_duration[1] != 0:
-            if "select_trunc" in poswid_dict.keys():
-                #: (:class:`graphicsoverlayer.ToolsPyQt.ComboBox`) Combo box
-                #: for selecting a truncated temporal range (tool for fast
-                #: navigation)
-                _, _, self.combo_trunc = ToolsPyQt.addComboBox(
-                    self.lay, poswid_dict['select_trunc'],
-                    [""] + self.getTruncIntervals(),
-                    box_title="%dmin %ds temporal range" %
-                    tuple(self.trunc_duration)
-                )
-
-                self.combo_trunc.setCurrentIndex(1)
-
-                # listen to the callback method
-                self.combo_trunc.currentIndexChanged.connect(
-                    self.callComboTrunc
-                )
-
-
-        # ************ widget for custom temporal re-scaling **************** #
-        if "select_manual" in poswid_dict.keys():
-            #: (*QtWidgets.QDateTimeEdit*) Editor of starting datetime of
-            #: custom temporal interval
-            self.edit_start = QtWidgets.QDateTimeEdit(QtCore.QDateTime(
-                QtCore.QDate(
-                    self.beginning_datetime.year,
-                    self.beginning_datetime.month,
-                    self.beginning_datetime.day
-                ),
-                QtCore.QTime(
-                    self.beginning_datetime.hour,
-                    self.beginning_datetime.minute,
-                    self.beginning_datetime.second
-                )
-            ))
-
-            # only for documentation
-            #: (*QtWidgets.QPushButton*) Push button for defining the starting
-            #: datetime of custom temporal interval as the current frame
-            self.current_push = None
-
-            #: (*QtWidgets.QTimeEdit*) Editor of the duration of custom
-            #: temporal interval
-            self.edit_duration = QtWidgets.QTimeEdit()
-
-            # only for documentation
-            #: (*QtWidgets.QPushButton*) Push button for validating custom
-            #: temporal interval
-            self.time_edit_push = None
-
-            # create widget
-            self.createWidgetTimeEdit(poswid_dict['select_manual'])
-
-            # listen to the callback methods
-            self.current_push.clicked.connect(self.timeEditCurrent)
-            self.time_edit_push.clicked.connect(self.timeEditOk)
+        else:
+            self.wid_time_edit = None
 
 
         # *************** widget for temporal re-scaling ******************** #
-        if len(self.wid_data_list) > 0 and \
+        if len(self.sig_dict) > 0 and \
             "select_from_cursor" in poswid_dict.keys() and \
-                len(self.from_cursor_list) > 0:
-            #: (:class:`graphicsoverlayer.ToolsPyQt.ComboBox`) Combo box for
-            #: selecting a temporal range starting from the current frame (tool
-            #: for fast navigation)
-            _, _, self.combo_from_cursor = ToolsPyQt.addComboBox(
-                self.lay, poswid_dict['select_from_cursor'],
-                [""] + ['{:>02}:{:>02}'.format(from_cursor[0], from_cursor[1])
-                        for from_cursor in self.from_cursor_list],
-                box_title="Temporal range duration"
+                len(from_cursor_list) > 0:
+            #: (:class:`.FromCursorTemporalRangeWidget`) Widget for selecting
+            #: a duration of temporal range to be started at the current frame
+            self.wid_from_cursor = FromCursorTemporalRangeWidget(
+                self, poswid_dict["select_from_cursor"], from_cursor_list
             )
 
-            # listen to the callback method
-            self.combo_from_cursor.currentIndexChanged.connect(
-                self.callComboFromCursor
+        else:
+            self.wid_from_cursor = None
+
+
+        # ********************** progress bar ******************************* #
+        if "progress" in poswid_dict.keys():
+            #: (:class:`.ProgressWidget`) Widget containing the progress bar
+            self.wid_progress = ProgressWidget(
+                self, poswid_dict['progress'], title_style=font_default_title,
+                ticks_color=ticks_color, ticks_size=ticks_size,
+                ticks_offset=ticks_offset, nb_ticks=self.nb_ticks
+            )
+
+        else:
+            raise Exception(
+                "No widget position given for the progress bar => "
+                "add key 'progress' to positional argument poswid_dict"
+            )
+
+
+        # ************************ video widgets **************************** #
+        #: (*dict*) Video widgets, each item corresponds to one camera
+        #:
+        #: Key is the camera ID (same keys as the positional argument
+        #: ``video_dict`` of the constructor of :class:`.ViSiAnnoT`).
+        #:
+        #: Value is an instance of :class:`.VideoWidget` where the
+        #: corresponding video is displayed.
+        self.wid_vid_dict = {}
+
+        # loop on cameras
+        for video_id, (video_path, _, _, _) in video_dict.items():
+            # check if widget position exists
+            if video_id in poswid_dict.keys():
+                # create widget
+                self.wid_vid_dict[video_id] = VideoWidget(
+                    self.lay, poswid_dict[video_id], video_path,
+                    **font_default_title
+                )
+
+                # initialize image
+                self.wid_vid_dict[video_id].setAndDisplayImage(
+                    self.video_data_dict[video_id], self.frame_id
+                )
+
+
+        # *********************** signal widgets **************************** #
+        #: (*list*) Signal widgets, each element is an instance of
+        #: :class:`.Signal` (same order as :attr:`.sig_dict`
+        self.wid_sig_list = []
+
+        if len(self.sig_dict) > 0:
+            # create signal widgets and initialize signal plots
+            # it sets the attribute wid_sig_list
+            self.initSignalPlot(
+                poswid_dict['progress'], y_range_dict=y_range_dict,
+                left_label_style=font_default_axis_label,
+                ticks_color=ticks_color, ticks_size=ticks_size, ticks_offset=2,
+                wid_height=height_widget_signal
             )
 
 
         # *********************** zoom widgets ****************************** #
-        if len(self.wid_data_list) > 0 and "visi" in poswid_dict.keys():
-            #: (*pyqtgraph.PlotWidget*) Widget with the visibility image
-            #:
-            #: Clicking on it sets the temporal range to the fullest
-            self.wid_visi = ToolsPyqtgraph.createWidgetLogo(
-                self.lay, poswid_dict['visi'], im_deco_dict["visibility"],
-                box_size=50
+        if len(self.sig_dict) > 0 and "visi" in poswid_dict.keys():
+            #: (:class:`.FullVisiWidget`) Widget for zooming out to the full
+            #: temporal range
+            self.wid_visi = FullVisiWidget(
+                self, poswid_dict["visi"], "visibility"
             )
 
-            # listen to the callback method
-            self.wid_visi.scene().sigMouseClicked.connect(self.visiAll)
+        else:
+            self.wid_visi = None
 
-
-        if len(self.wid_data_list) > 0 and "zoomin" in poswid_dict.keys():
-            #: (*pyqtgraph.PlotWidget*) Widget containing the zoomin image
-            self.wid_zoomin = ToolsPyqtgraph.createWidgetLogo(
-                self.lay, poswid_dict['zoomin'], im_deco_dict["zoomin"],
-                box_size=50
+        if len(self.sig_dict) > 0 and "zoomin" in poswid_dict.keys():
+            #: (:class:`.ZoomInWidget`) Widget for zooming in
+            self.wid_zoomin = ZoomInWidget(
+                self, poswid_dict["zoomin"], "zoomin", zoom_factor=zoom_factor
             )
 
-            # listen to the callback method
-            self.wid_zoomin.scene().sigMouseClicked.connect(self.zoomIn)
+        else:
+            self.wid_zoomin = None
 
-
-        if len(self.wid_data_list) > 0 and "zoomout" in poswid_dict.keys():
-            #: (*pyqtgraph.PlotWidget*) Widget containing the zoomout image
-            self.wid_zoomout = ToolsPyqtgraph.createWidgetLogo(
-                self.lay, poswid_dict['zoomout'], im_deco_dict["zoomout"],
-                box_size=50
+        if len(self.sig_dict) > 0 and "zoomout" in poswid_dict.keys():
+            #: (:class:`.ZoomOutWidget`) Widget for zooming out
+            self.wid_zoomout = ZoomOutWidget(
+                self, poswid_dict["zoomout"], "zoomout",
+                zoom_factor=zoom_factor
             )
 
-            # listen to the callback method
-            self.wid_zoomout.scene().sigMouseClicked.connect(self.zoomOut)
+        else:
+            self.wid_zoomout = None
 
 
         # ******************* event annotation widget *********************** #
-        if len(self.annotevent_label_list) > 0:
+        if len(annotevent_dict) > 0:
             if "annot_event" in poswid_dict.keys():
-                # for documentation only
-                #: (*QtWidgets.QButtonGroup*) Set of the radio buttons with
-                #: labels of events annotation
-                self.annotevent_button_group_radio_label = None
-
-                # for documentation only
-                #: (*QtWidgets.QButtonGroup*) Set of the radio buttons with
-                #: display options of events annotation
-                self.annotevent_button_group_radio_disp = None
-
-                # for documentation only
-                #: (*QtWidgets.QButtonGroup*) Set of the check boxes for
-                #: custom display of events annotation
-                self.annotevent_button_group_check_custom = None
-
-                #: (*QtWidgets.QButtonGroup*) Set of push buttons for
-                #: events annotation (Sart, Stop, Add, Delete last, Display)
-                self.annotevent_button_group_push = QtWidgets.QButtonGroup()
-
-                #: (*list*) Instances of QtWidgets.QLabel containing the text
-                #: next to the push buttons grouped in
-                #: :attr:`.ViSiAnnoT.annotevent_button_group_push`
-                self.annotevent_button_label_list = []
-
-                # create widget for events annotation
-                self.createWidgetAnnotEvent(
-                    poswid_dict['annot_event'], nb_table=nb_table_annot
-                )
-
-                #: (*dict*) Lists of region items (pyqtgraph.LinearRegionItem)
-                #: for the display of event annotations
-                #:
-                #: Key is a label index. Value is a list of lists, each sublist
-                #: corresponds to one annotation and contains
-                #: :math:`n_{wid} + 1` region items, where :math:`n_{wid}` is
-                #: the length of :attr:`.ViSiAnnoT.wid_data_list` (number of
-                #: signal widgets), the additional region item is for the
-                #: progress bar (:attr:`.ViSiAnnoT.wid_progress`).
-                #:
-                #: For example, for 3 signal widgets and for a given label with
-                #: 2 annotations, the value of the dictionary would be::
-                #:
-                #:      [
-                #:          [
-                #:              annot1_widProgress, annot1_wid1, annot1_wid2,
-                #:              annot1_wid3
-                #:          ],
-                #:          [
-                #:              annot2_widProgress, annot2_wid1, annot2_wid2,
-                #:              annot2_wid3
-                #:          ]
-                #:      ]
-                self.region_annotation_dict = {}
-
-                # plot annotations
-                self.plotAnnotEventRegions()
-
-                # listen to the callback methods
-                self.annotevent_button_group_push.buttonClicked[int].connect(
-                    self.annotEventCallPushButton
-                )
-
-                self.annotevent_button_group_radio_label.buttonClicked.connect(
-                    self.annotEventCallRadio
-                )
-
-                self.annotevent_button_group_radio_disp.buttonClicked.connect(
-                    self.plotAnnotEventRegions
-                )
-
-                self.annotevent_button_group_check_custom.buttonClicked.connect(
-                    self.plotAnnotEventRegions
+                #: (:class:`.AnnotEventWidget`) Widget for events annotation
+                self.wid_annotevent = AnnotEventWidget(
+                    self, poswid_dict["annot_event"], annotevent_dict,
+                    annot_dir, nb_table=nb_table_annot
                 )
 
             else:
-                raise Exception("No widget position given for the event annotation => add key 'annot_event' to positinal argument poswid_dict")
+                raise Exception(
+                    "No widget position given for the event annotation => "
+                    "add key 'annot_event' to positinal argument poswid_dict"
+                )
+
+        else:
+            self.wid_annotevent = None
 
 
         # ******************* image annotation widget *********************** #
-        if len(self.annotimage_label_list) > 0:
+        if len(annotimage_list) > 0:
             if "annot_image" in poswid_dict.keys():
-                # for documentation only
-                #: (*QtWidgets.QButtonGroup*) Set of radio buttons with
-                #: labels of image extraction
-                self.annotimage_radio_button_group = None
-
-                # for documentation only
-                #: (:class:`graphicsoverlayer.ToolsPyQt.PushButton`) Push
-                #: button for saving image extraction
-                self.annotimage_push_button = None
-
-                # check if horizontal or vertical radio buttons
+                # check layout mode
                 if layout_mode == 3:
                     flag_horizontal = False
 
                 else:
                     flag_horizontal = True
 
-                # create widget
-                self.createWidgetAnnotImage(
-                    poswid_dict['annot_image'],
-                    flag_horizontal=flag_horizontal,
-                    nb_table=nb_table_annot
-                )
-
-                # listen to the callback method
-                self.annotimage_push_button.clicked.connect(
-                    self.annotImageCallPushButton
+                #: (:class:`.AnnotImageWidget`) Widget for image extraction
+                self.wid_annotimage = AnnotImageWidget(
+                    self, poswid_dict["annot_image"], annotimage_list,
+                    annot_dir, nb_table=nb_table_annot,
+                    flag_horizontal=flag_horizontal
                 )
 
             else:
-                raise Exception("No widget position given for the image annotation => add key 'annot_image' to positinal argument poswid_dict")
+                raise Exception(
+                    "No widget position given for the image annotation => "
+                    "add key 'annot_image' to positinal argument poswid_dict"
+                )
+
+        else:
+            self.wid_annotimage = None
 
 
         # ******************************************************************* #
@@ -1255,94 +844,6 @@ class ViSiAnnoT():
     # *********************************************************************** #
     # Group: Miscellaneous methods
     # *********************************************************************** #
-
-
-    def getTruncIntervals(self):
-        """
-        Gets the string associated to the truncated temporal intervals defined
-        by :attr:`.ViSiAnnoT.trunc_duration` for fast navigation
-
-        :returns: list of strings
-        :rtype: list
-        """
-
-        trunc_list = []
-        for ite_trunc in range(self.nb_trunc):
-            string_1 = ToolsDateTime.convertFrameToAbsoluteTimeString(
-                ite_trunc * self.nframes_trunc, self.fps,
-                self.beginning_datetime
-            )
-
-            if (ite_trunc + 1) == self.nb_trunc:
-                string_2 = ToolsDateTime.convertFrameToAbsoluteTimeString(
-                    self.nframes, self.fps, self.beginning_datetime
-                )
-
-            else:
-                string_2 = ToolsDateTime.convertFrameToAbsoluteTimeString(
-                    (ite_trunc + 1) * self.nframes_trunc, self.fps,
-                    self.beginning_datetime
-                )
-
-            label = "%s - %s" % (string_1, string_2)
-            trunc_list.append(label)
-
-        return trunc_list
-
-
-    def setTemporalTicks(self, widget, temporal_info):
-        """
-        Sets the ticks of the X axis of the widget and the X axis range
-        according to a temporal range
-
-        It creates temporal labels for ticks in the format HH:MM:SS.SSS.
-        The number of ticks is specified by :attr:`.ViSiAnnoT.nb_ticks`.
-
-        :param widget: widget where to set X axis ticks and X axis range,
-            it may be any sub-class of pyqtgraph.PlotWidget, such as
-            :class:`graphicsoverlayer.ToolsPyqtgraph.SignalWidget` or
-            :class:`graphicsoverlayer.ToolsPyqtgraph.ProgressWidget`
-        :type widget: pyqtgraph.PlotWidget
-        :param temporal_info: temporal range, there are two ways to specify it:
-
-            - ``(first_frame_ms, last_frame_ms)``, the temporal range is
-              expressed in milliseconds,
-            - ``(first_frame, last_frame, freq)``, the temporal range is
-              expressed in number of frames sampled at the frequency ``freq``
-        :type temporal_info: list
-        """
-
-        start = temporal_info[0]
-        stop = temporal_info[1]
-        temporal_range = [start + i * (stop - start) / (self.nb_ticks - 1)
-                          for i in range(self.nb_ticks - 1)] + [stop]
-
-        # X axis range
-        widget.setXRange(start, stop)
-
-        if len(temporal_info) == 3:
-            freq = temporal_info[2]
-
-            # define temporal labels
-            temporal_labels = [
-                ToolsDateTime.convertFrameToAbsoluteTimeString(
-                    frame_id, freq, self.beginning_datetime
-                ) for frame_id in temporal_range
-            ]
-
-        else:
-            # define temporal labels
-            temporal_labels = [
-                ToolsDateTime.convertMsecToAbsoluteTimeString(
-                    msec, self.beginning_datetime
-                ) for msec in temporal_range
-            ]
-
-        # set ticks
-        ticks = [[(frame, label) for frame, label in
-                  zip(temporal_range, temporal_labels)], []]
-        axis = widget.getAxis('bottom')
-        axis.setTicks(ticks)
 
 
     def getFrameIdInMs(self, frame_id):
@@ -1397,113 +898,34 @@ class ViSiAnnoT():
     # End group
     # *********************************************************************** #
 
-
     # *********************************************************************** #
     # Group: Methods for displaying video / plotting signals and progress bar
     # *********************************************************************** #
 
 
-    def initVideoPlot(self, video_dict, poswid_dict,
-                      font_title={"color": "#000", "size": "12pt"}):
-        """
-        Creates the video widgets and initializes the video plots
-
-        It sets the following attributes:
-
-        - :attr:`.ViSiAnnoT.wid_vid_dict`
-        - :attr:`.ViSiAnnoT.img_vid_dict`
-        - :attr:`.ViSiAnnoT.im_dict`
-        - :attr:`.ViSiAnnoT.vid_file_name_dict`
-
-        Make sure the attribute :attr:`.ViSiAnnoT.lay` is created before
-        calling this method.
-
-        :param video_dict: video configuration, see positional argument
-            ``video_dict`` of :class:`.ViSiAnnoT` constructor
-        :type video_dict: dict
-        :param poswid_dict: position of the widgets in the window, see
-            positional argument ``poswid_dict`` of :class:`.ViSiAnnoT`
-            constructor
-        :type poswid_dict: dict
-        :param font_title: font of the widget title
-        :type font_title: dict
-        """
-
-        for video_id, (video_path, _, _, _) in video_dict.items():
-            # check if widget position exists
-            if video_id in poswid_dict.keys():
-                # get file name
-                file_name = os.path.splitext(os.path.basename(video_path))[0]
-                self.vid_file_name_dict[video_id] = file_name
-
-                self.previous_frame_id[video_id] = None
-
-                # create widget
-                self.wid_vid_dict[video_id], self.img_vid_dict[video_id] = \
-                    ToolsPyqtgraph.createWidgetImage(
-                        self.lay, poswid_dict[video_id],
-                        title=file_name, title_style=font_title
-                )
-
-                # initialize image arrays
-                ret = self.getVideoData(
-                    self.video_data_dict[video_id], video_id
-                )
-
-                # display first frame
-                self.img_vid_dict[video_id].setImage(self.im_dict[video_id])
-
-            else:
-                raise Exception("No widget position given for video %s => add key %s to positinal argument poswid_dict" % (video_id, video_id))
-
-
     def initSignalPlot(
-        self, progbar_wid_pos,
-        font_axis_label={"color": "#000", "font-size": "12pt"},
-        ticks_color=(93, 91, 89), ticks_size=10, ticks_offset=2,
-        current_cursor_style={'color': "F00", 'width': 1},
-        current_cursor_dragged_style={'color': "F0F", 'width': 2},
-        y_range_dict={}, height_widget_signal=150
+        self, progbar_wid_pos, y_range_dict={}, **kwargs
     ):
         """
         Creates the signal widgets and initializes the signal plots
 
         The widgets are automatically positioned below the progress bar.
 
-        It sets the following attributes:
-
-        - :attr:`.ViSiAnnoT.wid_data_list`
-        - :attr:`.ViSiAnnoT.data_plot_list_list`
-        - :attr:`.ViSiAnnoT.current_cursor_list`
-        - :attr:`.ViSiAnnoT.region_interval_dict`
+        It sets the attribute :attr:`.ViSiAnnoT.wid_sig_list`.
 
         Make sure the attributes :attr:`.ViSiAnnoT.lay`,
-        :attr:`.ViSiAnnoT.sig_list_list`, :attr:`.ViSiAnnoT.sig_labels`,
-        :attr:`.ViSiAnnoT.threshold_dict` and :attr:`.ViSiAnnoT.interval_dict`
-        are defined before calling this method.
+        :attr:`.ViSiAnnoT.sig_dict`, :attr:`.ViSiAnnoT.threshold_dict` and
+        :attr:`.ViSiAnnoT.interval_dict` are defined before calling this
+        method.
 
         :param progbar_wid_pos: position of the progress bar widget, length 2
             ``(row, col)`` or 4 ``(row, col, rowspan, colspan)``
         :type progbar_wid_pos: tuple of list
-        :param font_axis_label: font of the Y axis label
-        :type font_axis_label: dict
-        :param ticks_color: ticks color (RGB)
-        :type ticks_color: tuple or list
-        :param ticks_size: size of the ticks text
-        :type ticks_size: int
-        :param ticks_offset: offset between the ticks and the text
-        :type ticks_offset: int
-        :param current_cursor_style: plot style of the temporal cursor
-        :type current_cursor_style: dict
-        :param current_cursor_dragged_style: plot style of the temporal cursor
-            when dragged
-        :type current_cursor_dragged_style: dict
         :param y_range_dict: visible Y range for signal widgets, see positional
             argument ``y_range_dict`` of :class:`.ViSiAnnoT` constructor
         :type y_range_dict: dict
-        :param height_widget_signal: minimum height in pixels of the signal
-            widgets
-        :type height_widget_signal: int
+        :param kwargs: keyword arguments of the constructor of
+            :class:`.SignalWidget`, except ``y_range`` and ``left_label``
         """
 
         # get current range in milliseconds
@@ -1512,19 +934,18 @@ class ViSiAnnoT():
         # convert progress bar widget position to a list
         pos_sig = list(progbar_wid_pos)
 
+        # signal widget position is defined relatively to progress bar
+        # widget position
+        pos_sig[0] += 1
+
+        # create scroll area
+        scroll_lay, _ = ToolsPyQt.addScrollArea(
+            self.lay, pos_sig, flag_ignore_wheel_event=True
+        )
+
         # loop on signals
-        for ite_sig, (type_data, sig_list) in enumerate(
-            zip(self.sig_labels, self.sig_list_list)
-        ):
-            # get position of the widget relatively to the progress bar
-            pos_sig[0] += 1
-
-            # create scroll area
-            if ite_sig == 0:
-                scroll_lay, _ = ToolsPyQt.addScrollArea(
-                    self.lay, pos_sig, flag_ignore_wheel_event=True
-                )
-
+        for ite_sig, (type_data, sig_list) in \
+                enumerate(self.sig_dict.items()):
             # get Y range
             if type_data in y_range_dict.keys():
                 y_range = y_range_dict[type_data]
@@ -1532,127 +953,49 @@ class ViSiAnnoT():
             else:
                 y_range = []
 
+            # get list of intervals to plot in the signal widget
+            if type_data in self.interval_dict.keys():
+                interval_list = self.interval_dict[type_data]
+
+            else:
+                interval_list = []
+
+            # get list of thresholds to plot in the signal widget
+            if type_data in self.threshold_dict.keys():
+                threshold_list = self.threshold_dict[type_data]
+
+            else:
+                threshold_list = []
+
             # create widget
-            wid = ToolsPyqtgraph.createWidgetSignal(
-                self.lay, pos_sig, y_range=y_range,
-                left_label=type_data, left_label_style=font_axis_label,
-                ticks_color=ticks_color, ticks_size=ticks_size,
-                ticks_offset=ticks_offset
+            wid = SignalWidget(
+                self, pos_sig, y_range=y_range, left_label=type_data, **kwargs
+            )
+
+            # create plot items in the signal widget
+            wid.createPlotItems(
+                first_frame_ms, last_frame_ms, sig_list, interval_list,
+                threshold_list
+            )
+
+            # set temporal ticks and X axis range
+            ToolsPyqtgraph.setTemporalTicks(
+                wid, self.nb_ticks, (first_frame_ms, last_frame_ms),
+                self.beginning_datetime
             )
 
             # add widget to scroll area
-            wid.setMinimumHeight(height_widget_signal)
             scroll_lay.addWidget(wid)
 
             # append widget to list of widgets
-            self.wid_data_list.append(wid)
+            self.wid_sig_list.append(wid)
 
             # reconnect to keypress event callback, so that keypress events of
             # scroll are ignored
             wid.keyPressEvent = self.keyPress
 
-            # create legend item
-            if len(sig_list) > 1:
-                legend = pg.LegendItem(offset=(0, 10))
-                legend.setParentItem(wid.graphicsItem())
-
-            # loop on sub-signals for the widget
-            data_plot_list_tmp = []
-            for sig in sig_list:
-                # define temporal range for the signal
-                data_in_current_range = sig.getDataInRange(
-                    first_frame_ms, last_frame_ms
-                )
-
-                # plot signal in the widget
-                plot = ToolsPyqtgraph.addPlotTo2DWidget(
-                    wid, data_in_current_range,
-                    flag_nan_void=True, plot_style=sig.getPlotStyle()
-                )
-
-                data_plot_list_tmp.append(plot)
-
-                # add legend
-                if len(sig_list) > 1 and sig.getLegendText() != "":
-                    legend.addItem(plot, sig.getLegendText())
-
-            # append list of plot list
-            self.data_plot_list_list.append(data_plot_list_tmp)
-
-            # create the infinite line for the current cursor
-            current_cursor = pg.InfiniteLine(
-                angle=90, movable=True, bounds=[0, last_frame_ms],
-                pen=current_cursor_style, hoverPen=current_cursor_dragged_style
-            )
-
-            wid.addItem(current_cursor)
-            current_cursor.setPos(0)
-            self.current_cursor_list.append(current_cursor)
-
-            # set temporal ticks and X axis range
-            self.setTemporalTicks(wid, (first_frame_ms, last_frame_ms))
-
-            # check if there are intervals to plot
-            if type_data in self.interval_dict.keys():
-                # loop on interval data
-                self.region_interval_dict[type_data] = []
-                for intervals, freq, color in self.interval_dict[type_data]:
-                    # plot intervals
-                    self.region_interval_dict[type_data] += \
-                        ViSiAnnoT.plotIntervals(intervals, wid, freq, color)
-
-            # check if there are thresholds to plot
-            if type_data in self.threshold_dict.keys():
-                for value, color in self.threshold_dict[type_data]:
-                    infinite_line = pg.InfiniteLine(
-                        pos=value, angle=0, pen={'color': color, 'width': 1}
-                    )
-
-                    wid.addItem(infinite_line)
-
-
-    def getVideoData(self, data_video, video_id):
-        """
-        Gets video frame at the current frame :attr:`.frame_id`
-
-        :param data_video: video data to read
-        :type data_video: cv2.VideoCapture
-
-        :returns: RGB image of the current frame, shape
-            :math:`(width, height, 3)`
-        :rtype: numpy array
-        """
-
-        # check data video
-        if data_video is not None:
-            if self.previous_frame_id[video_id] == self.frame_id - 1:
-                pass
-            elif self.previous_frame_id[video_id] == self.frame_id:
-                sleep(0.00001)
-                return 1
-            else:
-                # set the video stream at the current frame
-                data_video.set(1, self.frame_id)
-
-            # read image
-            ret, im = data_video.read()
-            self.previous_frame_id[video_id] = self.frame_id
-
-        else:
-            ret = False
-
-        # check if reading is successful
-        if ret:
-            # cv2 returns BGR => converted to RGB
-            # cv2 returns image with shape (height,width,3) => transposed to
-            # (width, height, 3) for display
-            self.im_dict[video_id] = ToolsImage.transformImage(im)
-            return 0
-
-        else:
-            # if no image read, returns black image
-            self.im_dict[video_id] = np.zeros((100, 100, 3))
-            return 2
+            # get position of next signal widget
+            pos_sig[0] += 1
 
 
     def updateVideoFrame(self):
@@ -1661,16 +1004,19 @@ class ViSiAnnoT():
 
         Called by the thread :attr:`.update_frame_thread`.
 
-        It updates the attribute :attr:`.im_dict` with the image at
-        the current frame.
+        It updates the attribute :attr:`.wid_vid_dict` with the image at
+        the current frame for each camera.
         """
 
         # check if the process still goes on
         while self.flag_processing:
             if not self.flag_pause_status:
-                # update images at the current frame
+                # get image at the current frame for each camera
                 for video_id, data_video in self.video_data_dict.items():
-                    ret = self.getVideoData(data_video, video_id)
+                    self.wid_vid_dict[video_id].setImage(
+                        data_video, self.frame_id
+                    )
+
             else:
                 sleep(0.001)
 
@@ -1690,17 +1036,10 @@ class ViSiAnnoT():
 
         # check if annotation directory exists
         if os.path.isdir(self.annot_dir):
-            # get list of files/folders in the annotation directory
             print("delete empty annotation folders/files if necessary")
-            annot_path_list = os.listdir(self.annot_dir)
 
-            # get file name of event annotation of protected label
-            protected_name_0 = "%s_%s-datetime.txt" % (
-                self.annot_file_base, self.annotevent_protected_label
-            )
-            protected_name_1 = "%s_%s-frame.txt" % (
-                self.annot_file_base, self.annotevent_protected_label
-            )
+            # get list of files/folders in the annotation directory
+            annot_path_list = os.listdir(self.annot_dir)
 
             # loop on annotation files/folders
             for annot_file_name in annot_path_list:
@@ -1712,9 +1051,10 @@ class ViSiAnnoT():
 
                 # check if directory of image annotation
                 if os.path.isdir(annot_path) and \
-                        annot_file_name in self.annotimage_label_list:
-                    if os.listdir(annot_path) == []:
-                        rmtree(annot_path)
+                        self.wid_annotimage is not None:
+                    if annot_file_name in self.wid_annotimage.label_list:
+                        if os.listdir(annot_path) == []:
+                            rmtree(annot_path)
 
                 # check if file of event annotation
                 elif ext == ".txt" and ("datetime" in name or "frame" in name):
@@ -1723,15 +1063,27 @@ class ViSiAnnoT():
                         # remove empty file
                         os.remove(annot_path)
 
-            # update the list of files/folders in the annotation directory
-            annot_path_list = sorted(os.listdir(self.annot_dir))
+            # check if event annotation
+            if self.wid_annotevent is not None:
+                # update the list of files/folders in the annotation directory
+                annot_path_list = sorted(os.listdir(self.annot_dir))
 
-            # check if empty annotation directory (or only filled with
-            # event annotation of protected label)
-            if len(annot_path_list) == 0 or len(annot_path_list) == 2 and \
-                annot_path_list[0] == protected_name_0 and \
-                    annot_path_list[1] == protected_name_1:
-                rmtree(self.annot_dir)
+                # get file name of event annotation of protected label
+                protected_name_0 = "%s_%s-datetime.txt" % (
+                    self.wid_annotevent.file_name_base,
+                    self.wid_annotevent.protected_label
+                )
+                protected_name_1 = "%s_%s-frame.txt" % (
+                    self.wid_annotevent.file_name_base,
+                    self.wid_annotevent.protected_label
+                )
+
+                # check if empty annotation directory (or only filled with
+                # event annotation of protected label)
+                if len(annot_path_list) == 0 or len(annot_path_list) == 2 and \
+                    annot_path_list[0] == protected_name_0 and \
+                        annot_path_list[1] == protected_name_1:
+                    rmtree(self.annot_dir)
 
         # close videos
         print("close videos (if any)")
@@ -1795,34 +1147,15 @@ class ViSiAnnoT():
         # update frame ID
         self.frame_id = frame_id
 
-        # get image if pause status is true
+        # get image for each camera if pause status is true
         if self.flag_pause_status:
             for video_id, data_video in self.video_data_dict.items():
-                ret = self.getVideoData(data_video, video_id)
+                self.wid_vid_dict[video_id].setImage(
+                    data_video, self.frame_id
+                )
 
         # plot frame id position
         self.plotFrameIdPosition()
-
-
-    def updateProgressBarTitle(self):
-        """
-        Updates the title of the progress bar :attr:`.wid_progress`
-        with the values of the current temporal range defined by
-        :attr:`.first_frame` and :attr:`.last_frame`
-        """
-
-        current_range_string = ToolsDateTime.convertFrameToString(
-            self.last_frame - self.first_frame, self.fps
-        )
-
-        frame_id_string = ToolsDateTime.convertFrameToAbsoluteDatetimeString(
-            self.frame_id, self.fps, self.beginning_datetime
-        )
-
-        self.wid_progress.setTitle(
-            '%s (frame %d) - temporal range duration: %s'
-            % (frame_id_string, self.frame_id, current_range_string)
-        )
 
 
     def plotFrameIdPosition(self):
@@ -1850,9 +1183,9 @@ class ViSiAnnoT():
         update the position of the temporal cursor in the signal widgets.
         """
 
-        # check if frame_id overtakes the current range
+        # check if frame id overtakes the current range
         if self.frame_id >= self.last_frame:
-            # check if frame id overtakes the video
+            # check if frame id overtakes the reference file
             if self.frame_id >= self.nframes:
                 if not self.flag_long_rec:
                     # single recording
@@ -1865,18 +1198,21 @@ class ViSiAnnoT():
                         self.frame_id = self.nframes - 1
 
             else:
-                # define new range (with same temporal width as previously)
+                # get width of the current temporal range
                 temporal_width = self.last_frame - self.first_frame
-                if temporal_width + self.last_frame >= self.nframes:
+
+                # frame id is in the last temporal range window
+                if self.frame_id + temporal_width > self.nframes:
                     self.first_frame = self.nframes - temporal_width
                     self.last_frame = self.nframes
 
-                elif temporal_width + self.last_frame < self.frame_id:
-                    self.first_frame = self.frame_id
+                # frame id is in the next temporal range window
+                elif self.frame_id < self.last_frame + temporal_width:
+                    self.first_frame = self.last_frame
                     self.last_frame = self.first_frame + temporal_width
 
                 else:
-                    self.first_frame = self.last_frame
+                    self.first_frame = self.frame_id
                     self.last_frame = self.first_frame + temporal_width
 
                 # update signals plot
@@ -1890,148 +1226,106 @@ class ViSiAnnoT():
                 self.previousRecording()
 
             else:
-                # define new range (with same temporal width as previously)
+                # get width of the current temporal range
                 temporal_width = self.last_frame - self.first_frame
-                if self.first_frame - temporal_width < 0:
+
+                # frame id is the first temporal range window
+                if self.frame_id - temporal_width < 0:
                     self.first_frame = 0
                     self.last_frame = temporal_width
 
-                elif self.first_frame - temporal_width > self.frame_id:
-                    self.last_frame = self.frame_id
+                # frame id is in the previous temporal range window
+                elif self.frame_id > self.first_frame - temporal_width:
+                    self.last_frame = self.first_frame
                     self.first_frame = self.last_frame - temporal_width
 
                 else:
-                    self.last_frame = self.first_frame
+                    self.last_frame = self.frame_id
                     self.first_frame = self.last_frame - temporal_width
 
                 # update signals plots
                 self.updateSignalPlot()
 
+        # update temporal cursor
+        for wid in self.wid_sig_list:
+            wid.cursor.setPos(self.getFrameIdInMs(self.frame_id))
+
         # update progress bar (if the progress bar is dragged, then there is no
         # need to update it)
-        if not self.wid_progress.getDragged():
-            self.wid_progress.getProgressPlot().setData([self.frame_id], [0])
+        if not self.wid_progress.flag_dragged:
+            self.wid_progress.setProgressPlot(self.frame_id)
 
-        # update temporal cursor
-        for current_cursor in self.current_cursor_list:
-            current_cursor.setPos(self.getFrameIdInMs(self.frame_id))
-
-        # print current frame id and current temporal width
-        self.updateProgressBarTitle()
+        # set title of progress bar
+        self.wid_progress.updateTitle(self.fps, self.beginning_datetime)
 
         # update video image
-        for video_id, img_vid in self.img_vid_dict.items():
-            img_vid.setImage(self.im_dict[video_id])
+        for video_id, wid_vid in self.wid_vid_dict.items():
+            wid_vid.displayImage()
 
 
-    def updateSignalPlot(self, flag_reset_combo_trunc=True,
-                         flag_reset_combo_from_cursor=True):
+    def updateSignalPlot(
+        self, flag_reset_combo_trunc=True, flag_reset_combo_from_cursor=True
+    ):
         """
-        Updates the signal plots so that it spans the current temporal range
-        defined by :attr:`.first_frame` and
+        Updates the signal plots and the progress bar so that they span the
+        current temporal range defined by :attr:`.first_frame` and
         :attr:`.last_frame`
 
-        :param flag_reset_combo_trunc: specify if the combo box
-            :attr:`.combo_trunc` must be reset
+        :param flag_reset_combo_trunc: specify if the combo box of
+            :attr:`.wid_trunc` must be reset
         :type flag_reset_combo_trunc: bool
-        :param flag_reset_combo_from_cursor: specify if the combo box
-            :attr:`.combo_from_cursor` must be reset
+        :param flag_reset_combo_from_cursor: specify if the combo box of
+            :attr:`.wid_from_cursor` must be reset
         :type flag_reset_combo_from_cursor: bool
         """
 
         # reset combo boxes
-        if flag_reset_combo_trunc:
-            try:
-                self.combo_trunc.setCurrentIndex(0)
-            except Exception:
-                pass
+        if flag_reset_combo_trunc and self.wid_trunc is not None:
+            if self.wid_trunc.combo_box is not None:
+                self.wid_trunc.combo_box.setCurrentIndex(0)
 
-        if flag_reset_combo_from_cursor:
-            try:
-                self.combo_from_cursor.setCurrentIndex(0)
-            except Exception:
-                pass
+        if flag_reset_combo_from_cursor and self.wid_from_cursor is not None:
+            self.wid_from_cursor.combo_box.setCurrentIndex(0)
+
+        # set boundaries of progress bar with current temporal range
+        self.wid_progress.setBoundaries(self.first_frame, self.last_frame)
+
+        # update title of progress bar
+        self.wid_progress.updateTitle(self.fps, self.beginning_datetime)
 
         # get current range in milliseconds
         first_frame_ms, last_frame_ms = self.getCurrentRangeInMs()
 
-        # print current frame id and current temporal width
-        self.updateProgressBarTitle()
-
-        # update progress bar limits
-        self.wid_progress.getFirstLine().setValue(self.first_frame)
-        self.wid_progress.getLastLine().setValue(self.last_frame - 1)
-
         # update plots
-        for wid, sig_list, data_plot_list, current_plot, type_data in \
-            zip(self.wid_data_list, self.sig_list_list,
-                self.data_plot_list_list, self.current_cursor_list,
-                self.sig_labels):
-            for sig, data_plot in zip(sig_list, data_plot_list):
-                # get data in the current temporal range
-                data_in_current_range = sig.getDataInRange(
-                    first_frame_ms, last_frame_ms
-                )
-
-                # check if empty signal in the temporal range
-                if data_in_current_range.shape[0] == 0:
-                    data_plot.clear()
-
-                else:
-                    # delete NaNs
-                    data_in_current_range = ToolsPyqtgraph.deleteNaNForPlot(
-                        data_in_current_range
-                    )
-
-                    # signal plot
-                    data_plot.setData(data_in_current_range)
-
-            # X axis ticks and range
-            self.setTemporalTicks(wid, (first_frame_ms, last_frame_ms))
-
-            # update temporal cursor bounds (for dragging)
-            current_plot.setBounds([first_frame_ms, last_frame_ms])
-
+        for wid, (type_data, sig_list) in zip(
+            self.wid_sig_list, self.sig_dict.items()
+        ):
             # check if there are intervals to plot
             if type_data in self.interval_dict.keys():
-                # clear existing regions
-                for region in self.region_interval_dict[type_data]:
-                    wid.removeItem(region)
+                interval_list = self.interval_dict[type_data]
 
-                # plot detection
-                self.region_interval_dict[type_data] = []
-                for interval, freq, color in self.interval_dict[type_data]:
-                    self.region_interval_dict[type_data] += \
-                        ViSiAnnoT.plotIntervals(interval, wid, freq, color)
+            else:
+                interval_list = []
+
+            # update plot items
+            wid.updatePlotItems(
+                first_frame_ms, last_frame_ms, sig_list, interval_list
+            )
+
+            # X axis ticks
+            ToolsPyqtgraph.setTemporalTicks(
+                wid, self.nb_ticks, (first_frame_ms, last_frame_ms),
+                self.beginning_datetime
+            )
 
 
     # *********************************************************************** #
     # End group
     # *********************************************************************** #
 
-
     # *********************************************************************** #
     # Group: Methods for plotting region items (pyqtgraph.LinearRegionItem)
     # *********************************************************************** #
-
-
-    @staticmethod
-    def removeItemInWidgets(wid_list, item_list):
-        """
-        Removes an item from a list of widgets
-
-        :param wid_list: widgets where to remove an item, each element must
-            have a method ``removeItem`` (for example an instance of
-            pyqtgraph.PlotWidget)
-        :type wid_list: list
-        :param item_list: items to remove from widgets, same length as
-            ``wid_list``, each element corresponds to one element of
-            ``wid_list``
-        :type item_list: list
-        """
-
-        for wid, item in zip(wid_list, item_list):
-            wid.removeItem(item)
 
 
     def addItemToSignals(self, item_list):
@@ -2039,12 +1333,12 @@ class ViSiAnnoT():
         Displays items in the signal widgets
 
         :param item_list: items to display in the signal widgets, same length
-            as :attr:`.wid_data_list`, each element corresponds to
+            as :attr:`.wid_sig_list`, each element corresponds to
             one signal widget
         :type item_list: list
         """
 
-        for wid, item in zip(self.wid_data_list, item_list):
+        for wid, item in zip(self.wid_sig_list, item_list):
             wid.addItem(item)
 
 
@@ -2058,12 +1352,12 @@ class ViSiAnnoT():
             widgets, first element is the region item displayed in the progress
             bar widget (:attr:`.wid_progress`) and the remaining
             elements are the region items displayed in the signal widgets
-            (same order as :attr:`.wid_data_list`)
+            (same order as :attr:`.wid_sig_list`)
         :type region_list: list
         """
 
-        ViSiAnnoT.removeItemInWidgets(
-            [self.wid_progress] + self.wid_data_list, region_list
+        ToolsPyqtgraph.removeItemInWidgets(
+            [self.wid_progress] + self.wid_sig_list, region_list
         )
 
 
@@ -2071,7 +1365,7 @@ class ViSiAnnoT():
         """
         Creates and displays a region item (pyqtgraph.LinearRegionItem) for the
         progress bar (:attr:`.wid_progress`) and the signal widgets
-        (:attr:`.wid_data_list`)
+        (:attr:`.wid_sig_list`)
 
         :param bound_1: start frame of the region item (sampled at the
             reference frequency :attr:`.ViSiAnnoT.fps`)
@@ -2091,68 +1385,23 @@ class ViSiAnnoT():
         region_list = []
 
         # display region in progress bar
-        region = ViSiAnnoT.addRegionToWidget(
+        region = ToolsPyqtgraph.addRegionToWidget(
             bound_1, bound_2, self.wid_progress, color
         )
 
         region_list.append(region)
 
         # display region in each signal plot
-        for wid in self.wid_data_list:
+        for wid in self.wid_sig_list:
             # convert bounds in milliseconds
             bound_1_ms = self.getFrameIdInMs(bound_1)
             bound_2_ms = self.getFrameIdInMs(bound_2)
 
             # plot regions in signal widgets
-            region = ViSiAnnoT.addRegionToWidget(
+            region = ToolsPyqtgraph.addRegionToWidget(
                 bound_1_ms, bound_2_ms, wid, color
             )
 
-            region_list.append(region)
-
-        return region_list
-
-
-    @staticmethod
-    def plotIntervals(data_interval, wid, freq, color):
-        """
-        Plots intervals data as a region
-
-        :param data_interval: intervals to be displayed, shape
-            :math:`(n_{intervals}, 2)`, each line is an interval with start
-            frame and end frame (sampled at ``freq``, relatively to
-            :attr:`.ViSAnnoT.beginning_datetime` if used inside
-            :class:`.ViSiAnnoT`) ; the intervals might be expressed in
-            milliseconds, then ``freq`` must be set to ``0``
-
-            WARNING: test this feature in asynchronous long recording (because
-            of relative to :attr:`.ViSAnnoT.beginning_datetime`)
-        :type data_interval: numpy array
-        :param wid: widget where to plot intervals, might be any widget class
-            with a method ``addItem``
-        :type wid: pyqtgraph.PlotWidget
-        :param freq: sampling frequency of intervals frames, set it to ``0`` if
-            intervals expressed in milliseconds
-        :type freq: float
-        :param color: plot color (RGBA)
-        :type color: tuple or list
-
-        :returns: instances of pyqtgraph.LinearRegionItem
-        :rtype: list
-        """
-
-        region_list = []
-        for interval in data_interval:
-            det_0 = interval[0]
-            det_1 = interval[1]
-
-            # convert interval frames to milliseconds
-            if freq > 0:
-                det_0 = 1000.0 * det_0 / freq
-                det_1 = 1000.0 * det_1 / freq
-
-            # plot region
-            region = ViSiAnnoT.addRegionToWidget(det_0, det_1, wid, color)
             region_list.append(region)
 
         return region_list
@@ -2164,7 +1413,7 @@ class ViSiAnnoT():
     ):
         """
         Adds a text item to the signal widgets
-        (:attr:`.wid_data_list`)
+        (:attr:`.wid_sig_list`)
 
         See
         https://pyqtgraph.readthedocs.io/en/latest/functions.html#pyqtgraph.mkColor
@@ -2177,7 +1426,7 @@ class ViSiAnnoT():
             milliseconds
         :type pos_ms: float
         :param pos_y_list: position on the Y axis of the text item in each
-            signal widget, same length as :attr:`.wid_data_list`
+            signal widget, same length as :attr:`.wid_sig_list`
         :type pos_y_list: float
         :param text_color: color of the text
         :type text_color: tuple or list or str
@@ -2187,8 +1436,7 @@ class ViSiAnnoT():
         :type border_width: int
 
         :returns: instances of pyqtgraph.TextItem, each element corresponds to
-            a signal widget, same length and order as
-            :attr:`wid_data_list`
+            a signal widget, same length and order as :attr:`wid_sig_list`
         :rtype: list
         """
 
@@ -2196,11 +1444,12 @@ class ViSiAnnoT():
         text_item_list = []
 
         # loop on signal widgets
-        for wid, pos_y in zip(self.wid_data_list, pos_y_list):
+        for wid, pos_y in zip(self.wid_sig_list, pos_y_list):
             # create text item
-            text_item = pg.TextItem(text, fill='w', color=text_color,
-                                    border={"color": border_color,
-                                            "width": border_width})
+            text_item = pg.TextItem(
+                text, fill='w', color=text_color,
+                border={"color": border_color, "width": border_width}
+            )
 
             # set text item position
             text_item.setPos(pos_ms, pos_y)
@@ -2214,181 +1463,13 @@ class ViSiAnnoT():
         return text_item_list
 
 
-    @staticmethod
-    def addRegionToWidget(bound_1, bound_2, wid, color):
-        """
-        Creates a region item (pyqtgraph.LinearRegionItem) and displays it in a
-        widget
-
-        :param bound_1: start value of the region item (expressed as a
-            coordinate in the X axis of the widget)
-        :type bound_1: int
-        :param bound_2: end value of the region item (expressed as a
-            coordinate in the X axis of the widget)
-        :type bound_2: int
-        :param wid: widget where to display the region item, might be any
-            widget class with a method ``addItem``
-        :type wid: pyqtgraph.PlotWidget
-        :param color: plot color (RGBA)
-        :type color: tuple or list
-
-        :returns: region item displayed in the widget
-        :rtype: pyqtgraph.LinearRegionItem
-        """
-
-        # pen disabled for linux compatibility
-        try:
-            region = pg.LinearRegionItem(movable=False, brush=color,
-                                         pen={'color': color, 'width': 1})
-
-        except Exception:
-            region = pg.LinearRegionItem(movable=False, brush=color)
-
-        # set region boundaries
-        region.setRegion([bound_1, bound_2])
-
-        # add region to widget
-        wid.addItem(region)
-
-        return region
-
-
     # *********************************************************************** #
     # End group
     # *********************************************************************** #
 
     # *********************************************************************** #
-    # Group: Methods for mouse interaction with plots (mostly callback methods)
+    # Group: Methods for mouse interaction with plots
     # *********************************************************************** #
-
-
-    def mouseDraggedProgress(self):
-        """
-        Callback method for mouse dragging of the navigation point in the
-        progress bar widget :attr:`.wid_progress`
-
-        It updates the current frame :attr:`.frame_id` at the
-        current position defined by the mouse in the progress bar widget.
-
-        Connected to the signal ``sigPlotChanged`` of the scatter plot item of
-        :attr:`.wid_progress` (accessed with the method
-        :meth:`graphicsoverlayer.ToolsPyqtgraph.ProgressWidget.getProgressPlot`).
-        """
-
-        # check if dragging
-        if self.wid_progress.getDragged():
-            # get the temporal position
-            temporal_position = int(
-                self.wid_progress.getProgressPlot().getData()[0][0]
-            )
-
-            # update current frame
-            self.updateFrameId(temporal_position)
-
-            # define new range
-            current_range = self.last_frame - self.first_frame
-
-            if self.frame_id + current_range >= self.nframes:
-                self.first_frame = self.nframes - current_range
-                self.last_frame = self.nframes
-
-            else:
-                self.first_frame = self.frame_id
-                self.last_frame = self.first_frame + current_range
-
-            # update plots signals
-            self.updateSignalPlot()
-
-
-    def currentCursorDragged(self, cursor):
-        """
-        Callback method for mouse dragging of the temporal cursor in a signal
-        widget
-
-        It updates the current frame :attr:`.frame_id` at the current
-        position of the temporal cursor.
-
-        Connected to the signal ``sigDragged`` of the elements of
-        :attr:`.current_cursor_list`.
-
-        :param cursor: temporal cursor that is dragged
-        :type cursor: pyqtgraph.InfiniteLine
-        """
-
-        # update frame id (convert frame id from signal to ref)
-        self.updateFrameId(self.convertMsToFrameRef(int(cursor.value())))
-
-
-    def currentCursorClicked(self, position):
-        """
-        Sets the current frame :attr:`.frame_id` at the specified
-        position
-
-        If the specified position is out of bounds of the current temporal
-        range defined by :attr:`.first_frame` and :attr:`.last_frame`,
-        then the current frame is not set.
-
-        :param position: frame number (sampled at the reference frequency
-            :attr:`.ViSiAnnoT.fps`)
-        :type position: int
-        """
-
-        # check if temporal_position is in the current range
-        if position >= self.first_frame and position < self.last_frame:
-            # update current frame
-            self.updateFrameId(position)
-
-
-    def signalMouseClicked(self, ev):
-        """
-        Callback method for managing mouse click on the signal widgets
-        (:attr:`.wid_data_list`)
-
-        Connected to the signal ``sigMouseClicked`` of the elements of
-        :attr:`.wid_data_list`.
-
-        On one hand, it allows to define manually a temporal interval on which
-        to zoom by calling the method :meth:`.zoomOrAnnotClicked`.
-
-        On the other hand, it allows to define a new annotation and to add it
-        the annotation file by calling the method
-        :meth:`zoomOrAnnotClicked`. Also, it allows to delete
-        manually a specific annotation by calling the method
-        :meth:`.annotEventDeleteClicked`.
-
-        It also updates the position of the temporal cursor by calling the
-        method :meth:`.currentCursorClicked`.
-
-        :param ev: emitted when the mouse is clicked/moved
-        :type ev: QtGui.QMouseEvent
-        """
-
-        keyboard_modifiers = ev.modifiers()
-
-        # map the mouse position to the plot coordinates
-        pos_frame, pos_ms = self.getMouseTemporalPosition(ev)
-
-        # check if mouse clicked on a signal widget
-        if pos_frame >= 0:
-            # check if left button clicked
-            if ev.button() == QtCore.Qt.LeftButton:
-                # crtl+shift key => delete annotation
-                if keyboard_modifiers == \
-                        (QtCore.Qt.ControlModifier | QtCore.Qt.ShiftModifier):
-                    # only when display mode is on
-                    if self.annotevent_button_label_list[3].text() == "On":
-                        self.annotEventDeleteClicked(pos_frame)
-
-                # alt key => display description
-                elif keyboard_modifiers == QtCore.Qt.AltModifier:
-                    self.annotEventDescription(ev, pos_frame, pos_ms)
-
-                # no key modifier (only left button clicked)
-                else:
-                    self.currentCursorClicked(pos_frame)
-
-            elif ev.button() == QtCore.Qt.RightButton:
-                self.zoomOrAnnotClicked(ev, pos_frame, pos_ms)
 
 
     def getMouseYPosition(self, ev):
@@ -2398,7 +1479,7 @@ class ViSiAnnoT():
         :param ev: emitted when the mouse is clicked/moved
         :type ev: QtGui.QMouseEvent
 
-        :returns: same length as :attr:`.wid_data_list`, each element
+        :returns: same length as :attr:`.wid_sig_list`, each element
             is the position of the mouse on the Y axis in the corresponding
             signal widget, it returns ``[]`` if the mouse clicked on a label
             item (most likely the widget title)
@@ -2406,50 +1487,18 @@ class ViSiAnnoT():
         """
 
         # check what is being clicked
-        for item in self.wid_data_list[0].scene().items(ev.scenePos()):
+        for item in self.wid_sig_list[0].scene().items(ev.scenePos()):
             # if widget title is checked, nothing is returned
             if type(item) is pg.graphicsItems.LabelItem.LabelItem:
                 return []
 
         # map the mouse position to the plot coordinates
         position_y_list = []
-        for wid in self.wid_data_list:
+        for wid in self.wid_sig_list:
             position_y = wid.getViewBox().mapToView(ev.pos()).y()
             position_y_list.append(position_y)
 
         return position_y_list
-
-
-    def getMouseTemporalPosition(self, ev):
-        """
-        Gets the position of the mouse on the X axis
-
-        :param ev: emitted when the mouse is clicked/moved
-        :type ev: QtGui.QMouseEvent
-
-        :returns:
-            - **position_frame** (*int*) -- position of the mouse on the X axis
-              in frame number (sampled at the reference frequency
-              :attr:`ViSiAnnoT.fps`), ``-1`` if the mouse clicked on a label
-              item (most likely the widget title)
-            - **position_ms** (*float*) -- position of the mouse on the X axis
-              in milliseconds, ``-1`` if the mouse clicked on a label item
-              (most likely the widget title)
-        """
-
-        # check what is being clicked
-        for item in self.wid_data_list[0].scene().items(ev.scenePos()):
-            # if widget title is checked, nothing is returned
-            if type(item) is pg.graphicsItems.LabelItem.LabelItem:
-                return -1, -1
-
-        # map the mouse position to the plot coordinates
-        position_ms = self.wid_data_list[0].getViewBox().mapToView(ev.pos()).x()
-
-        # convert from signal to ref
-        position_frame = self.convertMsToFrameRef(position_ms)
-
-        return position_frame, position_ms
 
 
     def zoomOrAnnotClicked(self, ev, pos_frame, pos_ms):
@@ -2473,8 +1522,9 @@ class ViSiAnnoT():
             self.zoom_pos_1 = max(0, min(pos_frame, self.nframes - 1))
 
             # ctrl key => add annotation
-            if keyboard_modifiers == QtCore.Qt.ControlModifier:
-                self.annotEventSetTime(self.zoom_pos_1, 0)
+            if keyboard_modifiers == QtCore.Qt.ControlModifier and \
+                    self.wid_annotevent is not None:
+                self.wid_annotevent.setTimestamp(self, self.zoom_pos_1, 0)
 
         # define position 2
         elif self.zoom_pos_2 == -1:
@@ -2482,8 +1532,9 @@ class ViSiAnnoT():
             self.zoom_pos_2 = max(0, min(pos_frame, self.nframes - 1))
 
             # ctrl key => add annotation
-            if keyboard_modifiers == QtCore.Qt.ControlModifier:
-                self.annotEventSetTime(self.zoom_pos_2, 1)
+            if keyboard_modifiers == QtCore.Qt.ControlModifier and \
+                    self.wid_annotevent is not None:
+                self.wid_annotevent.setTimestamp(self, self.zoom_pos_2, 1)
 
             # swap pos_1 and pos_2 if necessary
             if self.zoom_pos_1 > self.zoom_pos_2:
@@ -2512,8 +1563,9 @@ class ViSiAnnoT():
             # check if click is inside the zoom in area
             if pos_frame >= self.zoom_pos_1 and pos_frame <= self.zoom_pos_2:
                 # ctrl key => add annotation
-                if keyboard_modifiers == QtCore.Qt.ControlModifier:
-                    self.annotEventAdd()
+                if keyboard_modifiers == QtCore.Qt.ControlModifier and \
+                        self.wid_annotevent is not None:
+                    self.wid_annotevent.add(self)
 
                 # no ctrl key => zoom
                 else:
@@ -2531,17 +1583,18 @@ class ViSiAnnoT():
 
             # in case the click is outside the zoom in area
             else:
-                if self.annotevent_array.size > 0:
-                    # reset annotation times
-                    self.annotEventResetTime()
+                if self.wid_annotevent is not None:
+                    if self.wid_annotevent.annot_array.size > 0:
+                        # reset annotation times
+                        self.wid_annotevent.resetTimestamp()
 
             # remove zoom regions
             self.removeRegionInWidgets(self.region_zoom_list)
             self.region_zoom_list = []
 
             # remove zoom regions description
-            ViSiAnnoT.removeItemInWidgets(
-                self.wid_data_list, self.region_zoom_text_item_list
+            ToolsPyqtgraph.removeItemInWidgets(
+                self.wid_sig_list, self.region_zoom_text_item_list
             )
 
             self.region_zoom_text_item_list = []
@@ -2549,1043 +1602,6 @@ class ViSiAnnoT():
             # reset zoom positions
             self.zoom_pos_1 = -1
             self.zoom_pos_2 = -1
-
-
-    # *********************************************************************** #
-    # End group
-    # *********************************************************************** #
-
-    # *********************************************************************** #
-    # Group: Callback methods for zooming in/out
-    # *********************************************************************** #
-
-
-    def visiAll(self):
-        """
-        Callback method for resetting the temporal range (defined by
-        :attr:`.first_frame` and :attr:`.last_frame`) to
-        the fullest
-
-        Connected to the signal ``sigMouseClicked`` of the scene attribute of
-        :attr:`.wid_visi`.
-
-        It sets :attr:`.first_frame` to ``0`` and
-        :attr:`.last_frame` to :attr:`.nframes`. Then it
-        calls the method :meth:`.updateSignalPlot`.
-        """
-
-        # update range: all video
-        self.first_frame = 0
-        self.last_frame = self.nframes
-
-        # update signal plots
-        self.updateSignalPlot()
-
-
-    def zoomIn(self):
-        """
-        Callback method for zooming in
-
-        Connected to the signal ``sigMouseClicked`` of the scene attribute of
-        :attr:`.wid_zoomin`.
-        """
-
-        # get current X axis range
-        axis = self.wid_data_list[0].getAxis('bottom')
-        axis_range_min, axis_range_max = axis.range[0], axis.range[1]
-
-        # convert from signal to ref
-        axis_range_min = self.convertMsToFrameRef(axis_range_min)
-        axis_range_max = self.convertMsToFrameRef(axis_range_max)
-
-        # check if current range is large enough for zoom in
-        if axis_range_max - axis_range_min > 5:
-            # compute the range on the left/right side of the temporal cursor
-            left = self.frame_id - axis_range_min
-            right = axis_range_max - self.frame_id
-
-            # compute the first frame and the last frame after zooming
-            self.first_frame = max(
-                int(self.frame_id - left / self.zoom_factor), self.first_frame
-            )
-
-            self.last_frame = min(
-                int(self.frame_id + right / self.zoom_factor), self.last_frame
-            )
-
-            # update signals plots
-            self.updateSignalPlot()
-
-
-    def zoomOut(self):
-        """
-        Callback method for zooming out
-
-        Connected to the signal ``sigMouseClicked`` of the scene attribute of
-        :attr:`.wid_zoomout`.
-        """
-
-        # get current X axis range
-        axis = self.wid_data_list[0].getAxis('bottom')
-        axis_range_min, axis_range_max = axis.range[0], axis.range[1]
-
-        # convert from signal to ref
-        axis_range_min = self.convertMsToFrameRef(axis_range_min)
-        axis_range_max = self.convertMsToFrameRef(axis_range_max)
-
-        # compute the range on the left/right side of the temporal cursor
-        left = self.frame_id - axis_range_min
-        right = axis_range_max - self.frame_id
-
-        # compute the first frame and the last frame after zooming
-        self.first_frame = max(int(self.frame_id - left * self.zoom_factor), 0)
-
-        self.last_frame = min(
-            int(self.frame_id + right * self.zoom_factor), self.nframes
-        )
-
-        # update signals plots
-        self.updateSignalPlot()
-
-
-    # *********************************************************************** #
-    # End group
-    # *********************************************************************** #
-
-    # *********************************************************************** #
-    # Group: Methods for managing image annotations
-    # *********************************************************************** #
-
-
-    def annotImageCallPushButton(self):
-        """
-        Callback method for saving an annotated image
-
-        Connected to the signal ``clicked`` of
-        :attr:`.annotimage_push_button`.
-        """
-
-        # get current label
-        current_label = self.annotimage_radio_button_group.checkedButton().text()
-
-        # get output directory
-        output_dir = "%s/%s" % (self.annot_dir, current_label)
-
-        # loop on cameras
-        for video_id, file_name in self.vid_file_name_dict.items():
-            # read image
-            im = ToolsImage.transformImage(self.im_dict[video_id])
-
-            # save image
-            im_path = "%s/%s_%s.png" % (output_dir, file_name, self.frame_id)
-            imwrite(im_path, im)
-            print("image saved: %s" % im_path)
-
-
-    # *********************************************************************** #
-    # End group
-    # *********************************************************************** #
-
-    # *********************************************************************** #
-    # Group: Methods for managing event annotations
-    # *********************************************************************** #
-
-
-    def annotEventCallRadio(self, ev):
-        """
-        Callback method for changing event annotation label with the radio
-        buttons
-
-        Connected to the signal ``buttonClicked`` of
-        :attr:`.annotevent_button_group_radio_label`.
-
-        It calls the method :meth:`.annotEventChangeLabel` with
-        ``ev.text()`` as input.
-
-        :param ev: radio button that has been clicked
-        :type ev: QtWidgets.QRadioButton
-        """
-
-        # get the new annotation file name
-        self.annotEventChangeLabel(ev.text())
-
-
-    def annotEventChangeLabel(self, new_label):
-        """
-        Changes event annotation label (loads new annotation file)
-
-        It sets the value of the following attributes:
-
-        - :attr:`.current_label_id` with the index of the new
-          annotation label in :attr:`.annotevent_label_list`
-        - :attr:`.annotevent_path_list` with the new list of
-          annotation file paths (by calling
-          :meth:`.annotEventGetPathList`)
-
-        It also manages the display of the annotations.
-
-        :param new_label: new annotation label
-        :type new_label: str
-        """
-
-        # update current label
-        self.annotevent_current_label_id = \
-            self.annotevent_label_list.index(new_label)
-
-        # get the new annotation file name
-        self.annotevent_path_list = self.annotEventGetPathList(new_label)
-
-        # get number of annotation already stored
-        if os.path.isfile(self.annotevent_path_list[0]):
-            lines = ToolsData.getTxtLines(self.annotevent_path_list[0])
-            nb_annot = len(lines)
-
-        else:
-            nb_annot = 0
-
-        # update label with the number of annotations
-        self.annotevent_button_label_list[2].setText("Nb: %d" % nb_annot)
-
-        # update label with the start and end time
-        non_zero_array = np.count_nonzero(
-            self.annotevent_array[self.annotevent_current_label_id], axis=1
-        )
-
-        if non_zero_array[0] < 2:
-            self.annotevent_button_label_list[0].setText(
-                "YYYY-MM-DD hh:mm:ss.sss"
-            )
-        else:
-            self.annotevent_button_label_list[0].setText(
-                self.annotevent_array[self.annotevent_current_label_id, 0, 0]
-            )
-
-        if non_zero_array[1] < 2:
-            self.annotevent_button_label_list[1].setText(
-                "YYYY-MM-DD hh:mm:ss.sss"
-            )
-        else:
-            self.annotevent_button_label_list[1].setText(
-                self.annotevent_array[self.annotevent_current_label_id, 1, 0]
-            )
-
-        # plot annotations
-        self.plotAnnotEventRegions()
-
-
-    def annotEventGetPathList(self, label):
-        """
-        Gets the path of the annotation files corresponding to the input label
-
-        :param label: event annotation label
-        :type label: str
-
-        :returns: paths of the annotation files, each element corresponds to an
-            annotation type (see :attr:`.annotevent_type_list`)
-        :rtype: list
-        """
-
-        annotevent_path_list = []
-        for annot_type in self.annotevent_type_list:
-            annotevent_path_list.append(
-                '%s/%s_%s-%s.txt' % (
-                    self.annot_dir, self.annot_file_base, label, annot_type
-                )
-            )
-
-        return annotevent_path_list
-
-
-    def annotEventSetTime(self, frame_id, annot_position):
-        """
-        Sets an annotation value for the current label, either start or end
-        timestamp of the event annotation
-
-        It sets the values of
-        ``ViSiAnnoT.annotevent_array[ViSiAnnoT.current_label_id, annot_position]``.
-
-        :param frame_id: frame number of the annotation timestamp (sampled at
-            the reference frequency :attr:`.ViSiAnnoT.fps`)
-        :type frame_id: int
-        :param annot_position: specify if start timestamp (``0``) or end
-            timestamp (``1``)
-        :type annot_position: int
-        """
-
-        if (annot_position == 0 or annot_position == 1) and \
-                len(self.annotevent_label_list) > 0:
-            # set the beginning time of the annotated interval to
-            # the current frame
-            self.annotevent_array[self.annotevent_current_label_id, annot_position, 0] = \
-                ToolsDateTime.convertFrameToAbsoluteDatetimeString(
-                    frame_id, self.fps, self.beginning_datetime
-            )
-
-            self.annotevent_array[self.annotevent_current_label_id, annot_position, 1] = \
-                '%d_%d' % (self.rec_id, frame_id)
-
-            # display the beginning time of the annotated interval
-            self.annotevent_button_label_list[annot_position].setText(
-                self.annotevent_array[self.annotevent_current_label_id, annot_position, 0]
-            )
-
-
-    def annotEventResetTime(self):
-        """
-        Resets the annotations value for the current label
-
-        It sets ``ViSiAnnoT.annotevent_array[ViSiAnnoT.annotevent_current_label_id]``
-        to zeros.
-        """
-
-        # reset the beginning and ending times of the annotated interval
-        self.annotevent_array[self.annotevent_current_label_id] = \
-            np.zeros((2, 2))
-
-        # reset the displayed beginning and ending times of the annotated interval
-        self.annotevent_button_label_list[0].setText("YYYY-MM-DD hh:mm:ss.sss")
-        self.annotevent_button_label_list[1].setText("YYYY-MM-DD hh:mm:ss.sss")
-
-
-    def annotEventAdd(self):
-        """
-        Adds an event annotation to the current label
-
-        It writes in the annotation files
-        (:attr:`.annotevent_path_list`).
-
-        If the annotation start timestamp or end timestamp is not defined, then
-        nothing happens.
-        """
-
-        # check if beginning time or ending of the annotated interval is empty
-        if np.count_nonzero(self.annotevent_array[self.annotevent_current_label_id]) < 4:
-            print("Empty annotation !!! Cannot write file.")
-
-        # otherwise all good
-        else:
-            # convert annotation to datetime
-            annot_datetime_0 = ToolsDateTime.convertStringToDatetime(
-                self.annotevent_array[self.annotevent_current_label_id, 0, 0],
-                "format_T", time_zone=self.time_zone
-            )
-
-            annot_datetime_1 = ToolsDateTime.convertStringToDatetime(
-                self.annotevent_array[self.annotevent_current_label_id, 1, 0],
-                "format_T", time_zone=self.time_zone
-            )
-
-            # check if annotation must be reversed
-            if (annot_datetime_1 - annot_datetime_0).total_seconds() < 0:
-                self.annotevent_array[self.annotevent_current_label_id, [0, 1]] = \
-                    self.annotevent_array[self.annotevent_current_label_id, [1, 0]]
-
-            # append the annotated interval to the annotation file
-            for ite_annot_type, annot_path in enumerate(
-                self.annotevent_path_list
-            ):
-                with open(annot_path, 'a') as file:
-                    file.write(
-                        "%s - %s\n" % (
-                            self.annotevent_array[self.annotevent_current_label_id, 0, ite_annot_type],
-                            self.annotevent_array[self.annotevent_current_label_id, 1, ite_annot_type]
-                        )
-                    )
-
-            # update the number of annotations
-            nb_annot = int(self.annotevent_button_label_list[2].text().split(': ')[1]) + 1
-            self.annotevent_button_label_list[2].setText("Nb: %d" % nb_annot)
-
-            # if display mode is on, display the appended interval
-            if self.annotevent_button_label_list[3].text() == "On" and \
-                self.annotevent_current_label_id in \
-                    self.region_annotation_dict.keys():
-                region_list = self.annotEventAddRegion(
-                    self.annotevent_array[self.annotevent_current_label_id, 0, 0],
-                    self.annotevent_array[self.annotevent_current_label_id, 1, 0],
-                    color=self.annotevent_color_list[self.annotevent_current_label_id]
-                )
-
-                self.region_annotation_dict[self.annotevent_current_label_id].append(region_list)
-
-            # reset the beginning and ending times of the annotated interval
-            self.annotEventResetTime()
-
-
-    def annotEventIdFromPosition(self, position):
-        """
-        Looks for the index of the annotation at the given position (for the
-        current label)
-
-        :param position: frame number (sampled at the reference frequency
-            :attr:`.ViSiAnnoT.fps`)
-        :type position: int
-
-        :returns: index of the annotation (i.e. line number in the annotation
-            file), returns ``-1`` if no annotation at ``position``
-        :rtype: int
-        """
-
-        # initialize output
-        annot_id = -1
-
-        # check if annotation file exists
-        if os.path.isfile(self.annotevent_path_list[0]):
-            # convert mouse position to datetime
-            position_date_time = ToolsDateTime.convertFrameToAbsoluteDatetime(
-                position, self.fps, self.beginning_datetime
-            )
-
-            # get annotations for current label
-            lines = ToolsData.getTxtLines(self.annotevent_path_list[0])
-
-            # loop on annotations
-            for ite_annot, line in enumerate(lines):
-                # get annotation
-                line = line.replace("\n", "")
-
-                start_date_time = ToolsDateTime.convertStringToDatetime(
-                    line.split(" - ")[0], "format_T", time_zone=self.time_zone
-                )
-
-                end_date_time = ToolsDateTime.convertStringToDatetime(
-                    line.split(" - ")[1], "format_T", time_zone=self.time_zone
-                )
-
-                # check if mouse position is in the annotation interval
-                if (position_date_time - start_date_time).total_seconds() >= 0 and \
-                        (end_date_time - position_date_time).total_seconds() >= 0:
-                    annot_id = ite_annot
-                    break
-
-        return annot_id
-
-
-    def annotEventDescription(self, ev, pos_frame, pos_ms):
-        """
-        Creates and displays text items in signal widgets with the description
-        of the event annotation that has been clicked on
-
-        :param ev: radio button that has been clicked
-        :type ev: QtWidgets.QRadioButton
-        :param pos_frame: frame number (sampled at the reference frequency
-            :attr:`ViSiAnnoT.fps`) corresponding to the mouse position on the X
-            axis of the signal widget
-        :type pos_frame: int
-        :param pos_ms: mouse position on the X axis of the signal widget in
-            milliseconds
-        :type pos_ms: float
-        """
-
-        # get annotation ID that has been clicked
-        annot_id = self.annotEventIdFromPosition(pos_frame)
-
-        # check if mouse clicked on an annotation
-        if annot_id >= 0:
-            # get dictionary with description text items for the current label
-            if self.annotevent_current_label_id in \
-                    self.annotevent_description_dict.keys():
-                description_dict = self.annotevent_description_dict[
-                    self.annotevent_current_label_id
-                ]
-
-            # create dictionary with description items for the current label
-            else:
-                description_dict = {}
-
-                self.annotevent_description_dict[
-                    self.annotevent_current_label_id
-                ] = description_dict
-
-            # check if description already displayed
-            if annot_id in description_dict.keys():
-                # remove display
-                ViSiAnnoT.removeItemInWidgets(
-                    self.wid_data_list, description_dict[annot_id]
-                )
-
-                # delete list of description text items from dictionary
-                del description_dict[annot_id]
-
-            else:
-                # get list of Y position of the mouse in each signal widget
-                pos_y_list = self.getMouseYPosition(ev)
-
-                # get date-time string annotation
-                annot = ToolsData.getTxtLines(
-                    self.annotevent_path_list[0]
-                )[annot_id]
-
-                # get date-time start/stop of the annotation
-                start, stop = annot.replace("\n", "").split(" - ")
-
-                # convert date-time string to datetime
-                start = ToolsDateTime.convertStringToDatetime(
-                    start, "format_T", time_zone=self.time_zone
-                )
-
-                stop = ToolsDateTime.convertStringToDatetime(
-                    stop, "format_T", time_zone=self.time_zone
-                )
-
-                # compute annotation duration
-                duration = (stop - start).total_seconds()
-
-                # get annotation description
-                description = "%s - %.3f s" % (
-                    self.annotevent_label_list[self.annotevent_current_label_id],
-                    duration
-                )
-
-                # get description color
-                color = self.annotevent_color_list[self.annotevent_current_label_id]
-
-                # create list of description text items for the annotation
-                self.annotevent_description_dict[self.annotevent_current_label_id][annot_id] = \
-                    self.createTextItem(
-                        description, pos_ms, pos_y_list, border_color=color
-                )
-
-
-    def annotEventDeleteClicked(self, position):
-        """
-        Deletes an annotion that is clicked with mouse
-
-        :param position: frame number (sampled at the reference frequency
-            :attr:`.ViSiAnnoT.fps`) corresponding to the mouse position on the
-            X axis of the signal widgets
-        :type position: int
-        """
-
-        # get annotated event ID
-        annot_id = self.annotEventIdFromPosition(position)
-
-        # check if an annotated event must be deleted
-        if annot_id >= 0:
-            # delete annotation
-            self.annotEventDelete(annot_id)
-
-
-    @staticmethod
-    def deleteLineInFile(path, line_id):
-        """
-        Class method for deleting a line in a txt file
-
-        :param path: path to the text file
-        :type path: str
-        :param line_id: number of the line to delete (zero-indexed)
-        :type line_id: int
-        """
-
-        # read annotation file lines
-        lines = ToolsData.getTxtLines(path)
-
-        # remove specified line
-        del lines[line_id]
-
-        # rewrite annotation file
-        with open(path, 'w') as file:
-            file.writelines(lines)
-
-
-    def annotEventDelete(self, annot_id):
-        """
-        Deletes a specific annotation for the current label
-
-        :param annot_id: index of the annotation to delete
-        :type annot_id: int
-        """
-
-        # delete annotation in the txt file
-        for annot_path in self.annotevent_path_list:
-            ViSiAnnoT.deleteLineInFile(annot_path, annot_id)
-
-        # update number of annotations
-        nb_annot = int(self.annotevent_button_label_list[2].text().split(': ')[1])
-        nb_annot = max(0, nb_annot - 1)
-        self.annotevent_button_label_list[2].setText("Nb: %d" % nb_annot)
-
-        # delete annotation description if necessary
-        if self.annotevent_current_label_id in \
-                self.annotevent_description_dict.keys():
-            description_dict = self.annotevent_description_dict[
-                self.annotevent_current_label_id
-            ]
-
-            if annot_id in description_dict.keys():
-                ViSiAnnoT.removeItemInWidgets(
-                    self.wid_data_list, description_dict[annot_id]
-                )
-
-                del description_dict[annot_id]
-
-            elif annot_id == -1 and nb_annot in description_dict.keys():
-                ViSiAnnoT.removeItemInWidgets(
-                    self.wid_data_list, description_dict[nb_annot]
-                )
-
-                del description_dict[nb_annot]
-
-        # if display mode is on, remove the deleted annotation
-        if self.annotevent_button_label_list[3].text() == "On":
-            self.removeRegionInWidgets(
-                self.region_annotation_dict[self.annotevent_current_label_id][annot_id]
-            )
-
-            del self.region_annotation_dict[self.annotevent_current_label_id][annot_id]
-
-
-    def annotEventShow(self):
-        """
-        Mananges the display of events annotation (on/off)
-        """
-
-        # if display mode is off, put it on
-        if self.annotevent_button_label_list[3].text() == "Off":
-            # notify that display mode is now on
-            self.annotevent_button_label_list[3].setText("On")
-
-            # display regions from the annotation file
-            self.plotAnnotEventRegions()
-
-        # display mode is on, put it off
-        else:
-            self.clearAnnotEventRegions()
-
-            # notify that display mode is now off
-            self.annotevent_button_label_list[3].setText("Off")
-
-
-    def annotEventCallPushButton(self, button_id):
-        """
-        Callback method managing events annotation with push buttons
-
-        Connected to the signal ``buttonClicked[int]`` of the attribute
-        attr:`.annotevent_button_group_push`.
-
-        There are 5 buttons and they have an effect on the current label:
-
-        - ``button_id == 0``: set annotation beginning datetime at the current
-          frame :attr:`.frame_id`
-        - ``button_id == 1``: set annotation ending datetime with the current
-          frame :attr;`.frame_id`
-        - ``button_id == 2``: add annotation defined by the current beginning
-          and ending datetimes
-        - ``button_id == 3``: delete last annotation
-        - ``button_id == 4``: on/off display
-
-        :param button_id: index of the button that has been pushed
-        :type button_id: int
-        """
-
-        # set beginning time of the annotated interval
-        if button_id == 0:
-            self.annotEventSetTime(self.frame_id, 0)
-
-        # set ending time of the annotated interval
-        elif button_id == 1:
-            self.annotEventSetTime(self.frame_id, 1)
-
-        # add the annotated interval to the annotation file
-        elif button_id == 2:
-            self.annotEventAdd()
-
-        # delete last annotation
-        elif button_id == 3:
-            # check if annotation file exists and annotation file is not empty
-            if os.path.isfile(self.annotevent_path_list[0]) and \
-                    int(self.annotevent_button_label_list[2].text().split(': ')[1]) > 0:
-                self.annotEventDelete(-1)
-
-            else:
-                print("Cannot delete annotation since annotation file does not exist or is empty.")
-
-        # display the annotated intervals
-        elif button_id == 4:
-            self.annotEventShow()
-
-
-    def plotAnnotEventRegions(self):
-        """
-        Plots events annotations, either only for the current label, or for all
-        lables (depending on the check box "Display all labels")
-
-        Make sure that the attribute :attr:`.region_annotation_dict`
-        is already created.
-
-        It checks if the display mode is on before plotting.
-
-        Connected to the signal ``buttonClicked`` of
-        :attr:`.annotevent_button_group_radio_disp` and
-        :attr:`.annotevent_button_group_check_custom`.
-        """
-
-        # check if display mode is on
-        if self.annotevent_button_label_list[3].text() == "On":
-            # get display mode
-            button_id = self.annotevent_button_group_radio_disp.checkedId()
-
-            # display current label
-            if button_id == 0:
-                plot_dict = {
-                    self.annotevent_current_label_id:
-                    self.annotevent_color_list[self.annotevent_current_label_id]
-                }
-
-            # display all labels
-            elif button_id == 1:
-                plot_dict = {}
-                for label_id, color in enumerate(self.annotevent_color_list):
-                    plot_dict[label_id] = color
-
-            # display custom
-            elif button_id == 2:
-                plot_dict = {}
-                for label_id, color in enumerate(self.annotevent_color_list):
-                    if self.annotevent_button_group_check_custom.button(label_id).isChecked():
-                        plot_dict[label_id] = color
-
-            # loop on labels already plotted
-            label_id_list = list(self.region_annotation_dict.keys())
-            for label_id in label_id_list:
-                # if label not to be plotted anymore
-                if label_id not in plot_dict.keys():
-                    # clear display
-                    self.clearAnnotEventRegionsSingleLabel(label_id)
-
-            # loop on labels to plot
-            for label_id, color in plot_dict.items():
-                # check if label not already displayed
-                if label_id not in self.region_annotation_dict.keys():
-                    # get annotation path
-                    label = self.annotevent_label_list[label_id]
-                    annot_path = self.annotEventGetPathList(label)[0]
-
-                    # initialize list of region items for the label
-                    region_annotation_list = []
-
-                    # check if annotation file exists
-                    if os.path.isfile(annot_path):
-                        # read annotation file
-                        lines = ToolsData.getTxtLines(annot_path)
-
-                        # loop on annotations
-                        for annot_line in lines:
-                            # display region
-                            annot_line_content = annot_line.split(' - ')
-
-                            region_list = self.annotEventAddRegion(
-                                annot_line_content[0],
-                                annot_line_content[1].replace("\n", ""),
-                                color=color
-                            )
-
-                            # append list of region items for the label
-                            region_annotation_list.append(region_list)
-
-                    # update dictionary of region items
-                    self.region_annotation_dict[label_id] = \
-                        region_annotation_list
-
-                    # display annotations description
-                    if label_id in self.annotevent_description_dict.keys():
-                        for description_list in \
-                                self.annotevent_description_dict[label_id].values():
-                            self.addItemToSignals(description_list)
-
-
-    def clearAnnotEventRegions(self):
-        """
-        Clears the display of events annotation for all labels (but does not
-        delete the annotations)
-        """
-
-        # loop on labels
-        for label_id in range(len(self.annotevent_label_list)):
-            self.clearAnnotEventRegionsSingleLabel(label_id)
-
-
-    def clearAnnotEventRegionsSingleLabel(self, label_id):
-        """
-        Clears the display of events annotation for a specific label
-
-        :param label_id: index of the label in the list
-            :attr:`.ViSiAnnoT.annotevent_label_list`
-        :type label_id: int
-        """
-
-        # clear annotations display
-        if label_id in self.region_annotation_dict.keys():
-            for region_list in self.region_annotation_dict[label_id]:
-                self.removeRegionInWidgets(region_list)
-            del self.region_annotation_dict[label_id]
-
-        # clear descriptions display
-        if label_id in self.annotevent_description_dict:
-            for description_list in \
-                    self.annotevent_description_dict[label_id].values():
-                ViSiAnnoT.removeItemInWidgets(
-                    self.wid_data_list, description_list
-                )
-
-
-    def clearAllAnnotEventDescriptions(self):
-        """
-        Clears the display of all the descriptions of events annotation
-        """
-
-        for description_dict in self.annotevent_description_dict.values():
-            for description_list in description_dict.values():
-                ViSiAnnoT.removeItemInWidgets(
-                    self.wid_data_list, description_list
-                )
-
-        self.annotevent_description_dict = {}
-
-
-    def annotEventAddRegion(self, bound_1, bound_2, **kwargs):
-        """
-        Displays a region in the progress bar and the signal widgets
-
-        It converts the bounds to frame numbers and then calls the
-        method :meth:`.ViSiAnnoT.addRegionToWidgets`.
-
-        :param bound_1: start datetime of the region
-        :type bound_1: str
-        :param bound_2: end datetime of the region
-        :type bound_2: str
-        :param kwargs: keyword arguments of
-            :meth:`.ViSiAnnoT.addRegionToWidgets`
-        """
-
-        # convert bounds to frame numbers
-        frame_1 = ToolsDateTime.convertAbsoluteDatetimeStringToFrame(
-            bound_1, self.fps, self.beginning_datetime,
-            time_zone=self.time_zone
-        )
-
-        frame_2 = ToolsDateTime.convertAbsoluteDatetimeStringToFrame(
-            bound_2, self.fps, self.beginning_datetime,
-            time_zone=self.time_zone
-        )
-
-        # check date-time (useful for longRec)
-        if frame_1 >= 0 and frame_1 < self.nframes \
-            or frame_2 >= 0 and frame_2 < self.nframes \
-                or frame_1 < 0 and frame_2 >= self.nframes:
-            # display region in each signal plot
-            region_list = self.addRegionToWidgets(frame_1, frame_2, **kwargs)
-
-            return region_list
-
-        else:
-            return []
-
-
-    # *********************************************************************** #
-    # End group
-    # *********************************************************************** #
-
-    # *********************************************************************** #
-    # Group: Callback methods for fast navigation
-    # *********************************************************************** #
-
-
-    def callComboTrunc(self, ite_trunc):
-        """
-        Callback method for selecting a part of the video/signal defined by
-        :attr:`.trunc_duration` via the combo box
-        :attr:`.combo_trunc`
-
-        Connected to the signal ``currentIndexChanged`` of
-        :attr:`.combo_trunc`.
-
-        It sets the temporal range (:attr:`.first_frame` and
-        :attr:`.last_frame`) with the selected value in the combo
-        box. The current frame :attr:`.frame_id` is set to the new
-        :attr:`.first_frame`. Then it calls the method
-        :meth:`.updateSignalPlot`.
-
-        :param ite_trunc: index of the selected value in the combo box
-            :attr:`.combo_trunc`
-        :type ite_trunc: int
-        """
-
-        # check if the value selected in the combo box is not the first one
-        # (empty one)
-        if ite_trunc > 0:
-            # define new range
-            ite_trunc -= 1
-            self.first_frame = ite_trunc * self.nframes_trunc
-            self.last_frame = min((ite_trunc + 1) * self.nframes_trunc,
-                                  self.nframes)
-
-            # update plots signals
-            self.updateSignalPlot(flag_reset_combo_trunc=False)
-
-            # update frame id
-            self.updateFrameId(ite_trunc * self.nframes_trunc)
-
-
-    def callComboFromCursor(self, ite_combo):
-        """
-        Callback method for selecting a pre-defined temporal range that begins
-        at the current temporal cursor position
-
-        Connected to the signal ``currentIndexChanged`` of the attribute
-        :attr:`.combo_from_cursor`.
-
-        It sets :attr:`.first_frame` to :attr:`.frame_id`
-        and :attr:`.last_frame` so that the temporal range spans the
-        selected value of the combo box :attr:`.combo_from_cursor`.
-        Then it calls the method :meth:`.updateSignalPlot`.
-
-        :param ite_combo: index of the selected value in the combo box
-            :attr:`.combo_from_cursor`
-        :type ite_combo: int
-        """
-
-        # check if the value selected in the combo box is not empty
-        if ite_combo > 0:
-            # get the value of the combo box and convert it to frame number
-            ite_combo -= 1
-            frame_interval = ToolsDateTime.convertTimeToFrame(
-                self.fps, minute=self.from_cursor_list[ite_combo][0],
-                sec=self.from_cursor_list[ite_combo][1]
-            )
-
-            # define new range
-            self.first_frame = self.frame_id
-            self.last_frame = min(self.frame_id + frame_interval, self.nframes)
-
-            # update plots signals
-            self.updateSignalPlot(flag_reset_combo_from_cursor=False)
-
-
-    def timeEditCurrent(self):
-        """
-        Callback method to set :attr:`.ViSiAnnoT.edit_start` to the current
-        frame :attr:`.ViSiAnnoT.frame_id`
-
-        Connected to the signal ``clicked`` of :attr:`.ViSiAnnoT.current_push`.
-        """
-
-        current_datetime = ToolsDateTime.convertFrameToAbsoluteDatetime(
-            self.frame_id, self.fps, self.beginning_datetime
-        )
-
-        self.edit_start.setDate(
-            QtCore.QDate(current_datetime.year,
-                         current_datetime.month,
-                         current_datetime.day)
-        )
-
-        self.edit_start.setTime(
-            QtCore.QTime(current_datetime.hour,
-                         current_datetime.minute,
-                         current_datetime.second)
-        )
-
-
-    def timeEditOk(self):
-        """
-        Callback method to set the temporal range
-        (:attr:`.first_frame` and :attr:`.last_frame`) to
-        the custom temporal range (manually defined with
-        :attr:`.edit_duration` and :attr:`.edit_start`)
-
-        If :attr:`.edit_duration` is 0, then the current temporal
-        range duration is kept.
-
-        Connected to the signal ``clicked`` of
-        :attr:`.time_edit_push`.
-        """
-
-        # get duration time edit
-        duration_qtime = self.edit_duration.time()
-        duration_hour = duration_qtime.hour()
-        duration_minute = duration_qtime.minute()
-        duration_sec = duration_qtime.second()
-
-        # check duration
-        if duration_hour == 0 and duration_minute == 0 and duration_sec == 0:
-            duration_hour, duration_minute, duration_sec, _ = \
-                ToolsDateTime.convertFrameToTime(
-                    self.last_frame - self.first_frame, self.fps
-                )
-
-        # get start date-time
-        start_qdate = self.edit_start.date()
-        start_qtime = self.edit_start.time()
-        start_date_time = datetime(
-            start_qdate.year(), start_qdate.month(), start_qdate.day(),
-            start_qtime.hour(), start_qtime.minute(), start_qtime.second()
-        )
-        pst = timezone(self.time_zone)
-        start_date_time = pst.localize(start_date_time)
-
-        # get start frame
-        start_frame = ToolsDateTime.convertAbsoluteDatetimeToFrame(
-            start_date_time, self.fps, self.beginning_datetime
-        )
-
-        # check temporal coherence
-        coherence = True
-        if start_frame < 0 or start_frame >= self.nframes:
-            # check long recordings
-            if self.flag_long_rec:
-                # get recording id
-                start_rec_diff_array = np.array(
-                    [(beg_rec - start_date_time).total_seconds()
-                        for beg_rec in self.rec_beginning_datetime_list]
-                )
-
-                new_rec_id = np.where(start_rec_diff_array >= 0)[0]
-
-                if new_rec_id.shape[0] == 0:
-                    coherence = False
-                    print("wrong input: start time is above the ending of the recordings")
-
-                elif new_rec_id.shape[0] == start_rec_diff_array.shape[0]:
-                    coherence = False
-                    print("wrong input: start time is below the beginning of the recording")
-
-                else:
-                    # change recording
-                    new_rec_id = new_rec_id[0] - 1
-                    coherence = self.prepareNewRecording(new_rec_id)
-
-            else:
-                print("wrong input: start time is below the beginning of the recordings or above the ending of the recording")
-                coherence = False
-
-        # go for it
-        if coherence:
-            # define new range
-            start_frame = ToolsDateTime.convertAbsoluteDatetimeToFrame(
-                start_date_time, self.fps, self.beginning_datetime
-            )
-
-            if len(self.wid_data_list) > 0:
-                self.first_frame = start_frame
-
-                self.last_frame = min(
-                    self.nframes,
-                    self.first_frame + ToolsDateTime.convertTimeToFrame(
-                        self.fps, duration_hour, duration_minute, duration_sec
-                    )
-                )
-
-            # udpdate current frame
-            self.updateFrameId(start_frame)
-
-            # update signals plots
-            self.updateSignalPlot()
-
-            # update annotation regions plot
-            if len(self.annotevent_label_list) > 0:
-                self.clearAnnotEventRegions()
-                self.plotAnnotEventRegions()
 
 
     # *********************************************************************** #
@@ -3690,26 +1706,33 @@ class ViSiAnnoT():
             if self.rec_id == self.rec_nb - 1:
                 self.updateFrameId(min(self.nframes, self.frame_id))
 
-        elif key == QtCore.Qt.Key_I and len(self.wid_data_list) > 0:
-            self.zoomIn()
+        elif key == QtCore.Qt.Key_I and len(self.wid_sig_list) > 0 and \
+                self.wid_zoomin is not None:
+            self.wid_zoomin.callback(self)
 
-        elif key == QtCore.Qt.Key_O and len(self.wid_data_list) > 0:
-            self.zoomOut()
+        elif key == QtCore.Qt.Key_O and len(self.wid_sig_list) > 0 and \
+                self.wid_zoomout is not None:
+            self.wid_zoomout.callback(self)
 
-        elif key == QtCore.Qt.Key_N and len(self.wid_data_list) > 0:
-            self.visiAll()
+        elif key == QtCore.Qt.Key_N and len(self.wid_sig_list) > 0 and \
+                self.wid_visi is not None:
+            self.wid_visi.callback(self)
 
-        elif key == QtCore.Qt.Key_A and len(self.annotevent_label_list) > 0:
-            self.annotEventSetTime(self.frame_id, 0)
+        elif key == QtCore.Qt.Key_A and self.wid_annotevent is not None:
+            if len(self.wid_annotevent.label_list) > 0:
+                self.wid_annotevent.setTimestamp(self, self.frame_id, 0)
 
-        elif key == QtCore.Qt.Key_Z and len(self.annotevent_label_list) > 0:
-            self.annotEventSetTime(self.frame_id, 1)
+        elif key == QtCore.Qt.Key_Z and self.wid_annotevent is not None:
+            if len(self.wid_annotevent.label_list) > 0:
+                self.wid_annotevent.setTimestamp(self, self.frame_id, 1)
 
-        elif key == QtCore.Qt.Key_E and len(self.annotevent_label_list) > 0:
-            self.annotEventAdd()
+        elif key == QtCore.Qt.Key_E and self.wid_annotevent is not None:
+            if len(self.wid_annotevent.label_list) > 0:
+                self.wid_annotevent.add(self)
 
-        elif key == QtCore.Qt.Key_S and len(self.annotevent_label_list) > 0:
-            self.annotEventShow()
+        elif key == QtCore.Qt.Key_S and self.wid_annotevent is not None:
+            if len(self.wid_annotevent.label_list) > 0:
+                self.wid_annotevent.display(self)
 
         elif key == QtCore.Qt.Key_PageDown and self.flag_long_rec:
             self.changeFileInLongRec(self.rec_id - 1, 0)
@@ -3725,7 +1748,8 @@ class ViSiAnnoT():
 
         elif key == QtCore.Qt.Key_D and keyboard_modifiers == \
                 (QtCore.Qt.ControlModifier | QtCore.Qt.ShiftModifier):
-            self.clearAllAnnotEventDescriptions()
+            if self.wid_annotevent is not None:
+                self.wid_annotevent.clearDescriptions(self)
 
 
     def keyRelease(self, ev):
@@ -3754,257 +1778,6 @@ class ViSiAnnoT():
     # *********************************************************************** #
 
     # *********************************************************************** #
-    # Group: Methods for creating widgets
-    # *********************************************************************** #
-
-
-    def createWidgetTimeEdit(self, widget_position):
-        """
-        Creates a widget for defining a custom temporal interval and adds it to
-        the layout :attr:`.ViSiAnnoT.lay`
-
-        A group box is added to the layout and the combo box is added to the
-        group box.
-
-        It sets the following attributes:
-
-        - :attr:`.edit_start`
-        - :attr:`.current_push`
-        - :attr:`.edit_duration`
-        - :attr:`.time_edit_push`
-
-        :param widget_position: position of the widget in the layout, length 2
-            ``(row, col)`` or 4 ``(row, col, rowspan, colspan)``
-        :type widget_position: list or tuple
-        """
-
-        # create group box
-        grid, _ = ToolsPyQt.addGroupBox(self.lay,
-                                        widget_position,
-                                        "Custom temporal range")
-
-        # add qlabel
-        q_label = QtWidgets.QLabel("Start date-time")
-        q_label.setAlignment(QtCore.Qt.AlignRight)
-        grid.addWidget(q_label, 0, 0)
-
-        self.edit_start.setDisplayFormat("yyyy-MM-dd - hh:mm:ss")
-        grid.addWidget(self.edit_start, 0, 1)
-
-        # add push button
-        self.current_push = ToolsPyQt.addPushButton(grid, (0, 2), "Current")
-
-        # add qlabel
-        q_label = QtWidgets.QLabel("Temporal range duration")
-        q_label.setAlignment(QtCore.Qt.AlignRight)
-        grid.addWidget(q_label, 1, 0)
-
-        # add time edit
-        self.edit_duration.setDisplayFormat("hh:mm:ss")
-        grid.addWidget(self.edit_duration, 1, 1)
-
-        # add push button
-        self.time_edit_push = ToolsPyQt.addPushButton(grid, (1, 2), "Ok")
-
-
-    def createWidgetProgress(
-        self, widget_position, title=None,
-        title_style={'color': '#000', 'size': '9pt'},
-        ticks_color="#000", ticks_size=9, ticks_offset=0
-    ):
-        """
-        Creates a widget with the progress bar and adds it to the layout
-        :attr:`.ViSiAnnoT.lay`
-
-        It sets the attribute :attr:`.wid_progress`.
-
-        :param widget_position: position of the widget in the layout, length 2
-            ``(row, col)`` or 4 ``(row, col, rowspan, colspan)``
-        :type widget_position: list or tuple
-        :param title: widget title
-        :type title: str
-        :param title_style: widget title style
-        :type title_style: dict
-        :param ticks_color: color of the ticks text, may be HEX string or
-            (RGB)
-        :type ticks_color: str or tuple or list
-        :param ticks_size: font size of the ticks text in pt
-        :type ticks_size: float
-        :param ticks_offset: ticks text offset
-        :type ticks_offset: int
-        """
-
-        # create widget containing the progress bar
-        self.wid_progress = ToolsPyqtgraph.ProgressWidget(
-            self.nframes, title=title, title_style=title_style,
-            ticks_color=ticks_color, ticks_size=ticks_size,
-            ticks_offset=ticks_offset
-        )
-
-        # add the widget to the layout
-        ToolsPyQt.addWidgetToLayout(
-            self.lay, self.wid_progress, widget_position
-        )
-
-        # set widget height
-        self.wid_progress.setMaximumHeight(80)
-
-        # set temporal ticks and X axis range
-        self.setTemporalTicks(self.wid_progress, (0, self.nframes, self.fps))
-
-        # set boundaries
-        self.wid_progress.getFirstLine().setValue(self.first_frame)
-        self.wid_progress.getLastLine().setValue(self.last_frame - 1)
-
-        # print current frame id and current temporal width
-        self.updateProgressBarTitle()
-
-
-    def createWidgetAnnotEvent(self, widget_position, nb_table=5):
-        """
-        Creates a widget with the events annotation tool and adds it to the
-        layout :attr:`.ViSiAnnoT.lay`
-
-        Make sure the attribute :attr:`.annotevent_label_list` is
-        defined before calling this method.
-
-        It sets the following attributes:
-
-        - :attr:`.annotevent_button_group_radio_label`
-        - :attr:`.annotevent_button_group_push` (must be initialized)
-        - :attr:`.annotevent_button_label_list` (must be initialized)
-        - :attr:`.annotevent_button_group_radio_disp`
-        - :attr:`.annotevent_button_group_check_custom`
-
-        :param widget_position: position of the widget in the layout, length 2
-            ``(row, col)`` or 4 ``(row, col, rowspan, colspan)``
-        :type widget_position: list or tuple
-        """
-
-        # create group box
-        grid, _ = ToolsPyQt.addGroupBox(self.lay, widget_position,
-                                        title="Events annotation")
-
-        # create widget with radio buttons (annotation labels)
-        _, _, self.annotevent_button_group_radio_label = \
-            ToolsPyQt.addWidgetButtonGroup(
-                grid, (0, 0, 1, 2), self.annotevent_label_list,
-                color_list=self.annotevent_color_list,
-                box_title="Current label selection",
-                nb_table=nb_table
-            )
-
-        # get number of annotations already stored (default first label)
-        if os.path.isfile(self.annotevent_path_list[0]):
-            lines = ToolsData.getTxtLines(self.annotevent_path_list[0])
-            nb_annot = len(lines)
-        else:
-            nb_annot = 0
-
-        # create push buttons with a label next to it
-        button_text_list = ["Start", "Stop", "Add", "Delete last", "Display"]
-        button_label_list = [
-            "YYYY-MM-DD hh:mm:ss.sss",
-            "YYYY-MM-DD hh:mm:ss.sss",
-            "Nb: %d" % nb_annot,
-            "",
-            "On"
-        ]
-
-        for ite_button, (text, label) in enumerate(zip(
-            button_text_list, button_label_list
-        )):
-            # add push button
-            push_button = ToolsPyQt.addPushButton(
-                grid, (1 + ite_button, 0), text,
-                flag_enable_key_interaction=False
-            )
-
-            # add push button to group for push buttons
-            self.annotevent_button_group_push.addButton(
-                push_button, ite_button
-            )
-
-            # add label next to the push button
-            if label != '':
-                q_label = QtWidgets.QLabel(label)
-                q_label.setAlignment(QtCore.Qt.AlignVCenter)
-                grid.addWidget(q_label, 1 + ite_button, 1)
-                self.annotevent_button_label_list.append(q_label)
-
-        # create widget with radio buttons (display options)
-        _, _, self.annotevent_button_group_radio_disp = \
-            ToolsPyQt.addWidgetButtonGroup(
-                grid, (2 + ite_button, 0, 1, 2),
-                ["Current label", "All labels", "Custom (below)"],
-                box_title="Display mode"
-            )
-
-        # create check boxes with labels
-        _, _, self.annotevent_button_group_check_custom = \
-            ToolsPyQt.addWidgetButtonGroup(
-                grid, (3 + ite_button, 0, 1, 2), self.annotevent_label_list,
-                color_list=self.annotevent_color_list,
-                box_title="Custom display",
-                button_type="check_box",
-                nb_table=nb_table
-            )
-
-
-    def createWidgetAnnotImage(
-        self, widget_position, flag_horizontal=True, nb_table=5
-    ):
-        """
-        Creates a widget with the image annotation tool and adds to the layout
-        :attr:`.ViSiAnnoT.lay`
-
-        Make sure the attribute :attr:`.annotimage_label_list` is
-        defined before calling this method.
-
-        It sets the following attributes:
-
-        - :attr:`.annotimage_radio_button_group`
-        - :attr:`.annotimage_push_button`
-
-        :param widget_position: position of the widget in the layout, length 2
-            ``(row, col)`` or 4 ``(row, col, rowspan, colspan)``
-        :type widget_position: list or tuple
-        :param flag_horizontal: specify if radio buttons are horizontal
-        :type flag_horizontal: bool
-        """
-
-        # create widget with radio buttons (annotation labels)
-        grid, _, self.annotimage_radio_button_group = \
-            ToolsPyQt.addWidgetButtonGroup(
-                self.lay, widget_position, self.annotimage_label_list,
-                button_type="radio",
-                box_title="Image extraction",
-                flag_horizontal=flag_horizontal,
-                nb_table=nb_table
-            )
-
-        # get push button position
-        if flag_horizontal:
-            pos_push_button = (
-                ceil(len(self.annotimage_label_list) / nb_table), 0
-            )
-
-        else:
-            pos_push_button = (
-                min(len(self.annotimage_label_list), nb_table), 0
-            )
-
-        # add push button
-        self.annotimage_push_button = ToolsPyQt.addPushButton(
-            grid, pos_push_button, "Save", flag_enable_key_interaction=False
-        )
-
-
-    # *********************************************************************** #
-    # End group
-    # *********************************************************************** #
-
-    # *********************************************************************** #
     # Group: Methods for setting video and signal data
     # *********************************************************************** #
 
@@ -4023,7 +1796,7 @@ class ViSiAnnoT():
         method (it can be empty):
 
         - :attr:`.video_data_dict`
-        - :attr:`.sig_list_list`
+        - :attr:`.sig_dict`
         - :attr:`.interval_dict`
 
         Otherwise the video thread throws a RunTime error.
@@ -4035,7 +1808,7 @@ class ViSiAnnoT():
         - :attr:`.nframes`
         - :attr:`.ViSiAnnoT.fps`
         - :attr:`.beginning_datetime`
-        - :attr:`.sig_list_list`
+        - :attr:`.sig_dict`
         - :attr:`.interval_dict`
         - :attr:`.data_wave`
 
@@ -4068,7 +1841,7 @@ class ViSiAnnoT():
         beginning_datetime_list = []
 
         # reset attributes
-        self.sig_list_list = []
+        self.sig_dict = {}
         self.interval_dict = {}
 
         # loop on video
@@ -4119,8 +1892,8 @@ class ViSiAnnoT():
             # get beginning datetime of the video
             self.beginning_datetime = beginning_datetime_list[ite_vid]
 
-        # check if more than 2 videos
-        if len(nframes_list) >= 2:
+        # check if more than 1 video
+        if len(nframes_list) > 1:
             # update number of frames
             self.nframes = max(nframes_list)
 
@@ -4128,7 +1901,12 @@ class ViSiAnnoT():
             for fps in fps_list[1:]:
                 if self.fps != fps and fps >= 0:
                     if '' not in video_dict.values():
-                        raise Exception('The 2 videos do not have the same FPS. %s - %s' % (list(video_dict.values())[0][0], path_video))
+                        raise Exception(
+                            "The 2 videos do not have the same FPS: "
+                            "%s - %s" % (
+                                list(video_dict.values())[0][0], path_video
+                            )
+                        )
 
 
         # ******************************************************************* #
@@ -4185,8 +1963,9 @@ class ViSiAnnoT():
             sig_list_tmp = []
 
             # loop on sub-signals
-            for ite_data, (path_data, key_data, freq_data, _, _, _, plot_style) \
-                    in enumerate(data_info_list):
+            for ite_data, (
+                path_data, key_data, freq_data, _, _, _, plot_style
+            ) in enumerate(data_info_list):
                 # ******************** load intervals *********************** #
                 if type_data in interval_dict.keys():
                     # initialize dictionary value
@@ -4211,7 +1990,8 @@ class ViSiAnnoT():
                                 # load intervals data
                                 interval = self.getDataSigTmp(
                                     path_interval, type_data, key_interval,
-                                    freq_interval, self.tmp_delimiter
+                                    freq_interval, self.tmp_delimiter,
+                                    flag_interval=True
                                 )
 
                                 # if time series, convert to intervals
@@ -4278,7 +2058,12 @@ class ViSiAnnoT():
                     if ite_data < len(self.plot_style_list):
                         plot_style = self.plot_style_list[ite_data]
                     else:
-                        raise Exception("No plot style provided for signal %s - %s (sub-id %d) and cannot use the default style." % (type_data, key_data, ite_data))
+                        raise Exception(
+                            "No plot style provided for signal %s - %s "
+                            "(sub-id %d) and cannot use the default style" % (
+                                type_data, key_data, ite_data
+                            )
+                        )
 
                 # create an instance of Signal
                 signal = Signal(
@@ -4294,7 +2079,7 @@ class ViSiAnnoT():
                 sig_list_tmp.append(signal)
 
             # append list of signals
-            self.sig_list_list.append(sig_list_tmp)
+            self.sig_dict[type_data] = sig_list_tmp
 
 
     @staticmethod
@@ -4326,7 +2111,10 @@ class ViSiAnnoT():
         return path, start_sec
 
 
-    def getDataSigTmp(self, path, type_data, key_data, freq_data, delimiter):
+    def getDataSigTmp(
+        self, path, type_data, key_data, freq_data, delimiter,
+        flag_interval=False
+    ):
         """
         Gets signal data after synchronization with video
 
@@ -4342,6 +2130,8 @@ class ViSiAnnoT():
         :param delimiter: delimiter used to split the lines of the temporary
             signal files
         :type delimiter: str
+        :param flag_interval: specify if data to load is intervals
+        :type flag_interval: bool
 
         :returns: signal data synchronized with video
         :rtype: numpy array
@@ -4370,16 +2160,22 @@ class ViSiAnnoT():
                     start_sec_prev = start_sec
                 else:
                     # keyword arguments for ToolsData.getDataGeneric
+                    # used when loading audio in order to specify channel
                     kwargs = {}
-
                     if file_name.split('.')[-1] == "wav":
                         kwargs["channel_id"] = \
                             ToolsAudio.convertKeyToChannelId(key_data)
 
-                    # get data
-                    next_data = ToolsData.getDataGeneric(
-                        file_name, key_data, **kwargs
-                    )
+                    # load data
+                    if flag_interval:
+                        next_data = ToolsData.getDataIntervalAsTimeSeries(
+                            file_name, key=key_data
+                        )
+
+                    else:
+                        next_data = ToolsData.getDataGeneric(
+                            file_name, key_data, **kwargs
+                        )
 
                     # truncate data at the beginning if necessary
                     if ite_line == 0:
@@ -4390,9 +2186,14 @@ class ViSiAnnoT():
 
                         # 2D data => ms timestamp on first axis
                         else:
-                            inds = np.where(next_data[:, 0] >= start_sec * 1000)[0]
+                            inds = np.where(
+                                next_data[:, 0] >= start_sec * 1000
+                            )[0]
+
                             next_data = next_data[inds]
-                            next_data[:, 0] = next_data[:, 0] - start_sec * 1000
+
+                            next_data[:, 0] = \
+                                next_data[:, 0] - start_sec * 1000
 
 
                     # truncate data at the end if necessary
@@ -4405,17 +2206,34 @@ class ViSiAnnoT():
                                 data_length += data_tmp.shape[0]
 
                             # get the end frame
-                            end_frame = int(round(freq_data * self.nframes / self.fps - data_length))
+                            end_frame = int(round(
+                                freq_data * self.nframes / self.fps -
+                                data_length
+                            ))
+
                             next_data = next_data[:end_frame]
 
                         # 2D data => ms timestamp on first axis
                         else:
                             if start_sec_prev != -1:
-                                inds = np.where(next_data[:, 0] <= (self.nframes / self.fps - start_sec_prev) * 1000)[0]
+                                inds = np.where(
+                                    next_data[:, 0] <= (
+                                        self.nframes / self.fps -
+                                        start_sec_prev
+                                    ) * 1000
+                                )[0]
+
                                 next_data = next_data[inds]
-                                next_data[:, 0] = next_data[:, 0] + start_sec_prev * 1000
+
+                                next_data[:, 0] = \
+                                    next_data[:, 0] + start_sec_prev * 1000
+
                             else:
-                                inds = np.where(next_data[:, 0] <= 1000 * self.nframes / self.fps)[0]
+                                inds = np.where(
+                                    next_data[:, 0] <=
+                                    1000 * self.nframes / self.fps
+                                )[0]
+
                                 next_data = next_data[inds]
 
                     start_sec_prev = -1
@@ -4425,7 +2243,8 @@ class ViSiAnnoT():
 
             # check if 2D and zero fill at the beginning
             if len(data_list) > 1:
-                if len(data_list[0].shape) == 1 and len(data_list[1].shape) == 2:
+                if len(data_list[0].shape) == 1 \
+                        and len(data_list[1].shape) == 2:
                     zero_length = data_list[0].shape[0]
                     if freq_data == 0:
                         data_list[0] = np.empty((0, 2))

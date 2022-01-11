@@ -14,15 +14,14 @@ Module defining :class:`.ViSiAnnoTLongRec`
 import numpy as np
 import os
 from glob import glob
-import sys
-from collections import OrderedDict
 from ..tools import ToolsPyQt
-from ..tools import ToolsPyqtgraph
 from ..tools import ToolsDateTime
 from ..tools import ToolsData
 from ..tools import ToolsImage
 from ..tools import ToolsAudio
 from .ViSiAnnoT import ViSiAnnoT
+from .components.LogoWidgets import PreviousWidget, NextWidget
+from .components.FileSelectionWidget import FileSelectionWidget
 
 
 class ViSiAnnoTLongRec(ViSiAnnoT):
@@ -175,7 +174,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             - ``"zoomout"``
             - ``"previous"``
             - ``"next"``
-            - ``"rec_choice"``
+            - ``"file_selection"``
             - ``"progress"``
         :type poswid_dict: dict
         :param kwargs: keyword arguments of :class:`.ViSiAnnoT` constructor
@@ -207,10 +206,10 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         #: in the long recording, where each element is a configuration list
         #: (see first positional argument of :class:`.ViSiAnnoT` constructor
         #: for details about configuration list)
-        self.video_dict_list = OrderedDict()
+        self.video_dict_list = {}
 
         # dictionary containing the current video file path
-        video_dict_current = OrderedDict()
+        video_dict_current = {}
 
         # nested list of video paths
         video_path_list = []
@@ -307,8 +306,8 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                         flag_missing_current = True
 
                     else:
-                        # get delta in seconds between the current camera and the
-                        # first camera
+                        # get delta in seconds between the current camera and
+                        # the first camera
                         delta = (
                             video_datetime_list[ite_id][ite_vid] -
                             video_datetime_list[0][ite_vid]
@@ -469,7 +468,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         #: element is a configuration list (see second positional argument of
         #: :class:`.ViSiAnnoT` constructor for details about the configuration
         #: list).
-        self.signal_dict_list = OrderedDict()
+        self.signal_dict_list = {}
 
         #: (*dict*) Each item corresponds to one signal widget on which to plot
         #: intervals, key is the data type of the widget, value is a nested
@@ -480,7 +479,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         #: each element is a configuration list (see second keyword argument
         #: ``interval_dict`` of :class:`.ViSiAnnoT` constructor for details
         #: about the configuration list).
-        self.interval_dict_list = OrderedDict()
+        self.interval_dict_list = {}
 
         # get signal configuration
         signal_dict_current, interval_dict_current = \
@@ -512,7 +511,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 poswid_dict['zoomout'] = (4, nb_video + 2)
                 poswid_dict['previous'] = (4, nb_video + 3)
                 poswid_dict['next'] = (4, nb_video + 4)
-                poswid_dict['rec_choice'] = (4, nb_video + 5)
+                poswid_dict['file_selection'] = (4, nb_video + 5)
                 poswid_dict['progress'] = (5, 0, 1, nb_video + 6)
 
             elif layout_mode == 2:
@@ -528,7 +527,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 poswid_dict['zoomout'] = (3, nb_video + 2)
                 poswid_dict['previous'] = (3, nb_video + 3)
                 poswid_dict['next'] = (3, nb_video + 4)
-                poswid_dict['rec_choice'] = (3, nb_video + 5)
+                poswid_dict['file_selection'] = (3, nb_video + 5)
                 poswid_dict['progress'] = (4, 0, 1, nb_video + 7)
 
             elif layout_mode == 3:
@@ -541,11 +540,14 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 poswid_dict['zoomout'] = (1, nb_video + 3)
                 poswid_dict['previous'] = (2, nb_video + 1)
                 poswid_dict['next'] = (2, nb_video + 2)
-                poswid_dict['rec_choice'] = (2, nb_video + 3)
+                poswid_dict['file_selection'] = (2, nb_video + 3)
                 poswid_dict['progress'] = (3, 0, 1, nb_video + 4)
 
             else:
-                raise Exception("No layout configuration given - got mode %d, must be 1, 2 or 3" % layout_mode)
+                raise Exception(
+                    "No layout configuration given - got mode %d, "
+                    "must be 1, 2 or 3" % layout_mode
+                )
 
 
         # ******************************************************************* #
@@ -563,57 +565,35 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         self.rec_nb = len(self.rec_beginning_datetime_list)
 
 
-        # ******************************************************************* #
         # ******************* previous/next recording *********************** #
-        # ******************************************************************* #
-
-        # read images
-        if hasattr(sys, "_MEIPASS"):
-            dir_path = os.path.abspath(getattr(sys, "_MEIPASS"))
+        if "previous" in poswid_dict.keys():
+            #: (:class:`.PreviousWidget`) Widget for selecting previous file
+            self.wid_previous = PreviousWidget(
+                self, poswid_dict["previous"], "previous"
+            )
 
         else:
-            dir_path = os.path.dirname(os.path.realpath(__file__))
+            self.wid_previous = None
 
-        previous_path = '%s/Images/previous.jpg' % dir_path
-        next_path = '%s/Images/next.jpg' % dir_path
+        if "next" in poswid_dict.keys():
+            #: (:class:`.NextWidget`) Widget for selecting next file
+            self.wid_next = NextWidget(self, poswid_dict["next"], "next")
 
-        previous_im = ToolsImage.readImage(previous_path)
-        next_im = ToolsImage.readImage(next_path)
+        else:
+            self.wid_next = None
 
-        #: (*QtWidgets.QGridlayout*) Widget of the "previous rec" image
-        self.wid_previous = ToolsPyqtgraph.createWidgetLogo(
-            self.lay, poswid_dict['previous'], previous_im, box_size=50
-        )
+        if "file_selection" in poswid_dict.keys():
+            #: (:class:`.FileSelectionWidget`) Widget for selecting a in a
+            #: combo box
+            self.file_selection_widget = FileSelectionWidget(
+                self, poswid_dict["file_selection"]
+            )
 
-        #: (*QtWidgets.QGridlayout*) Widget of the "next rec" image
-        self.wid_next = ToolsPyqtgraph.createWidgetLogo(
-            self.lay, poswid_dict['next'], next_im, box_size=50
-        )
-
-        # for documentation onyl
-        #: (*QtWidgets.QComboBox*) Combo box for recording file selection
-        self.combo_rec_choice = None
-
-        # create combo box widget
-        _, group_box, self.combo_rec_choice = ToolsPyQt.addComboBox(
-            self.lay, poswid_dict['rec_choice'],
-            [str(rec_id + 1) for rec_id in range(self.rec_nb)],
-            box_title="File ID / %d" % self.rec_nb
-        )
-
-        group_box.setMaximumWidth(100)
-
-        # listen to callbacks
-        self.wid_previous.scene().sigMouseClicked.connect(
-            self.mouseClickedPrevious
-        )
-        self.wid_next.scene().sigMouseClicked.connect(self.mouseClickedNext)
-        self.combo_rec_choice.currentIndexChanged.connect(self.recChoice)
+        else:
+            self.file_selection_widget = None
 
 
-        # ******************************************************************* #
         # *********************** infinite loop ***************************** #
-        # ******************************************************************* #
         ToolsPyQt.infiniteLoopDisplay(self.app)
 
         # close streams, delete temporary folders
@@ -725,6 +705,12 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                             path_list, key, freq, delimiter, pos, fmt, **kwargs
                         )
 
+                    # if interval data, specify in data type for the temporary
+                    # synchronization file
+                    if "flag_interval" in kwargs.keys():
+                        if kwargs["flag_interval"]:
+                            type_data = "interval-%s" % type_data
+
                     # create temporary synchronization files
                     sync_path_list = \
                         ViSiAnnoTLongRec.createSynchronizationFiles(
@@ -759,8 +745,11 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 config_current_list.append(configuration[0])
 
             elif flag_raise_exception:
-                raise Exception('wrong input data directory\ngot: %s - %s' %
-                                (type_data, data_dir))
+                raise Exception(
+                    'wrong input data directory, got: %s - %s' % (
+                        type_data, data_dir
+                    )
+                )
 
         return config_whole_rec_list, config_current_list
 
@@ -784,7 +773,8 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             :class:`.ViSiAnnoTLongRec` constructor
         :type interval_dict: dict
         :param kwargs: keyword arguments of the function
-            :func:`.getBeginningEndingDateTimeFromList`
+            :func:`.getBeginningEndingDateTimeFromList`, minus
+            ``flag_interval``
 
         :returns:
             - **signal_dict_current** (*list*) -- signal configuration of the
@@ -798,21 +788,22 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         """
 
         # dictionary containing the curent signals configuration
-        signal_dict_current = OrderedDict()
+        signal_dict_current = {}
 
         # dictionary containing the current files of intervals and the color to
         # plot
-        interval_dict_current = OrderedDict()
+        interval_dict_current = {}
 
         # loop on data types
         for type_data, data_info_list in signal_dict.items():
             # check if there are intervals
             if type_data in interval_dict.keys():
                 # get interval configuration for the data type
-                self.signal_dict_list[type_data], \
-                    signal_dict_current[type_data] = \
+                self.interval_dict_list[type_data], \
+                    interval_dict_current[type_data] = \
                     self.getSignalConfigurationSingleType(
-                        type_data, interval_dict[type_data], **kwargs
+                        type_data, interval_dict[type_data],
+                        flag_interval=True, **kwargs
                 )
 
             # get signal configuration for the data type
@@ -910,7 +901,8 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 # check length of signal file beginning before video
                 if data_ending_datetime_list[before_video_sig_array[-1]] > \
                         video_date_time:
-                    # update list of signal files sharing temporality with video
+                    # update list of signal files sharing temporality with
+                    # video
                     sig_file_id_list = np.hstack((
                         before_video_sig_array[-1], sig_file_id_list
                     ))
@@ -996,8 +988,8 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
         if ok:
             # reset previous frame id
-            for video_id in self.previous_frame_id.keys():
-                self.previous_frame_id[video_id] = None
+            for wid_vid in self.wid_vid_dict.values():
+                wid_vid.previous_frame_id = None
 
             # update frame id
             self.updateFrameId(new_frame_id)
@@ -1011,20 +1003,21 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 self.first_frame = max(0, self.nframes - current_range)
                 self.last_frame = self.nframes
 
+            # update progress bar
+            self.wid_progress.updateFromViSiAnnoT(
+                self.nframes, self.first_frame, self.last_frame, self.fps,
+                self.beginning_datetime
+            )
+
             # update signals plot
             self.updateSignalPlot()
 
-            # update progress bar
-            self.wid_progress.getProgressCurve().setData(
-                [0, self.nframes], [0, 0]
-            )
-
             # update annotation regions plot if necessary
-            if len(self.annotevent_label_list) > 0:
-                if self.annotevent_button_label_list[3].text() == "On":
-                    self.clearAnnotEventRegions()
-                    self.annotevent_description_dict = {}
-                    self.plotAnnotEventRegions()
+            if self.wid_annotevent is not None:
+                if self.wid_annotevent.push_text_list[3].text() == "On":
+                    self.wid_annotevent.clearRegions(self)
+                    self.wid_annotevent.description_dict = {}
+                    self.wid_annotevent.plotRegions(self)
 
         return ok
 
@@ -1040,18 +1033,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         )
 
 
-    def mouseClickedPrevious(self):
-        """
-        Callback method for loading previous file in the long recording after
-        having clicked on the "previous" image
-
-        Connected to the signal ``sigMouseClicked`` of the attribute ``scene``
-        of :attr:`.ViSiAnnoTLongRec.wid_previous`.
-        """
-
-        self.changeFileInLongRec(self.rec_id - 1, 0)
-
-
     def nextRecording(self):
         """
         Loads next file in the long recording
@@ -1065,18 +1046,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         )
 
         return ok
-
-
-    def mouseClickedNext(self):
-        """
-        Callback method for loading next file in the long recording after
-        having clicked on the "next" image
-
-        Connected to the signal ``sigMouseClicked`` of the attribute ``scene``
-        of :attr:`.ViSiAnnoTLongRec.wid_next`.
-        """
-
-        self.changeFileInLongRec(self.rec_id + 1, 0)
 
 
     def prepareNewRecording(self, rec_id):
@@ -1098,21 +1067,18 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             self.rec_id = rec_id
 
             # get new video data
-            video_dict_current = OrderedDict()
+            video_dict_current = {}
             for video_id, video_dict_list_tmp in self.video_dict_list.items():
                 video_dict_current[video_id] = video_dict_list_tmp[self.rec_id]
 
                 # set video widget title
-                file_name, _ = os.path.splitext(
-                    os.path.basename(video_dict_current[video_id][0])
+                self.wid_vid_dict[video_id].setWidgetTitle(
+                    video_dict_current[video_id][0]
                 )
 
-                self.wid_vid_dict[video_id].setTitle(file_name)
-                self.vid_file_name_dict[video_id] = file_name
-
             # get new signals and intervals
-            signal_dict_current = OrderedDict()
-            interval_dict_current = OrderedDict()
+            signal_dict_current = {}
+            interval_dict_current = {}
             for type_data in self.signal_dict_list.keys():
                 # signal
                 signal_dict_current[type_data] = []
@@ -1136,47 +1102,24 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 video_dict_current, signal_dict_current, interval_dict_current
             )
 
-            # update progress bar
-            self.setTemporalTicks(
-                self.wid_progress, (0, self.nframes, self.fps)
-            )
-            self.wid_progress.updateNFrames(self.nframes)
-
             # set recording choice combo box
-            self.combo_rec_choice.setCurrentIndex(self.rec_id)
+            if self.file_selection_widget is not None:
+                self.file_selection_widget.combo_box.setCurrentIndex(
+                    self.rec_id
+                )
 
-            # reset combo boxes
-            try:
-                self.combo_trunc.setCurrentIndex(0)
-            except Exception:
-                pass
+            # set items of combo box for truncated temporal ranges
+            if self.wid_trunc is not None:
+                self.wid_trunc.setTrunc(self)
 
-            try:
-                self.combo_from_cursor.setCurrentIndex(0)
-            except Exception:
-                pass
+            # reset selected item of combo box for temporal range from cursor
+            if self.wid_from_cursor is not None:
+                self.wid_from_cursor.combo_box.setCurrentIndex(0)
 
             return True
 
         else:
             return False
-
-
-    def recChoice(self, ite_rec):
-        """
-        Callback method for choosing a new file in the long recording with the
-        combo box
-
-        Connected to the signal ``currentIndexChanged`` of
-        :attr:`.ViSiAnnoTLongRec.combo_rec_choice`.
-
-        :param ite_rec: index of the new file in the long recording selected
-            in the combo box
-        :type ite_rec: int
-        """
-
-        # change recording
-        self.changeFileInLongRec(ite_rec, 0)
 
 
     # *********************************************************************** #
