@@ -984,7 +984,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         Changes file in the long recording
 
         It loads new data files by calling
-        :meth:`.ViSiAnnoTLongRec.prepareNewRecording`. Then it updates the
+        :meth:`.ViSiAnnoTLongRec.prepareNewFile`. Then it updates the
         display.
 
         :param rec_id: index of the new file in the long recording
@@ -1000,8 +1000,8 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         :rtype: bool
         """
 
-        # set new recording
-        ok = self.prepareNewRecording(rec_id)
+        # set new file
+        ok = self.prepareNewFile(rec_id)
 
         if ok:
             # reset previous frame id
@@ -1039,7 +1039,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         return ok
 
 
-    def previousRecording(self):
+    def previousFile(self):
         """
         Loads previous file in the long recording
         """
@@ -1050,7 +1050,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         )
 
 
-    def nextRecording(self):
+    def nextFile(self):
         """
         Loads next file in the long recording
 
@@ -1065,7 +1065,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         return ok
 
 
-    def prepareNewRecording(self, rec_id):
+    def prepareNewFile(self, rec_id):
         """
         Loads data of a new file in the long recording
 

@@ -178,7 +178,7 @@ class CustomTemporalRangeWidget():
                 else:
                     # change recording
                     new_rec_id = new_rec_id[0] - 1
-                    coherence = visi.prepareNewRecording(new_rec_id)
+                    coherence = visi.prepareNewFile(new_rec_id)
 
             else:
                 print(

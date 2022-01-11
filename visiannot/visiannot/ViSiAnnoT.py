@@ -1255,7 +1255,7 @@ class ViSiAnnoT():
 
                 else:
                     # long recordings => change file
-                    ok = self.nextRecording()
+                    ok = self.nextFile()
                     if not ok:
                         self.frame_id = self.nframes - 1
 
@@ -1285,7 +1285,7 @@ class ViSiAnnoT():
             # check if frame undertakes the video
             if self.frame_id < 0 and self.flag_long_rec:
                 # long recordings => change file
-                self.previousRecording()
+                self.previousFile()
 
             else:
                 # get width of the current temporal range
