@@ -618,7 +618,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
 
     def getSignalConfigurationSingleType(
-        self, type_data, data_info_list, flag_raise_exception=True, **kwargs
+        self, signal_id, data_info_list, flag_raise_exception=True, **kwargs
     ):
         """
         Converts the configuration lists for a specific signal widget and for
@@ -626,8 +626,8 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
         It can be used for signal configuration or intervals configuration.
 
-        :param type_data: data type of the signal widget
-        :type type_data: str
+        :param signal_id: signal type of the widget
+        :type signal_id: str
         :param data_info_list: list of configuration lists, each element is a
             list of length 8:
 
@@ -674,7 +674,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         # loop on sub-configurations
         for data_info in data_info_list:
             # check number of elements in data configuration
-            checkConfiguration(type_data, data_info, "Signal")
+            checkConfiguration(signal_id, data_info, "Signal")
 
             # get configuration
             data_dir, key, freq, pattern, delimiter, pos, fmt, plot_style = \
@@ -727,13 +727,13 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                     # synchronization file
                     if "flag_interval" in kwargs.keys():
                         if kwargs["flag_interval"]:
-                            type_data = "interval-%s" % type_data
+                            signal_id = "interval-%s" % signal_id
 
                     # create temporary synchronization files
                     sync_path_list = \
                         ViSiAnnoTLongRec.createSynchronizationFiles(
                             path_list,
-                            type_data,
+                            signal_id,
                             key,
                             self.rec_beginning_datetime_list,
                             self.rec_duration_list,
@@ -765,7 +765,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             elif flag_raise_exception:
                 raise Exception(
                     "Wrong input data directory, got: %s - %s" %
-                    (type_data, data_dir)
+                    (signal_id, data_dir)
                 )
 
         return config_whole_rec_list, config_current_list
@@ -812,22 +812,22 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         interval_dict_current = {}
 
         # loop on data types
-        for type_data, data_info_list in signal_dict.items():
+        for signal_id, data_info_list in signal_dict.items():
             # check if there are intervals
-            if type_data in interval_dict.keys():
+            if signal_id in interval_dict.keys():
                 # get interval configuration for the data type
-                self.interval_dict_list[type_data], \
-                    interval_dict_current[type_data] = \
+                self.interval_dict_list[signal_id], \
+                    interval_dict_current[signal_id] = \
                     self.getSignalConfigurationSingleType(
-                        type_data, interval_dict[type_data],
+                        signal_id, interval_dict[signal_id],
                         flag_interval=True, **kwargs
                 )
 
             # get signal configuration for the data type
-            self.signal_dict_list[type_data], \
-                signal_dict_current[type_data] = \
+            self.signal_dict_list[signal_id], \
+                signal_dict_current[signal_id] = \
                 self.getSignalConfigurationSingleType(
-                    type_data, data_info_list, **kwargs
+                    signal_id, data_info_list, **kwargs
             )
 
         return signal_dict_current, interval_dict_current
@@ -835,7 +835,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
     @staticmethod
     def createSynchronizationFiles(
-        data_path_list, type_data, key_data, ref_beginning_datetime_list,
+        data_path_list, signal_id, key_data, ref_beginning_datetime_list,
         ref_duration_list, data_beginning_datetime_list,
         data_ending_datetime_list, output_dir, delimiter
     ):
@@ -867,9 +867,9 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
         :param data_path_list: paths to the data files to synchronize
         :type data_path_list: list
-        :param type_data: data type, used for the name of the synchronization
+        :param signal_id: signal type, used for the name of the synchronization
             files
-        :type type_data: str
+        :type signal_id: str
         :param key_data: key to access data (in case of .h5 or .mat files),
             used for the name of the synchronization files
         :type key_data: str
@@ -926,7 +926,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
             # get synchronization file name
             tmp_file_name = "%s/%s_%s-%s_%s.txt" % \
-                (output_dir, output_dir, type_data, key_data.replace('/', '_'),
+                (output_dir, output_dir, signal_id, key_data.replace('/', '_'),
                  ToolsDateTime.convertDatetimeToString(video_date_time, fmt=1)
                  )
 
@@ -1096,21 +1096,21 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             # get new signals and intervals
             signal_dict_current = {}
             interval_dict_current = {}
-            for type_data in self.signal_dict_list.keys():
+            for signal_id in self.signal_dict_list.keys():
                 # signal
-                signal_dict_current[type_data] = []
-                for config_list in self.signal_dict_list[type_data]:
-                    signal_dict_current[type_data].append(
+                signal_dict_current[signal_id] = []
+                for config_list in self.signal_dict_list[signal_id]:
+                    signal_dict_current[signal_id].append(
                         config_list[self.rec_id]
                     )
 
                 # additinal intervals
-                if type_data in self.interval_dict_list.keys():
-                    interval_dict_current[type_data] = []
+                if signal_id in self.interval_dict_list.keys():
+                    interval_dict_current[signal_id] = []
                     for interval_config_list in \
-                            self.interval_dict_list[type_data]:
+                            self.interval_dict_list[signal_id]:
                         if self.rec_id < len(interval_config_list):
-                            interval_dict_current[type_data].append(
+                            interval_dict_current[signal_id].append(
                                 interval_config_list[self.rec_id]
                             )
 

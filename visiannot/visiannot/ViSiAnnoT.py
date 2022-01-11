@@ -1000,38 +1000,38 @@ class ViSiAnnoT():
         )
 
         # loop on signals
-        for ite_sig, (type_data, sig_list) in \
+        for ite_sig, (signal_id, sig_list) in \
                 enumerate(self.sig_dict.items()):
             # get Y range
-            if type_data in y_range_dict.keys():
-                y_range = y_range_dict[type_data]
+            if signal_id in y_range_dict.keys():
+                y_range = y_range_dict[signal_id]
 
                 # check number of elements in yrange configuration
-                checkConfiguration(type_data, y_range, "YRange")
+                checkConfiguration(signal_id, y_range, "YRange")
 
             else:
                 y_range = []
 
             # get list of intervals to plot in the signal widget
-            if type_data in self.interval_dict.keys():
-                interval_list = self.interval_dict[type_data]
+            if signal_id in self.interval_dict.keys():
+                interval_list = self.interval_dict[signal_id]
 
             else:
                 interval_list = []
 
             # get list of thresholds to plot in the signal widget
-            if type_data in self.threshold_dict.keys():
-                threshold_list = self.threshold_dict[type_data]
+            if signal_id in self.threshold_dict.keys():
+                threshold_list = self.threshold_dict[signal_id]
 
                 # check number of elements in threshold configuration
-                checkConfiguration(type_data, threshold_list, "Threshold")
+                checkConfiguration(signal_id, threshold_list, "Threshold")
 
             else:
                 threshold_list = []
 
             # create widget
             wid = SignalWidget(
-                self, pos_sig, y_range=y_range, left_label=type_data, **kwargs
+                self, pos_sig, y_range=y_range, left_label=signal_id, **kwargs
             )
 
             # create plot items in the signal widget
@@ -1359,12 +1359,12 @@ class ViSiAnnoT():
         first_frame_ms, last_frame_ms = self.getCurrentRangeInMs()
 
         # update plots
-        for wid, (type_data, sig_list) in zip(
+        for wid, (signal_id, sig_list) in zip(
             self.wid_sig_list, self.sig_dict.items()
         ):
             # check if there are intervals to plot
-            if type_data in self.interval_dict.keys():
-                interval_list = self.interval_dict[type_data]
+            if signal_id in self.interval_dict.keys():
+                interval_list = self.interval_dict[signal_id]
 
             else:
                 interval_list = []
@@ -2034,31 +2034,32 @@ class ViSiAnnoT():
         # ******************************************************************* #
 
         # loop on signals
-        for ite_type, (type_data, data_info_list) in \
+        for ite_type, (signal_id, signal_config_list) in \
                 enumerate(signal_dict.items()):
             # initialize temporary list
             sig_list_tmp = []
 
             # loop on sub-signals
-            for ite_data, data_info in enumerate(data_info_list):
+            for ite_data, signal_config in enumerate(signal_config_list):
                 # check number of elements in signal configuration
                 checkConfiguration(
-                    type_data, data_info, "Signal", flag_long_rec=False
+                    signal_id, signal_config, "Signal", flag_long_rec=False
                 )
 
                 # get configuration
-                path_data, key_data, freq_data, _, _, _, plot_style = data_info
+                path_data, key_data, freq_data, _, _, _, plot_style = \
+                    signal_config
 
                 # ******************** load intervals *********************** #
-                if type_data in interval_dict.keys():
+                if signal_id in interval_dict.keys():
                     # initialize dictionary value
-                    self.interval_dict[type_data] = []
+                    self.interval_dict[signal_id] = []
 
                     # loop on intervals paths
-                    for interval_config in interval_dict[type_data]:
+                    for interval_config in interval_dict[signal_id]:
                         # check number of elements in interval configuration
                         checkConfiguration(
-                            type_data, interval_config, "Interval",
+                            signal_id, interval_config, "Interval",
                             flag_long_rec=False
                         )
 
@@ -2081,7 +2082,7 @@ class ViSiAnnoT():
                             if self.flag_long_rec and not self.flag_synchro:
                                 # load intervals data
                                 interval = self.getDataSigTmp(
-                                    path_interval, type_data, key_interval,
+                                    path_interval, signal_id, key_interval,
                                     freq_interval, self.tmp_delimiter,
                                     flag_interval=True
                                 )
@@ -2101,7 +2102,7 @@ class ViSiAnnoT():
                                 )
 
                             # update dictionary value
-                            self.interval_dict[type_data].append(
+                            self.interval_dict[signal_id].append(
                                 [interval, freq_interval, color_interval]
                             )
 
@@ -2125,7 +2126,7 @@ class ViSiAnnoT():
                 if self.flag_long_rec and not self.flag_synchro:
                     # get data
                     data = self.getDataSigTmp(
-                        path_data, type_data, key_data, freq_data,
+                        path_data, signal_id, key_data, freq_data,
                         self.tmp_delimiter
                     )
 
@@ -2153,7 +2154,7 @@ class ViSiAnnoT():
                         raise Exception(
                             "No plot style provided for signal %s - %s "
                             "(sub-id %d) and cannot use the default style" % (
-                                type_data, key_data, ite_data
+                                signal_id, key_data, ite_data
                             )
                         )
 
@@ -2171,7 +2172,7 @@ class ViSiAnnoT():
                 sig_list_tmp.append(signal)
 
             # append list of signals
-            self.sig_dict[type_data] = sig_list_tmp
+            self.sig_dict[signal_id] = sig_list_tmp
 
 
     @staticmethod
@@ -2204,7 +2205,7 @@ class ViSiAnnoT():
 
 
     def getDataSigTmp(
-        self, path, type_data, key_data, freq_data, delimiter,
+        self, path, signal_id, key_data, freq_data, delimiter,
         flag_interval=False
     ):
         """
@@ -2212,9 +2213,9 @@ class ViSiAnnoT():
 
         :param path: path to the temporary signal file
         :type path: str
-        :param type_data: data type (key of the dictionary ``signal_dict``,
+        :param signal_id: signal type (key in the dictionary ``signal_dict``,
             second positional argument of :class:`.ViSiAnnoT` constructor)
-        :type type_data: str
+        :type signal_id: str
         :param key_data: key to access the data (in case of .h5 or .mat file)
         :type key_data: str
         :param freq_data: signal frequency
