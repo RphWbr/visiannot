@@ -21,6 +21,7 @@ from ...tools.ToolsDateTime import convertDatetimeToString, \
 from ...tools.ToolsPyqtgraph import removeItemInWidgets
 import numpy as np
 from datetime import timedelta
+from ...tools.ToolsAnnotation import readAnnotation
 
 
 class AnnotEventWidget():
@@ -694,6 +695,15 @@ class AnnotEventWidget():
                 self.annot_array[self.current_label_id, [0, 1]] = \
                     self.annot_array[self.current_label_id, [1, 0]]
 
+            # check annotation overlap with previous annotations
+            if isfile(self.path_list[0]):
+                flag_ok = self.checkOverlap(
+                    self.path_list[0], annot_datetime_0, annot_datetime_1,
+                    time_zone=visi.time_zone
+                )
+
+                print(flag_ok)
+
             # append the annotated interval to the annotation file
             for ite_annot_type, annot_path in enumerate(self.path_list):
                 with open(annot_path, 'a') as file:
@@ -726,6 +736,32 @@ class AnnotEventWidget():
 
             # reset the beginning and ending times of the annotated interval
             self.resetTimestamp()
+
+
+    @staticmethod
+    def checkOverlap(annot_path, annot_datetime_0, annot_datetime_1, **kwargs):
+        # get existing annotations
+        annot_array_total = readAnnotation(annot_path).flatten()
+
+        # loop on current annotation boundaries
+        diff_array = np.empty((0, len(annot_array_total)))
+        for annot_bound in [annot_datetime_0, annot_datetime_1]:
+            # compute difference with boundaries of existing annotations
+            diff_array_tmp = np.array([(
+                convertStringToDatetime(d, "format_T", **kwargs) - annot_bound
+            ).total_seconds() for d in annot_array_total])
+
+            # binarize difference array
+            diff_array = np.concatenate((
+                diff_array, np.where(diff_array_tmp > 0, 1, 0)[None, :]
+            ))
+
+        # check if no overlap
+        if np.sum(np.diff(diff_array, axis=0)) == 0:
+            return True
+
+        else:
+            return False
 
 
     @staticmethod
