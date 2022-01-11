@@ -140,7 +140,7 @@ The class :class:`.Configuration` is used to create and set configurations. Ther
 ViSiAnnoT
 ---------
 
-Figure :numref:`fig-class-diagram-visiannot` is the class diagram of :class:`.ViSiAnnoTMultipleRec`, which launches ViSiAnnoT in the context of long recordings (see section :ref:`sec-longrec`).
+Figure :numref:`fig-class-diagram-visiannot` is the class diagram of :class:`.ViSiAnnoTLongRec`, which launches ViSiAnnoT in the context of long recordings (see section :ref:`sec-longrec`).
 
 .. _fig-class-diagram-visiannot:
 
