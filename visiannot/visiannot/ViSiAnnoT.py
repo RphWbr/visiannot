@@ -38,6 +38,62 @@ from .components.AnnotEventWidget import AnnotEventWidget
 from .components.AnnotImageWidget import AnnotImageWidget
 
 
+def checkConfiguration(config_id, config, config_type, flag_long_rec=True):
+    """
+    Checks if a configuration list has the right number of elements
+
+    It raises an exception if it is not the case.
+
+    :param config_id: configuration key in the configuration dictionary
+    :type config_id: str
+    :param config: configuration list
+    :type config: tuple or list
+    :param config_type: used to set the right number of
+        elements, one of the following: "Video", "Signal", "Interval",
+        "Threshold" or "YRange" (otherwise nothing happens)
+    :type config_type: str
+    :param flag_long_rec: specify if configuration in the context of
+        :class:`.ViSiAnnoTLongRec`, otherwise :class:`.ViSiAnnoT` (it has an
+        impact on "video", "signal" and "interval")
+    :type flag_long_rec: bool
+    """
+
+    # get the right number of elements
+    if config_type == "Video":
+        if flag_long_rec:
+            n = 5
+
+        else:
+            n = 4
+
+    elif config_type == "Signal" or config_type == "Interval":
+        if flag_long_rec:
+            n = 8
+
+        else:
+            n = 7
+
+    elif config_type == "Threshold":
+        n = 2
+
+    elif config_type == "YRange":
+        n = 2
+
+    else:
+        n = None
+
+    if n is not None:
+        # get number of elements in configuration
+        m = len(config)
+
+        # check if wrong number of elements in configuration
+        if n != m:
+            raise Exception(
+                "Wrong number of elements in signal configuration %s: %d "
+                "instead of %d" % (config_id, m, n)
+            )
+
+
 class ViSiAnnoT():
     def __init__(
         self,
@@ -950,6 +1006,9 @@ class ViSiAnnoT():
             if type_data in y_range_dict.keys():
                 y_range = y_range_dict[type_data]
 
+                # check number of elements in yrange configuration
+                checkConfiguration(type_data, y_range, "YRange")
+
             else:
                 y_range = []
 
@@ -963,6 +1022,9 @@ class ViSiAnnoT():
             # get list of thresholds to plot in the signal widget
             if type_data in self.threshold_dict.keys():
                 threshold_list = self.threshold_dict[type_data]
+
+                # check number of elements in threshold configuration
+                checkConfiguration(type_data, threshold_list, "Threshold")
 
             else:
                 threshold_list = []
@@ -1845,8 +1907,15 @@ class ViSiAnnoT():
         self.interval_dict = {}
 
         # loop on video
-        for ite, (video_id, (path_video, delimiter, pos, fmt)) in \
-                enumerate(video_dict.items()):
+        for ite, (video_id, video_config) in enumerate(video_dict.items()):
+            # check number of elements in configuration
+            checkConfiguration(
+                video_id, video_config, "Video", flag_long_rec=False
+            )
+
+            # get video configuration
+            path_video, delimiter, pos, fmt = video_config
+
             # get data
             if path_video != '':
                 self.video_data_dict[video_id], nframes, fps = \
@@ -1917,9 +1986,17 @@ class ViSiAnnoT():
         # in this case the attributes fps, nframes and beginning_datetime are
         # not defined yet => these attributes are defined with the first signal
         if not any(video_dict):
-            # get information about signal
-            path, key_data, self.fps, delimiter, pos, fmt, _ = \
-                list(signal_dict.values())[0][0]
+            # get first signal configuration
+            signal_id = list(signal_dict.keys())[0]
+            signal_config = list(signal_dict.values())[0][0]
+
+            # check number of elements in first signal configuration
+            checkConfiguration(
+                signal_id, signal_config, "Signal", flag_long_rec=False
+            )
+
+            # get first signal configuration
+            path, key_data, self.fps, delimiter, pos, fmt, _ = signal_config
 
             # get beginning date-time
             self.beginning_datetime = ToolsDateTime.getDatetimeFromPath(
@@ -1963,17 +2040,32 @@ class ViSiAnnoT():
             sig_list_tmp = []
 
             # loop on sub-signals
-            for ite_data, (
-                path_data, key_data, freq_data, _, _, _, plot_style
-            ) in enumerate(data_info_list):
+            for ite_data, data_info in enumerate(data_info_list):
+                # check number of elements in signal configuration
+                checkConfiguration(
+                    type_data, data_info, "Signal", flag_long_rec=False
+                )
+
+                # get configuration
+                path_data, key_data, freq_data, _, _, _, plot_style = data_info
+
                 # ******************** load intervals *********************** #
                 if type_data in interval_dict.keys():
                     # initialize dictionary value
                     self.interval_dict[type_data] = []
 
                     # loop on intervals paths
-                    for path_interval, key_interval, freq_interval, _, _, _, \
-                            color_interval in interval_dict[type_data]:
+                    for interval_config in interval_dict[type_data]:
+                        # check number of elements in interval configuration
+                        checkConfiguration(
+                            type_data, interval_config, "Interval",
+                            flag_long_rec=False
+                        )
+
+                        # get configuration
+                        path_interval, key_interval, freq_interval, _, _, _, \
+                            color_interval = interval_config
+
                         # get frequency if necessary
                         if isinstance(freq_interval, str):
                             freq_interval = ToolsData.getAttributeGeneric(

@@ -15,6 +15,7 @@ from PyQt5 import QtWidgets
 from ast import literal_eval
 import numpy as np
 from ..tools import ToolsPyQt
+from ..visiannot.ViSiAnnoT import checkConfiguration
 
 
 class Configuration():
@@ -1084,6 +1085,9 @@ class Configuration():
 
             # configuration level 1 => simple configuration
             if self.nb_level == 1:
+                # check number of elements in configuration list
+                checkConfiguration(config_key, config_list, self.type)
+
                 # add configuration
                 self.addConfigurationSimple(config_list)
 
@@ -1101,6 +1105,9 @@ class Configuration():
 
                 # loop on sub-configurations
                 for config_sub_list in config_list:
+                    # check number of elements in configuration list
+                    checkConfiguration(config_key, config_sub_list, self.type)
+
                     # add sub-configuration
                     self.addConfigurationSimple(config_sub_list)
 

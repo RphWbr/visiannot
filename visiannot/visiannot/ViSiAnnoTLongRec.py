@@ -19,7 +19,7 @@ from ..tools import ToolsDateTime
 from ..tools import ToolsData
 from ..tools import ToolsImage
 from ..tools import ToolsAudio
-from .ViSiAnnoT import ViSiAnnoT
+from .ViSiAnnoT import ViSiAnnoT, checkConfiguration
 from .components.LogoWidgets import PreviousWidget, NextWidget
 from .components.FileSelectionWidget import FileSelectionWidget
 
@@ -221,8 +221,13 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         video_duration_list = []
 
         # loop on cameras
-        for ite_id, (video_id, (dir_video, pattern, delimiter, pos, fmt)) in \
-                enumerate(video_dict.items()):
+        for ite_id, (video_id, video_config) in enumerate(video_dict.items()):
+            # check number of elements in video configuration
+            checkConfiguration(video_id, video_config, "Video")
+
+            # get video configuration
+            dir_video, pattern, delimiter, pos, fmt = video_config
+
             # get list of video paths for current camera
             video_path_list_tmp = sorted(glob("%s/%s" % (dir_video, pattern)))
 
@@ -382,9 +387,16 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
         # no video
         else:
+            # get first signal configuration
+            signal_id = list(signal_dict.keys())[0]
+            signal_config = list(signal_dict.values())[0][0]
+
+            # check number of elements in first signal configuration
+            checkConfiguration(signal_id, signal_config, "Signal")
+
             # get info for first signal
             data_dir, key_data, freq, path_pattern_data, delimiter, pos, fmt, \
-                _ = list(signal_dict.values())[0][0]
+                _ = signal_config
 
             # get list of signal files paths
             data_list_tmp = sorted(
@@ -660,8 +672,14 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         config_current_list = []
 
         # loop on sub-configurations
-        for data_dir, key, freq, pattern, delimiter, pos, fmt, plot_style in \
-                data_info_list:
+        for data_info in data_info_list:
+            # check number of elements in data configuration
+            checkConfiguration(type_data, data_info, "Signal")
+
+            # get configuration
+            data_dir, key, freq, pattern, delimiter, pos, fmt, plot_style = \
+                data_info
+
             # get list of data paths of the recording
             path_list = sorted(glob('%s/%s' % (data_dir, pattern)))
 
@@ -746,9 +764,8 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
             elif flag_raise_exception:
                 raise Exception(
-                    'wrong input data directory, got: %s - %s' % (
-                        type_data, data_dir
-                    )
+                    "Wrong input data directory, got: %s - %s" %
+                    (type_data, data_dir)
                 )
 
         return config_whole_rec_list, config_current_list
