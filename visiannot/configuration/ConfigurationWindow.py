@@ -346,6 +346,7 @@ class ConfigurationWindow():
             "nb_ticks": 10,
             "trunc_duration": [0, 0],
             "time_zone": "Europe/Paris",
+            "flag_annot_overlap": False,
             "annot_dir": "Annotations",
             "from_cursor_list": [],
             "ticks_size": 12,
@@ -377,6 +378,8 @@ class ConfigurationWindow():
         #: - ``"trunc_duration"``: (*list*) length 2 *(minute, second)*
         #: - ``"time_zone"``: (*str*) time zone (complying with pytz
         #:   package)
+        #: - ``"flag_annot_overlap"``: (*bool*) specify if overlap of events
+        #:   annotations is enabled
         #: - ``"annot_dir"``: (*str*) directory of the annotations
         #: - ``"from_cursor_list"``: (*list*) each element is a list of
         #:   length 2 *(minute, second)*
@@ -456,6 +459,10 @@ class ConfigurationWindow():
             ("Signals synchronized", "flag_synchro", "check_box", 1, {}),
             (
                 "Video paused at launch", "flag_pause_status",
+                "check_box", 1, {}
+            ),
+            (
+                "Events annotations overlap", "flag_annot_overlap",
                 "check_box", 1, {}
             ),
             (

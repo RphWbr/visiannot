@@ -111,6 +111,7 @@ class ViSiAnnoT():
         from_cursor_list=[],
         zoom_factor=2,
         nb_ticks=10,
+        flag_annot_overlap=False,
         annot_dir="Annotations",
         down_freq=500,
         flag_pause_status=False,
@@ -346,6 +347,9 @@ class ViSiAnnoT():
         :param nb_ticks: number of temporal ticks on the X axis of the signals
             widgets
         :type nb_ticks: int
+        :param flag_annot_overlap: specify if overlap of events annotations is
+            enabled
+        :type flag_annot_overlap: bool
         :param annot_dir: directory where to save annotations, automatically
             created if it does not exist
         :type annot_dir: str
@@ -818,7 +822,8 @@ class ViSiAnnoT():
                 #: (:class:`.AnnotEventWidget`) Widget for events annotation
                 self.wid_annotevent = AnnotEventWidget(
                     self, poswid_dict["annot_event"], annotevent_dict,
-                    annot_dir, nb_table=nb_table_annot
+                    annot_dir, flag_annot_overlap=flag_annot_overlap,
+                    nb_table=nb_table_annot
                 )
 
             else:

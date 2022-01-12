@@ -26,7 +26,8 @@ from ...tools.ToolsAnnotation import readAnnotation
 
 class AnnotEventWidget():
     def __init__(
-        self, visi, widget_position, label_dict, annot_dir, **kwargs
+        self, visi, widget_position, label_dict, annot_dir,
+        flag_annot_overlap=False, **kwargs
     ):
         """
         Widget for events annotation
@@ -41,11 +42,17 @@ class AnnotEventWidget():
         :type label_dict: dict
         :param annot_dir: directory where the annotations are saved
         :type annot_dir: str
+        :param flag_annot_overlap: specify if overlap of events annotations is
+            enabled
+        :type flag_annot_overlap: bool
         :param kwargs: keyword arguments of :meth:`.createWidget`
         """
 
         #: (*str*) Directory where the annotations are saved
         self.annot_dir = annot_dir
+
+        #: (*bool*) Specify if overlap of events annotations is enabled
+        self.flag_annot_overlap = flag_annot_overlap
 
         #: (*str*) Base name of the annotation files (to which is appended
         #: the label)
@@ -695,46 +702,58 @@ class AnnotEventWidget():
                 self.annot_array[self.current_label_id, [0, 1]] = \
                     self.annot_array[self.current_label_id, [1, 0]]
 
-            # check annotation overlap with previous annotations
-            if isfile(self.path_list[0]):
-                flag_ok = self.checkOverlap(
-                    self.path_list[0], annot_datetime_0, annot_datetime_1,
-                    time_zone=visi.time_zone
-                )
+            # initialize boolean to specify if annotation must be saved
+            flag_ok = True
 
-                print(flag_ok)
-
-            # append the annotated interval to the annotation file
-            for ite_annot_type, annot_path in enumerate(self.path_list):
-                with open(annot_path, 'a') as file:
-                    file.write(
-                        "%s - %s\n" % (
-                            self.annot_array[
-                                self.current_label_id, 0, ite_annot_type
-                            ],
-                            self.annot_array[
-                                self.current_label_id, 1, ite_annot_type
-                            ]
-                        )
+            # check if annotations overlap disabled
+            if not self.flag_annot_overlap:
+                # check if annotation overlaps with previous annotations
+                if isfile(self.path_list[0]):
+                    flag_ok = self.checkOverlap(
+                        self.path_list[0], annot_datetime_0, annot_datetime_1,
+                        time_zone=visi.time_zone
                     )
 
-            # update the number of annotations
-            nb_annot = int(self.push_text_list[2].text().split(': ')[1]) + 1
-            self.push_text_list[2].setText("Nb: %d" % nb_annot)
+            # check if annotation must be saved
+            if flag_ok:
+                # append the annotated interval to the annotation file
+                for ite_annot_type, annot_path in enumerate(self.path_list):
+                    with open(annot_path, 'a') as file:
+                        file.write(
+                            "%s - %s\n" % (
+                                self.annot_array[
+                                    self.current_label_id, 0, ite_annot_type
+                                ],
+                                self.annot_array[
+                                    self.current_label_id, 1, ite_annot_type
+                                ]
+                            )
+                        )
 
-            # if display mode is on, display the appended interval
-            if self.push_text_list[3].text() == "On" and \
-                    self.current_label_id in self.region_dict.keys():
-                region_list = self.addRegion(
-                    visi,
-                    self.annot_array[self.current_label_id, 0, 0],
-                    self.annot_array[self.current_label_id, 1, 0],
-                    color=self.color_list[self.current_label_id]
+                # update the number of annotations
+                nb_annot = int(self.push_text_list[2].text().split(': ')[1]) + 1
+                self.push_text_list[2].setText("Nb: %d" % nb_annot)
+
+                # if display mode is on, display the appended interval
+                if self.push_text_list[3].text() == "On" and \
+                        self.current_label_id in self.region_dict.keys():
+                    region_list = self.addRegion(
+                        visi,
+                        self.annot_array[self.current_label_id, 0, 0],
+                        self.annot_array[self.current_label_id, 1, 0],
+                        color=self.color_list[self.current_label_id]
+                    )
+
+                    self.region_dict[self.current_label_id].append(region_list)
+
+            else:
+                print(
+                    "Cannot save annotation because it overlaps with an "
+                    "existing annotation"
                 )
 
-                self.region_dict[self.current_label_id].append(region_list)
-
-            # reset the beginning and ending times of the annotated interval
+            # reset the beginning and ending times of the annotated
+            # interval
             self.resetTimestamp()
 
 
