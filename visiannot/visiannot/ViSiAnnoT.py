@@ -391,7 +391,7 @@ class ViSiAnnoT():
             the signal plots
         :type ticks_offset: int
         :param nb_table_annot: maximum number of labels in a row in the
-            widgets for event annotation and image annotation
+            widgets for events annotation and image annotation
         :type nb_table_annot: int
         :param height_widget_signal: minimum height in pixel of the signal
             widgets
@@ -434,7 +434,7 @@ class ViSiAnnoT():
             {'pen': {'color': '#4C9900', 'width': 1}}
         ]
 
-        #: (*str*) Directory where the event annotations and extracted images
+        #: (*str*) Directory where the events annotations and extracted images
         #: are saved
         self.annot_dir = annot_dir
 
@@ -812,7 +812,7 @@ class ViSiAnnoT():
             self.wid_zoomout = None
 
 
-        # ******************* event annotation widget *********************** #
+        # ******************* events annotation widget ********************** #
         if len(annotevent_dict) > 0:
             if "annot_event" in poswid_dict.keys():
                 #: (:class:`.AnnotEventWidget`) Widget for events annotation
@@ -823,7 +823,7 @@ class ViSiAnnoT():
 
             else:
                 raise Exception(
-                    "No widget position given for the event annotation => "
+                    "No widget position given for the events annotation => "
                     "add key 'annot_event' to positinal argument poswid_dict"
                 )
 
@@ -1118,19 +1118,19 @@ class ViSiAnnoT():
                         if os.listdir(annot_path) == []:
                             rmtree(annot_path)
 
-                # check if file of event annotation
+                # check if file of events annotation
                 elif ext == ".txt" and ("datetime" in name or "frame" in name):
                     # check if empty file
                     if os.path.getsize(annot_path) == 0:
                         # remove empty file
                         os.remove(annot_path)
 
-            # check if event annotation
+            # check if events annotation
             if self.wid_annotevent is not None:
                 # update the list of files/folders in the annotation directory
                 annot_path_list = sorted(os.listdir(self.annot_dir))
 
-                # get file name of event annotation of protected label
+                # get file name of events annotation of protected label
                 protected_name_0 = "%s_%s-datetime.txt" % (
                     self.wid_annotevent.file_name_base,
                     self.wid_annotevent.protected_label
@@ -1141,7 +1141,7 @@ class ViSiAnnoT():
                 )
 
                 # check if empty annotation directory (or only filled with
-                # event annotation of protected label)
+                # events annotation of protected label)
                 if len(annot_path_list) == 0 or len(annot_path_list) == 2 and \
                     annot_path_list[0] == protected_name_0 and \
                         annot_path_list[1] == protected_name_1:

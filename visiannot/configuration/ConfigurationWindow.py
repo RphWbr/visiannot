@@ -33,7 +33,7 @@ class ConfigurationWindow():
 
         - Video configuration
         - Signal configuration
-        - Eevent annotation configuration
+        - Events annotation configuration
         - General configuration
         - Group box with load/save/done push buttons
 

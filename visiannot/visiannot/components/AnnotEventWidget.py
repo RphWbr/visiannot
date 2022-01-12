@@ -29,7 +29,7 @@ class AnnotEventWidget():
         self, visi, widget_position, label_dict, annot_dir, **kwargs
     ):
         """
-        Widget for event annotation
+        Widget for events annotation
 
         :param visi: associated instance of :class:`.ViSiAnnoT`
         :param widget_position: position of the widget in the layout of the
@@ -71,10 +71,10 @@ class AnnotEventWidget():
                 self.protected_label
             )
 
-        #: (*list*) Labels of the event annotation
+        #: (*list*) Labels of the events annotation
         self.label_list = list(label_dict.keys())
 
-        #: (*list*) Colors of the event annotation labels
+        #: (*list*) Colors of the events annotation labels
         #:
         #: each element is a list of length 4 with the RGBA color
         self.color_list = list(label_dict.values())
@@ -99,7 +99,7 @@ class AnnotEventWidget():
             (len(self.label_list), 2, 2), dtype=object
         )
 
-        #: (*dict*) Event annotations descriptions to be displayed
+        #: (*dict*) Events annotations descriptions to be displayed
         #:
         #: Key is the index of a label in :attr:`.label_list`. Value is a
         #: dictionary:
@@ -112,7 +112,7 @@ class AnnotEventWidget():
         #:        corresponds to one signal widget
         self.description_dict = {}
 
-        #: (*list*) Way of storing event annotations
+        #: (*list*) Way of storing events annotations
         #:
         #: Two elements:
         #:
@@ -122,7 +122,7 @@ class AnnotEventWidget():
         self.annot_type_list = ["datetime", "frame"]
 
         if len(self.label_list) > 0:
-            #: (*list*) Files names of event annotation
+            #: (*list*) Files names of events annotation
             #:
             #: Same length as :attr:`.annot_type_list`, there is
             #: one file for each annotation type.
@@ -169,7 +169,7 @@ class AnnotEventWidget():
         self.createWidget(visi.lay, widget_position, **kwargs)
 
         #: (*dict*) Lists of region items (pyqtgraph.LinearRegionItem)
-        #: for the display of event annotations
+        #: for the display of events annotations
         #:
         #: Key is a label index. Value is a list of lists, each sublist
         #: corresponds to one annotation and contains
@@ -321,7 +321,7 @@ class AnnotEventWidget():
         """
         Gets the path of the annotation files corresponding to the input label
 
-        :param label: event annotation label
+        :param label: events annotation label
         :type label: str
 
         :returns: paths of the annotation files, each element corresponds to an
@@ -864,7 +864,7 @@ class AnnotEventWidget():
 
     def plotRegions(self, visi):
         """
-        Plots event annotations, depending on the display mode selected with
+        Plots events annotations, depending on the display mode selected with
         :attr:`.button_group_radio_disp`
 
         Make sure that the attribute :attr:`.region_dict` is already created.

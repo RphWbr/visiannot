@@ -402,7 +402,7 @@ class SignalWidget(pg.PlotWidget):
         On the other hand, it allows to define a new annotation and to add it
         the annotation file by calling the method
         :meth:`zoomOrAnnotClicked`. Also, it allows to delete
-        manually a specific event annotation by calling the method
+        manually a specific events annotation by calling the method
         :meth:`.deleteClicked` on the attribute
         :attr:`.ViSiAnnoT.wid_annotevent`.
 

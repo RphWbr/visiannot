@@ -620,7 +620,7 @@ Here is an example of combined video and signal visualization in the context of 
 	    ]
 	]
 
-	# event annotation dictionary
+	# events annotation dictionary
 	annotevent_dict = {}
 	annotevent_dict["Label-1"] = [200, 105, 0, 50]
 	annotevent_dict["Label-2"] = [105, 205, 0, 50]
@@ -711,7 +711,7 @@ Mouse click on the signal plots
 
 * **right button**: zoom in (3 clicks: the first two to define the new temporal range, the third click must be inside the new temporal range in order to validate and zoom in, or outside to cancel)
 
-	* with **control** pressed: add event annotation (3 clicks: the first two to define the start/stop of the annotation, the third click must be inside the temporal range in order to add the annotation, or outside to cancel)
+	* with **control** pressed: add events annotation (3 clicks: the first two to define the start/stop of the annotation, the third click must be inside the temporal range in order to add the annotation, or outside to cancel)
 
 
 

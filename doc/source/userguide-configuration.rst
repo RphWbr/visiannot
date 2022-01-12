@@ -398,7 +398,7 @@ The events annotation configuration is contained in the third group box named "A
 
 .. figure:: images/configuration_annotevent.png
 
-  Screenshot of the event annotation configuration
+  Screenshot of the events annotation configuration
 
 The user must click on the push button "Add" in order to create a new annotation configuration, corresponding to a new label. Once an annotation configuration is added, there are two fields to fill in: 
 
@@ -464,7 +464,7 @@ The "Font size" spin box specifies the font size for the title of the video widg
 
 The "Font color" spin boxes specify the font color.
 
-The "Maximum number of labels in a row" spin box specifies the maximum number of labels to put in a row in the widgets of event annotation and image annotation.
+The "Maximum number of labels in a row" spin box specifies the maximum number of labels to put in a row in the widgets of events annotation and image annotation.
 
 The "Background color" spin boxes specify the background color of ViSiAnnoT window.
 

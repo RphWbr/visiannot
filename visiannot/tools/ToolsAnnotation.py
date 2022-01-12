@@ -7,7 +7,7 @@
 # http://www.cecill.info
 
 """
-Module with functions for loading ViSiAnnoT event annotation files
+Module with functions for loading ViSiAnnoT events annotation files
 """
 
 
