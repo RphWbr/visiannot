@@ -192,6 +192,48 @@ The user can zoom in/out around the temporal cursor by using the two buttons loo
 The temporal range can be defined with the combo list "Temporal range duration". The user can select the duration of the new temporal range which starts at the current position of the temporal cursor.
 
 
+.. _yrange:
+
+YRange
+------
+The range of values on the Y axis of a specific signal widget may be fixed by the user. This is done with the dictionary ``y_range_dict`` which is passed to :class:`.ViSiAnnoT`. The key of the dictionary must correspond to a key of ``signal_dict``, it specifies the signal widget where the Y range is fixed. The value of the dictionary is a tuple of length 2 with the minimum and maximum value on the Y axis.
+
+Here is an example::
+
+	from visiannot.visiannot import ViSiAnnoT
+
+	# signal paths
+	path_ecg = "data/20170423T002840_ecg.txt"
+	path_tqrs = "data/20170423T002840_tqrs.mat"
+
+	# define plot style
+	plot_style_tqrs = {
+	    'pen': None,
+	    'symbol': '+',
+	    'symbolPen': 'r',
+	    'symbolSize': 10
+	}
+
+	plot_style_resp = {'pen': {'color': 'm', 'width': 1}}
+
+	# signal configuration
+	signal_dict = {}
+
+	signal_dict["ECG"] = [
+	    [path_ecg, "ecg", 500, '_', 0, "%Y%m%dT%H%M%S", None],
+	    [path_tqrs, "tqrs", 0, '_', 0, "%Y%m%dT%H%M%S", plot_style_tqrs]
+	]
+
+	# YRange configuration
+	y_range_dict = {}
+	y_range_dict["ECG"] = (500, 1000)
+
+	# create ViSiAnnoT window
+	win_visiannot = ViSiAnnoT(
+	    {}, signal_dict, y_range_dict=y_range_dict, flag_pause_status=True
+	)
+
+
 .. _threshold:
 
 Threshold values
@@ -545,6 +587,9 @@ It is possible to display the duration of the annotated intervals by clicking wi
 .. figure:: images/annotation_event_description.png
 
   Detail of a screenshot of ViSiAnnoT with annotations displayed, two of them with duration displayed
+
+By default, it is not possible to overlap two annotations with the same label. In order to enable this feature, the keyword argument ``flag_annot_overlap`` of :class:`.ViSiAnnoT` constructor must be set to ``True``.
+
 
 Storage of events annotation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^

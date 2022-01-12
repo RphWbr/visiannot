@@ -135,9 +135,21 @@ Same configuration with a more compact writing::
     Respiration = [['dir/to/sig', 'resp', 62.5, 'data_*.h5', '_', 1, 'posix', {'pen': {'color': 'm', 'width': 1}}]]
 
 
+YRange
+------
+See section :ref:`yrange` for details about YRange configuration. In a Python script, it is stored in a dictionary as in the following example::
+
+    y_range_dict = {}
+    y_range_dict["ECG"] = (500, 1000)
+
+In the configuration file, we create a section named "YRange", composed of as much keys as signal widgets where to set the Y axis range. Here is the equivalent YRange configuration::
+
+    [YRange]
+    ECG = (500, 1000)
+
+
 Threshold
 ---------
-
 See section :ref:`threshold` for details about threshold configuration. In a Python script, it is stored in a dictionary as in the following example::
 
     threshold_dict = {}
@@ -146,7 +158,7 @@ See section :ref:`threshold` for details about threshold configuration. In a Pyt
         [750, (178, 34, 34)]
     ]
 
-In configuration file, we create a section named "Threshold", composed of as much sub-sections as threshold values. Here is the equivalent threshold configuration::
+In the configuration file, we create a section named "Threshold", composed of as much sub-sections as threshold values. Here is the equivalent threshold configuration::
 
     [Threshold]
     [[RR]]
@@ -270,6 +282,7 @@ In a Python script, the general configuration is specified with the keyword argu
     font_size_title = 8
     nb_table_annot = 10
     time_zone = 'Europe/Paris'
+    flag_annot_overlap = False
     annot_dir = 'Annotations'
     ticks_offset = 5
     font_name = 'Times'
@@ -346,6 +359,17 @@ The user must click on the push button "Add" in order to create a new signal con
 .. figure:: images/configuration_audio.png
 
   Example of audio signal configuration
+
+
+YRange
+------
+The user can manage the YRange configuration by clicking on the push button "YRange" located above the signal configuration. This opens a new window illustrated in figure :numref:`fig-config-yrange`. The push button "Add" allows to add a YRange configuration that is automatically linked to an existing signal widget.
+
+.. _fig-config-yrange:
+
+.. figure:: images/configuration_yrange.png
+
+  Example of YRange configuration
 
 
 Threshold
@@ -433,6 +457,8 @@ The general configuration is contained in the fifth group box named "General". F
 The "Signals synchronized" check box specifies if the the signals are synchronized with video or synchronized with each other if there is no video.
 
 The "Video paused to launch" check box specifies if the video must be in pause mode when launching the software.
+
+The "Events annotations overlap" check box specifies if the overlap of events annotations is enabled.
 
 The "Layout mode" spin box specifies the layout mode (see :numref:`fig-example-combined`).
 
