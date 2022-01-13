@@ -691,11 +691,21 @@ class ViSiAnnoT():
 
         # *************** widget for truncated temporal range *************** #
         if len(self.sig_dict) > 0 and "select_trunc" in poswid_dict.keys():
-            #: (:class:`.TruncTemporalRangeWidget`) Widget for selecting a
-            #: truncated temporal range
-            self.wid_trunc = TruncTemporalRangeWidget(
-                self, poswid_dict['select_trunc'], trunc_duration
-            )
+            # check trunc duration
+            if self.trunc_duration[0] == 0 and self.trunc_duration[1] == 0:
+                print(
+                    "Duration of truncated temporal range is 0 => widget not "
+                    "created"
+                )
+
+                self.wid_trunc = None
+
+            else:
+                #: (:class:`.TruncTemporalRangeWidget`) Widget for selecting a
+                #: truncated temporal range
+                self.wid_trunc = TruncTemporalRangeWidget(
+                    self, poswid_dict['select_trunc'], trunc_duration
+                )
 
         else:
             self.wid_trunc = None
