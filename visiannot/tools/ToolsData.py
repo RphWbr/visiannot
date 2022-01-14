@@ -16,6 +16,7 @@ import sys
 from os.path import isfile, split, abspath, dirname, realpath
 from scipy.io import loadmat
 from h5py import File, Dataset
+from datetime import timedelta
 from .ToolsAudio import getDataAudio
 
 
@@ -136,6 +137,60 @@ def convertTimeSeriesToIntervals(data, value):
         )
 
         return np.vstack((start_inds, end_inds)).T
+
+
+def getEndingDateTime(
+    path, key_data, freq_data, beginning_datetime, flag_interval=False
+):
+    """
+    Gets the ending date-time of a data file
+
+    The beginning date-time must be in the path of the data files.
+
+    :param path: path to the data file
+    :type path: list
+    :param key_data: key to access the data (in case of .mat or .h5)
+    :type key_data: str
+    :param freq_data: data frequency
+    :type freq_data: int or float
+    :param args: positional arguments of :func:`.getDatetimeFromPath`, minus
+        the first one (``path``)
+    :param beginning_datetime: beginning datetime of the data file
+    :type beginning_datetime: datetime.datetime
+    :param flag_interval: specify if data to load is intervals
+    :type flag_interval: bool
+
+    :returns: ending datetime of the data file
+    :rtype: datetime.datetime
+    """
+
+    # load data
+    if flag_interval:
+        data = getDataIntervalAsTimeSeries(path, key=key_data)
+
+    else:
+        data = getDataGeneric(path, key_data)
+
+    # check if any data
+    if data.size > 0:
+        # check if signal not regularly sampled
+        if freq_data == 0:
+            # get duration in seconds
+            duration_sec = data[-1, 0] / 1000
+
+        # regularly sampled signal
+        else:
+            # get duration in seconds
+            duration_sec = data.shape[0] / freq_data
+
+        # get file ending date time
+        ending_datetime = beginning_datetime + timedelta(seconds=duration_sec)
+
+
+    else:
+        ending_datetime = beginning_datetime
+
+    return ending_datetime
 
 
 def getDataInterval(path, key=""):

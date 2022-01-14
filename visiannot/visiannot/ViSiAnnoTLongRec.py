@@ -62,12 +62,12 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             - (*str*) Directory where to find the signal files, see positional
               argument ``signal_dict`` of :class:`.ViSiAnnoT` constructor for
               detail about data storing format,
+            - (*str*) Pattern to find signal files,
             - (*str*) Key to access the data (in case of .mat or .h5 file),
             - (*int* or *float* or *str*) Signal frequency, set it to ``0`` if
               signal non regularly sampled, set it to ``-1`` if same frequency
               as :attr:`.ViSiAnnoT.fps`, it may be a string with the path to
               the frequency attribute in a .h5 file,
-            - (*str*) Pattern to find signal files,
             - (*str*) Delimiter to get beginning datetime in the signal file
               name,
             - (*int*) Position of the beginning datetime in the signal file
@@ -199,191 +199,44 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
 
         # ******************************************************************* #
-        # ****************** search for video paths ************************* #
+        # ********************* video configuration ************************* #
         # ******************************************************************* #
 
-        #: (*dict*) Key is a camera ID. Value is a list along the video files
-        #: in the long recording, where each element is a configuration list
-        #: (see first positional argument of :class:`.ViSiAnnoT` constructor
-        #: for details about configuration list)
-        self.video_dict_list = {}
+        #: (*dict*) Key is a camera ID. Value is the corresponding
+        #: configuration list without video path
+        self.video_config_dict = {}
+        for cam_id, config_list in video_dict.items():
+            self.video_config_dict[cam_id] = config_list[2:]
 
-        # dictionary containing the current video file path
-        video_dict_current = {}
+        #: (*dict*) Key is a camera ID. Value is a tuple of length 2: list of 
+        #: video paths and list of beginning datetimes
+        self.video_list_dict = None
 
-        # nested list of video paths
-        video_path_list = []
-
-        # nested list of beginning datetime of video files
-        video_datetime_list = []
-
-        # nested list of duration of video files
-        video_duration_list = []
-
-        # loop on cameras
-        for ite_id, (video_id, video_config) in enumerate(video_dict.items()):
-            # check number of elements in video configuration
-            checkConfiguration(video_id, video_config, "Video")
-
-            # get video configuration
-            dir_video, pattern, delimiter, pos, fmt = video_config
-
-            # get list of video paths for current camera
-            video_path_list_tmp = sorted(glob("%s/%s" % (dir_video, pattern)))
-
-            # check if any video file
-            if video_path_list_tmp == []:
-                raise Exception(
-                    "Wrong input video directory for video %s - %s" %
-                    (video_id, dir_video)
-                )
-
-            # initialize list of beginning datetime of video files for current
-            # camera
-            video_datetime_list_tmp = []
-
-            # initialize list of duration of video files for current camera
-            video_duration_list_tmp = []
-
-            # loop on paths
-            for video_path in video_path_list_tmp:
-                # get beginning datetime of the video file
-                beginning_datetime = ToolsDateTime.getDatetimeFromPath(
-                    video_path, delimiter, pos, fmt, time_zone=time_zone
-                )
-
-                # append list
-                video_datetime_list_tmp.append(beginning_datetime)
-
-                # get information for video duration
-                _, nframes, fps = ToolsImage.getDataVideo(video_path)
-
-                # check fps
-                if fps > 0:
-                    # append list of video duration
-                    video_duration_list_tmp.append(nframes / fps)
-
-                    # store fps as an attribute
-                    if not hasattr(self, "fps"):
-                        self.fps = fps
-
-                else:
-                    # append list of video duration
-                    video_duration_list_tmp.append(0)
-
-            # sort video paths by chronological order
-            sort_indexes = np.argsort(video_datetime_list_tmp)
-
-            # append lists
-            video_path_list.append(
-                [video_path_list_tmp[i] for i in sort_indexes]
-            )
-
-            video_datetime_list.append(
-                [video_datetime_list_tmp[i] for i in sort_indexes]
-            )
-
-            video_duration_list.append(
-                [video_duration_list_tmp[i] for i in sort_indexes]
-            )
+        # get list of video paths, beginning datetimes and durations for each
+        # camera
+        self.setVideoListDict(video_dict, time_zone=time_zone)
 
         # check if more than one camera
-        # then check for "holes" in cameras
         if len(video_dict) > 1:
-            # get maximum number of video files with regard to camera
-            nb_vid_max = max([len(sub_list) for sub_list in video_path_list])
+            # check for "holes" in videos
+            self.checkVideoHoles()
 
-            # get number of cameras
-            nb_camera = len(video_dict)
+        ###########################
+        # get reference frequency #
+        ###########################
 
-            # loop on video files
-            for ite_vid in range(nb_vid_max):
-                # loop on cameras (skipping first camera because of reference)
-                for ite_id in range(1, nb_camera):
-                    flag_missing_first = False
-                    flag_missing_current = False
+        # check if any video
+        if any(video_dict):
+            # get fps
+            ite_vid = 0
+            cam_id_0 = list(video_dict.keys())[0]
+            self.fps = 0
+            while self.fps <= 0:
+                _, _, self.fps = ToolsImage.getDataVideo(
+                    self.video_list_dict[cam_id_0][0][ite_vid]
+                )
 
-                    # check if above first camera range
-                    if ite_vid >= len(video_datetime_list[0]):
-                        flag_missing_first = True
-
-                    elif ite_vid >= len(video_datetime_list[ite_id]):
-                        flag_missing_current = True
-
-                    else:
-                        # get delta in seconds between the current camera and
-                        # the first camera
-                        delta = (
-                            video_datetime_list[ite_id][ite_vid] -
-                            video_datetime_list[0][ite_vid]
-                        ).total_seconds()
-
-                        # check if delta is more than 1 second
-                        if abs(delta) > 1:
-                            # check if missing file for current camera
-                            if delta > 0:
-                                flag_missing_current = True
-
-                            # missing file for first camera
-                            else:
-                                flag_missing_first = True
-
-                    # check if missing camera
-                    if flag_missing_first or flag_missing_current:
-                        if flag_missing_current:
-                            ite_id_tmp = ite_id
-                            ite_id_tmp_comp = 0
-
-                        else:
-                            ite_id_tmp = 0
-                            ite_id_tmp_comp = ite_id
-
-                        # insert fake video file to fill the hole
-                        video_path_list[ite_id_tmp].insert(ite_vid, '')
-
-                        video_datetime_list[ite_id_tmp].insert(
-                            ite_vid,
-                            video_datetime_list[ite_id_tmp_comp][ite_vid]
-                        )
-
-                        video_duration_list[ite_id_tmp].insert(
-                            ite_vid,
-                            video_duration_list[ite_id_tmp_comp][ite_vid]
-                        )
-
-        # update dictionaries
-        for ite_id, video_id in enumerate(video_dict.keys()):
-            self.video_dict_list[video_id] = [
-                [
-                    path, video_dict[video_id][2],
-                    video_dict[video_id][3], video_dict[video_id][4]
-                ] for path in video_path_list[ite_id]
-            ]
-
-            video_dict_current[video_id] = self.video_dict_list[video_id][0]
-
-
-        # ******************************************************************* #
-        # ****************** get files beginning time *********************** #
-        # ******************************************************************* #
-
-        #: (*list*) Instances of datetime.datetime with the beginning datetime
-        #: of each video file (or first signal if no video)
-        #:
-        #: The list of video files that is used is in the first value of
-        #: :attr:`.ViSiAnnoTLongRec.video_dict_list`
-        #: (or :attr:`.ViSiAnnoTLongRec.signal_dict_list` in case
-        #: :attr:`.ViSiAnnoTLongRec.video_dict_list` is empty).
-        self.rec_beginning_datetime_list = []
-
-        #: (*list*) Durations in seconds of each video file (or first signal if
-        #: no video)
-        self.rec_duration_list = []
-
-        # check if there is any video
-        if any(self.video_dict_list):
-            self.rec_beginning_datetime_list = video_datetime_list[0]
-            self.rec_duration_list = video_duration_list[0]
+                ite_vid += 1
 
         # no video
         else:
@@ -395,19 +248,16 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             checkConfiguration(signal_id, signal_config, "Signal")
 
             # get info for first signal
-            data_dir, key_data, freq, path_pattern_data, delimiter, pos, fmt, \
-                _ = signal_config
+            data_dir, pattern, _, freq, _, _, _, _ = signal_config
 
             # get list of signal files paths
-            data_list_tmp = sorted(
-                glob('%s/%s' % (data_dir, path_pattern_data))
-            )
+            data_list_tmp = glob('%s/%s' % (data_dir, pattern))
 
             # check if any file
             if len(data_list_tmp) == 0:
                 raise Exception(
                     "Empty directory for first signal: %s - %s" %
-                    (data_dir, path_pattern_data)
+                    (pattern, data_dir)
                 )
 
             # store frequency as an attribute
@@ -419,38 +269,36 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             else:
                 self.fps = freq
 
-            # loop on signal files
-            for path in data_list_tmp:
-                # get data length
-                data = ToolsData.getDataGeneric(path, key_data)
-
-                if data is not None:
-                    nframes = data.shape[0]
-
-                    # get beginning datetime
-                    date_time = ToolsDateTime.getDatetimeFromPath(
-                        path, delimiter, pos, fmt, time_zone=time_zone
-                    )
-
-                    # append lists
-                    self.rec_duration_list.append(nframes / self.fps)
-                    self.rec_beginning_datetime_list.append(date_time)
-
-            # sort signal paths by chronological order
-            sort_indexes = np.argsort(self.rec_beginning_datetime_list)
-
-            self.rec_beginning_datetime_list = [
-                self.rec_beginning_datetime_list[i] for i in sort_indexes
-            ]
-
-            self.rec_duration_list = [
-                self.rec_duration_list[i] for i in sort_indexes
-            ]
-
 
         # ******************************************************************* #
-        # ******************* search for signal files *********************** #
+        # ********************** signal configuration *********************** #
         # ******************************************************************* #
+
+        #: (*dict*) Key is a data type, corresponding to a signal widget. Value
+        #: is the corresponding configuration list without data path
+        self.signal_config_dict = {}
+        for signal_id, config_list in signal_dict.items():
+            self.signal_config_dict[signal_id] = config_list[2:]
+
+        #: (*dict*) Key is a data type, corresponding to a signal widget. Value
+        #: is a tuple of length 2: list of signal paths and list of beginning
+        #: datetimes
+        self.signal_list_dict = None
+
+        #: (*dict*) Key is a data type, corresponding to a signal widget on
+        #: which to plot intervals. Value is the corresponding configuration
+        #: list without data path
+        self.interval_config_dict = {}
+        for interval_id, config_list in interval_dict.items():
+            self.interval_config_dict[interval_id] = config_list[2:]
+
+        #: (*dict*) Key is a data type, corresponding to a signal widget on
+        #: which to plot intervals. Value is a tuple of length 2: list of
+        #: interval paths and list of beginning datetimes
+        self.interval_list_dict = None
+
+        self.setSignalList(signal_dict, interval_dict, time_zone=time_zone)
+        import pdb; pdb.set_trace()
 
         #: (*str*) Directory where to save temporary files for synchrnonization
         self.tmp_name = "sig-tmp"
@@ -459,6 +307,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         self.tmp_delimiter = " *=* "
 
         # check if asynchronous signals
+        print("Synchronized: %d" % self.flag_synchro)
         if not self.flag_synchro:
             # create temporary directory for signals if not synchro with video
             if not os.path.isdir(self.tmp_name):
@@ -470,34 +319,11 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 rmtree(self.tmp_name, ignore_errors=True)
                 os.mkdir(self.tmp_name)
 
-        print("Synchronized: %d" % self.flag_synchro)
-
-        #: (*dict*) Each item corresponds to one signal widget, key is the data
-        #: type of the widget, value is a nested list of signal configurations
-        #:
-        #: Each element of the nested list corresponds to one signal plot and
-        #: is a list along the signal files in the long recording, where each
-        #: element is a configuration list (see second positional argument of
-        #: :class:`.ViSiAnnoT` constructor for details about the configuration
-        #: list).
-        self.signal_dict_list = {}
-
-        #: (*dict*) Each item corresponds to one signal widget on which to plot
-        #: intervals, key is the data type of the widget, value is a nested
-        #: list of interval configurations.
-        #:
-        #: Each element of the nested list corresponds to one type of interval
-        #: and is a list along the interval files in the long recording, where
-        #: each element is a configuration list (see second keyword argument
-        #: ``interval_dict`` of :class:`.ViSiAnnoT` constructor for details
-        #: about the configuration list).
-        self.interval_dict_list = {}
 
         # get signal configuration
-        signal_dict_current, interval_dict_current = \
-            self.getSignalConfigurationAllTypes(
-                signal_dict, interval_dict, time_zone=time_zone
-            )
+        self.getSignalConfigurationAllTypes(
+            signal_dict, interval_dict, time_zone=time_zone
+        )
 
 
         # ******************************************************************* #
@@ -612,13 +438,194 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         self.stopProcessing()
 
 
+    @staticmethod
+    def getPathList(
+        config_id, config_list, config_type, flag_raise_exception=False,
+        **kwargs
+    ):
+        # check number of elements in configuration
+        checkConfiguration(config_id, config_list, config_type)
+
+        # get configuration
+        data_dir, pattern, delimiter, pos, fmt = config_list[:5]
+
+        # get list of data paths
+        path_list = sorted(glob("%s/%s" % (data_dir, pattern)))
+
+        # check if any data file
+        if flag_raise_exception and path_list == []:
+            raise Exception(
+                "Empty directory for %s %s: %s - %s" %
+                (config_type, config_id, pattern, data_dir)
+            )
+
+        # initialize list of beginning datetime of data files
+        datetime_list = []
+
+        # loop on data files paths
+        for path in path_list:
+            # get beginning datetime of the video file
+            beginning_datetime = ToolsDateTime.getDatetimeFromPath(
+                path, delimiter, pos, fmt, **kwargs
+            )
+
+            # append list
+            datetime_list.append(beginning_datetime)
+
+        # sort data paths by chronological order
+        sort_indexes = np.argsort(datetime_list)
+        path_list = [path_list[i] for i in sort_indexes]
+        datetime_list = [datetime_list[i] for i in sort_indexes]
+
+        return path_list, datetime_list
+
+
     # *********************************************************************** #
-    # Group: Methods  for converting converting an input signal configuration to a list of signal configurations compliant with ViSiAnnoT
+    # Group: Methods for converting video configuration
     # *********************************************************************** #
+
+
+    def setVideoListDict(self, video_dict, **kwargs):
+        """
+        It sets the following attribute :attr:`.video_list_dict`
+        """
+
+        # initialize dictionaries
+        self.video_list_dict = {}
+
+        # loop on cameras
+        for ite_id, (video_id, video_config) in enumerate(video_dict.items()):
+            # get list of video paths and beginning datetimes
+            self.video_list_dict[video_id] = self.getPathList(
+                video_id, video_config, "Video", flag_raise_exception=True,
+                **kwargs
+            )
+
+            # # get information for video duration
+            # _, nframes, fps = ToolsImage.getDataVideo(video_path)
+
+            # # check fps
+            # if fps > 0:
+            #     # append list of video duration
+            #     duration_list_tmp.append(nframes / fps)
+
+            #     # store fps as an attribute
+            #     if not hasattr(self, "fps"):
+            #         self.fps = fps
+
+            # else:
+            #     # append list of video duration
+            #     duration_list_tmp.append(0)
+
+
+    def checkVideoHoles(self):
+        """
+        It updates the following attribute :attr:`.video_list_dict`
+        """
+
+        # get maximum number of video files with regard to camera
+        nb_vid_max = max(
+            [len(v_list) for v_list in self.video_list_dict.values()]
+        )
+
+        # get list of camera IDs
+        cam_id_list = list(self.video_list_dict.keys())
+
+        # get first camera ID
+        cam_id_0 = cam_id_list[0]
+
+        # loop on video files
+        for ite_vid in range(nb_vid_max):
+            # loop on cameras (skipping first camera because of reference)
+            for cam_id in cam_id_list[1:]:
+                flag_missing_first = False
+                flag_missing_current = False
+
+                # check if above first camera range
+                if ite_vid >= len(self.video_list_dict[cam_id_0][0]):
+                    flag_missing_first = True
+
+                elif ite_vid >= len(self.video_list_dict[cam_id][0]):
+                    flag_missing_current = True
+
+                else:
+                    # get delta in seconds between the current camera and
+                    # the first camera
+                    delta = (
+                        self.video_list_dict[cam_id][1][ite_vid] -
+                        self.video_list_dict[cam_id_0][1][ite_vid]
+                    ).total_seconds()
+
+                    # check if delta is more than 1 second
+                    if abs(delta) > 1:
+                        # check if missing file for current camera
+                        if delta > 0:
+                            flag_missing_current = True
+
+                        # missing file for first camera
+                        else:
+                            flag_missing_first = True
+
+                # check if missing camera
+                if flag_missing_first or flag_missing_current:
+                    if flag_missing_current:
+                        cam_id_hole = cam_id
+                        cam_id_comp = cam_id_0
+
+                    else:
+                        cam_id_hole = cam_id_0
+                        cam_id_comp = cam_id
+
+                    # insert fake video file to fill the hole
+                    self.video_list_dict[cam_id_hole][0].insert(ite_vid, '')
+                    self.video_list_dict[cam_id_hole][1].insert(
+                        ite_vid, self.video_list_dict[cam_id_comp][1][ite_vid]
+                    )
+
+
+    # *********************************************************************** #
+    # End group
+    # *********************************************************************** #
+
+    # *********************************************************************** #
+    # Group: Methods for converting signal configuration
+    # *********************************************************************** #
+
+
+    def setSignalList(self, signal_dict, interval_dict, **kwargs):
+        # initialize dictionaries
+        self.signal_list_dict = {}
+        self.interval_list_dict = {}
+
+        # loop on data types
+        for signal_id, data_info_list in signal_dict.items():
+            # check if there are intervals
+            if signal_id in interval_dict.keys():
+                # loop on interval configurations for current signal
+                interval_list_tmp = []
+                for data_info in interval_dict[signal_id]:
+                    # get list of interval files
+                    interval_list_tmp.append(
+                        self.getPathList(
+                            signal_id, data_info, "Interval", **kwargs
+                        )
+                    )
+
+                self.interval_list_dict[signal_id] = interval_list_tmp
+
+            # loop on signal configurations for current signal
+            signal_list_tmp = []
+            for data_info in data_info_list:
+                signal_list_tmp.append(
+                    self.getPathList(signal_id, data_info, "Signal", **kwargs)
+                )
+
+            self.signal_list_dict[signal_id] = signal_list_tmp
 
 
     def getSignalConfigurationSingleType(
-        self, signal_id, data_info_list, flag_raise_exception=True, **kwargs
+        self, signal_id, data_info_list, flag_raise_exception=True,
+        flag_interval=False, **kwargs
     ):
         """
         Converts the configuration lists for a specific signal widget and for
@@ -647,29 +654,20 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         :param flag_raise_exception: specify if an exception must be raised
             when no data files are found
         :type flag_raise_exception: bool
+        :param flag_interval: specify if data is intervals
+        :type flag_interval: bool
         :param kwargs: keyword arguments of the function
-            :func:`.getBeginningEndingDateTimeFromList`
+            :func:`.getDatetimeFromPath`
 
-        :returns:
-            - **config_whole_rec_list** (*list*) -- nested list where each
-              element is a configuration list and corresponds to one file in
-              the long recording. Each element corresponds to one
-              signal/interval and is a nested list where each element
-              corresponds to one file in the long recording with 4 elements
-              (path to the data file, key to access data, frequency, plot
-              style)
-            - **config_current_list** (*list*) -- configuration list of the
-              first file in the long recording. Each element corresponds to one
-              signal/interval and is a list with 4 elements (path to the data
-              file, key to access data, frequency, plot style)
+        :returns: nested list where each element is a configuration list and
+            corresponds to one file in the long recording, each configuration
+            list has 4 elements (path to the data file, key to access data,
+            frequency, plot style)
+        :rtype: list
         """
 
         # initialize list of configuration for the whole recording
         config_whole_rec_list = []
-
-        # initialize list of current configuration (i.e. for the first file
-        # of the recording)
-        config_current_list = []
 
         # loop on sub-configurations
         for data_info in data_info_list:
@@ -677,7 +675,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             checkConfiguration(signal_id, data_info, "Signal")
 
             # get configuration
-            data_dir, key, freq, pattern, delimiter, pos, fmt, plot_style = \
+            data_dir, pattern, key, freq, delimiter, pos, fmt, plot_style = \
                 data_info
 
             # get list of data paths of the recording
@@ -717,11 +715,20 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
                 # synchro is not OK
                 else:
-                    # get beginning/ending time of files
-                    beginning_datetime_list, ending_datetime_list = \
-                        ToolsDateTime.getBeginningEndingDateTimeFromList(
-                            path_list, key, freq, delimiter, pos, fmt, **kwargs
+                    # get beginning time of files
+                    beginning_datetime_list = []
+                    for path in path_list:
+                        beginning_datetime_list.append(
+                            ToolsDateTime.getDatetimeFromPath(
+                                path, delimiter, pos, fmt, **kwargs
+                            )
                         )
+
+                    # sort paths by chronological order
+                    sort_indexes = np.argsort(beginning_datetime_list)
+                    beginning_datetime_list = [
+                        beginning_datetime_list[i] for i in sort_indexes
+                    ]
 
                     # if interval data, specify in data type for the temporary
                     # synchronization file
@@ -768,7 +775,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                     (signal_id, data_dir)
                 )
 
-        return config_whole_rec_list, config_current_list
+        return config_whole_rec_list
 
 
     def getSignalConfigurationAllTypes(
@@ -780,8 +787,8 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
         It sets the following attributes:
 
-        - :attr:`.ViSiAnnoTLongRec.signal_dict_list`
-        - :attr:`.ViSiAnnoTLongRec.interval_dict_list` (must be initialized)
+        - :attr:`.ViSiAnnoTLongRec.signal_list_dict`
+        - :attr:`.ViSiAnnoTLongRec.interval_list_dict`
 
         :param signal_dict: see second positional argument of
             :class:`.ViSiAnnoTLongRec` constructor
@@ -790,47 +797,29 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             :class:`.ViSiAnnoTLongRec` constructor
         :type interval_dict: dict
         :param kwargs: keyword arguments of the function
-            :func:`.getBeginningEndingDateTimeFromList`, minus
-            ``flag_interval``
-
-        :returns:
-            - **signal_dict_current** (*list*) -- signal configuration of the
-              first file in the long recording. Each element corresponds to one
-              signal and is a list with 7 elements (see positional argument
-              ``signal_dict`` of :class:`.ViSiAnnoT` constructor)
-            - **interval_dict_current** (*list*) -- interval configuration of
-              the first file in the long recording. Each element corresponds to
-              one interval and is a list with 7 elements (see keyword argument
-              ``interval_dict`` of :class:`.ViSiAnnoT` constructor)
+            :func:`.getDatetimeFromPath`
         """
 
-        # dictionary containing the curent signals configuration
-        signal_dict_current = {}
-
-        # dictionary containing the current files of intervals and the color to
-        # plot
-        interval_dict_current = {}
+        # initialize dictionaries
+        self.signal_list_dict = {}
+        self.interval_list_dict = {}
 
         # loop on data types
         for signal_id, data_info_list in signal_dict.items():
             # check if there are intervals
             if signal_id in interval_dict.keys():
                 # get interval configuration for the data type
-                self.interval_dict_list[signal_id], \
-                    interval_dict_current[signal_id] = \
+                self.interval_list_dict[signal_id] = \
                     self.getSignalConfigurationSingleType(
                         signal_id, interval_dict[signal_id],
                         flag_interval=True, **kwargs
                 )
 
             # get signal configuration for the data type
-            self.signal_dict_list[signal_id], \
-                signal_dict_current[signal_id] = \
+            self.signal_list_dict[signal_id] = \
                 self.getSignalConfigurationSingleType(
                     signal_id, data_info_list, **kwargs
             )
-
-        return signal_dict_current, interval_dict_current
 
 
     @staticmethod
