@@ -454,15 +454,15 @@ class ViSiAnnoT():
         #: (*int*) ID of the current video/signal file in case of long
         #: recordings
         #:
-        #: If :attr:`.ViSiAnnoT.flag_long_rec` is ``False``, then
-        #: :attr:`.ViSiAnnoT.rec_id` is always equal to 0.
-        self.rec_id = 0
+        #: If :attr:`.flag_long_rec` is ``False``, then :attr:`.ite_file` is
+        #: always equal to 0.
+        self.ite_file = 0
 
         #: (*int*) Number of files in case of long recordings
         #:
-        #: If ``self.flag_long_rec`` is false, then ``self.rec_nb`` is set to
-        #: 1.
-        self.rec_nb = 1
+        #: If :attr:`.flag_long_rec` is ``False``, then :attr:`.nb_files` is
+        #: set to 1.
+        self.nb_files = 1
 
 
         # ******************************************************************* #
@@ -1740,7 +1740,7 @@ class ViSiAnnoT():
             else:
                 self.updateFrameId(self.frame_id - self.fps)
 
-            if self.rec_id == 0:
+            if self.ite_file == 0:
                 self.updateFrameId(max(0, self.frame_id))
 
         elif key == QtCore.Qt.Key_Right:
@@ -1750,7 +1750,7 @@ class ViSiAnnoT():
             else:
                 self.updateFrameId(self.frame_id + self.fps)
 
-            if self.rec_id == self.rec_nb - 1:
+            if self.ite_file == self.nb_files - 1:
                 self.updateFrameId(min(self.nframes, self.frame_id))
 
         elif key == QtCore.Qt.Key_Down:
@@ -1760,7 +1760,7 @@ class ViSiAnnoT():
             else:
                 self.updateFrameId(self.frame_id - 10 * self.fps)
 
-            if self.rec_id == 0:
+            if self.ite_file == 0:
                 self.updateFrameId(max(0, self.frame_id))
 
         elif key == QtCore.Qt.Key_Up:
@@ -1770,17 +1770,17 @@ class ViSiAnnoT():
             else:
                 self.updateFrameId(self.frame_id + 10 * self.fps)
 
-            if self.rec_id == self.rec_nb - 1:
+            if self.ite_file == self.nb_files - 1:
                 self.updateFrameId(min(self.nframes, self.frame_id))
 
         elif key == QtCore.Qt.Key_L:
             self.updateFrameId(self.frame_id - 1)
-            if self.rec_id == 0:
+            if self.ite_file == 0:
                 self.updateFrameId(max(0, self.frame_id))
 
         elif key == QtCore.Qt.Key_M:
             self.updateFrameId(self.frame_id + 1)
-            if self.rec_id == self.rec_nb - 1:
+            if self.ite_file == self.nb_files - 1:
                 self.updateFrameId(min(self.nframes, self.frame_id))
 
         elif key == QtCore.Qt.Key_I and len(self.wid_sig_list) > 0 and \
@@ -1812,10 +1812,10 @@ class ViSiAnnoT():
                 self.wid_annotevent.display(self)
 
         elif key == QtCore.Qt.Key_PageDown and self.flag_long_rec:
-            self.changeFileInLongRec(self.rec_id - 1, 0)
+            self.changeFileInLongRec(self.ite_file - 1, 0)
 
         elif key == QtCore.Qt.Key_PageUp and self.flag_long_rec:
-            self.changeFileInLongRec(self.rec_id + 1, 0)
+            self.changeFileInLongRec(self.ite_file + 1, 0)
 
         elif key == QtCore.Qt.Key_Home:
             self.updateFrameId(0)
@@ -2011,7 +2011,10 @@ class ViSiAnnoT():
             )
 
             # get first signal configuration
-            path, key_data, self.fps, delimiter, pos, fmt, _ = signal_config
+            path, delimiter, pos, fmt, key_data, freq, _ = signal_config
+
+            # get frequency and store it as reference frequency
+            self.fps = self.getDataFrequency(path, freq)
 
             # get beginning date-time
             self.beginning_datetime = ToolsDateTime.getDatetimeFromPath(
@@ -2026,22 +2029,14 @@ class ViSiAnnoT():
                 # get first signal file
                 path = lines[1].replace("\n", "")
 
-            # check if audio
-            if os.path.splitext(path)[1] == ".wav":
-                # get fps of audio
-                _, self.fps = ToolsAudio.getAudioWaveFrequency(path)
-
-            # get data
-            data = ToolsData.getDataGeneric(path, key_data)
+            # get number of frames
+            self.nframes = ToolsData.getNbSamplesGeneric(path, key_data)
 
             # check if there is data indeed
-            if data.shape[0] == 0:
+            if self.nframes == 0:
                 raise Exception(
                     "There is no data in the first signal file %s" % path
                 )
-
-            # get number of frames
-            self.nframes = data.shape[0]
 
 
         # ******************************************************************* #
@@ -2062,7 +2057,7 @@ class ViSiAnnoT():
                 )
 
                 # get configuration
-                path_data, key_data, freq_data, _, _, _, plot_style = \
+                path_data, _, _, _, key_data, freq_data, plot_style = \
                     signal_config
 
                 # ******************** load intervals *********************** #
@@ -2079,17 +2074,13 @@ class ViSiAnnoT():
                         )
 
                         # get configuration
-                        path_interval, key_interval, freq_interval, _, _, _, \
+                        path_interval, _, _, _, key_interval, freq_interval, \
                             color_interval = interval_config
 
-                        # get frequency if necessary
-                        if isinstance(freq_interval, str):
-                            freq_interval = ToolsData.getAttributeGeneric(
-                                path_interval, freq_interval
-                            )
-
-                        elif freq_interval == -1:
-                            freq_interval = self.fps
+                        # get frequency
+                        freq_interval = self.getDataFrequency(
+                            path_interval, freq_interval
+                        )
 
                         # check if file exists
                         if os.path.isfile(path_interval):
@@ -2122,31 +2113,20 @@ class ViSiAnnoT():
                             )
 
 
-                # ******************** get frequency ************************ #
-                # get frequency if necessary
-                if os.path.splitext(path_data)[1] == ".wav":
-                    _, freq_data = ToolsAudio.getAudioWaveFrequency(path_data)
-
-                elif isinstance(freq_data, str):
-                    freq_data = ToolsData.getAttributeGeneric(
-                        path_data, freq_data
-                    )
-
-                elif freq_data == -1:
-                    freq_data = self.fps
-
-
                 # ********************** load data ************************** #
                 # asynchronous signal
                 if self.flag_long_rec and not self.flag_synchro:
-                    # get data
-                    data = self.getDataSigTmp(
+                    # get data and frequency
+                    data, freq_data = self.getDataSigTmp(
                         path_data, signal_id, key_data, freq_data,
                         self.tmp_delimiter
                     )
 
                 # synchronous signals
                 else:
+                    # get frequency
+                    freq_data = self.getDataFrequency(path_data, freq_data)
+
                     # keyword arguments for ToolsData.getDataGeneric
                     kwargs = {}
 
@@ -2190,6 +2170,20 @@ class ViSiAnnoT():
             self.sig_dict[signal_id] = sig_list_tmp
 
 
+    def getDataFrequency(self, path, freq):
+        # get frequency if necessary
+        if os.path.splitext(path)[1] == ".wav":
+            _, freq, _ = ToolsAudio.getAudioWaveInfo(path)
+
+        elif isinstance(freq, str):
+            freq = ToolsData.getAttributeGeneric(path, freq)
+
+        elif freq == -1:
+            freq = self.fps
+
+        return freq
+
+
     @staticmethod
     def getFileSigTmp(line, delimiter):
         """
@@ -2212,6 +2206,7 @@ class ViSiAnnoT():
             line_split = line.split(delimiter)
             path = line_split[0]
             start_sec = int(line_split[1].replace("\n", ""))
+
         else:
             path = line.replace("\n", "")
             start_sec = 0
@@ -2233,8 +2228,10 @@ class ViSiAnnoT():
         :type signal_id: str
         :param key_data: key to access the data (in case of .h5 or .mat file)
         :type key_data: str
-        :param freq_data: signal frequency
-        :type freq_data: float
+        :param freq_data: signal frequency as found in the configuration file,
+            in case this is a string, then the frequency is retrieved in the
+            data file
+        :type freq_data: float or str
         :param delimiter: delimiter used to split the lines of the temporary
             signal files
         :type delimiter: str
@@ -2257,33 +2254,47 @@ class ViSiAnnoT():
             data_list = []
             start_sec_prev = -1
 
+            # look for data file path in order to get frequency if stored in
+            # file attribute
+            freq_data_tmp = None
+            for line in lines:
+                data_path, _ = ViSiAnnoT.getFileSigTmp(line, delimiter)
+                if data_path != "None":
+                    freq_data_tmp = self.getDataFrequency(data_path, freq_data)
+                    break
+
+            if freq_data_tmp is not None:
+                freq_data = freq_data_tmp
+
             # loop on temporary file lines
             for ite_line, line in enumerate(lines):
-                # get data file name and starting second
-                file_name, start_sec = ViSiAnnoT.getFileSigTmp(line, delimiter)
+                # get data path and starting second
+                data_path, start_sec = ViSiAnnoT.getFileSigTmp(line, delimiter)
 
                 # no data at the beginning
-                if file_name == "None":
+                if data_path == "None":
                     data_list.append(np.zeros((int(start_sec * freq_data),)))
                     start_sec_prev = start_sec
+
                 else:
                     # keyword arguments for ToolsData.getDataGeneric
                     # used when loading audio in order to specify channel
                     kwargs = {}
-                    if file_name.split('.')[-1] == "wav":
+                    if data_path.split('.')[-1] == "wav":
                         kwargs["channel_id"] = \
                             ToolsAudio.convertKeyToChannelId(key_data)
 
                     # load data
                     if flag_interval:
                         next_data = ToolsData.getDataIntervalAsTimeSeries(
-                            file_name, key=key_data
+                            data_path, key=key_data
                         )
 
                     else:
                         next_data = ToolsData.getDataGeneric(
-                            file_name, key_data, **kwargs
+                            data_path, key_data, **kwargs
                         )
+
 
                     # truncate data at the beginning if necessary
                     if ite_line == 0:
@@ -2366,7 +2377,7 @@ class ViSiAnnoT():
             # get data as a numpy array
             data = np.concatenate(tuple(data_list))
 
-        return data
+        return data, freq_data
 
 
     # *********************************************************************** #

@@ -298,7 +298,6 @@ def getDataDuration(
             # get duration in seconds
             duration = nb_samples / freq
 
-
     return duration
 
 
@@ -356,7 +355,11 @@ def getLastSampleGeneric(path, key=''):
         raise Exception("Data format not supported: %s" % ext)
 
     if last_sample is not None:
-        last_sample = float(last_sample)
+        try:
+            last_sample = float(last_sample)
+
+        except Exception:
+            pass
 
     return last_sample
 

@@ -30,8 +30,8 @@ class FileSelectionWidget():
         # create combo box widget
         _, group_box, self.combo_box = addComboBox(
             visi.lay, widget_position,
-            [str(rec_id + 1) for rec_id in range(visi.rec_nb)],
-            box_title="File ID / %d" % visi.rec_nb
+            [str(ite_file + 1) for ite_file in range(visi.nb_files)],
+            box_title="File ID / %d" % visi.nb_files
         )
 
         group_box.setMaximumWidth(100)
