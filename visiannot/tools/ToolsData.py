@@ -18,6 +18,7 @@ from scipy.io import loadmat
 from h5py import File, Dataset
 from datetime import timedelta
 from .ToolsAudio import getDataAudio
+from warnings import catch_warnings, simplefilter
 
 
 def getWorkingDirectory(path):
@@ -346,7 +347,6 @@ def getDataTxt(path, **kwargs):
     """
 
     # disable warnings
-    from warnings import catch_warnings, simplefilter
     with catch_warnings():
         simplefilter("ignore")
         data = np.loadtxt(path, **kwargs)
