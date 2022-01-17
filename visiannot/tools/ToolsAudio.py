@@ -15,9 +15,9 @@ import wave
 import numpy as np
 
 
-def getAudioWaveFrequency(path):
+def getAudioWaveInfo(path):
     """
-    Loads audio wave and gets frequency
+    Loads audio wave and gets frequency and number of frames
 
     :param path: path to the audio file
     :type path: str
@@ -25,7 +25,8 @@ def getAudioWaveFrequency(path):
     :returns:
         - **data_wave** (*wave.Wave_read*) -- see
           https://docs.python.org/3/library/wave.html#wave-read-objects
-        - **freq** (*int* or *float*) -- frequency
+        - **freq** (*float*) -- frequency
+        - **nframes** (*float*) -- number of frames
     """
 
     # get audio wave
@@ -34,7 +35,10 @@ def getAudioWaveFrequency(path):
     # get frequency
     freq = data_wave.getframerate()
 
-    return data_wave, freq
+    # get number of frames
+    nframes = data_wave.getnframes()
+
+    return data_wave, freq, nframes
 
 
 def getDataAudio(path, channel_id=0):
@@ -56,11 +60,11 @@ def getDataAudio(path, channel_id=0):
     """
 
     # get audio wave and frequency
-    data_wave, freq = getAudioWaveFrequency(path)
+    data_wave, freq, nframes = getAudioWaveInfo(path)
 
     # get audio data as a numpy array
-    data_audio = data_wave.readframes(data_wave.getnframes())
-    byte_length = int(len(data_audio) / data_wave.getnframes())
+    data_audio = data_wave.readframes(nframes)
+    byte_length = int(len(data_audio) / nframes)
 
     if byte_length == 2:
         np_type = np.int8
@@ -78,7 +82,7 @@ def getDataAudio(path, channel_id=0):
 
     else:
         data_audio = np.fromstring(data_audio, dtype=np_type).reshape(
-            (data_wave.getnframes(), data_wave.getnchannels())
+            (nframes, data_wave.getnchannels())
         )
 
         # get specific channel if necessary
