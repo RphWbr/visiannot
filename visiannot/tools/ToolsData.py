@@ -429,48 +429,7 @@ def getAttributeGeneric(path, key):
     return attr
 
 
-def recursiveReadH5(parent_item):
-    """
-    Recursive function to read data from a h5py file object while preserving
-    nested architecture
-
-    It reaches the last group level recursively.
-
-    If the parent item is a H5 dataset, then the function returns a numpy
-    array. Otherwise it returns a dictionary, where the key corresponds to one
-    H5 group and the value correponds to the H5 group content (may it be a
-    nested group, a numpy array in case of H5 dataset or a string/int/float in
-    case of H5 attribute). The attributes of a H5 dataset are not retrieved,
-    it only works for attributes of a H5 group.
-
-    :param parent_item: h5py file object
-
-    :returns: all data contained in ``parent_item``
-    :rtype: dict or numpy array
-    """
-
-    # check if parent item is a dataset
-    if isinstance(parent_item, Dataset):
-        # output is a numpy array
-        output = parent_item[()]
-
-    else:
-        # output is a dictionary
-        output = {}
-
-        # get attributes
-        for key, value in parent_item.attrs.items():
-            output[key] = value
-
-        # loop on items of the next level
-        for key, item in parent_item.items():
-            # recursive call
-            output[key] = recursiveReadH5(item)
-
-    return output
-
-
-def getDataH5(path, root_path='/'):
+def getDataH5(path, key):
     """
     Reads the whole content of a H5 file or a specific dataset/group
 
@@ -478,9 +437,8 @@ def getDataH5(path, root_path='/'):
 
     :param path: path to the file
     :type path: str
-    :param root_path: path to the H5 group or H5 dataset where to start
-        retrieving data, default ``'/'`` (file root)
-    :type key_path: str
+    :param key: path to the H5 dataset to load
+    :type key: str
 
     :returns: three options:
 
@@ -492,8 +450,9 @@ def getDataH5(path, root_path='/'):
     """
 
     with File(path, 'r') as f:
-        if root_path in f:
-            output = recursiveReadH5(f[root_path])
+        if key in f:
+            output = f[key][()]
+
         else:
             output = None
 
