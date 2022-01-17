@@ -322,17 +322,34 @@ def getDataGeneric(path, key="", **kwargs):
         data = getDataH5(path, key)
 
     elif ext == "txt":
-        # disable warnings
-        from warnings import catch_warnings, simplefilter
-        with catch_warnings():
-            simplefilter("ignore")
-            data = np.loadtxt(path, **kwargs)
+        data = getDataTxt(path, **kwargs)
 
     elif ext == "wav":
         _, data, _ = getDataAudio(path, **kwargs)
 
     else:
         raise Exception("Data format not supported: %s" % ext)
+
+    return data
+
+
+def getDataTxt(path, **kwargs):
+    """
+    Loads data from a txt file
+
+    :param path: path to the data file
+    :type path: str
+    :param kwargs: keyword arguments of numpy.loadtxt (in case of txt file)
+
+    :returns: data
+    :rtype: numpy array
+    """
+
+    # disable warnings
+    from warnings import catch_warnings, simplefilter
+    with catch_warnings():
+        simplefilter("ignore")
+        data = np.loadtxt(path, **kwargs)
 
     return data
 
