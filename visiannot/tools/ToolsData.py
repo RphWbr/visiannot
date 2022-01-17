@@ -15,9 +15,9 @@ import numpy as np
 import sys
 from os.path import isfile, split, abspath, dirname, realpath
 from scipy.io import loadmat
-from h5py import File, Dataset
-from datetime import timedelta
-from .ToolsAudio import getDataAudio
+from h5py import File
+from .ToolsAudio import getAudioWaveInfo, getDataAudio
+from os import SEEK_END, SEEK_CUR
 from warnings import catch_warnings, simplefilter
 
 
@@ -140,60 +140,6 @@ def convertTimeSeriesToIntervals(data, value):
         return np.vstack((start_inds, end_inds)).T
 
 
-def getEndingDateTime(
-    path, key_data, freq_data, beginning_datetime, flag_interval=False
-):
-    """
-    Gets the ending date-time of a data file
-
-    The beginning date-time must be in the path of the data files.
-
-    :param path: path to the data file
-    :type path: list
-    :param key_data: key to access the data (in case of .mat or .h5)
-    :type key_data: str
-    :param freq_data: data frequency
-    :type freq_data: int or float
-    :param args: positional arguments of :func:`.getDatetimeFromPath`, minus
-        the first one (``path``)
-    :param beginning_datetime: beginning datetime of the data file
-    :type beginning_datetime: datetime.datetime
-    :param flag_interval: specify if data to load is intervals
-    :type flag_interval: bool
-
-    :returns: ending datetime of the data file
-    :rtype: datetime.datetime
-    """
-
-    # load data
-    if flag_interval:
-        data = getDataIntervalAsTimeSeries(path, key=key_data)
-
-    else:
-        data = getDataGeneric(path, key_data)
-
-    # check if any data
-    if data.size > 0:
-        # check if signal not regularly sampled
-        if freq_data == 0:
-            # get duration in seconds
-            duration_sec = data[-1, 0] / 1000
-
-        # regularly sampled signal
-        else:
-            # get duration in seconds
-            duration_sec = data.shape[0] / freq_data
-
-        # get file ending date time
-        ending_datetime = beginning_datetime + timedelta(seconds=duration_sec)
-
-
-    else:
-        ending_datetime = beginning_datetime
-
-    return ending_datetime
-
-
 def getDataInterval(path, key=""):
     """
     Loads file containing temporal intervals, output shape
@@ -295,7 +241,127 @@ def getTxtLines(path):
     return lines
 
 
-def getDataGeneric(path, key="", **kwargs):
+def getDataDuration(
+    path, freq, key='', flag_interval=False, **kwargs
+):
+    """
+    Gets the ending date-time of a data file
+
+    The beginning date-time must be in the path of the data files.
+
+    :param path: path to the data file
+    :type path: list
+    :param freq: data frequency, set to ``0`` if signal not regularly sampled
+    :type freq: float
+    :param key: key to access the data (in case of .mat or .h5)
+    :type key: str
+    :param flag_interval: specify if data is intervals
+    :type flag_interval: bool
+    :param kwargs: keyword arguments of :func:`.getNbSamplesGeneric`
+
+    :returns: duration of the data file in seconds
+    :rtype: int
+    """
+
+    # check if interval data
+    if flag_interval:
+        # load intervals
+        data = getDataInterval(path, key=key)
+
+        if data.size > 0:
+            # get ending frame of last interval
+            last_frame = data[-1, -1]
+
+            # get duration in seconds
+            duration = last_frame / freq
+
+        else:
+            duration = 0
+
+    else:
+        # check if signal not regularly sampled
+        if freq == 0:
+            # get last sample of the data file
+            last_sample = getLastSampleGeneric(path, key=key)
+
+            if last_sample is not None:
+                # get duration in seconds
+                duration = last_sample[0] / 1000
+
+            else:
+                duration = 0
+
+        else:
+            # get number of samples
+            nb_samples = getNbSamplesGeneric(path, key, **kwargs)
+
+            # get duration in seconds
+            duration = nb_samples / freq
+
+
+    return duration
+
+
+def getNbSamplesGeneric(path, key='', **kwargs):
+    ext = path.split('.')[-1]
+
+    if ext == "mat" or ext == "h5":
+        with File(path, 'r') as f:
+            nframes = f[key].shape[0]
+
+    elif ext == "txt":
+        with open(path, 'r') as f:
+            nframes = len(f.readlines())
+
+    elif ext == "wav":
+        _, _, nframes = getAudioWaveInfo(path, **kwargs)
+
+    else:
+        raise Exception("Data format not supported: %s" % ext)
+
+    return nframes
+
+
+def getLastSampleGeneric(path, key=''):
+    ext = path.split('.')[-1]
+
+    if ext == "mat" or ext == "h5":
+        with File(path, 'r') as f:
+            dataset = f[key]
+
+            # check if empty dataset
+            if dataset.shape[0] == 0:
+                last_sample = None
+
+            else:
+                last_sample = dataset[-1]
+
+    elif ext == "txt":
+        with open(path, 'rb') as f:
+            try:
+                f.seek(-2, SEEK_END)
+                while f.read(1) != b'\n':
+                    f.seek(-2, SEEK_CUR)
+
+            # only one line in file
+            except OSError:
+                f.seek(0)
+
+            last_line = f.readline().decode()
+
+            if last_line == '':
+                last_sample = None
+
+    else:
+        raise Exception("Data format not supported: %s" % ext)
+
+    if last_sample is not None:
+        last_sample = float(last_sample)
+
+    return last_sample
+
+
+def getDataGeneric(path, key='', **kwargs):
     """
     Loads data from a file with format mat, h5, txt or wav
 
