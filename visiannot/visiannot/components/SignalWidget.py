@@ -293,16 +293,16 @@ class SignalWidget(pg.PlotWidget):
                 first_frame_ms, last_frame_ms
             )
 
+            # delete NaNs
+            data_in_current_range = ToolsPyqtgraph.deleteNaNForPlot(
+                data_in_current_range
+            )
+
             # check if empty signal in the temporal range
             if data_in_current_range.shape[0] == 0:
                 sig_plot.clear()
 
             else:
-                # delete NaNs
-                data_in_current_range = ToolsPyqtgraph.deleteNaNForPlot(
-                    data_in_current_range
-                )
-
                 # signal plot
                 sig_plot.setData(data_in_current_range)
 
