@@ -670,6 +670,12 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                     ToolsData.getDataDuration(path, freq, key=key)
                 )
 
+            # update configuration of first signal to match temporary
+            # synchronization files
+            self.signal_config_dict[sig_id_0][0][0] = '_'
+            self.signal_config_dict[sig_id_0][0][1] = 2
+            self.signal_config_dict[sig_id_0][0][2] = "%Y-%m-%dT%H-%M-%S"
+
 
     def setSynchronizationTemporaryPaths(
         self, signal_id, data_info_list, config_list, flag_interval=False
