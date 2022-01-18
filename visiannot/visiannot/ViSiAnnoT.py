@@ -506,9 +506,12 @@ class ViSiAnnoT():
         #:  - (*tuple*) Plot color (RGBA)
         self.interval_dict = {}
 
-        #: (*int*) Frequency of the video (or the first signal if there is no
-        #: video), it is the reference frequency
-        self.fps = None
+        # check if not long recording => create attribute of reference
+        # frequency (otherwise already set in ViSiAnnoTLongRec)
+        if not self.flag_long_rec:
+            #: (*int*) Frequency of the video (or the first signal if there is
+            #: no video), it is the reference frequency
+            self.fps = None
 
         #: (*int*) Number of frames in the video (or the first signal if there
         #: is no video)
@@ -1965,10 +1968,13 @@ class ViSiAnnoT():
                     flag_ok = True
                     break
 
-            if flag_ok:
-                self.fps = fps_list[ite_vid]
-            else:
-                self.fps = 1
+            # check if fps attribute to be set
+            if self.fps is None:
+                if flag_ok:
+                    self.fps = fps_list[ite_vid]
+
+                else:
+                    self.fps = 1
 
             # get number of frames of the video
             self.nframes = nframes_list[ite_vid]
@@ -2013,8 +2019,10 @@ class ViSiAnnoT():
             # get first signal configuration
             path, delimiter, pos, fmt, key_data, freq, _ = signal_config
 
-            # get frequency and store it as reference frequency
-            self.fps = self.getDataFrequency(path, freq)
+            # check if attribute fps to be set
+            if self.fps is None:
+                # get frequency and store it as reference frequency
+                self.fps = self.getDataFrequency(path, freq)
 
             # get beginning date-time
             self.beginning_datetime = ToolsDateTime.getDatetimeFromPath(

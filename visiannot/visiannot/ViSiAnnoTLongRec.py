@@ -248,7 +248,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             checkConfiguration(signal_id, signal_config, "Signal")
 
             # get info for first signal
-            data_dir, pattern, _, freq, _, _, _, _ = signal_config
+            data_dir, pattern, _, _, _, _, freq, _ = signal_config
 
             # get list of signal files paths
             data_list_tmp = glob('%s/%s' % (data_dir, pattern))
