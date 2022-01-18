@@ -41,7 +41,7 @@ def getAudioWaveInfo(path):
     return data_wave, freq, nframes
 
 
-def getDataAudio(path, channel_id=0):
+def getDataAudio(path, channel_id=0, slicing=()):
     """
     Loads audio data
 
@@ -50,6 +50,12 @@ def getDataAudio(path, channel_id=0):
     :param channel_id: audio channel to be loaded as a numpy array, set it to
         ``-1`` to get all channels
     :type channel_id: int
+    :param slicing: indexes for slicing output data:
+
+        - ``()``: no slicing
+        - ``(start,)``: ``data[start:]``
+        - ``(start, stop)``: ``data[start:stop]``
+    :type slicing: tuple
 
     :returns:
         - **data_wave** (*wave.Wave_read*) -- see
@@ -88,6 +94,12 @@ def getDataAudio(path, channel_id=0):
         # get specific channel if necessary
         if channel_id >= 0:
             data_audio = data_audio[:, channel_id]
+
+        if len(slicing) == 1:
+            data_audio = data_audio[slicing[0]:]
+
+        elif len(slicing) == 2:
+            data_audio = data_audio[slicing[0]:slicing[1]]
 
     return data_wave, data_audio, freq
 
