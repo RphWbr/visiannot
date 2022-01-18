@@ -642,7 +642,7 @@ class AnnotEventWidget():
 
             # set timestamp in frame format
             self.annot_array[self.current_label_id, annot_position, 1] = \
-                '%d_%d' % (visi.rec_id, frame_id)
+                '%d_%d' % (visi.ite_file, frame_id)
 
             # display the beginning time of the annotated interval
             self.push_text_list[annot_position].setText(

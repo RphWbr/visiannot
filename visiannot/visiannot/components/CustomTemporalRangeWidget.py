@@ -159,16 +159,16 @@ class CustomTemporalRangeWidget():
                         for beg_rec in visi.rec_beginning_datetime_list]
                 )
 
-                new_rec_id = np.where(start_rec_diff_array >= 0)[0]
+                new_ite_file = np.where(start_rec_diff_array >= 0)[0]
 
-                if new_rec_id.shape[0] == 0:
+                if new_ite_file.shape[0] == 0:
                     coherence = False
                     print(
                         "wrong input: start time is above the ending of the "
                         "recordings"
                     )
 
-                elif new_rec_id.shape[0] == start_rec_diff_array.shape[0]:
+                elif new_ite_file.shape[0] == start_rec_diff_array.shape[0]:
                     coherence = False
                     print(
                         "wrong input: start time is below the beginning of "
@@ -177,8 +177,8 @@ class CustomTemporalRangeWidget():
 
                 else:
                     # change recording
-                    new_rec_id = new_rec_id[0] - 1
-                    coherence = visi.prepareNewFile(new_rec_id)
+                    new_ite_file = new_ite_file[0] - 1
+                    coherence = visi.prepareNewFile(new_ite_file)
 
             else:
                 print(

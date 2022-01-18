@@ -171,7 +171,7 @@ class PreviousWidget(LogoWidget):
         :param visi: associated instance of :class:`.ViSiAnnoT`
         """
 
-        visi.changeFileInLongRec(visi.rec_id - 1, 0)
+        visi.changeFileInLongRec(visi.ite_file - 1, 0)
 
 
 class NextWidget(LogoWidget):
@@ -182,4 +182,4 @@ class NextWidget(LogoWidget):
         :param visi: associated instance of :class:`.ViSiAnnoT`
         """
 
-        visi.changeFileInLongRec(visi.rec_id + 1, 0)
+        visi.changeFileInLongRec(visi.ite_file + 1, 0)

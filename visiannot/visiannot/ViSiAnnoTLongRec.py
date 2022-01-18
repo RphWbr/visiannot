@@ -1048,7 +1048,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             self.ite_file = ite_file
 
             # loop on cameras
-            for cam_id, config in self.video_dict_current.items():
+            for cam_id, config in video_dict_current.items():
                 # set video widget title
                 self.wid_vid_dict[cam_id].setWidgetTitle(config[0])
 
