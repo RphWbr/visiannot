@@ -1036,6 +1036,8 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         """
         Loads data of a new file in the long recording
 
+        It sets the attribute :attr:`.ViSiAnnoT.ite_file`
+
         It does not set :attr:`.ViSiAnnoT.first_frame` and
         :attr:`.ViSiAnnoT.last_frame`, and it does not update signal plots.
 

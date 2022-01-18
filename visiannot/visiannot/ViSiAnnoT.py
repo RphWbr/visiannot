@@ -2264,15 +2264,18 @@ class ViSiAnnoT():
 
             # look for data file path in order to get frequency if stored in
             # file attribute
-            freq_data_tmp = None
-            for line in lines:
-                data_path, _ = ViSiAnnoT.getFileSigTmp(line, delimiter)
-                if data_path != "None":
-                    freq_data_tmp = self.getDataFrequency(data_path, freq_data)
-                    break
+            if isinstance(freq_data, str):
+                freq_data_tmp = None
+                for line in lines:
+                    data_path, _ = ViSiAnnoT.getFileSigTmp(line, delimiter)
+                    if data_path != "None":
+                        freq_data_tmp = self.getDataFrequency(
+                            data_path, freq_data
+                        )
+                        break
 
-            if freq_data_tmp is not None:
-                freq_data = freq_data_tmp
+                if freq_data_tmp is not None:
+                    freq_data = freq_data_tmp
 
             # loop on temporary file lines
             for ite_line, line in enumerate(lines):
@@ -2302,7 +2305,6 @@ class ViSiAnnoT():
                         next_data = ToolsData.getDataGeneric(
                             data_path, key_data, **kwargs
                         )
-
 
                     # truncate data at the beginning if necessary
                     if ite_line == 0:
