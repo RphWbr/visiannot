@@ -205,8 +205,8 @@ def getDataIntervalAsTimeSeries(path, n_samples=0, key="", slicing=()):
     :param slicing: indexes for slicing output data:
 
         - ``()``: no slicing
-        - ``(start,)``: data[start:]
-        - ``(start, stop)``: data[start:stop]
+        - ``(start,)``: ``data[start:]``
+        - ``(start, stop)``: ``data[start:stop]``
     :type slicing: tuple
 
     :returns: numpy array of shape :math:`(n_{samples},)` with intervals as a
@@ -425,8 +425,10 @@ def getDataTxt(path, slicing=(), **kwargs):
     :param slicing: indexes for slicing output data:
 
         - ``()``: no slicing
-        - ``(start,)``: data[start:]
-        - ``(start, stop)``: data[start:stop]
+        - ``(start,)``: ``data[start:]``
+        - ``(start, stop)``: ``data[start:stop]``
+        - ``("row", ind)``: ``data[ind]``
+        - ``("col", ind)``: ``data[:, ind]`` (2D array only)
     :type slicing: tuple
     :param kwargs: keyword arguments of numpy.loadtxt (in case of txt file)
 
@@ -443,7 +445,14 @@ def getDataTxt(path, slicing=(), **kwargs):
         data = data[slicing[0]:]
 
     elif len(slicing) == 2:
-        data = data[slicing[0]:slicing[1]]
+        if slicing[0] == "row":
+            data = data[slicing[1]]
+
+        elif slicing[0] == "col":
+            data = data[:, slicing[1]]
+
+        else:
+            data = data[slicing[0]:slicing[1]]
 
     return data
 
@@ -459,8 +468,10 @@ def getDataMat(path, key, slicing=()):
     :param slicing: indexes for slicing output data:
 
         - ``()``: no slicing
-        - ``(start,)``: data[start:]
-        - ``(start, stop)``: data[start:stop]
+        - ``(start,)``: ``data[start:]``
+        - ``(start, stop)``: ``data[start:stop]``
+        - ``("row", ind)``: ``data[ind]``
+        - ``("col", ind)``: ``data[:, ind]`` (2D array only)
     :type slicing: tuple
 
     :returns: data
@@ -475,7 +486,14 @@ def getDataMat(path, key, slicing=()):
             data = data[slicing[0]:]
 
         elif len(slicing) == 2:
-            data = data[slicing[0]:slicing[1]]
+            if slicing[0] == "row":
+                data = data[slicing[1]]
+
+            elif slicing[0] == "col":
+                data = data[:, slicing[1]]
+
+            else:
+                data = data[slicing[0]:slicing[1]]
 
     except Exception:
         data = getDataH5(path, key, slicing=slicing)
@@ -546,8 +564,10 @@ def getDataH5(path, key, slicing=()):
     :param slicing: indexes for slicing output data:
 
         - ``()``: no slicing
-        - ``(start,)``: data[start:]
-        - ``(start, stop)``: data[start:stop]
+        - ``(start,)``: ``data[start:]``
+        - ``(start, stop)``: ``data[start:stop]``
+        - ``("row", ind)``: ``data[ind]``
+        - ``("col", ind)``: ``data[:, ind]`` (2D array only)
     :type slicing: tuple
 
     :returns: dataset or ``None`` if not found
@@ -560,7 +580,14 @@ def getDataH5(path, key, slicing=()):
                 output = f[key][slicing[0]:]
 
             elif len(slicing) == 2:
-                output = f[key][slicing[0]:slicing[1]]
+                if slicing[0] == "row":
+                    output = f[key][slicing[1]]
+
+                elif slicing[0] == "col":
+                    output = f[key][:, slicing[1]]
+
+                else:
+                    output = f[key][slicing[0]:slicing[1]]
 
             else:
                 output = f[key][()]
