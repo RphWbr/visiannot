@@ -2095,7 +2095,7 @@ class ViSiAnnoT():
                             # asynchronous signal
                             if self.flag_long_rec and not self.flag_synchro:
                                 # load intervals data
-                                interval = self.getDataSigTmp(
+                                interval, _ = self.getDataSigTmp(
                                     path_interval, signal_id, key_interval,
                                     freq_interval, self.tmp_delimiter,
                                     flag_interval=True
