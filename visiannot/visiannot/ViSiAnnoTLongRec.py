@@ -517,7 +517,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
         # get maximum number of video files with regard to camera
         nb_vid_max = max(
-            [len(v_list) for v_list in self.video_list_dict.values()]
+            [len(v_list[0]) for v_list in self.video_list_dict.values()]
         )
 
         # get list of camera IDs
