@@ -397,8 +397,9 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         # ******************************************************************* #
 
         # get configuration dictionaries for first file
+        self.ite_file = 0
         video_dict_current, signal_dict_current, interval_dict_current = \
-            self.getCurrentFileConfiguration(0)
+            self.getCurrentFileConfiguration()
 
         # lauch ViSiAnnoT
         ViSiAnnoT.__init__(
@@ -918,11 +919,11 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
     # *********************************************************************** #
 
 
-    def getCurrentFileConfiguration(self, ite_file):
+    def getCurrentFileConfiguration(self):
         video_dict = {}
         for cam_id, (path_list, _) in self.video_list_dict.items():
             video_dict[cam_id] = \
-                [path_list[ite_file]] + self.video_config_dict[cam_id]
+                [path_list[self.ite_file]] + self.video_config_dict[cam_id]
 
         signal_dict = {}
         interval_dict = {}
@@ -933,9 +934,9 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                     self.interval_list_dict[signal_id],
                     self.interval_config_dict[signal_id]
                 ):
-                    if ite_file < len(path_list):
+                    if self.ite_file < len(path_list):
                         self.interval_list_dict[signal_id].append(
-                            [path_list[ite_file]] + config
+                            [path_list[self.ite_file]] + config
                         )
 
             signal_dict[signal_id] = []
@@ -943,7 +944,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 data_info_list, self.signal_config_dict[signal_id]
             ):
                 signal_dict[signal_id].append(
-                    [path_list[ite_file]] + config
+                    [path_list[self.ite_file]] + config
                 )
 
         return video_dict, signal_dict, interval_dict
@@ -1066,10 +1067,10 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
         # check recording id
         if ite_file >= 0 and ite_file < self.nb_files:
-            video_dict_current, signal_dict_current, interval_dict_current = \
-                self.getCurrentFileConfiguration(ite_file)
-
             self.ite_file = ite_file
+
+            video_dict_current, signal_dict_current, interval_dict_current = \
+                self.getCurrentFileConfiguration()
 
             # loop on cameras
             for cam_id, config in video_dict_current.items():
