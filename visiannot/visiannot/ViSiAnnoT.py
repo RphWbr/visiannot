@@ -2222,6 +2222,22 @@ class ViSiAnnoT():
         return path, start_sec
 
 
+    @staticmethod
+    def loadDataSigTmp(path, key, flag_interval=False, **kwargs):
+        # load data
+        if flag_interval:
+            data = ToolsData.getDataIntervalAsTimeSeries(
+                path, key=key, **kwargs
+            )
+
+        else:
+            data = ToolsData.getDataGeneric(
+                path, key=key, **kwargs
+            )
+
+        return data
+
+
     def getDataSigTmp(
         self, path, signal_id, key_data, freq_data, delimiter,
         flag_interval=False
@@ -2260,7 +2276,7 @@ class ViSiAnnoT():
         else:
             # initialize data list
             data_list = []
-            start_sec_prev = -1
+            duration_progress = 0
 
             # look for data file path in order to get frequency if stored in
             # file attribute
@@ -2284,10 +2300,76 @@ class ViSiAnnoT():
 
                 # no data at the beginning
                 if data_path == "None":
-                    data_list.append(np.zeros((int(start_sec * freq_data),)))
-                    start_sec_prev = start_sec
+                    next_data = np.nan * np.ones((int(start_sec * freq_data),))
+                    duration_progress = start_sec
 
                 else:
+                    # check if 2D data (signal not regularly sampled)
+                    if freq_data == 0:
+                        # get first column (samples timestamps)
+                        next_data_ts = self.loadDataSigTmp(
+                            data_path, key_data, slicing=("col", 0)
+                        )
+
+                    # initialize slicing indexes
+                    start_ind = 0
+                    end_ind = None
+
+                    # truncate data at the beginning if necessary
+                    if ite_line == 0:
+                        # 1D data (regularly sampled)
+                        if freq_data > 0:
+                            # get slicing index
+                            start_ind = int(start_sec * freq_data)
+
+                        # 2D data (not regularly sampled)
+                        else:
+                            # get indexes of samples after starting second
+                            inds = np.where(
+                                next_data_ts >= start_sec * 1000
+                            )[0]
+
+                            # get slicing index
+                            start_ind = inds[0]
+
+                            # update temporal offset
+                            duration_progress = - start_sec
+
+                    # truncate data at the end if necessary
+                    if ite_line == len(lines) - 1:
+                        # get duration of reference data file in seconds
+                        ref_duration = self.nframes / self.fps
+
+                        # 1D data
+                        if freq_data > 0:
+                            # get length of data so far
+                            data_length = 0
+                            for data_tmp in data_list:
+                                data_length += data_tmp.shape[0]
+
+                            # get remaining data length required to fill
+                            # the reference data file
+                            remaining_length = int(round(
+                                freq_data * ref_duration - data_length
+                            ))
+
+                            # get slicing index
+                            end_ind = start_ind + remaining_length
+
+                        # 2D data (not regularly sampled)
+                        else:
+                            temporal_limit = (
+                                ref_duration - duration_progress
+                            ) * 1000
+
+                            # get indexes of samples before temporal limit
+                            inds = np.where(
+                                next_data_ts <= temporal_limit
+                            )[0]
+
+                            # get slicing indexes
+                            end_ind = inds[-1] + 1
+
                     # keyword arguments for ToolsData.getDataGeneric
                     # used when loading audio in order to specify channel
                     kwargs = {}
@@ -2295,93 +2377,49 @@ class ViSiAnnoT():
                         kwargs["channel_id"] = \
                             ToolsAudio.convertKeyToChannelId(key_data)
 
-                    # load data
-                    if flag_interval:
-                        next_data = ToolsData.getDataIntervalAsTimeSeries(
-                            data_path, key=key_data
-                        )
+                    # slicing keyword argument for data loading
+                    if start_ind == 0 and end_ind is None:
+                        kwargs["slicing"] = ()
+
+                    elif end_ind is None:
+                        kwargs["slicing"] = (start_ind,)
 
                     else:
-                        next_data = ToolsData.getDataGeneric(
-                            data_path, key_data, **kwargs
-                        )
+                        kwargs["slicing"] = (start_ind, end_ind)
 
-                    # truncate data at the beginning if necessary
-                    if ite_line == 0:
-                        # 1D data (constant frequency)
-                        if len(next_data.shape) == 1:
-                            start_frame = int(start_sec * freq_data)
-                            next_data = next_data[start_frame:]
+                    # load data with slicing
+                    next_data = self.loadDataSigTmp(
+                        data_path, key_data, flag_interval=flag_interval,
+                        **kwargs
+                    )
 
-                        # 2D data => ms timestamp on first axis
-                        else:
-                            inds = np.where(
-                                next_data[:, 0] >= start_sec * 1000
-                            )[0]
+                    # get duration of truncated data
+                    if freq_data > 0:
+                        duration = next_data.shape[0] / freq_data
 
-                            next_data = next_data[inds]
+                    else:
+                        duration = (next_data[-1, 0] - next_data[0, 0]) / 1000
 
-                            next_data[:, 0] = \
-                                next_data[:, 0] - start_sec * 1000
+                        # temporal offset
+                        next_data[:, 0] += duration_progress * 1000
 
+                    duration_progress += duration
 
-                    # truncate data at the end if necessary
-                    if ite_line == len(lines) - 1:
-                        # 1D data
-                        if len(next_data.shape) == 1:
-                            # get length of data so far
-                            data_length = 0
-                            for data_tmp in data_list:
-                                data_length += data_tmp.shape[0]
+                # concatenate data
+                data_list.append(next_data)
 
-                            # get the end frame
-                            end_frame = int(round(
-                                freq_data * self.nframes / self.fps -
-                                data_length
-                            ))
-
-                            next_data = next_data[:end_frame]
-
-                        # 2D data => ms timestamp on first axis
-                        else:
-                            if start_sec_prev != -1:
-                                inds = np.where(
-                                    next_data[:, 0] <= (
-                                        self.nframes / self.fps -
-                                        start_sec_prev
-                                    ) * 1000
-                                )[0]
-
-                                next_data = next_data[inds]
-
-                                next_data[:, 0] = \
-                                    next_data[:, 0] + start_sec_prev * 1000
-
-                            else:
-                                inds = np.where(
-                                    next_data[:, 0] <=
-                                    1000 * self.nframes / self.fps
-                                )[0]
-
-                                next_data = next_data[inds]
-
-                    start_sec_prev = -1
-
-                    # concatenate data
-                    data_list.append(next_data)
-
-            # check if 2D and zero fill at the beginning
+            # check if 2D and NaN fill at the beginning
             if len(data_list) > 1:
                 if len(data_list[0].shape) == 1 \
                         and len(data_list[1].shape) == 2:
-                    zero_length = data_list[0].shape[0]
+                    nan_length = data_list[0].shape[0]
                     if freq_data == 0:
                         data_list[0] = np.empty((0, 2))
 
                     else:
                         data_list[0] = np.vstack((
-                            np.arange(0, zero_length, int(1000 / freq_data)),
-                            np.zeros((zero_length,))
+                            np.arange(0, nan_length, int(1000 / freq_data)),
+                            np.zeros((nan_length,))
                         )).T
 
             # get data as a numpy array
