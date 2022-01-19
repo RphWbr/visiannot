@@ -819,34 +819,51 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         :rtype: list
         """
 
+        # remove empty data files (where beginning and ending datetimes are the
+        # same)
+        inds_to_remove = []
+        for ite_file, (beginning_datetime, ending_datetime) in enumerate(zip(
+            data_beginning_datetime_list, data_ending_datetime_list
+        )):
+            duration = (ending_datetime - beginning_datetime).total_seconds()
+            if duration == 0:
+                inds_to_remove.append(ite_file)
+
+        for ind in inds_to_remove:
+            data_beginning_datetime_list.pop(ind)
+            data_ending_datetime_list.pop(ind)
+
         # initialize list of synchronization files names
         synchro_path_list = []
 
-        # loop on videos beginning date time
+        # loop on beginning datetimes of reference data files
         for ref_datetime, ref_duration \
                 in zip(ref_beginning_datetime_list, ref_duration_list):
-            # compute difference of start time between video and signal files
+            # compute difference of beginning datetimes between reference and
+            # signal
             start_sig_diff_array = np.array([
                 (beg_rec - ref_datetime).total_seconds()
                 for beg_rec in data_beginning_datetime_list
             ])
 
-            # get signal files sharing temporality with video
+            # get signal files sharing temporality with reference data file
             sig_file_id_list = np.intersect1d(
                 np.where(start_sig_diff_array >= 0)[0],
                 np.where(start_sig_diff_array <= ref_duration)[0]
             )
 
-            # check if there is a signal file beginning before video
-            before_video_sig_array = np.where(start_sig_diff_array < 0)[0]
-            if before_video_sig_array.shape[0] > 0:
-                # check length of signal file beginning before video
-                if data_ending_datetime_list[before_video_sig_array[-1]] > \
+            # check if there is a signal file beginning before reference data
+            # file
+            before_ref_sig_array = np.where(start_sig_diff_array < 0)[0]
+            if before_ref_sig_array.shape[0] > 0:
+                # check length of signal file beginning before reference data
+                # file
+                if data_ending_datetime_list[before_ref_sig_array[-1]] > \
                         ref_datetime:
                     # update list of signal files sharing temporality with
-                    # video
+                    # reference data file
                     sig_file_id_list = np.hstack((
-                        before_video_sig_array[-1], sig_file_id_list
+                        before_ref_sig_array[-1], sig_file_id_list
                     ))
 
             # get synchronization file name
@@ -860,7 +877,8 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 for ite_id, sig_file_id in enumerate(sig_file_id_list):
                     # check first signal file
                     if ite_id == 0:
-                        # if first signal file begins before the video
+                        # if first signal file begins before the reference data
+                        # file
                         if start_sig_diff_array[sig_file_id] < 0:
                             # in case of TQRS, start second is computed from
                             #: the very beginning
