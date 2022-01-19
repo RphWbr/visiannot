@@ -2168,7 +2168,7 @@ class ViSiAnnoT():
                 )
 
                 # downsample if necessary
-                if freq_data > self.down_freq:
+                if freq_data is not None and freq_data > self.down_freq:
                     signal.downsampleSignal(self.down_freq)
 
                 # append temporary signal list
@@ -2271,7 +2271,8 @@ class ViSiAnnoT():
 
         # define empty data
         if len(lines) == 0:
-            data = np.array([])
+            data = None
+            freq_data = None
 
         else:
             # initialize data list
