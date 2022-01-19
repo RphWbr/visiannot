@@ -373,8 +373,8 @@ class AnnotEventWidget():
                     # loop on beginning datetime and duration of reference
                     # modality files in the long recording
                     for beg_datetime, duration in zip(
-                        visi.rec_beginning_datetime_list,
-                        visi.rec_duration_list
+                        visi.ref_beg_datetime_list,
+                        visi.ref_duration_list
                     ):
                         # get end datetime
                         end_datetime = beg_datetime + timedelta(
@@ -393,7 +393,7 @@ class AnnotEventWidget():
                     # loop on duration of reference modality files in the long
                     # recording
                     for ite_file, duration in enumerate(
-                        visi.rec_duration_list
+                        visi.ref_duration_list
                     ):
                         # write annotation file
                         f.write("%d_0 - %d_%d\n" % (

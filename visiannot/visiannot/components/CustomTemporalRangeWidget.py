@@ -154,12 +154,12 @@ class CustomTemporalRangeWidget():
             # check long recordings
             if visi.flag_long_rec:
                 # get recording id
-                start_rec_diff_array = np.array(
+                start_ref_diff_array = np.array(
                     [(beg_rec - start_date_time).total_seconds()
-                        for beg_rec in visi.rec_beginning_datetime_list]
+                        for beg_rec in visi.ref_beg_datetime_list]
                 )
 
-                new_ite_file = np.where(start_rec_diff_array >= 0)[0]
+                new_ite_file = np.where(start_ref_diff_array >= 0)[0]
 
                 if new_ite_file.shape[0] == 0:
                     coherence = False
@@ -168,7 +168,7 @@ class CustomTemporalRangeWidget():
                         "recordings"
                     )
 
-                elif new_ite_file.shape[0] == start_rec_diff_array.shape[0]:
+                elif new_ite_file.shape[0] == start_ref_diff_array.shape[0]:
                     coherence = False
                     print(
                         "wrong input: start time is below the beginning of "
@@ -212,6 +212,6 @@ class CustomTemporalRangeWidget():
             visi.updateSignalPlot()
 
             # update annotation regions plot
-            if len(visi.annotevent_label_list) > 0:
-                visi.clearAnnotEventRegions()
-                visi.plotAnnotEventRegions()
+            if visi.wid_annotevent is not None:
+                visi.wid_annotevent.clearRegions(visi)
+                visi.wid_annotevent.plotRegions(visi)
