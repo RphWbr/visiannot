@@ -677,14 +677,25 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             self.signal_config_dict[sig_id_0][0][2] = "%Y-%m-%dT%H-%M-%S"
 
 
-    def setSynchronizationTemporaryPaths(
-        self, signal_id, data_info_list, config_list, flag_interval=False
-    ):
+    def setSynchronizationTemporaryPaths(self, signal_id, flag_interval=False):
         # check if interval
         if flag_interval:
             # specify interval in data type for the temporary synchronization
             # file
             signal_id = "interval-%s" % signal_id
+
+            # get list of interval configurations
+            config_list = self.interval_config_dict[signal_id]
+
+            # get list of data info (paths and beginning datetimes)
+            data_info_list = self.interval_list_dict[signal_id]
+
+        else:
+            # get list of interval configurations
+            config_list = self.signal_config_dict[signal_id]
+
+            # get list of data info (paths and beginning datetimes)
+            data_info_list = self.signal_list_dict[signal_id]
 
         # loop on sub-data
         for ite_sig, (data_info, config) in enumerate(
@@ -735,27 +746,14 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         self.setReferenceModalityInfo()
 
         # loop on signal widgets
-        for signal_id, signal_list in self.signal_list_dict.items():
+        for signal_id in self.signal_list_dict.keys():
             # check if any interval in the current widget
             if signal_id in self.interval_list_dict.keys():
-                # get list of interval configurations
-                config_list = self.interval_config_dict[signal_id]
-
-                # get list of interval data info
-                interval_list = self.interval_list_dict[signal_id]
-
-                # synchronization
                 self.setSynchronizationTemporaryPaths(
-                    signal_id, interval_list, config_list, flag_interval=True
+                    signal_id, flag_interval=True
                 )
 
-            # get list of signal configurations
-            config_list = self.signal_config_dict[signal_id]
-
-            # synchronization
-            self.setSynchronizationTemporaryPaths(
-                signal_id, signal_list, config_list
-            )
+            self.setSynchronizationTemporaryPaths(signal_id)
 
 
     @staticmethod
