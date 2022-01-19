@@ -1956,8 +1956,7 @@ class ViSiAnnoT():
 
             # check FPS
             if fps <= 0 and path_video != '':
-                print("WARNING: video with null FPS at %s" % path_video)
-                print()
+                raise Warning("Video with null FPS at %s" % path_video)
 
         # check if there is any video
         if any(self.video_data_dict):
