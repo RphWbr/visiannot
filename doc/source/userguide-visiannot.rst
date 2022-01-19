@@ -710,8 +710,12 @@ Keyboard/mouse interactions
 ===========================
 Here is a synthesis of all the possible user interactions with the keyboard and the mouse.
 
+.. _keyboard:
+
 Keyboard
 --------
+
+Press
 
 * **space**: start/stop of the video playback
 * **left**: 1 second backward
@@ -744,6 +748,9 @@ Keyboard
 * **home**: set the position of the temporal cursor to the first sample of the current file
 * **end**: set the position of the temporal cursor to the last sample of the current file
 * **d** + **control** + **shift**: delete the display of annotation durations
+
+Release
+
 * **alt**: show/hide the menu bar
 
 Mouse click on the signal plots

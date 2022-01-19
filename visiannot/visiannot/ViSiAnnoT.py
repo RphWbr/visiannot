@@ -2214,22 +2214,6 @@ class ViSiAnnoT():
         return path, start_sec
 
 
-    @staticmethod
-    def loadDataSigTmp(path, key, flag_interval=False, **kwargs):
-        # load data
-        if flag_interval:
-            data = ToolsData.getDataIntervalAsTimeSeries(
-                path, key=key, **kwargs
-            )
-
-        else:
-            data = ToolsData.getDataGeneric(
-                path, key=key, **kwargs
-            )
-
-        return data
-
-
     def getDataSigTmp(
         self, path, signal_id, key_data, freq_data, delimiter,
         flag_interval=False
@@ -2300,8 +2284,8 @@ class ViSiAnnoT():
                     # check if 2D data (signal not regularly sampled)
                     if freq_data == 0:
                         # get first column (samples timestamps)
-                        next_data_ts = self.loadDataSigTmp(
-                            data_path, key_data, slicing=("col", 0)
+                        next_data_ts = ToolsData.getDataGeneric(
+                            data_path, key=key_data, slicing=("col", 0)
                         )
 
                     # initialize slicing indexes
@@ -2363,9 +2347,10 @@ class ViSiAnnoT():
                             # get slicing indexes
                             end_ind = inds[-1] + 1
 
-                    # keyword arguments for ToolsData.getDataGeneric
-                    # used when loading audio in order to specify channel
-                    kwargs = {}
+                    # keyword arguments for loading data
+                    kwargs = {"key": key_data}
+
+                    # channel specification when loading audio
                     if data_path.split('.')[-1] == "wav":
                         kwargs["channel_id"] = \
                             ToolsAudio.convertKeyToChannelId(key_data)
@@ -2380,11 +2365,18 @@ class ViSiAnnoT():
                     else:
                         kwargs["slicing"] = (start_ind, end_ind)
 
-                    # load data with slicing
-                    next_data = self.loadDataSigTmp(
-                        data_path, key_data, flag_interval=flag_interval,
-                        **kwargs
-                    )
+                    # check if interval data
+                    if flag_interval:
+                        # load data with slicing
+                        next_data = ToolsData.getDataIntervalAsTimeSeries(
+                            data_path, **kwargs
+                        )
+
+                    else:
+                        # load data with slicing
+                        next_data = ToolsData.getDataGeneric(
+                            data_path, **kwargs
+                        )
 
                     # get duration of truncated data
                     if freq_data > 0:
