@@ -2052,8 +2052,7 @@ class ViSiAnnoT():
         # ******************************************************************* #
 
         # loop on signals
-        for ite_type, (signal_id, signal_config_list) in \
-                enumerate(signal_dict.items()):
+        for signal_id, signal_config_list in signal_dict.items():
             # initialize temporary list
             sig_list_tmp = []
 
