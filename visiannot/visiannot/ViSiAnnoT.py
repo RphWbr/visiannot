@@ -895,7 +895,7 @@ class ViSiAnnoT():
         #: connected to the method :meth:`.ViSiAnnoT.updatePlot`
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.updatePlot)
-        self.timer.start()
+        self.timer.start(1000 / self.fps)
 
 
         # ******************************************************************* #
@@ -1193,9 +1193,6 @@ class ViSiAnnoT():
         It increments the value of :attr:`.frame_id`.
         """
 
-        # in order to get processing time for updating plot
-        time_start = time()
-
         # update plot only if pause status is False
         if not self.flag_pause_status:
             # plot temporal cursor at the value of self.frame_id
@@ -1206,9 +1203,6 @@ class ViSiAnnoT():
 
             # plot in a loop
             self.app.processEvents()
-
-        # sleep
-        sleep(max(0, 1 / self.fps - (time() - time_start)))
 
 
     def updateFrameId(self, frame_id):
