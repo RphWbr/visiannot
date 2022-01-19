@@ -614,7 +614,7 @@ class Configuration():
 
                     if elt_type == "edit_float" or elt_type == "edit_freq":
                         if value.count('.') < 2 and value.count(',') < 2 and \
-                                value.count('-') < 2:
+                                value.count('-') < 2 and len(value) > 0:
                             value_clean = \
                                 value.replace(',', '').replace('.', '')
 
