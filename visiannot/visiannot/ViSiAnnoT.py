@@ -16,7 +16,7 @@ import pyqtgraph as pg
 import numpy as np
 from threading import Thread
 import os
-from time import time, sleep
+from time import sleep
 from shutil import rmtree
 from ..tools import ToolsPyQt
 from ..tools import ToolsPyqtgraph
@@ -47,7 +47,7 @@ def checkConfiguration(config_id, config, config_type, flag_long_rec=True):
     :param config_id: configuration key in the configuration dictionary
     :type config_id: str
     :param config: configuration list
-    :type config: tuple or list
+    :type config: list
     :param config_type: used to set the right number of
         elements, one of the following: "Video", "Signal", "Interval",
         "Threshold" or "YRange" (otherwise nothing happens)
@@ -196,11 +196,6 @@ class ViSiAnnoT():
               array if regularly sampled, otherwise in a 2D array (where first
               column is the timestamp in milliseconds and the second column the
               signal value)
-            - (*str*) Key to access the data (in case of .mat or .h5 file),
-            - (*int* or *float* or *str*) Signal frequency, set it to ``0`` if
-              signal non regularly sampled, set it to ``-1`` if same frequency
-              as :attr:`.ViSiAnnoT.fps`, it may be a string with the path to
-              the frequency attribute in a .h5 file,
             - (*str*) Delimiter to get beginning datetime in the signal file
               name,
             - (*int*) Position of the beginning datetime in the signal file
@@ -208,52 +203,16 @@ class ViSiAnnoT():
             - (*str*) Format of the beginning datetime in the signal file name
               (either ``"posix"`` or a format compliant with
               ``datetime.strptime()``),
+            - (*str*) Key to access the data (in case of .mat or .h5 file),
+            - (*int* or *float* or *str*) Signal frequency, set it to ``0`` if
+              signal non regularly sampled, set it to ``-1`` if same frequency
+              as :attr:`.ViSiAnnoT.fps`, it may be a string with the path to
+              the frequency attribute in a .h5 file,
             - (*dict*) Plot style, see
               https://pyqtgraph.readthedocs.io/en/latest/graphicsItems/plotdataitem.html
               for details, set it to ``None`` for default.
 
-            Here is an example::
-
-                {
-                "sig_1": [
-                    [
-                        "folder1/file1.txt", "", 50, '_', 1,
-                        "%Y-%m-%dT%H-%M-%S", None
-                    ]
-                ],
-                "sig_2": [
-                    [
-                        "folder1/file2.h5", "key2", 0, '_', 0, "posix",
-                        {'pen': {'color': 'm', 'width': 1}
-                    ],
-                    ["folder3/file3.mat", "key3", -1, '_', 0, "posix", None]
-                ]
-                }
-
-            In case of audio signal to plot, the configuration list is slightly
-            different. The second element (key to access data) is a string to
-            specify which channel to plot. It must contain ``"left"`` or
-            ``"right"``, whatever the letter capitalization is. Otherwise, by
-            default the left channel is plotted. Moreover, the frequency is
-            directly retrieved from the wav file, so the third element of the
-            configuration list (signal frequency) is ignored.
-
-            Here is an example for audio::
-
-                {
-                "Audio L": [
-                    [
-                        "path/to/audio.wav", "Left channel", 0, '_', 1,
-                        "%Y-%m-%dT%H-%M-%S", None
-                    ]
-                ],
-                "Audio R": [
-                    [
-                        "path/to/audio.wav", "Right channel", 0, '_', 1,
-                        "%Y-%m-%dT%H-%M-%S", None
-                    ]
-                ]
-                }
+            See :ref:`signal` for details and examples.
         :type signal_dict: dict
         :param annotevent_dict: events annotation configuration,
             key is the label (string), value is the associated color (RGB or
@@ -282,10 +241,6 @@ class ViSiAnnoT():
             - (*str*) Path to the interval file, data can be stored as a 2D
               array (where each line has 2 elements: start and stop frames) or
               a 1D array (time series of 0 and 1),
-            - (*str*) Key to access the data (in case of .mat or .h5 file),
-            - (*int*) Signal frequency, set it to ``-1`` if same frequency as
-              :attr:`.ViSiAnnoT.fps`, it may be a string with the path to the
-              frequency attribute in a .h5 file,
             - (*str*) Delimiter to get beginning datetime in the interval file
               name,
             - (*int*) Position of the beginning datetime in the interval file
@@ -293,6 +248,10 @@ class ViSiAnnoT():
             - (*str*) Format of the beginning datetime in the interval file
               name (either ``"posix"`` or a format compliant with
               ``datetime.strptime()``),
+            - (*str*) Key to access the data (in case of .mat or .h5 file),
+            - (*int*) Signal frequency, set it to ``-1`` if same frequency as
+              :attr:`.ViSiAnnoT.fps`, it may be a string with the path to the
+              frequency attribute in a .h5 file,
             - (*tuple* or *list*) Plot color (RGBA).
         :type interval_dict: dict
         :param y_range_dict: visible Y range for signal widgets, each item
@@ -458,7 +417,8 @@ class ViSiAnnoT():
         #: always equal to 0.
         self.ite_file = 0
 
-        #: (*int*) Number of files in case of long recordings
+        #: (*int*) Number of files for reference modality in case of long
+        #: recording
         #:
         #: If :attr:`.flag_long_rec` is ``False``, then :attr:`.nb_files` is
         #: set to 1.
@@ -653,9 +613,10 @@ class ViSiAnnoT():
 
         # set style sheet
         ToolsPyQt.setStyleSheet(
-            self.app, font_name, font_size, font_color,
-            ["QGroupBox", "QComboBox", "QPushButton", "QRadioButton", "QLabel",
-             "QCheckBox", "QDateTimeEdit", "QTimeEdit"]
+            self.app, font_name, font_size, font_color, [
+                "QGroupBox", "QComboBox", "QPushButton", "QRadioButton",
+                "QLabel", "QCheckBox", "QDateTimeEdit", "QTimeEdit"
+            ]
         )
 
         # get default font for titles in pyqtgraph
@@ -784,12 +745,11 @@ class ViSiAnnoT():
 
         # *********************** signal widgets **************************** #
         #: (*list*) Signal widgets, each element is an instance of
-        #: :class:`.Signal` (same order as :attr:`.sig_dict`
+        #: :class:`.SignalWidget` (same order as :attr:`.sig_dict`)
         self.wid_sig_list = []
 
         if len(self.sig_dict) > 0:
             # create signal widgets and initialize signal plots
-            # it sets the attribute wid_sig_list
             self.initSignalPlot(
                 poswid_dict['progress'], y_range_dict=y_range_dict,
                 left_label_style=font_default_axis_label,
@@ -912,11 +872,7 @@ class ViSiAnnoT():
 
 
     # *********************************************************************** #
-    # ************************ ViSiAnnoT methods **************************** #
-    # *********************************************************************** #
-
-    # *********************************************************************** #
-    # Group: Miscellaneous methods
+    # Group: Methods for conversion between milliseconds and frame number
     # *********************************************************************** #
 
 
@@ -973,7 +929,7 @@ class ViSiAnnoT():
     # *********************************************************************** #
 
     # *********************************************************************** #
-    # Group: Methods for displaying video / plotting signals and progress bar
+    # Group: Methods for displaying video, signals and progress bar
     # *********************************************************************** #
 
 
@@ -1689,34 +1645,7 @@ class ViSiAnnoT():
 
     def keyPress(self, ev):
         """
-        Callback method for key press interaction
-
-        - **Space**: play/pause video playback
-        - **Left**: rewind 1 second (1 minute if **ctrl** key pressed as well)
-        - **Right**: forward 1 second (1 minute if **ctrl** key pressed as
-          well)
-        - **Down**: rewind 10 seconds (10 minutes if **ctrl** key pressed as
-          well)
-        - **Up**: forward 10 seconds (10 minutes if **ctrl** key pressed as
-          well)
-        - **l**: rewind 1 frame
-        - **m**: forward 1 frame
-        - **Home**: set the current frame :attr:`.ViSiAnnoT.frame_id` to 0
-        - **End**: set the current frame :attr:`.ViSiAnnoT.frame_id` to
-          ``ViSiAnnoT.nframes-1``
-        - **i**: zoom in (:meth:`.ViSiAnnoT.zoomIn` is called)
-        - **o**: zoom out (:meth:`.ViSiAnnoT.zoomOut` is called)
-        - **n**: set the temporal range to the fullest
-        - **a**: define start datetime of events annotation
-        - **z**: define end datetime of events annotation
-        - **e**: add events annotation
-        - **s**: display events annotations
-        - **Page down**: load previous file in case of long recordings
-          (:attr:`.ViSiAnnoT.flag_long_rec` is ``True``)
-        - **Page up**: load next file in case of long recordings
-          (:attr:`.ViSiAnnoT.flag_long_rec` is ``True``)
-        - **d** + **ctrl** + **shift**: clear the display of all events
-          annotation descriptions
+        Callback method for key press interaction, see :ref:`keyboard`
 
         :param ev: emmited when a key is pressed
         :type ev: QtGui.QKeyEvent
@@ -1828,9 +1757,7 @@ class ViSiAnnoT():
 
     def keyRelease(self, ev):
         """
-        Callback method for key release interaction
-
-        - **Alt**: show/hide menu bar
+        Callback method for key release interaction, see :ref:`keyboard`
 
         :param ev: emmited when a key is released
         :type ev: QtGui.QKeyEvent
@@ -1873,9 +1800,9 @@ class ViSiAnnoT():
         - :attr:`.sig_dict`
         - :attr:`.interval_dict`
 
-        Otherwise the video thread throws a RunTime error.
-        These attributes are then set thanks to the positional arguments
-        ``video_dict`` and ``signal_dict``.
+        Otherwise the video thread throws a RunTime error. These attributes are
+        then set thanks to the positional arguments ``video_dict`` and
+        ``signal_dict``.
 
         This method sets the following attributes:
 

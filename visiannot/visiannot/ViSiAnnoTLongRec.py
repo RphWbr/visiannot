@@ -19,7 +19,6 @@ from ..tools import ToolsPyQt
 from ..tools import ToolsDateTime
 from ..tools import ToolsData
 from ..tools import ToolsImage
-from ..tools import ToolsAudio
 from .ViSiAnnoT import ViSiAnnoT, checkConfiguration
 from .components.LogoWidgets import PreviousWidget, NextWidget
 from .components.FileSelectionWidget import FileSelectionWidget
@@ -64,11 +63,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
               argument ``signal_dict`` of :class:`.ViSiAnnoT` constructor for
               detail about data storing format,
             - (*str*) Pattern to find signal files,
-            - (*str*) Key to access the data (in case of .mat or .h5 file),
-            - (*int* or *float* or *str*) Signal frequency, set it to ``0`` if
-              signal non regularly sampled, set it to ``-1`` if same frequency
-              as :attr:`.ViSiAnnoT.fps`, it may be a string with the path to
-              the frequency attribute in a .h5 file,
             - (*str*) Delimiter to get beginning datetime in the signal file
               name,
             - (*int*) Position of the beginning datetime in the signal file
@@ -76,50 +70,16 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             - (*str*) Format of the beginning datetime in the signal file name
               (either ``"posix"`` or a format compliant with
               ``datetime.strptime()``),
+            - (*str*) Key to access the data (in case of .mat or .h5 file),
+            - (*int* or *float* or *str*) Signal frequency, set it to ``0`` if
+              signal non regularly sampled, set it to ``-1`` if same frequency
+              as :attr:`.ViSiAnnoT.fps`, it may be a string with the path to
+              the frequency attribute in a .h5 file,
             - (*dict*) Plot style, see
               https://pyqtgraph.readthedocs.io/en/latest/graphicsItems/plotdataitem.html
               for details, set it to ``None`` for default.
 
-            Here is an example::
-
-                {
-                "sig_1": [
-                    [
-                        "path/to/folder1", "", 50, "*_motion.txt", '_', 1,
-                        "%Y-%m-%dT%H-%M-%S", None
-                    ]
-                ],
-                "sig_2": [
-                    [
-                        "path/to/folder2", "ecg", 0, "*_physio.h5", '_', 0,
-                        "posix", {'pen': {'color': 'm', 'width': 1}
-                    ],
-                    [
-                        "path/to/folder2", "resp", -1, "*_physio.h5", '_', 0,
-                        "posix",None
-                    ]
-                ]
-                }
-
-            In case of audio signal to plot, the configuration list is slightly
-            different. The second element (key to access data) is a string to
-            specify which channel to plot. It must contain ``"left"`` or
-            ``"right"``, whatever the letter capitalization is. Otherwise, by
-            default the left channel is plotted. Moreover, the frequency is
-            directly retrieved from the wav file, so the third element of the
-            configuration list (signal frequency) is ignored.
-
-            Here is an example for audio::
-
-                {
-                "Audio L": [[
-                    "path/to/folder", "Left channel", 0, "*_audio.wav", '_',
-                    1, "%Y-%m-%dT%H-%M-%S", None
-                ]],
-                "Audio R": [[
-                    "path/to/folder", "Right channel", 0, "*_audio.wav", '_',
-                    1, "%Y-%m-%dT%H-%M-%S", None]]
-                }
+            See :ref:`sec-longrec` for details.
         :type signal_dict: dict
         :param interval_dict: interval configuration. Each item
             corresponds to a signal widget on which to plot intervals. The key
@@ -131,10 +91,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             - (*str*) Directory where to find interval files, see positional
               argument ``interval_dict`` of :class:`.ViSiAnnoT` constructor for
               detail about data storing format,
-            - (*str*) Key to access the data (in case of .mat or .h5 file),
-            - (*int*) Signal frequency, set it to ``-1`` if same frequency as
-              :attr:`.ViSiAnnoT.fps`, it may be a string with the path to the
-              frequency attribute in a .h5 file,
             - (*str*) Pattern to find interval files,
             - (*str*) Delimiter to get beginning datetime in the interval file
               name,
@@ -143,6 +99,10 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             - (*str*) Format of the beginning datetime in the interval file
               name (either ``"posix"`` or a format compliant with
               ``datetime.strptime()``),
+            - (*str*) Key to access the data (in case of .mat or .h5 file),
+            - (*int*) Signal frequency, set it to ``-1`` if same frequency as
+              :attr:`.ViSiAnnoT.fps`, it may be a string with the path to the
+              frequency attribute in a .h5 file,
             - (*tuple* or *list*) Plot color (RGBA).
         :type interval_dict: dict
         :param flag_synchro: specify if video and signal are synchronized, in
@@ -155,9 +115,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
             - ``1`` (focus on video, works better with a big screen),
             - ``2`` (focus on signal, suitable for a laptop screen),
-            - ``3`` (compact display with some features disabled),
-            - ``4`` (even more compact display, image extraction tool is
-              disabled).
+            - ``3`` (compact display with some features disabled).
         :type layout_mode: int
         :param poswid_dict: custom position of the widgets in the window,
             default ``{}`` to use the positions defined by the layout mode (see
@@ -278,8 +236,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
         #: (*dict*) Key is a data type, corresponding to a signal widget. Value
         #: is a list (along the signals in the widget) of lists of length 2:
-        #: list of signal paths and list of
-        #: beginning datetimes
+        #: list of signal paths and list of beginning datetimes
         self.signal_list_dict = {}
 
         #: (*dict*) Key is a data type, corresponding to a signal widget on
@@ -309,13 +266,17 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         #: (*str*) Delimiter for parsing temporary files for synchronization
         self.tmp_delimiter = " *=* "
 
+        #: (*list*) Beginning datetimes of the files of the reference modality
         self.ref_beg_datetime_list = None
+
+        #: (*list*) Durations of the files of the reference modality
         self.ref_duration_list = None
 
         # check if asynchronous signals
         print("Synchronized: %d" % self.flag_synchro)
         if not self.flag_synchro:
-            # create temporary directory for signals if not synchro with video
+            # create temporary directory for signals if not synchro with
+            # reference modality
             if not os.path.isdir(self.tmp_name):
                 os.mkdir(self.tmp_name)
 
@@ -325,8 +286,8 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 rmtree(self.tmp_name, ignore_errors=True)
                 os.mkdir(self.tmp_name)
 
-            # synchronize signals and intervals w.r.t. video and create
-            # temporary synchronization files
+            # synchronize signals and intervals w.r.t. reference modality and
+            # create temporary synchronization files
             self.processSynchronizationAll()
 
 
@@ -408,7 +369,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             flag_long_rec=True, layout_mode=layout_mode, **kwargs
         )
 
-        # udpate number of recordings
+        # udpate number of files for reference modality in the recording
         self.nb_files = len(self.ref_beg_datetime_list)
 
 
@@ -454,14 +415,39 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
     @staticmethod
     def getPathList(
-        config_id, config_list, config_type, flag_raise_exception=False,
+        config_id, config, config_type, flag_raise_exception=False,
         **kwargs
     ):
+        """
+        Gets list of paths and list of beginning datetimes along the recording
+        for a specific modality
+
+        :param config_id: configuration key of the modality in the
+            configuration dictionary
+        :type config_id: str
+        :param config: configuration list
+        :type config: list
+        :param config_type: one of the following: "Video", "Signal" or
+            "Interval"
+        :type config_type: str
+        :param flag_raise_exception: specify if an exception must be raised i
+            case no file is found
+        :type flag_raise_exception: bool
+        :param kwargs: keyword arguments of :func:`.getDatetimeFromPath`
+
+        :returns: 2 elements:
+
+            - (*list*) paths to the data files along the recording
+            - (*list*) beginning datetimes of the data files along the
+              recording
+        :rtype: list
+        """
+
         # check number of elements in configuration
-        checkConfiguration(config_id, config_list, config_type)
+        checkConfiguration(config_id, config, config_type)
 
         # get configuration
-        data_dir, pattern, delimiter, pos, fmt = config_list[:5]
+        data_dir, pattern, delimiter, pos, fmt = config[:5]
 
         # get list of data paths
         path_list = sorted(glob("%s/%s" % (data_dir, pattern)))
@@ -496,7 +482,15 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
     def setVideoListDict(self, video_dict, **kwargs):
         """
-        It sets the following attribute :attr:`.video_list_dict`
+        Finds the list of video files (path and beginning datetime) in the
+        long recording
+
+        It sets the attribute :attr:`.video_list_dict`.
+
+        :param video_dict: see first positional argument of
+            :class:`.ViSiAnnoTLongRec`
+        :type video_dict: dict
+        :param kwargs: keyword arguments of :meth:`.getPathList`
         """
 
         # initialize dictionaries
@@ -513,7 +507,11 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
     def checkVideoHoles(self):
         """
-        It updates the following attribute :attr:`.video_list_dict`
+        Checks if there are holes in the list of video files when comparing
+        the different cameras
+
+        It updates the attribute :attr:`.video_list_dict` by filling the holes
+        with a fake empty video file.
         """
 
         # get maximum number of video files with regard to camera
@@ -577,6 +575,22 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
 
     def setSignalIntervalList(self, signal_dict, interval_dict, **kwargs):
+        """
+        Finds the list of data files (path and beginning datetime) in the
+        long recording for signals and intervals
+
+        It sets the attributes :attr:`.signal_list_dict` and
+        :attr:`.interval_list_dict`.
+
+        :param signal_dict: see second positional argument of
+            :class:`.ViSiAnnoTLongRec`
+        :type signal_dict: dict
+        :param interval_dict: see keyword argument of
+            :class:`.ViSiAnnoTLongRec`
+        :type interval_dict: dict
+        :param kwargs: keyword arguments of :meth:`.getPathList`
+        """
+
         # initialize dictionaries
         self.signal_list_dict = {}
         self.interval_list_dict = {}
@@ -618,6 +632,12 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
     def setReferenceModalityInfo(self):
         """
+        Finds the beginning datetimes and the durations of the files of
+        reference modality along the recording
+
+        The reference modality is the first camera, or the first signal
+        in case there is no video.
+
         It sets the attributes :attr:`.ref_beg_datetime_list` and
         :attr:`.ref_duration_list`
         """
@@ -678,7 +698,21 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             self.signal_config_dict[sig_id_0][0][2] = "%Y-%m-%dT%H-%M-%S"
 
 
-    def setSynchronizationTemporaryPaths(self, signal_id, flag_interval=False):
+    def processSynchronizationSingleWidget(
+        self, signal_id, flag_interval=False
+    ):
+        """
+        Creates temporary synchronization files for signals or intervals in a
+        specific widget and updates the attribute :attr:`.signal_list_dict` or
+        :attr:`.interval_list_dict` with the synchronization files
+
+        :param signal_id: widget identifier (must be a key in
+            :attr:`.signal_list_dict`)
+        :type signal_id: str
+        :param flag_interval: specify if interval data to synchronize
+        :type flag_interval: bool
+        """
+
         # check if interval
         if flag_interval:
             # specify interval in data type for the temporary synchronization
@@ -744,17 +778,27 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
 
     def processSynchronizationAll(self):
+        """
+        Creates temporary synchronization files for all signals and intervals
+        and updates the attributes :attr:`.signal_list_dict` and
+        :attr:`.interval_list_dict` with the synchronization files
+
+        First it calls :meth:`.setReferenceModalityInfo`, then it calls
+        :meth:`.processSynchronizationSingleWidget` for each signal
+        widget.
+        """
+
         self.setReferenceModalityInfo()
 
         # loop on signal widgets
         for signal_id in self.signal_list_dict.keys():
             # check if any interval in the current widget
             if signal_id in self.interval_list_dict.keys():
-                self.setSynchronizationTemporaryPaths(
+                self.processSynchronizationSingleWidget(
                     signal_id, flag_interval=True
                 )
 
-            self.setSynchronizationTemporaryPaths(signal_id)
+            self.processSynchronizationSingleWidget(signal_id)
 
 
     @staticmethod
@@ -920,6 +964,16 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
 
     def getCurrentFileConfiguration(self):
+        """
+        Gets configuration dictionaries for the current file in the recording
+        to provide to :class:`.ViSiAnnoT`
+
+        :returns:
+            - **video_dict** (*dict*) -- video configuration
+            - **signal_dict** (*dict*) -- signal configuration
+            - **interval_dict** (*dict*) -- interval configuration
+        """
+
         video_dict = {}
         for cam_id, (path_list, _) in self.video_list_dict.items():
             video_dict[cam_id] = \
