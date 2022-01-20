@@ -257,7 +257,9 @@ def getDataDuration(
     path, freq, key='', flag_interval=False, **kwargs
 ):
     """
-    Gets the ending date-time of a data file
+    Gets the ending date-time of a data file (.mat, .h5 or .txt)
+
+    It raises an exception if the format is not supported.
 
     The beginning date-time must be in the path of the data files.
 
@@ -314,27 +316,54 @@ def getDataDuration(
 
 
 def getNbSamplesGeneric(path, key='', **kwargs):
+    """
+    Gets number of samples in a data file (.mat, .h5 or .txt)
+
+    It raises an exception if the format is not supported.
+
+    :param path: path to the data file
+    :type path: list
+    :param key: key to access the data (in case of .mat or .h5)
+    :type key: str
+
+    :returns: number of samples
+    :rtype: int
+    """
 
     _, ext = splitext(path)
 
     if ext == ".mat" or ext == ".h5":
         with File(path, 'r') as f:
-            nframes = f[key].shape[0]
+            nb_samples = f[key].shape[0]
 
     elif ext == ".txt":
         with open(path, 'r') as f:
-            nframes = len(f.readlines())
+            nb_samples = len(f.readlines())
 
     elif ext == ".wav":
-        _, _, nframes = getAudioWaveInfo(path, **kwargs)
+        _, _, nb_samples = getAudioWaveInfo(path, **kwargs)
 
     else:
         raise Exception("Data format not supported: %s" % ext)
 
-    return nframes
+    return nb_samples
 
 
 def getLastSampleGeneric(path, key=''):
+    """
+    Gets the last sample in a data file (.mat, .h5 or .txt)
+
+    It raises an exception if the format is not supported.
+
+    :param path: path to the data file
+    :type path: list
+    :param key: key to access the data (in case of .mat or .h5)
+    :type key: str
+
+    :returns: last sample
+    :rtype: float or str
+    """
+
     _, ext = splitext(path)
 
     if ext == ".mat" or ext == ".h5":
@@ -379,13 +408,14 @@ def getLastSampleGeneric(path, key=''):
 
 def getDataGeneric(path, key='', **kwargs):
     """
-    Loads data from a file with format mat, h5, txt or wav
+    Loads data from a file (.h5, .mat or .txt)
+
+    It raises an exception if the format is not supported.
 
     :param path: path to the data file
     :type path: str
        string containing the path to the data
-    :param key: key to access the data in case of mat or h5 file, for txt file
-        it is ignored
+    :param key: key to access the data (in case of .mat or .h5)
     :type key: str
     :param kwargs: keyword arguments of :func:`.getDataMat`,
         :func:`.getDataH5`, :func:`.getDataTxt` or
@@ -393,8 +423,6 @@ def getDataGeneric(path, key='', **kwargs):
 
     :returns: data
     :rtype: numpy array
-
-    It raises an exception if the format is not supported.
     """
 
     _, ext = splitext(path)
@@ -419,7 +447,7 @@ def getDataGeneric(path, key='', **kwargs):
 
 def getDataTxt(path, slicing=(), **kwargs):
     """
-    Loads data from a txt file
+    Loads data from a .txt file
 
     :param path: path to the data file
     :type path: str
@@ -431,7 +459,7 @@ def getDataTxt(path, slicing=(), **kwargs):
         - ``("row", ind)``: ``data[ind]``
         - ``("col", ind)``: ``data[:, ind]`` (2D array only)
     :type slicing: tuple
-    :param kwargs: keyword arguments of numpy.loadtxt (in case of txt file)
+    :param kwargs: keyword arguments of numpy.loadtxt
 
     :returns: data
     :rtype: numpy array
@@ -460,7 +488,7 @@ def getDataTxt(path, slicing=(), **kwargs):
 
 def getDataMat(path, key, slicing=()):
     """
-    Loads data from a mat file
+    Loads data from a .mat file
 
     :param path: path to the data file
     :type path: str
@@ -504,11 +532,11 @@ def getDataMat(path, key, slicing=()):
 
 def getAttributeH5(path, key_path):
     """
-    Gets an attribute in a h5 file
+    Gets an attribute in a .h5 file
 
     :param path: path to the file
     :type path: str
-    :param key_path: key path to the attribute in the file
+    :param key_path: path to the attribute in the file
     :type key_path: str
 
     :returns: attribute
@@ -528,16 +556,14 @@ def getAttributeH5(path, key_path):
 
 def getAttributeGeneric(path, key):
     """
-    Gets an attribute in a mat or h5 file
+    Gets an attribute in a .mat or .h5 file
 
     :param path: path to the file
     :type path: str
-    :param key_path: key path to the attribute in the file
+    :param key_path: path to the attribute in the file
     :type key_path: str
 
-    If the file is not mat or h5, it returns key.
-
-    :returns: attribute
+    :returns: attribute (if the file is not .mat or .h5, it returns ``key``)
     """
 
     _, ext = splitext(path)
@@ -556,7 +582,7 @@ def getAttributeGeneric(path, key):
 
 def getDataH5(path, key, slicing=()):
     """
-    Reads a dataset in a H5 file
+    Reads a dataset in a .h5 file
 
     :param path: path to the file
     :type path: str
