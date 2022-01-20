@@ -38,24 +38,35 @@ def getDatetimeFromPath(
 
     If datetime is not in the file name, then set to ``None`` one of the
     following positional argument: ``datetime_del``, ``datetime_pos``,
-    ``datetime_fmt``. By default the returned datetime is
+    ``datetime_fmt``.
+
+    If datetime is not found in the path, by default the function returns
     ``datetime(2000, 1, 1, 0, 0, 0)``.
 
     :returns: datetime
     :rtype: datetime.datetime
     """
 
-    if datetime_del is None or datetime_pos is None or datetime_fmt is None:
-        return datetime(2000, 1, 1, 0, 0, 0)
+    date_time = datetime(2000, 1, 1, 0, 0, 0)
 
-    else:
+    if datetime_del is not None and datetime_pos is not None \
+            and datetime_fmt is not None:
         # get file basename
         basename = os.path.splitext(os.path.basename(path))[0]
 
-        # get datetime string
-        datetime_str = basename.split(datetime_del)[datetime_pos]
+        # split basename
+        basename_split = basename.split(datetime_del)
 
-        return convertStringToDatetime(datetime_str, datetime_fmt, **kwargs)
+        # check split length
+        if len(basename_split) >= datetime_pos + 1:
+            # get datetime string
+            datetime_str = basename.split(datetime_del)[datetime_pos]
+
+            date_time = convertStringToDatetime(
+                datetime_str, datetime_fmt, **kwargs
+            )
+
+    return date_time
 
 
 def convertSectimeToTime(time):
