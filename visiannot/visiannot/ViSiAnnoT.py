@@ -215,8 +215,7 @@ class ViSiAnnoT():
             See :ref:`signal` for details and examples.
         :type signal_dict: dict
         :param annotevent_dict: events annotation configuration,
-            key is the label (string), value is the associated color (RGB or
-            RGBA)
+            key is the label (string), value is the associated color (RGBA)
         :type annotevent_dict: dict
         :param annotimage_list: labels for image extraction
         :type annotimage_list: list
@@ -228,8 +227,7 @@ class ViSiAnnoT():
             elements:
 
             - (*int* or *float*) Threshold value on Y axis,
-            - (*tuple* or *list* or *str*) Plot color in (RGB) format or HEX
-              color string.
+            - (*tuple* or *list*) Plot color (RGBA).
         :type threshold_dict: dict
         :param interval_dict: interval configuration. Each item corresponds to
             a signal widget on which to plot intervals. The key must be the
