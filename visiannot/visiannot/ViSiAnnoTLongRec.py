@@ -909,8 +909,8 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                     ))
 
             # get synchronization file name
-            tmp_path = "%s/%s_%s-%s_%s.txt" % (
-                output_dir, output_dir, signal_id, key_data.replace('/', '_'),
+            tmp_path = "%s/%s_%s_%s_%s.txt" % (
+                output_dir, output_dir, signal_id, key_data.replace('/', '-'),
                 ToolsDateTime.convertDatetimeToString(ref_datetime, fmt=1)
             )
 
