@@ -716,10 +716,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
         # check if interval
         if flag_interval:
-            # specify interval in data type for the temporary synchronization
-            # file
-            signal_id = "interval-%s" % signal_id
-
             # get list of interval configurations
             config_list = self.interval_config_dict[signal_id]
 
