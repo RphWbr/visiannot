@@ -13,6 +13,12 @@ Classes
 .. autosummary::
    visiannot.configuration.Configuration.Configuration
 
+Functions
+---------
+
+.. autosummary::
+   visiannot.configuration.Configuration.checkConfiguration
+
 API
 ===
 
@@ -24,4 +30,9 @@ Class Configuration
    :undoc-members:
    :show-inheritance:
    :private-members:
+
+Functions
+---------
+
+.. autofunction:: visiannot.configuration.Configuration.checkConfiguration
 

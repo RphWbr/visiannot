@@ -25,7 +25,6 @@ Functions
    visiannot.tools.ToolsDateTime.convertStringToDatetime
    visiannot.tools.ToolsDateTime.convertTimeToFrame
    visiannot.tools.ToolsDateTime.convertTimeToString
-   visiannot.tools.ToolsDateTime.getBeginningEndingDateTimeFromList
    visiannot.tools.ToolsDateTime.getDatetimeFromPath
 
 API
@@ -48,6 +47,5 @@ Functions
 .. autofunction:: visiannot.tools.ToolsDateTime.convertStringToDatetime
 .. autofunction:: visiannot.tools.ToolsDateTime.convertTimeToFrame
 .. autofunction:: visiannot.tools.ToolsDateTime.convertTimeToString
-.. autofunction:: visiannot.tools.ToolsDateTime.getBeginningEndingDateTimeFromList
 .. autofunction:: visiannot.tools.ToolsDateTime.getDatetimeFromPath
 
