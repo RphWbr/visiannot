@@ -11,7 +11,7 @@ User guide: ViSiAnnoT
 
 Video visualization with multiple cameras
 =========================================
-**ViSiAnnoT** can be used as a simple video player. Supported formats are the ones that are supported by **OpenCV** (for instance mp4 and avi). It is possible to play as many videos as wanted simultaneously, provided that they are synchronized. This is useful when the user has video files of several synchronized cameras. The name of the video files must contain the beginning datetime of the video, so that the software can check if the videos are indeed synchronized (a shift of one second is authorized between the video files).
+**ViSiAnnoT** can be used as a simple video player. Supported formats are the ones that are supported by **OpenCV** (for instance .mp4 and .avi). It is possible to play as many videos as wanted simultaneously, provided that they are synchronized. This is useful when the user has video files of several synchronized cameras. The name of the video files must contain the beginning datetime of the video, so that the software can check if the videos are indeed synchronized (a shift of one second is authorized between the video files).
 
 Here is an example::
 
@@ -41,7 +41,7 @@ From the sub-package **visiannot** we import the class :class:`.ViSiAnnoT`. We h
 
 The instance of :class:`.ViSiAnnoT` must be stored in a variable in order to have the window displayed.
 
-:numref:`fig-example-video` shows a screenshot of the resulting window. At the bottom, there is the progress bar which gives the current temporal position with the red dot and allows to navigate in the video. We call the red dot "navigation point". The temporal axis is expressed in absolute time. It is possible to navigate in the video by clicking in the progress bar and dragging the navigation point. The user can start/stop the video playback with the space key.
+:numref:`fig-example-video` shows a screenshot of the resulting window. At the bottom, there is the progress bar which gives the current temporal position with the red dot and allows to navigate in the video. We call the red dot "navigation point". The temporal axis is expressed in absolute datetime. It is possible to navigate in the video by clicking in the progress bar and dragging the navigation point. The user can start/stop the video playback with the space key.
 
 .. _fig-example-video:
 
@@ -56,28 +56,28 @@ If audio is contained in the video file, there is currently no audio playback.
 
 Signal visualization
 ====================
-**ViSiAnnoT** can be used as a simple signal viewer. The user can define as many widgets as wanted (which can be seen as figures) and plot as many signals as wanted in a widget. As for video visualization, the signal files should be synchronized.
+**ViSiAnnoT** can be used as a simple signal viewer. The user can define as many widgets as wanted (*i.e.* figures) and plot as many signals as wanted in a widget. As for video visualization, the signal files should be synchronized.
 
 Signal format
 -------------
-Supported formats are txt, mat, h5 and wav. There are two ways to store the signal:
+Supported formats are .txt, .mat, .h5 and .wav. There are two ways to store the signal:
 
 * As a vector of length :math:`n_{sample}`, where :math:`n_{sample} \in \mathbb{N}` is the number of samples in the file. In this case, the frequency is constant and must be provided by the user.
 * As a matrix of shape :math:`(n_{sample},2)`, where the first column contains the timestamp of each sample and the second column contains the value of the samples. This is particularly useful for non regularly sampled signals. The timestamps are expressed in milliseconds relatively to the beginning datetime of the file.
 
-In case several signals are plotted, the fact that their frequencies may be different is automatically managed.
-
 An example of non regularly sampled signal is the RR series, which is extracted from the physiological signal ECG (electrocardiogram). The ECG measures the electrical activity of the heart beat. During a heart beat cycle, there is a peak that can be detected. The RR series is defined as the difference between two successive peaks in the ECG. Since these peaks are not regular, the RR series is non regularly sampled.
 
+**NB: it is strongly advised to use the .h5 format instead of .txt in order to have better speed performance.**
 
 .. _signal_ex:
 
-Multiple signals on the same plot
----------------------------------
-**ViSiAnnoT** allows to display as many signals as wanted on the same plot. A default plot style can be used for up to 10 signals on the same plot. Since plotting relies on `Pyqtgraph`_, all the configurations available in this package can be used to customize plot style (see keyword arguments of `PlotDataItem`_ constructor).
+Multiple signal plots in the same widget
+----------------------------------------
+**ViSiAnnoT** allows to plot as many signals as wanted in the same widget. Since plotting relies on `Pyqtgraph <http://pyqtgraph.org/>`_, all the configurations available in this package can be used to customize plot style (see line style and point style keyword arguments of `PlotDataItem <https://pyqtgraph.readthedocs.io/en/latest/graphicsItems/plotdataitem.html#pyqtgraph.PlotDataItem.__init__>`_ constructor).
 
-.. _Pyqtgraph: http://pyqtgraph.org/
-.. _plotdataitem: https://pyqtgraph.readthedocs.io/en/latest/graphicsItems/plotdataitem.html#pyqtgraph.PlotDataItem.__init__
+A default plot style can be used For up to 10 signals plotted in the same widget, it is possible to use the default plot style (no symbol for points, points connected by a line). Only the color of the connecting line changes from one signal to another. Above 10 signals, it is required to manually specify the plot style.
+
+In case several signals are plotted in the same widget, the fact that their frequencies may be different is automatically managed.
 
 Here is an example::
 
@@ -102,12 +102,12 @@ Here is an example::
 	signal_dict = {}
 
 	signal_dict["ECG"] = [
-	    [path_ecg, "ecg", 500, '_', 0, "%Y%m%dT%H%M%S", None],
-	    [path_tqrs, "tqrs", 0, '_', 0, "%Y%m%dT%H%M%S", plot_style_tqrs]
+	    [path_ecg, '_', 0, "%Y%m%dT%H%M%S", "ecg", 500, None],
+	    [path_tqrs, '_', 0, "%Y%m%dT%H%M%S", "tqrs", 0, plot_style_tqrs]
 	]
 
 	signal_dict["Respiration"] = [
-	    [path_resp, "", 62.5, '_', 0, "%Y%m%dT%H%M%S", plot_style_resp]
+	    [path_resp, '_', 0, "%Y%m%dT%H%M%S", '', 62.5, plot_style_resp]
 	]
 
 	# create ViSiAnnoT window
@@ -119,16 +119,16 @@ Here is an example::
 From the sub-package **visiannot** we import the class :class:`.ViSiAnnoT`. We have a set of 3 synchronized signals (ECG, respiration and QRS beat detection), located in the folder *data*. The configuration dictionary ``signal_dict`` specifies to :class:`.ViSiAnnoT` where to find the signal files, what is the frequency of the signals, how to get the beginning datetime of the signal file and how to plot. Each item corresponds to one signal widget. The key is the widget ID, which is used as Y axis label. The value is a nested configuration list where each element corresponds to one signal to plot and is a list of 7 elements:
 
 * Path to the signal file,
-* Key to access the data in the file (in case of .h5 or .mat, set it to ``''`` otherwise), also used a legend,
-* Signal frequency (may also be a string with path to the frequency attribute in case of h5 file), set it to ``0`` in case of non-regularly sampled signal,
 * Delimiter to get the beginning datetime in the signal file name,
 * Position of the beginning datetime in the signal file name, according to the delimiter,
 * Format of the beginning datetime in the signal file name (``"posix"`` or format compliant with ``datetime``, see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes),
-* Dictionary with plot style.
+* Key to access the data in the file (in case of .h5 or .mat, set it to ``''`` otherwise), also used a legend,
+* Signal frequency (may also be a string with path to the frequency attribute in case of h5 file), set it to ``0`` in case of non-regularly sampled signal,
+* Dictionary with plot style, set to ``None`` for default plot style.
 
 The keyword argument ``pause_status`` is set to True so that the video playback is disabled at launch. The instance of :class:`.ViSiAnnoT` must be stored in a variable in order to have the window displayed.
 
-:numref:`fig-example-signal` shows a screenshot of the resulting window. On the first plot, there are two signals: ECG (sampled at 500 Hz) and QRS beat detection (non regularly sampled). On the second plot, there is one signal: respiration. The default plot style is used for the ECG (blue curve), whereas a custom plot style is defined for QRS beat detection (red dots) and respiration (purple curve). We call "temporal cursor" the red vertical line on the signal plots giving the current temporal position. It is linked to the red dot in the progress bar, which is above the signal plots.
+:numref:`fig-example-signal` shows a screenshot of the resulting window. On the first widget, there are two signals: ECG (sampled at 500 Hz) and QRS beat detection (non regularly sampled). On the second widget, there is one signal: respiration. The default plot style is used for the ECG (blue curve), whereas a custom plot style is defined for QRS beat detection (red dots) and respiration (purple curve). We call "temporal cursor" the red vertical line on the signal plots giving the current temporal position. It is linked to the red dot in the progress bar, which is above the signal widgets.
 
 .. _fig-example-signal:
 
@@ -149,8 +149,8 @@ Regarding the visualization of an audio signal, the configuration is slightly di
 	# signal configuration
 	signal_dict = {}
 
-	signal_dict["Audio L"] = [[path_audio, "Left channel", 0, '', None, '', None]]
-	signal_dict["Audio R"] = [[path_audio, "Right channel", 0, '', None, '', None]]
+	signal_dict["Audio L"] = [[path_audio, '', None, '', "Left channel", 0, None]]
+	signal_dict["Audio R"] = [[path_audio, '', None, '', "Right channel", 0, None]]
 
 	# create ViSiAnnoT window
 	win_visiannot = ViSiAnnoT(
@@ -177,7 +177,7 @@ The beginning datetime is not contained in the audio file name, so one of the th
 
 Zoom tools
 ----------
-The default zoom of PyQtGraph is available for the Y axis of the signal plots and is overwritten for the X axis so that all the signal plots are linked. Thus the zoom tools described here only affects the temporal axis.
+The default zoom of **Pyqtgraph** is available for the Y axis of the signal plots and is overwritten for the X axis so that all the signal widgets are linked. Thus the zoom tools described here only affects the temporal axis.
 
 Based on :numref:`fig-example-signal`, :numref:`fig-example-signal-zoom` illustrates the temporal zoom. We call "temporal range" the period of the signals that is displayed and "temporal range duration" its duration. In the progress bar, the black lines delimit the temporal range. We can see that the temporal range duration in :numref:`fig-example-signal` is 00h30min00s and becomes 00h00min21s after zoom in :numref:`fig-example-signal-zoom`. The black lines of the progress bar have also moved to show what part of the signals is displayed.
 
@@ -196,7 +196,9 @@ The temporal range can be defined with the combo list "Temporal range duration".
 
 YRange
 ------
-The range of values on the Y axis of a specific signal widget may be fixed by the user. This is done with the dictionary ``y_range_dict`` which is passed to :class:`.ViSiAnnoT`. The key of the dictionary must correspond to a key of ``signal_dict``, it specifies the signal widget where the Y range is fixed. The value of the dictionary is a tuple of length 2 with the minimum and maximum value on the Y axis.
+The range of values on the Y axis of a specific signal widget may be fixed by the user.
+
+This is done with the dictionary ``y_range_dict`` which is passed to :class:`.ViSiAnnoT` as a keyword argument. The key of the dictionary must correspond to a key of ``signal_dict``, it specifies the signal widget where the Y range is fixed. The value of the dictionary is a tuple of length 2 with the minimum and maximum value on the Y axis.
 
 Here is an example::
 
@@ -204,25 +206,10 @@ Here is an example::
 
 	# signal paths
 	path_ecg = "data/20170423T002840_ecg.txt"
-	path_tqrs = "data/20170423T002840_tqrs.mat"
-
-	# define plot style
-	plot_style_tqrs = {
-	    'pen': None,
-	    'symbol': '+',
-	    'symbolPen': 'r',
-	    'symbolSize': 10
-	}
-
-	plot_style_resp = {'pen': {'color': 'm', 'width': 1}}
 
 	# signal configuration
 	signal_dict = {}
-
-	signal_dict["ECG"] = [
-	    [path_ecg, "ecg", 500, '_', 0, "%Y%m%dT%H%M%S", None],
-	    [path_tqrs, "tqrs", 0, '_', 0, "%Y%m%dT%H%M%S", plot_style_tqrs]
-	]
+	signal_dict["ECG"] = [[path_ecg, '_', 0, "%Y%m%dT%H%M%S", "ecg", 500, None]]
 
 	# YRange configuration
 	y_range_dict = {}
@@ -240,6 +227,8 @@ Threshold values
 ----------------
 Threshold values can be drawn as horizontal lines on a signal plot. It may be useful to identify temporal intervals where a signal is above or below a specific value.
 
+This is done with the dictionary ``threshold_dict`` which is passed to :class:`.ViSiAnnoT` as a keyword argument. The key of the dictionary must correspond to a key of ``signal_dict``, it specifies the signal widget where to draw the threshold. The value of the dictionary is a nested list of thresholds, each element is a list of length 2: threshold value and threshold color (RGBA).
+
 Here is an example::
 
 	from visiannot.visiannot import ViSiAnnoT
@@ -248,29 +237,16 @@ Here is an example::
 	path_ecg = "data/20170423T002840_ecg.txt"
 	path_tqrs = "data/20170423T002840_tqrs.mat"
 
-	# define plot style
-	plot_style_tqrs = {
-		'pen': None,
-		'symbol': '+',
-		'symbolPen': 'r',
-		'symbolSize': 10
-	}
-
 	# signal configuration
 	signal_dict = {}
-
-	signal_dict["ECG"] = [
-		[path_ecg, "ecg", 500, '_', 0, "%Y%m%dT%H%M%S", None],
-		[path_tqrs, "tqrs", 0, '_', 0, "%Y%m%dT%H%M%S", plot_style_tqrs]
-	]
-
-	signal_dict["RR"] = [[path_tqrs, "rr", 0, '_', 0, "%Y%m%dT%H%M%S", None]]
+	signal_dict["ECG"] = [[path_ecg, '_', 0, "%Y%m%dT%H%M%S", "ecg", 500, None]]
+	signal_dict["RR"] = [[path_tqrs, '_', 0, "%Y%m%dT%H%M%S", "rr", 0, None]]
 
 	# threshold configuration
 	threshold_dict = {}
 	threshold_dict["RR"] = [
-		[600, "#336600"],
-		[750, "#B22222"]
+		[600, (51, 102, 0, 50)],
+		[750, (178, 34, 34, 50)]
 	]
 
 	# create ViSiAnnoT window
@@ -280,9 +256,7 @@ Here is an example::
 	)
 
 
-From the sub-package **visiannot** we import the class :class:`.ViSiAnnoT`. We have a set of 3 synchronized signals (ECG, QRS beat detection and RR series), located in the folder *data*. The QRS beat detection and RR series are stored in the same mat file, it is specified in ``signal_dict`` what is their respective key to access them (``"tqrs"`` and ``"rr"``). Both of those signals are non regularly sampled, so it is compulsory to set a regularly sampled signal on top (here ``"ecg"``).
-
-The threshold configuration dictionary ``threshold_dict`` specifies on which signal widget to draw the threshold (keys of the dictionary), the threshold value and its color (values of the dictionary). In this example, two thresholds are defined on the ``"RR"`` plot. :numref:`fig-example-threshold` shows this particular plot.
+In this example, two thresholds are defined on the ``"RR"`` widget. :numref:`fig-example-threshold` shows this particular plot.
 
 .. _fig-example-threshold:
 
@@ -295,7 +269,22 @@ The threshold configuration dictionary ``threshold_dict`` specifies on which sig
 
 Temporal intervals
 ------------------
-It is also possible to display temporal intervals on the signal plots. This may be useful if the user has pre-annotations or results from a detection algorithm and wants to visually check their accuracy.
+It is also possible to display temporal intervals on the signal widgets. This may be useful if the user has pre-annotations or results from a detection algorithm and wants to visually check their accuracy.
+
+This is done with the dictionary ``interval_dict`` which is passed to :class:`.ViSiAnnoT` as a keyword argument. The key of the dictionary must correspond to a key of ``signal_dict``, it specifies the signal widget where to display temporal intervals. The value of the dictionary is a nested list of configurations for each kind of interval to display on the same widget. The configuration is a list of length 7:
+
+* Path to the interval file,
+* Delimiter to get the beginning datetime in the interval file name,
+* Position of the beginning datetime in the interval file name, according to the delimiter,
+* Format of the beginning datetime in the interval file name (``"posix"`` or format compliant with ``datetime``, see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes),
+* Key to access the data in the file (in case of .h5 or .mat, set it to ``''`` otherwise),
+* Interval frequency (may also be a string with path to the frequency attribute in case of h5 file),
+* RGBA color.
+
+The intervals may be stored in two ways in the files:
+
+* As a vector of length :math:`n_{sample}` with 0 and 1, where :math:`n_{sample} \in \mathbb{N}` is the number of samples in the file,
+* As a matrix of shape :math:`(n_{inter},2)`, where :math:`n_{inter} \in \mathbb{N}` is the number of intervals in the file, each line is an interval with the starting sample and the ending sample.
 
 Here is an example::
 
@@ -318,15 +307,15 @@ Here is an example::
 	# signal configuration
 	signal_dict = {}
 	signal_dict["ECG"] = [
-		[path_ecg, "ecg", 500, '_', 0, "%Y%m%dT%H%M%S", None],
-		[path_tqrs, "tqrs", 0, '_', 0, "%Y%m%dT%H%M%S", plot_style_tqrs]
+		[path_ecg, '_', 0, "%Y%m%dT%H%M%S", "ecg", 500, None],
+		[path_tqrs, '_', 0, "%Y%m%dT%H%M%S", "tqrs", 0, plot_style_tqrs]
 	]
 
 	# interval configuration
 	interval_dict = {}
 	interval_dict["ECG"] = [
-		[path_interval, "", 500, '_', 0, "%Y%m%dT%H%M%S", (0, 255, 0, 50)],
-		[path_intervalbis, "", 500, '_', 0, "%Y%m%dT%H%M%S", (255, 200, 0, 50)]
+		[path_interval, '_', 0, "%Y%m%dT%H%M%S", '', 500, (0, 255, 0, 50)],
+		[path_intervalbis, '_', 0, "%Y%m%dT%H%M%S", '', 500, (255, 200, 0, 50)]
 	]
 
 	# create ViSiAnnoT window
@@ -336,22 +325,7 @@ Here is an example::
 	)
 
 
-From the sub-package **visiannot** we import the class :class:`.ViSiAnnoT`. We have a set of 2 synchronized signals (ECG and QRS beat detection) and 2 synchronized intervals, located in the folder *data*. The intervals may be stored in two ways in the files:
-
-* As a vector of length :math:`n_{sample}` with 0 and 1, where :math:`n_{sample} \in \mathbb{N}` is the number of samples in the file,
-* As a matrix of shape :math:`(n_{inter},2)`, where :math:`n_{inter} \in \mathbb{N}` is the number of intervals in the file, each line is an interval with the starting sample and the ending sample.
-
-The configuration dictionary ``interval_dict`` specifies to :class:`.ViSiAnnoT` where to find the interval file, what is the frequency of the interval, how to get the beginning datetime of the interval file and how to plot. Each item corresponds to one signal widget. The key is the widget ID (same as in ``signal_dict``). The value is a nested configuration list where each element corresponds to one type of interval and is a list of 7 elements:
-
-* Path to the interval file,
-* Key to access the data in the file (in case of .h5 or .mat, set it to ``''`` otherwise),
-* Interval frequency (may also be a string with path to the frequency attribute in case of h5 file),
-* Delimiter to get the beginning datetime in the interval file name,
-* Position of the beginning datetime in the interval file name, according to the delimiter,
-* Format of the beginning datetime in the interval file name (``"posix"`` or format compliant with ``datetime``, see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes),
-* RGB color.
-
-In this example, two types of intervals are defined on the ``"ECG"`` plot. A specific color is assigned to each type of temporal intervals. :numref:`fig-example-intervals` shows this particular plot.
+In this example, two kinds of intervals are defined on the ``"ECG"`` widget. A specific color is assigned to each kind of temporal intervals. :numref:`fig-example-intervals` shows this particular plot.
 
 .. _fig-example-intervals:
 
@@ -397,8 +371,8 @@ Here is an example::
 	signal_dict = {}
 
 	signal_dict["ECG"] = [
-	    [path_ecg, "ecg", 500, '_', 0, "%Y%m%dT%H%M%S", None],
-	    [path_tqrs, "tqrs", 0, '_', 0, "%Y%m%dT%H%M%S", plot_style_tqrs]
+	    [path_ecg, '_', 0, "%Y%m%dT%H%M%S", "ecg", 500, None],
+	    [path_tqrs, '_', 0, "%Y%m%dT%H%M%S", "tqrs", 0, plot_style_tqrs]
 	]
 
 	# create ViSiAnnoT window
@@ -447,6 +421,27 @@ In this context, there are two additional buttons that allow to switch easily fr
 
   Buttons and combo box for file selection in a long recording
 
+We define the video configuration and the signal configuration almost the same way as for the class :class:`.ViSiAnnoT`, but instead of specifying the path to a file, we specify the directory containing the files and a pattern to find them.
+
+Regarding ``video_dict``, each item corresponds to one camera. The key is the camera ID and the value is a list of 5 elements:
+
+* Directory where to find the video files,
+* Pattern to find the video files,
+* Delimiter to get the beginning datetime in the video file name,
+* Position of the beginning datetime in the video file name, according to the delimiter,
+* Format of the beginning datetime in the video file name (``"posix"`` or format compliant with ``datetime``, see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes).
+
+Regarding ``signal_dict``, each item corresponds to one signal widget. The key is the widget ID. The value is a nested configuration list where each element corresponds to one signal to plot and is a list of 8 elements:
+
+* Directory where to find the signal files,
+* Pattern to find the signal files,
+* Delimiter to get the beginning datetime in the signal file name,
+* Position of the beginning datetime in the signal file name, according to the delimiter,
+* Format of the beginning datetime in the signal file name (``"posix"`` or format compliant with ``datetime``, see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes),
+* Key to access the data in the file (in case of .h5 or .mat, set it to ``''`` otherwise), also used a legend,
+* Signal frequency (may also be a string with path to the frequency attribute in case of h5 file), set it to ``0`` in case of non-regularly sampled signal,
+* Dictionary with plot style.
+
 
 Set of synchronized files
 -------------------------
@@ -488,15 +483,12 @@ Here is an example::
 	signal_dict = {}
 
 	signal_dict["ECG"] = [
-	    [
-	        dir_sig, "SynapseRPi/ecg/value", 500, "data_15*.h5", '_', 1, "posix",
-	        None
-	    ]
+	    [dir_sig, "data_15*.h5", '_', 1, "posix", "ecg/value", 500, None]
 	]
 
 	signal_dict["Respiration"] = [
 	    [
-	        dir_sig, "SynapseRPi/resp/value", 62.5, "data_15*.h5", '_', 1, "posix",
+	        dir_sig, "data_15*.h5", '_', 1, "posix", "resp/value", 62.5,
 	        {'pen': {'color': 'm', 'width': 1}}
 	    ]
 	]
@@ -507,30 +499,6 @@ Here is an example::
 	    flag_pause_status=True,
 	    flag_synchro=False
 	)
-
-
-From the sub-package **visiannot** we import the class :class:`.ViSiAnnoTLongRec`. For a set of asynchronous files, the keyword argument ``flag_synchro`` is set to ``False`` whereas for a set of synchronized files it is set to ``True``.
-
-We define the video configuration and the signal configuration almost the same way as for the class :class:`.ViSiAnnoT`, but instead of specifying the path to a file, we specify the directory containing the files and a pattern to find them.
-
-Regarding ``video_dict``, each item corresponds to one camera. The key is the camera ID and the value is a list of 5 elements:
-
-* Directory where to find the video files,
-* Pattern to find the video files,
-* Delimiter to get the beginning datetime in the video file name,
-* Position of the beginning datetime in the video file name, according to the delimiter,
-* Format of the beginning datetime in the video file name (``"posix"`` or format compliant with ``datetime``, see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes).
-
-Regarding ``signal_dict``, each item corresponds to one signal widget. The key is the widget ID. The value is a nested configuration list where each element corresponds to one signal to plot and is a list of 8 elements:
-
-* Directory where to find the signal files,
-* Key to access the data in the file (in case of .h5 or .mat, set it to ``''`` otherwise), also used a legend,
-* Signal frequency (may also be a string with path to the frequency attribute in case of h5 file), set it to ``0`` in case of non-regularly sampled signal,
-* Pattern to find the signal files,
-* Delimiter to get the beginning datetime in the signal file name,
-* Position of the beginning datetime in the signal file name, according to the delimiter,
-* Format of the beginning datetime in the signal file name (``"posix"`` or format compliant with ``datetime``, see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes),
-* Dictionary with plot style.
 
 
 
@@ -612,7 +580,7 @@ Image extraction tool
 ---------------------
 This tool allows to extract a still image from the video(s) and associate a label to it.
 
-When creating an instance of *ViSiAnnoT* or *ViSiAnnoTLongRec*, the configuration of the annotation tool is given to the keyword argument ``annotimage_list``. Here is an example::
+When creating an instance of :class:`.ViSiAnnoT` or :class:`.ViSiAnnoTLongRec`, the configuration of the annotation tool is given to the keyword argument ``annotimage_list``. Here is an example::
 	
 	annotimage_list = ["Label-A", "Label-B", "Label-C"]
 
@@ -652,15 +620,12 @@ Here is an example of combined video and signal visualization in the context of 
 	signal_dict = {}
 
 	signal_dict["ECG"] = [
-	    [
-	        dir_sig, "SynapseRPi/ecg/value", 500, "data_15*.h5", '_', 1, "posix",
-	        None
-	    ]
+	    [dir_sig, "data_15*.h5", '_', 1, "posix", "ecg/value", 500, None]
 	]
 
 	signal_dict["Respiration"] = [
 	    [
-	        dir_sig, "SynapseRPi/resp/value", 62.5, "data_15*.h5", '_', 1, "posix",
+	        dir_sig, "data_15*.h5", '_', 1, "posix", "resp/value", 62.5,
 	        {'pen': {'color': 'm', 'width': 1}}
 	    ]
 	]
