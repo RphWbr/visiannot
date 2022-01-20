@@ -2151,8 +2151,16 @@ class ViSiAnnoT():
 
                 # no data at the beginning
                 if data_path == "None":
-                    next_data = np.nan * np.ones((int(start_sec * freq_data),))
-                    duration_progress = start_sec
+                    # check if 2D data (signal not regularly sampled)
+                    if freq_data == 0:
+                        next_data = np.empty((0, 2))
+
+                    else:
+                        next_data = np.nan * np.ones(
+                            (int(start_sec * freq_data),)
+                        )
+                    
+                    duration_progress += start_sec
 
                 else:
                     # check if 2D data (signal not regularly sampled)
@@ -2278,20 +2286,6 @@ class ViSiAnnoT():
 
                 # concatenate data
                 data_list.append(next_data)
-
-            # check if 2D and NaN fill at the beginning
-            if len(data_list) > 1:
-                if len(data_list[0].shape) == 1 \
-                        and len(data_list[1].shape) == 2:
-                    nan_length = data_list[0].shape[0]
-                    if freq_data == 0:
-                        data_list[0] = np.empty((0, 2))
-
-                    else:
-                        data_list[0] = np.vstack((
-                            np.arange(0, nan_length, int(1000 / freq_data)),
-                            np.zeros((nan_length,))
-                        )).T
 
             # get data as a numpy array
             data = np.concatenate(tuple(data_list))
