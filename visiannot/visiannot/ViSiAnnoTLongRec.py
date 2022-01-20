@@ -907,13 +907,13 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                     ))
 
             # get synchronization file name
-            tmp_file_name = "%s/%s_%s-%s_%s.txt" % \
-                (output_dir, output_dir, signal_id, key_data.replace('/', '_'),
-                 ToolsDateTime.convertDatetimeToString(ref_datetime, fmt=1)
-                 )
+            tmp_path = "%s/%s_%s-%s_%s.txt" % (
+                output_dir, output_dir, signal_id, key_data.replace('/', '_'),
+                ToolsDateTime.convertDatetimeToString(ref_datetime, fmt=1)
+            )
 
-            synchro_path_list.append(tmp_file_name)
-            with open(tmp_file_name, 'w') as f:
+            synchro_path_list.append(tmp_path)
+            with open(tmp_path, 'w') as f:
                 for ite_id, sig_file_id in enumerate(sig_file_id_list):
                     # check first signal file
                     if ite_id == 0:
