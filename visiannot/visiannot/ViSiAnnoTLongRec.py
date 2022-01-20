@@ -737,69 +737,41 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             path_list, beginning_datetime_list = data_info
             _, _, _, key, freq, _ = config
 
-            # compare list of data paths with signals that have been already
-            # synchronized
-            flag_already_sync = False
-            for path_list_tmp, synchro_path_list_tmp \
-                    in self.already_synchronized_list:
-                # check if same list of data paths => same synchronization
-                if not any(set(path_list) - set(path_list_tmp)):
-                    flag_already_sync = True
-                    break
+            # initialize list of data files ending datetime
+            ending_datetime_list = []
 
-            # check if same synchronization as a previous signal
-            if flag_already_sync:
-                # update list of data paths
-                if flag_interval:
-                    self.interval_list_dict[signal_id][ite_sig][0] = \
-                        synchro_path_list_tmp
-                
-                else:
-                    self.signal_list_dict[signal_id][ite_sig][0] = \
-                        synchro_path_list_tmp
+            # loop on data paths
+            for path, beginning_datetime in zip(
+                path_list, beginning_datetime_list
+            ):
+                # get frequency
+                freq = self.getDataFrequency(path, freq)
 
-            # process synchronization
+                # get data file duration
+                duration = ToolsData.getDataDuration(
+                    path, freq, key=key, flag_interval=flag_interval
+                )
+
+                # get ending datetime
+                ending_datetime_list.append(
+                    beginning_datetime + timedelta(seconds=duration)
+                )
+            
+            # create temporary synchronization files    
+            synchro_path_list = self.createSynchronizationFiles(
+                path_list, signal_id, key, self.ref_beg_datetime_list,
+                self.ref_duration_list, beginning_datetime_list,
+                ending_datetime_list, self.tmp_name, self.tmp_delimiter
+            )
+
+            # update list of data paths
+            if flag_interval:
+                self.interval_list_dict[signal_id][ite_sig][0] = \
+                    synchro_path_list
+            
             else:
-                # initialize list of data files ending datetime
-                ending_datetime_list = []
-
-                # loop on data paths
-                for path, beginning_datetime in zip(
-                    path_list, beginning_datetime_list
-                ):
-                    # get frequency
-                    freq = self.getDataFrequency(path, freq)
-
-                    # get data file duration
-                    duration = ToolsData.getDataDuration(
-                        path, freq, key=key, flag_interval=flag_interval
-                    )
-
-                    # get ending datetime
-                    ending_datetime_list.append(
-                        beginning_datetime + timedelta(seconds=duration)
-                    )
-                
-                # create temporary synchronization files    
-                synchro_path_list = self.createSynchronizationFiles(
-                    path_list, signal_id, key, self.ref_beg_datetime_list,
-                    self.ref_duration_list, beginning_datetime_list,
-                    ending_datetime_list, self.tmp_name, self.tmp_delimiter
-                )
-
-                # update list of data paths
-                if flag_interval:
-                    self.interval_list_dict[signal_id][ite_sig][0] = \
-                        synchro_path_list
-                
-                else:
-                    self.signal_list_dict[signal_id][ite_sig][0] = \
-                        synchro_path_list
-
-                # update list with signals that have been synchronized
-                self.already_synchronized_list.append(
-                    (path_list, synchro_path_list)
-                )
+                self.signal_list_dict[signal_id][ite_sig][0] = \
+                    synchro_path_list
 
 
     def processSynchronizationAll(self):
@@ -814,8 +786,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         """
 
         self.setReferenceModalityInfo()
-
-        self.already_synchronized_list = []
 
         # loop on signal widgets
         for signal_id in self.signal_list_dict.keys():
