@@ -2188,16 +2188,11 @@ class ViSiAnnoT():
                                 next_data_ts >= start_sec * 1000
                             )[0]
 
-                            # check if any data above starting second
-                            if len(inds) > 0:
-                                # get slicing index
-                                start_ind = inds[0]
+                            # get slicing index
+                            start_ind = inds[0]
 
-                                # update temporal offset
-                                duration_progress = - start_sec
-
-                            else:
-                                start_ind = None
+                            # update temporal offset
+                            duration_progress = - start_sec
 
                     # truncate data at the end if necessary
                     if ite_line == len(lines) - 1:
@@ -2234,55 +2229,48 @@ class ViSiAnnoT():
                             # get slicing indexes
                             end_ind = inds[-1] + 1
 
-                    # check if no data to load (might be the case for 2D data)
-                    if start_ind is None:
-                        next_data = np.empty((0, 2))
+                    # keyword arguments for loading data
+                    kwargs = {"key": key_data}
+
+                    # channel specification when loading audio
+                    if data_path.split('.')[-1] == "wav":
+                        kwargs["channel_id"] = \
+                            ToolsAudio.convertKeyToChannelId(key_data)
+
+                    # slicing keyword argument for data loading
+                    if start_ind == 0 and end_ind is None:
+                        kwargs["slicing"] = ()
+
+                    elif end_ind is None:
+                        kwargs["slicing"] = (start_ind,)
 
                     else:
-                        # keyword arguments for loading data
-                        kwargs = {"key": key_data}
+                        kwargs["slicing"] = (start_ind, end_ind)
 
-                        # channel specification when loading audio
-                        if data_path.split('.')[-1] == "wav":
-                            kwargs["channel_id"] = \
-                                ToolsAudio.convertKeyToChannelId(key_data)
+                    # check if interval data
+                    if flag_interval:
+                        # load data with slicing
+                        next_data = ToolsData.getDataIntervalAsTimeSeries(
+                            data_path, **kwargs
+                        )
 
-                        # slicing keyword argument for data loading
-                        if start_ind == 0 and end_ind is None:
-                            kwargs["slicing"] = ()
+                    else:
+                        # load data with slicing
+                        next_data = ToolsData.getDataGeneric(
+                            data_path, **kwargs
+                        )
 
-                        elif end_ind is None:
-                            kwargs["slicing"] = (start_ind,)
+                    # get duration of truncated data
+                    if freq_data > 0:
+                        duration = next_data.shape[0] / freq_data
 
-                        else:
-                            kwargs["slicing"] = (start_ind, end_ind)
+                    else:
+                        duration = (next_data[-1, 0] - next_data[0, 0]) / 1000
 
-                        # check if interval data
-                        if flag_interval:
-                            # load data with slicing
-                            next_data = ToolsData.getDataIntervalAsTimeSeries(
-                                data_path, **kwargs
-                            )
+                        # temporal offset
+                        next_data[:, 0] += duration_progress * 1000
 
-                        else:
-                            # load data with slicing
-                            next_data = ToolsData.getDataGeneric(
-                                data_path, **kwargs
-                            )
-
-                        # get duration of truncated data
-                        if freq_data > 0:
-                            duration = next_data.shape[0] / freq_data
-
-                        else:
-                            duration = (
-                                next_data[-1, 0] - next_data[0, 0]
-                            ) / 1000
-
-                            # temporal offset
-                            next_data[:, 0] += duration_progress * 1000
-
-                        duration_progress += duration
+                    duration_progress += duration
 
                 # concatenate data
                 data_list.append(next_data)
