@@ -19,7 +19,8 @@ from ..tools import ToolsPyQt
 from ..tools import ToolsDateTime
 from ..tools import ToolsData
 from ..tools import ToolsImage
-from .ViSiAnnoT import ViSiAnnoT, checkConfiguration
+from .ViSiAnnoT import ViSiAnnoT
+from ..configuration import checkConfiguration
 from .components.LogoWidgets import PreviousWidget, NextWidget
 from .components.FileSelectionWidget import FileSelectionWidget
 

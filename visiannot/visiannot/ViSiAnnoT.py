@@ -36,62 +36,7 @@ from .components.FromCursorTemporalRangeWidget import \
 from .components.LogoWidgets import ZoomInWidget, ZoomOutWidget, FullVisiWidget
 from .components.AnnotEventWidget import AnnotEventWidget
 from .components.AnnotImageWidget import AnnotImageWidget
-
-
-def checkConfiguration(config_id, config, config_type, flag_long_rec=True):
-    """
-    Checks if a configuration list has the right number of elements
-
-    It raises an exception if it is not the case.
-
-    :param config_id: configuration key in the configuration dictionary
-    :type config_id: str
-    :param config: configuration list
-    :type config: list
-    :param config_type: used to set the right number of
-        elements, one of the following: "Video", "Signal", "Interval",
-        "Threshold" or "YRange" (otherwise nothing happens)
-    :type config_type: str
-    :param flag_long_rec: specify if configuration in the context of
-        :class:`.ViSiAnnoTLongRec`, otherwise :class:`.ViSiAnnoT` (it has an
-        impact on "video", "signal" and "interval")
-    :type flag_long_rec: bool
-    """
-
-    # get the right number of elements
-    if config_type == "Video":
-        if flag_long_rec:
-            n = 5
-
-        else:
-            n = 4
-
-    elif config_type == "Signal" or config_type == "Interval":
-        if flag_long_rec:
-            n = 8
-
-        else:
-            n = 7
-
-    elif config_type == "Threshold":
-        n = 2
-
-    elif config_type == "YRange":
-        n = 2
-
-    else:
-        n = None
-
-    if n is not None:
-        # get number of elements in configuration
-        m = len(config)
-
-        # check if wrong number of elements in configuration
-        if n != m:
-            raise Exception(
-                "Wrong number of elements in signal configuration %s: %d "
-                "instead of %d" % (config_id, m, n)
-            )
+from ..configuration import checkConfiguration
 
 
 class ViSiAnnoT():
