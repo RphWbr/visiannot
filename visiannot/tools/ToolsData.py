@@ -13,7 +13,7 @@ Module with functions for loading and saving data files
 
 import numpy as np
 import sys
-from os.path import isfile, split, abspath, dirname, realpath
+from os.path import isfile, split, abspath, dirname, realpath, splitext
 from scipy.io import loadmat
 from h5py import File
 from .ToolsAudio import getAudioWaveInfo, getDataAudio
@@ -314,17 +314,18 @@ def getDataDuration(
 
 
 def getNbSamplesGeneric(path, key='', **kwargs):
-    ext = path.split('.')[-1]
 
-    if ext == "mat" or ext == "h5":
+    _, ext = splitext(path)
+
+    if ext == ".mat" or ext == ".h5":
         with File(path, 'r') as f:
             nframes = f[key].shape[0]
 
-    elif ext == "txt":
+    elif ext == ".txt":
         with open(path, 'r') as f:
             nframes = len(f.readlines())
 
-    elif ext == "wav":
+    elif ext == ".wav":
         _, _, nframes = getAudioWaveInfo(path, **kwargs)
 
     else:
@@ -334,9 +335,9 @@ def getNbSamplesGeneric(path, key='', **kwargs):
 
 
 def getLastSampleGeneric(path, key=''):
-    ext = path.split('.')[-1]
+    _, ext = splitext(path)
 
-    if ext == "mat" or ext == "h5":
+    if ext == ".mat" or ext == ".h5":
         with File(path, 'r') as f:
             dataset = f[key]
 
@@ -347,7 +348,7 @@ def getLastSampleGeneric(path, key=''):
             else:
                 last_sample = dataset[-1]
 
-    elif ext == "txt":
+    elif ext == ".txt":
         with open(path, 'rb') as f:
             try:
                 f.seek(-2, SEEK_END)
@@ -396,18 +397,18 @@ def getDataGeneric(path, key='', **kwargs):
     It raises an exception if the format is not supported.
     """
 
-    ext = path.split('.')[-1]
+    _, ext = splitext(path)
 
-    if ext == "mat":
+    if ext == ".mat":
         data = getDataMat(path, key, **kwargs)
 
-    elif ext == "h5":
+    elif ext == ".h5":
         data = getDataH5(path, key, **kwargs)
 
-    elif ext == "txt":
+    elif ext == ".txt":
         data = getDataTxt(path, **kwargs)
 
-    elif ext == "wav":
+    elif ext == ".wav":
         _, data, _ = getDataAudio(path, **kwargs)
 
     else:
@@ -539,12 +540,12 @@ def getAttributeGeneric(path, key):
     :returns: attribute
     """
 
-    ext = path.split('.')[-1]
+    _, ext = splitext(path)
 
-    if ext == "mat":
+    if ext == ".mat":
         attr = getDataMat(path, key)
 
-    elif ext == "h5":
+    elif ext == ".h5":
         attr = getAttributeH5(path, key)
 
     else:
