@@ -841,13 +841,15 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         :param ref_beginning_datetime_list: instances of datetime.datetime with
             the beginning datetime of each reference file
         :type ref_beginning_datetime_list: list
-        :param ref_duration_list: durations of each reference file in seconds
+        :param ref_duration_list: durations of each reference file in seconds,
+            same length as ``ref_beginning_datetime_list``
         :type ref_duration_list: list
         :param data_beginning_datetime_list: instances of datetime.datetime
             with the beginning datetime of each data file to synchronize
         :type data_beginning_datetime_list: list
         :param data_ending_datetime_list: instances of datetime.datetime with
-            the ending datetime of each data file to synchronize
+            the ending datetime of each data file to synchronize, same length
+            as ``data_beginning_datetime_list``
         :type data_ending_datetime_list: list
         :param output_dir: directory where to save the synchronization files
         :type output_dir: str

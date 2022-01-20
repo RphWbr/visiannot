@@ -2091,7 +2091,7 @@ class ViSiAnnoT():
         """
         Gets signal data after synchronization with video
 
-        :param path: path to the temporary signal file
+        :param path: path to the temporary synchronization file
         :type path: str
         :param signal_id: signal type (key in the dictionary ``signal_dict``,
             second positional argument of :class:`.ViSiAnnoT` constructor)
