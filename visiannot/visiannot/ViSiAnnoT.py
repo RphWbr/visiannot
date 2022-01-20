@@ -1101,7 +1101,7 @@ class ViSiAnnoT():
             self.frame_id += 1
 
             # plot in a loop
-            self.app.processEvents()
+            # self.app.processEvents() # not sure about the usefullness of this
 
 
     def updateFrameId(self, frame_id):
