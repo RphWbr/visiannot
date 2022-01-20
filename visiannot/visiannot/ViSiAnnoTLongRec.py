@@ -23,6 +23,7 @@ from .ViSiAnnoT import ViSiAnnoT
 from ..configuration import checkConfiguration
 from .components.LogoWidgets import PreviousWidget, NextWidget
 from .components.FileSelectionWidget import FileSelectionWidget
+from concurrent.futures import ProcessPoolExecutor
 
 
 class ViSiAnnoTLongRec(ViSiAnnoT):
@@ -651,21 +652,12 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             path_list = self.video_list_dict[cam_id_0][0]
             self.ref_beg_datetime_list = self.video_list_dict[cam_id_0][1]
 
-            # initialize list of videos duration for fist camera
+            # get duration of of video files for first camera
+            # (parallelization to improve performance)
             self.ref_duration_list = []
-
-            # loop on videos of first camera
-            for path in path_list:
-                # get video information
-                _, nframes, fps = ToolsImage.getDataVideo(path)
-
-                # check fps
-                if fps > 0:
-                    # get duration
-                    self.ref_duration_list.append(nframes / fps)
-
-                else:
-                    self.ref_duration_list.append(0)
+            with ProcessPoolExecutor() as executor:
+                for r in executor.map(ToolsImage.getVideoDuration, path_list):
+                    self.ref_duration_list.append(r)
 
         # no video => first signal is the reference modality for
         # synchronization

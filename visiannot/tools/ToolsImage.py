@@ -13,6 +13,7 @@ Module with functions for loading image and video files
 
 from cv2 import imread, VideoCapture
 import numpy as np
+from os.path import isfile
 
 
 def transformImage(im, RGB_combination="BGR", flag_transpose=True):
@@ -108,3 +109,11 @@ def getDataVideo(path):
     fps = data_video.get(5)
 
     return data_video, nframes, fps
+def getVideoDuration(*args):
+    _, nframes, fps = getDataVideo(*args)
+
+    if fps > 0:
+        return nframes / fps
+
+    else:
+        return 0
