@@ -2197,6 +2197,10 @@ class ViSiAnnoT():
                 if freq_data_tmp is not None:
                     freq_data = freq_data_tmp
 
+            # data frequency is the same as reference frequency
+            elif freq_data == -1:
+                freq_data = self.fps
+
             # loop on temporary file lines
             for ite_line, line in enumerate(lines):
                 # get data path and starting second
