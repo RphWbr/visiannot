@@ -14,6 +14,7 @@ Module with functions for loading image and video files
 from cv2 import imread, VideoCapture
 import numpy as np
 from os.path import isfile
+from tinytag import TinyTag
 
 
 def transformImage(im, RGB_combination="BGR", flag_transpose=True):
@@ -116,11 +117,20 @@ def getDataVideo(path):
         return None, 0, -1
 
 
-def getVideoDuration(*args):
-    _, nframes, fps = getDataVideo(*args)
+def getVideoDuration(path):
+    """
+    Gets duration of a video file
 
-    if fps > 0:
-        return nframes / fps
+    :param path: path to the video file
+    :type path: str
+
+    :returns: video file duration in seconds
+    :rtype: float
+    """
+
+    # check if video file exists
+    if isfile(path):
+        return TinyTag.get(path).duration
 
     else:
         return 0
