@@ -855,7 +855,7 @@ class ViSiAnnoT():
         #: connected to the method :meth:`.ViSiAnnoT.updatePlot`
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.updatePlot)
-        self.timer.start(1000 / self.fps)
+        self.timer.start(int(1000 / self.fps))
 
 
         # ******************************************************************* #
