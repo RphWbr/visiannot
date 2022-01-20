@@ -93,22 +93,29 @@ def getDataVideo(path):
     :type path: str
 
     :returns:
-        - **data_video** (*cv2.VideoCapture*)
-        - **nframes** (*int*) -- number of frames in the video
-        - **fps** (*int* or *float*) - frame rate of the video
-        - **date_time** (*datetime.datetime*) -- beginning date-time of the
-          video file (this information must be provided in the name of the
-          video file, see :func:`.ToolsDateTime.getFileDatetimeString`)
+        - **data_video** (*cv2.VideoCapture*) (``None`` if video file does not
+          exist)
+        - **nframes** (*int*) -- number of frames in the video (0 if video file
+          does not exist)
+        - **fps** (*int* or *float*) - frame rate of the video (-1 if video
+          file does not exist)
     """
 
-    # get video data
-    data_video = VideoCapture(path)
+    # check if video file exists
+    if isfile(path):
+        # get video data
+        data_video = VideoCapture(path)
 
-    # get number of frames and fps
-    nframes = int(data_video.get(7))
-    fps = data_video.get(5)
+        # get number of frames and fps
+        nframes = int(data_video.get(7))
+        fps = data_video.get(5)
 
-    return data_video, nframes, fps
+        return data_video, nframes, fps
+
+    else:
+        return None, 0, -1
+
+
 def getVideoDuration(*args):
     _, nframes, fps = getDataVideo(*args)
 

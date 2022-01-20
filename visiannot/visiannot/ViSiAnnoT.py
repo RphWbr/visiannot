@@ -1798,20 +1798,19 @@ class ViSiAnnoT():
             # get video configuration
             path_video, delimiter, pos, fmt = video_config
 
-            # get data
-            if path_video != '':
-                self.video_data_dict[video_id], nframes, fps = \
-                    ToolsImage.getDataVideo(path_video)
+            # get video data
+            self.video_data_dict[video_id], nframes, fps = \
+                ToolsImage.getDataVideo(path_video)
 
+            # check if no video data
+            if self.video_data_dict is None:
+                beginning_datetime = None
+
+            else:
+                # get beginning datetime of video file
                 beginning_datetime = ToolsDateTime.getDatetimeFromPath(
                     path_video, delimiter, pos, fmt, time_zone=self.time_zone
                 )
-
-            else:
-                self.video_data_dict[video_id] = None
-                nframes = 0
-                fps = -1
-                beginning_datetime = None
 
             # update lists
             nframes_list.append(nframes)
