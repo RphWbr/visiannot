@@ -194,10 +194,10 @@ class SignalWidget(pg.PlotWidget):
 
         :param first_frame_ms: start timestamp of the temporal range to display
             (in milliseconds)
-        :type first_frame_ms: int
+        :type first_frame_ms: float
         :param last_frame_ms: end timestamp of the temporal range to display
             (in milliseconds)
-        :type last_frame_ms: int
+        :type last_frame_ms: float
         :param sig_list: signals to plot, each element is an instance of
             :class:`.Signal`
         :type sig_list: list 
