@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright Université Rennes 1 / INSERM
-# Contributor: Raphael Weber
+# Contributor: Raphael Weber, Edouard Boustouler
 #
 # Under CeCILL license
 # http://www.cecill.info
