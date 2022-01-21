@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright Université Rennes 1 / INSERM
-# Contributor: Raphael Weber
+# Contributor: Raphael Weber, Edouard Boustouler
 #
 # Under CeCILL license
 # http://www.cecill.info
@@ -13,6 +13,8 @@ Module with functions for loading image and video files
 
 from cv2 import imread, VideoCapture
 import numpy as np
+from os.path import isfile
+from tinytag import TinyTag
 
 
 def transformImage(im, RGB_combination="BGR", flag_transpose=True):
@@ -92,19 +94,43 @@ def getDataVideo(path):
     :type path: str
 
     :returns:
-        - **data_video** (*cv2.VideoCapture*)
-        - **nframes** (*int*) -- number of frames in the video
-        - **fps** (*int* or *float*) - frame rate of the video
-        - **date_time** (*datetime.datetime*) -- beginning date-time of the
-          video file (this information must be provided in the name of the
-          video file, see :func:`.ToolsDateTime.getFileDatetimeString`)
+        - **data_video** (*cv2.VideoCapture*) (``None`` if video file does not
+          exist)
+        - **nframes** (*int*) -- number of frames in the video (0 if video file
+          does not exist)
+        - **fps** (*int* or *float*) - frame rate of the video (-1 if video
+          file does not exist)
     """
 
-    # get video data
-    data_video = VideoCapture(path)
+    # check if video file exists
+    if isfile(path):
+        # get video data
+        data_video = VideoCapture(path)
 
-    # get number of frames and fps
-    nframes = int(data_video.get(7))
-    fps = data_video.get(5)
+        # get number of frames and fps
+        nframes = int(data_video.get(7))
+        fps = data_video.get(5)
 
-    return data_video, nframes, fps
+        return data_video, nframes, fps
+
+    else:
+        return None, 0, -1
+
+
+def getVideoDuration(path):
+    """
+    Gets duration of a video file
+
+    :param path: path to the video file
+    :type path: str
+
+    :returns: video file duration in seconds
+    :rtype: float
+    """
+
+    # check if video file exists
+    if isfile(path):
+        return TinyTag.get(path).duration
+
+    else:
+        return 0

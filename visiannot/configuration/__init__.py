@@ -3,8 +3,8 @@
 from os.path import dirname
 from pkgutil import iter_modules
 
-# import classes to ease import outside of the package
-from .Configuration import Configuration
+# import classes/functions to ease import outside of the package
+from .Configuration import Configuration, checkConfiguration
 from .ConfigurationWindow import ConfigurationWindow
 
 

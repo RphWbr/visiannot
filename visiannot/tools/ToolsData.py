@@ -13,10 +13,12 @@ Module with functions for loading and saving data files
 
 import numpy as np
 import sys
-from os.path import isfile, split, abspath, dirname, realpath
+from os.path import isfile, split, abspath, dirname, realpath, splitext
 from scipy.io import loadmat
-from h5py import File, Dataset
-from .ToolsAudio import getDataAudio
+from h5py import File
+from .ToolsAudio import getAudioWaveInfo, getDataAudio
+from os import SEEK_END, SEEK_CUR
+from warnings import catch_warnings, simplefilter
 
 
 def getWorkingDirectory(path):
@@ -178,7 +180,7 @@ def getDataInterval(path, key=""):
     return data_array
 
 
-def getDataIntervalAsTimeSeries(path, n_samples=0, key=""):
+def getDataIntervalAsTimeSeries(path, n_samples=0, key="", slicing=()):
     """
     Loads file containing temporal intervals, output shape
     :math:`(n_{samples},)`
@@ -200,6 +202,12 @@ def getDataIntervalAsTimeSeries(path, n_samples=0, key=""):
     :param key: key to access the data in case of mat or h5 file, for txt file
         it is ignored
     :type key: str
+    :param slicing: indexes for slicing output data:
+
+        - ``()``: no slicing
+        - ``(start,)``: ``data[start:]``
+        - ``(start, stop)``: ``data[start:stop]``
+    :type slicing: tuple
 
     :returns: numpy array of shape :math:`(n_{samples},)` with intervals as a
         time series of 0 and 1
@@ -218,6 +226,12 @@ def getDataIntervalAsTimeSeries(path, n_samples=0, key=""):
     else:
         print("Time series full of NaN because file not found: %s" % path)
         data_array = np.nan * np.ones((n_samples,))
+
+    if len(slicing) == 1:
+        data_array = data_array[slicing[0]:]
+
+    elif len(slicing) == 2:
+        data_array = data_array[slicing[0]:slicing[1]]
 
     return data_array
 
@@ -239,41 +253,190 @@ def getTxtLines(path):
     return lines
 
 
-def getDataGeneric(path, key="", **kwargs):
+def getDataDuration(
+    path, freq, key='', flag_interval=False, **kwargs
+):
     """
-    Loads data from a file with format mat, h5, txt or wav
+    Gets the ending date-time of a data file (.mat, .h5 or .txt)
+
+    It raises an exception if the format is not supported.
+
+    The beginning date-time must be in the path of the data files.
+
+    :param path: path to the data file
+    :type path: list
+    :param freq: data frequency, set to ``0`` if signal not regularly sampled
+    :type freq: float
+    :param key: key to access the data (in case of .mat or .h5)
+    :type key: str
+    :param flag_interval: specify if data is intervals
+    :type flag_interval: bool
+    :param kwargs: keyword arguments of :func:`.getNbSamplesGeneric`
+
+    :returns: duration of the data file in seconds
+    :rtype: int
+    """
+
+    # check if interval data
+    if flag_interval:
+        # load intervals
+        data = getDataInterval(path, key=key)
+
+        if data.size > 0:
+            # get ending frame of last interval
+            last_frame = data[-1, -1]
+
+            # get duration in seconds
+            duration = last_frame / freq
+
+        else:
+            duration = 0
+
+    else:
+        # check if signal not regularly sampled
+        if freq == 0:
+            # get last sample of the data file
+            last_sample = getLastSampleGeneric(path, key=key)
+
+            if last_sample is not None:
+                # get duration in seconds
+                duration = last_sample[0] / 1000
+
+            else:
+                duration = 0
+
+        else:
+            # get number of samples
+            nb_samples = getNbSamplesGeneric(path, key, **kwargs)
+
+            # get duration in seconds
+            duration = nb_samples / freq
+
+    return duration
+
+
+def getNbSamplesGeneric(path, key='', **kwargs):
+    """
+    Gets number of samples in a data file (.mat, .h5 or .txt)
+
+    It raises an exception if the format is not supported.
+
+    :param path: path to the data file
+    :type path: list
+    :param key: key to access the data (in case of .mat or .h5)
+    :type key: str
+
+    :returns: number of samples
+    :rtype: int
+    """
+
+    _, ext = splitext(path)
+
+    if ext == ".mat" or ext == ".h5":
+        with File(path, 'r') as f:
+            nb_samples = f[key].shape[0]
+
+    elif ext == ".txt":
+        with open(path, 'r') as f:
+            nb_samples = len(f.readlines())
+
+    elif ext == ".wav":
+        _, _, nb_samples = getAudioWaveInfo(path, **kwargs)
+
+    else:
+        raise Exception("Data format not supported: %s" % ext)
+
+    return nb_samples
+
+
+def getLastSampleGeneric(path, key=''):
+    """
+    Gets the last sample in a data file (.mat, .h5 or .txt)
+
+    It raises an exception if the format is not supported.
+
+    :param path: path to the data file
+    :type path: list
+    :param key: key to access the data (in case of .mat or .h5)
+    :type key: str
+
+    :returns: last sample
+    :rtype: float or str
+    """
+
+    _, ext = splitext(path)
+
+    if ext == ".mat" or ext == ".h5":
+        with File(path, 'r') as f:
+            dataset = f[key]
+
+            # check if empty dataset
+            if dataset.shape[0] == 0:
+                last_sample = None
+
+            else:
+                last_sample = dataset[-1]
+
+    elif ext == ".txt":
+        with open(path, 'rb') as f:
+            try:
+                f.seek(-2, SEEK_END)
+                while f.read(1) != b'\n':
+                    f.seek(-2, SEEK_CUR)
+
+            # only one line in file
+            except OSError:
+                f.seek(0)
+
+            last_line = f.readline().decode()
+
+            if last_line == '':
+                last_sample = None
+
+    else:
+        raise Exception("Data format not supported: %s" % ext)
+
+    if last_sample is not None:
+        try:
+            last_sample = float(last_sample)
+
+        except Exception:
+            pass
+
+    return last_sample
+
+
+def getDataGeneric(path, key='', **kwargs):
+    """
+    Loads data from a file (.h5, .mat or .txt)
+
+    It raises an exception if the format is not supported.
 
     :param path: path to the data file
     :type path: str
        string containing the path to the data
-    :param key: key to access the data in case of mat or h5 file, for txt file
-        it is ignored
+    :param key: key to access the data (in case of .mat or .h5)
     :type key: str
-    :param kwargs: keyword arguments of numpy.loadtxt (in case of txt file) or
-        :func:`.ToolsAudio.getDataAudio` (in case of wav file)
+    :param kwargs: keyword arguments of :func:`.getDataMat`,
+        :func:`.getDataH5`, :func:`.getDataTxt` or
+        :func:`.ToolsAudio.getDataAudio`, depending on file format
 
     :returns: data
     :rtype: numpy array
-
-    It raises an exception if the format is not supported.
     """
 
-    ext = path.split('.')[-1]
+    _, ext = splitext(path)
 
-    if ext == "mat":
-        data = getDataMat(path, key)
+    if ext == ".mat":
+        data = getDataMat(path, key, **kwargs)
 
-    elif ext == "h5":
-        data = getDataH5(path, key)
+    elif ext == ".h5":
+        data = getDataH5(path, key, **kwargs)
 
-    elif ext == "txt":
-        # disable warnings
-        from warnings import catch_warnings, simplefilter
-        with catch_warnings():
-            simplefilter("ignore")
-            data = np.loadtxt(path, **kwargs)
+    elif ext == ".txt":
+        data = getDataTxt(path, **kwargs)
 
-    elif ext == "wav":
+    elif ext == ".wav":
         _, data, _ = getDataAudio(path, **kwargs)
 
     else:
@@ -282,14 +445,63 @@ def getDataGeneric(path, key="", **kwargs):
     return data
 
 
-def getDataMat(path, key):
+def getDataTxt(path, slicing=(), **kwargs):
     """
-    Loads data from a mat file
+    Loads data from a .txt file
+
+    :param path: path to the data file
+    :type path: str
+    :param slicing: indexes for slicing output data:
+
+        - ``()``: no slicing
+        - ``(start,)``: ``data[start:]``
+        - ``(start, stop)``: ``data[start:stop]``
+        - ``("row", ind)``: ``data[ind]``
+        - ``("col", ind)``: ``data[:, ind]`` (2D array only)
+    :type slicing: tuple
+    :param kwargs: keyword arguments of numpy.loadtxt
+
+    :returns: data
+    :rtype: numpy array
+    """
+
+    # disable warnings
+    with catch_warnings():
+        simplefilter("ignore")
+        data = np.loadtxt(path, **kwargs)
+
+    if len(slicing) == 1:
+        data = data[slicing[0]:]
+
+    elif len(slicing) == 2:
+        if slicing[0] == "row":
+            data = data[slicing[1]]
+
+        elif slicing[0] == "col":
+            data = data[:, slicing[1]]
+
+        else:
+            data = data[slicing[0]:slicing[1]]
+
+    return data
+
+
+def getDataMat(path, key, slicing=()):
+    """
+    Loads data from a .mat file
 
     :param path: path to the data file
     :type path: str
     :param key: key to access the data
     :type key: str
+    :param slicing: indexes for slicing output data:
+
+        - ``()``: no slicing
+        - ``(start,)``: ``data[start:]``
+        - ``(start, stop)``: ``data[start:stop]``
+        - ``("row", ind)``: ``data[ind]``
+        - ``("col", ind)``: ``data[:, ind]`` (2D array only)
+    :type slicing: tuple
 
     :returns: data
     :rtype: numpy array
@@ -299,19 +511,32 @@ def getDataMat(path, key):
     try:
         data = loadmat(path)[key]
 
+        if len(slicing) == 1:
+            data = data[slicing[0]:]
+
+        elif len(slicing) == 2:
+            if slicing[0] == "row":
+                data = data[slicing[1]]
+
+            elif slicing[0] == "col":
+                data = data[:, slicing[1]]
+
+            else:
+                data = data[slicing[0]:slicing[1]]
+
     except Exception:
-        data = getDataH5(path, key)
+        data = getDataH5(path, key, slicing=slicing)
 
     return np.squeeze(data)
 
 
 def getAttributeH5(path, key_path):
     """
-    Gets an attribute in a h5 file
+    Gets an attribute in a .h5 file
 
     :param path: path to the file
     :type path: str
-    :param key_path: key path to the attribute in the file
+    :param key_path: path to the attribute in the file
     :type key_path: str
 
     :returns: attribute
@@ -331,24 +556,22 @@ def getAttributeH5(path, key_path):
 
 def getAttributeGeneric(path, key):
     """
-    Gets an attribute in a mat or h5 file
+    Gets an attribute in a .mat or .h5 file
 
     :param path: path to the file
     :type path: str
-    :param key_path: key path to the attribute in the file
+    :param key_path: path to the attribute in the file
     :type key_path: str
 
-    If the file is not mat or h5, it returns key.
-
-    :returns: attribute
+    :returns: attribute (if the file is not .mat or .h5, it returns ``key``)
     """
 
-    ext = path.split('.')[-1]
+    _, ext = splitext(path)
 
-    if ext == "mat":
+    if ext == ".mat":
         attr = getDataMat(path, key)
 
-    elif ext == "h5":
+    elif ext == ".h5":
         attr = getAttributeH5(path, key)
 
     else:
@@ -357,71 +580,45 @@ def getAttributeGeneric(path, key):
     return attr
 
 
-def recursiveReadH5(parent_item):
+def getDataH5(path, key, slicing=()):
     """
-    Recursive function to read data from a h5py file object while preserving
-    nested architecture
-
-    It reaches the last group level recursively.
-
-    If the parent item is a H5 dataset, then the function returns a numpy
-    array. Otherwise it returns a dictionary, where the key corresponds to one
-    H5 group and the value correponds to the H5 group content (may it be a
-    nested group, a numpy array in case of H5 dataset or a string/int/float in
-    case of H5 attribute). The attributes of a H5 dataset are not retrieved,
-    it only works for attributes of a H5 group.
-
-    :param parent_item: h5py file object
-
-    :returns: all data contained in ``parent_item``
-    :rtype: dict or numpy array
-    """
-
-    # check if parent item is a dataset
-    if isinstance(parent_item, Dataset):
-        # output is a numpy array
-        output = parent_item[()]
-
-    else:
-        # output is a dictionary
-        output = {}
-
-        # get attributes
-        for key, value in parent_item.attrs.items():
-            output[key] = value
-
-        # loop on items of the next level
-        for key, item in parent_item.items():
-            # recursive call
-            output[key] = recursiveReadH5(item)
-
-    return output
-
-
-def getDataH5(path, root_path='/'):
-    """
-    Reads the whole content of a H5 file or a specific dataset/group
-
-    It calls the recursive function :func:`.recursiveReadH5`.
+    Reads a dataset in a .h5 file
 
     :param path: path to the file
     :type path: str
-    :param root_path: path to the H5 group or H5 dataset where to start
-        retrieving data, default ``'/'`` (file root)
-    :type key_path: str
+    :param key: path to the H5 dataset to load
+    :type key: str
+    :param slicing: indexes for slicing output data:
 
-    :returns: three options:
+        - ``()``: no slicing
+        - ``(start,)``: ``data[start:]``
+        - ``(start, stop)``: ``data[start:stop]``
+        - ``("row", ind)``: ``data[ind]``
+        - ``("col", ind)``: ``data[:, ind]`` (2D array only)
+    :type slicing: tuple
 
-    - (*dict*) -- in case ``root_path`` points to a H5 group, all data
-      contained in the H5 group
-    - (*numpy array*) -- in case ``root_path`` points to a H5 dataset
-    - ``None`` -- in case ``root_path`` points to a location that is not in the
-      file
+    :returns: dataset or ``None`` if not found
+    :rtype: numpy array
     """
 
     with File(path, 'r') as f:
-        if root_path in f:
-            output = recursiveReadH5(f[root_path])
+        if key in f:
+            if len(slicing) == 1:
+                output = f[key][slicing[0]:]
+
+            elif len(slicing) == 2:
+                if slicing[0] == "row":
+                    output = f[key][slicing[1]]
+
+                elif slicing[0] == "col":
+                    output = f[key][:, slicing[1]]
+
+                else:
+                    output = f[key][slicing[0]:slicing[1]]
+
+            else:
+                output = f[key][()]
+
         else:
             output = None
 

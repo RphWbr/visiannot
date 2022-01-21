@@ -33,7 +33,7 @@ class ConfigurationWindow():
 
         - Video configuration
         - Signal configuration
-        - Eevent annotation configuration
+        - Events annotation configuration
         - General configuration
         - Group box with load/save/done push buttons
 
@@ -168,19 +168,19 @@ class ConfigurationWindow():
             "Signal",
             2,
             [
-                ("edit", 1, {}), ("edit", 1, {}), ("edit_freq", 1, {}),
-                ("edit", 1, {}), ("edit", 1, {}), ("spin", 1, {"minimum": -2}),
-                ("edit", 1, {}), ("edit_literal", 1, {})
+                ("edit", 1, {}), ("edit", 1, {}), ("edit", 1, {}),
+                ("spin", 1, {"minimum": -2}), ("edit", 1, {}), ("edit", 1, {}),
+                ("edit_freq", 1, {}), ("edit_literal", 1, {})
             ],
-            [['', '', 0, '*', '_', 0, '%Y-%m-%dT%H-%M-%S', None]],
+            [['', '*', '_', 0, '%Y-%m-%dT%H-%M-%S', '', 0, None]],
             help_text="1. Signal widget name\
             2. Directory\
-            3. Key to access the data (for .mat or .h5), used as legend\
-            4. Frequency (0 if 2D data with timestamp, -1 if same as video)\
-            5. File pattern\
-            6. Timestamp delimiter\
-            7. Timestamp position\
-            8. Timestamp format\
+            3. File pattern\
+            4. Timestamp delimiter\
+            5. Timestamp position\
+            6. Timestamp format\
+            7. Key to access the data (for .mat or .h5), used as legend\
+            8. Frequency (0 if 2D data with timestamp, -1 if same as video)\
             9. Plot style (default is None)",
             pos_dir=0,
             flag_dir_identical=True,
@@ -276,23 +276,23 @@ class ConfigurationWindow():
             "Interval",
             2,
             [
-                ("edit", 1, {}), ("edit", 1, {}), ("edit_freq", 1, {}),
                 ("edit", 1, {}), ("edit", 1, {}), ("edit", 1, {}),
-                ("edit", 1, {}), ("spin", 4, [
+                ("spin", 1, {"minimum": -2}), ("edit", 1, {}), ("edit", 1, {}),
+                ("edit_freq", 1, {}), ("spin", 4, [
                     {"minimum": 0, "maximum": 255},
                     {"minimum": 0, "maximum": 255},
                     {"minimum": 0, "maximum": 255},
                     {"minimum": 0, "maximum": 100}
                 ])
             ],
-            [['', '', 0, '', '_', 0, '%Y-%m-%dT%H-%M-%S', (0, 0, 0, 50)]],
+            [['', '*', '_', 0, '%Y-%m-%dT%H-%M-%S', 0, '', (0, 0, 0, 50)]],
             help_text="1. Directory\
-            2. Key to access the data (for .mat or .h5)\
-            3. Frequency (0 if timestamps, -1 if same as signal)\
-            4. File pattern\
-            5. Timestamp delimiter\
-            6. Timestamp position\
-            7. Timestamp format\
+            2. File pattern\
+            3. Timestamp delimiter\
+            4. Timestamp position\
+            5. Timestamp format\
+            6. Key to access the data (for .mat or .h5)\
+            7. Frequency (0 if timestamps, -1 if same as signal)\
             8. Color (RGBA)",
             pos_dir=0,
             flag_dir_identical=True,
@@ -346,6 +346,7 @@ class ConfigurationWindow():
             "nb_ticks": 10,
             "trunc_duration": [0, 0],
             "time_zone": "Europe/Paris",
+            "flag_annot_overlap": False,
             "annot_dir": "Annotations",
             "from_cursor_list": [],
             "ticks_size": 12,
@@ -377,6 +378,8 @@ class ConfigurationWindow():
         #: - ``"trunc_duration"``: (*list*) length 2 *(minute, second)*
         #: - ``"time_zone"``: (*str*) time zone (complying with pytz
         #:   package)
+        #: - ``"flag_annot_overlap"``: (*bool*) specify if overlap of events
+        #:   annotations is enabled
         #: - ``"annot_dir"``: (*str*) directory of the annotations
         #: - ``"from_cursor_list"``: (*list*) each element is a list of
         #:   length 2 *(minute, second)*
@@ -456,6 +459,10 @@ class ConfigurationWindow():
             ("Signals synchronized", "flag_synchro", "check_box", 1, {}),
             (
                 "Video paused at launch", "flag_pause_status",
+                "check_box", 1, {}
+            ),
+            (
+                "Events annotations overlap", "flag_annot_overlap",
                 "check_box", 1, {}
             ),
             (

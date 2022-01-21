@@ -32,13 +32,13 @@ It is cross-platform and has been tested on Windows 7/10, Ubuntu 16/18/20 and Ma
 The following packages are required and are automatically installed with ``pip``: 
 
 * `configobj <https://pypi.org/project/configobj/>`_ (saving and loading configuration files)
-* `opencv-python <https://opencv.org/>`_
-* `h5py <https://pypi.org/project/h5py/>`_
+* `opencv-python <https://opencv.org/>`_ (loading video files)
+* `h5py <https://pypi.org/project/h5py/>`_ (loading .h5 files)
 * `numpy <https://numpy.org/>`_
 * `PyQt5 <https://pypi.org/project/PyQt5/>`_ (GUI creation)
 * `pyqtgraph <http://pyqtgraph.org/>`_ (video and signal plots)
-* `pytz <https://pypi.org/project/pytz/>`_ (used for date-time comparison)
-* `scipy <https://www.scipy.org/>`_
+* `pytz <https://pypi.org/project/pytz/>`_ (date-time comparison with time zone)
+* `scipy <https://www.scipy.org/>`_ (loading .mat files)
 
 
 .. _run:

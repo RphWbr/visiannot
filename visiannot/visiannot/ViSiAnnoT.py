@@ -16,7 +16,7 @@ import pyqtgraph as pg
 import numpy as np
 from threading import Thread
 import os
-from time import time, sleep
+from time import sleep
 from shutil import rmtree
 from ..tools import ToolsPyQt
 from ..tools import ToolsPyqtgraph
@@ -36,62 +36,7 @@ from .components.FromCursorTemporalRangeWidget import \
 from .components.LogoWidgets import ZoomInWidget, ZoomOutWidget, FullVisiWidget
 from .components.AnnotEventWidget import AnnotEventWidget
 from .components.AnnotImageWidget import AnnotImageWidget
-
-
-def checkConfiguration(config_id, config, config_type, flag_long_rec=True):
-    """
-    Checks if a configuration list has the right number of elements
-
-    It raises an exception if it is not the case.
-
-    :param config_id: configuration key in the configuration dictionary
-    :type config_id: str
-    :param config: configuration list
-    :type config: tuple or list
-    :param config_type: used to set the right number of
-        elements, one of the following: "Video", "Signal", "Interval",
-        "Threshold" or "YRange" (otherwise nothing happens)
-    :type config_type: str
-    :param flag_long_rec: specify if configuration in the context of
-        :class:`.ViSiAnnoTLongRec`, otherwise :class:`.ViSiAnnoT` (it has an
-        impact on "video", "signal" and "interval")
-    :type flag_long_rec: bool
-    """
-
-    # get the right number of elements
-    if config_type == "Video":
-        if flag_long_rec:
-            n = 5
-
-        else:
-            n = 4
-
-    elif config_type == "Signal" or config_type == "Interval":
-        if flag_long_rec:
-            n = 8
-
-        else:
-            n = 7
-
-    elif config_type == "Threshold":
-        n = 2
-
-    elif config_type == "YRange":
-        n = 2
-
-    else:
-        n = None
-
-    if n is not None:
-        # get number of elements in configuration
-        m = len(config)
-
-        # check if wrong number of elements in configuration
-        if n != m:
-            raise Exception(
-                "Wrong number of elements in signal configuration %s: %d "
-                "instead of %d" % (config_id, m, n)
-            )
+from ..configuration import checkConfiguration
 
 
 class ViSiAnnoT():
@@ -111,6 +56,7 @@ class ViSiAnnoT():
         from_cursor_list=[],
         zoom_factor=2,
         nb_ticks=10,
+        flag_annot_overlap=False,
         annot_dir="Annotations",
         down_freq=500,
         flag_pause_status=False,
@@ -195,11 +141,6 @@ class ViSiAnnoT():
               array if regularly sampled, otherwise in a 2D array (where first
               column is the timestamp in milliseconds and the second column the
               signal value)
-            - (*str*) Key to access the data (in case of .mat or .h5 file),
-            - (*int* or *float* or *str*) Signal frequency, set it to ``0`` if
-              signal non regularly sampled, set it to ``-1`` if same frequency
-              as :attr:`.ViSiAnnoT.fps`, it may be a string with the path to
-              the frequency attribute in a .h5 file,
             - (*str*) Delimiter to get beginning datetime in the signal file
               name,
             - (*int*) Position of the beginning datetime in the signal file
@@ -207,56 +148,19 @@ class ViSiAnnoT():
             - (*str*) Format of the beginning datetime in the signal file name
               (either ``"posix"`` or a format compliant with
               ``datetime.strptime()``),
+            - (*str*) Key to access the data (in case of .mat or .h5 file),
+            - (*int* or *float* or *str*) Signal frequency, set it to ``0`` if
+              signal non regularly sampled, set it to ``-1`` if same frequency
+              as :attr:`.ViSiAnnoT.fps`, it may be a string with the path to
+              the frequency attribute in a .h5 file,
             - (*dict*) Plot style, see
               https://pyqtgraph.readthedocs.io/en/latest/graphicsItems/plotdataitem.html
               for details, set it to ``None`` for default.
 
-            Here is an example::
-
-                {
-                "sig_1": [
-                    [
-                        "folder1/file1.txt", "", 50, '_', 1,
-                        "%Y-%m-%dT%H-%M-%S", None
-                    ]
-                ],
-                "sig_2": [
-                    [
-                        "folder1/file2.h5", "key2", 0, '_', 0, "posix",
-                        {'pen': {'color': 'm', 'width': 1}
-                    ],
-                    ["folder3/file3.mat", "key3", -1, '_', 0, "posix", None]
-                ]
-                }
-
-            In case of audio signal to plot, the configuration list is slightly
-            different. The second element (key to access data) is a string to
-            specify which channel to plot. It must contain ``"left"`` or
-            ``"right"``, whatever the letter capitalization is. Otherwise, by
-            default the left channel is plotted. Moreover, the frequency is
-            directly retrieved from the wav file, so the third element of the
-            configuration list (signal frequency) is ignored.
-
-            Here is an example for audio::
-
-                {
-                "Audio L": [
-                    [
-                        "path/to/audio.wav", "Left channel", 0, '_', 1,
-                        "%Y-%m-%dT%H-%M-%S", None
-                    ]
-                ],
-                "Audio R": [
-                    [
-                        "path/to/audio.wav", "Right channel", 0, '_', 1,
-                        "%Y-%m-%dT%H-%M-%S", None
-                    ]
-                ]
-                }
+            See :ref:`signal` for details and examples.
         :type signal_dict: dict
         :param annotevent_dict: events annotation configuration,
-            key is the label (string), value is the associated color (RGB or
-            RGBA)
+            key is the label (string), value is the associated color (RGBA)
         :type annotevent_dict: dict
         :param annotimage_list: labels for image extraction
         :type annotimage_list: list
@@ -268,8 +172,7 @@ class ViSiAnnoT():
             elements:
 
             - (*int* or *float*) Threshold value on Y axis,
-            - (*tuple* or *list* or *str*) Plot color in (RGB) format or HEX
-              color string.
+            - (*tuple* or *list*) Plot color (RGBA).
         :type threshold_dict: dict
         :param interval_dict: interval configuration. Each item corresponds to
             a signal widget on which to plot intervals. The key must be the
@@ -281,10 +184,6 @@ class ViSiAnnoT():
             - (*str*) Path to the interval file, data can be stored as a 2D
               array (where each line has 2 elements: start and stop frames) or
               a 1D array (time series of 0 and 1),
-            - (*str*) Key to access the data (in case of .mat or .h5 file),
-            - (*int*) Signal frequency, set it to ``-1`` if same frequency as
-              :attr:`.ViSiAnnoT.fps`, it may be a string with the path to the
-              frequency attribute in a .h5 file,
             - (*str*) Delimiter to get beginning datetime in the interval file
               name,
             - (*int*) Position of the beginning datetime in the interval file
@@ -292,6 +191,10 @@ class ViSiAnnoT():
             - (*str*) Format of the beginning datetime in the interval file
               name (either ``"posix"`` or a format compliant with
               ``datetime.strptime()``),
+            - (*str*) Key to access the data (in case of .mat or .h5 file),
+            - (*int*) Signal frequency, set it to ``-1`` if same frequency as
+              :attr:`.ViSiAnnoT.fps`, it may be a string with the path to the
+              frequency attribute in a .h5 file,
             - (*tuple* or *list*) Plot color (RGBA).
         :type interval_dict: dict
         :param y_range_dict: visible Y range for signal widgets, each item
@@ -346,6 +249,9 @@ class ViSiAnnoT():
         :param nb_ticks: number of temporal ticks on the X axis of the signals
             widgets
         :type nb_ticks: int
+        :param flag_annot_overlap: specify if overlap of events annotations is
+            enabled
+        :type flag_annot_overlap: bool
         :param annot_dir: directory where to save annotations, automatically
             created if it does not exist
         :type annot_dir: str
@@ -391,7 +297,7 @@ class ViSiAnnoT():
             the signal plots
         :type ticks_offset: int
         :param nb_table_annot: maximum number of labels in a row in the
-            widgets for event annotation and image annotation
+            widgets for events annotation and image annotation
         :type nb_table_annot: int
         :param height_widget_signal: minimum height in pixel of the signal
             widgets
@@ -434,7 +340,7 @@ class ViSiAnnoT():
             {'pen': {'color': '#4C9900', 'width': 1}}
         ]
 
-        #: (*str*) Directory where the event annotations and extracted images
+        #: (*str*) Directory where the events annotations and extracted images
         #: are saved
         self.annot_dir = annot_dir
 
@@ -450,15 +356,16 @@ class ViSiAnnoT():
         #: (*int*) ID of the current video/signal file in case of long
         #: recordings
         #:
-        #: If :attr:`.ViSiAnnoT.flag_long_rec` is ``False``, then
-        #: :attr:`.ViSiAnnoT.rec_id` is always equal to 0.
-        self.rec_id = 0
+        #: If :attr:`.flag_long_rec` is ``False``, then :attr:`.ite_file` is
+        #: always equal to 0.
+        self.ite_file = 0
 
-        #: (*int*) Number of files in case of long recordings
+        #: (*int*) Number of files for reference modality in case of long
+        #: recording
         #:
-        #: If ``self.flag_long_rec`` is false, then ``self.rec_nb`` is set to
-        #: 1.
-        self.rec_nb = 1
+        #: If :attr:`.flag_long_rec` is ``False``, then :attr:`.nb_files` is
+        #: set to 1.
+        self.nb_files = 1
 
 
         # ******************************************************************* #
@@ -502,9 +409,12 @@ class ViSiAnnoT():
         #:  - (*tuple*) Plot color (RGBA)
         self.interval_dict = {}
 
-        #: (*int*) Frequency of the video (or the first signal if there is no
-        #: video), it is the reference frequency
-        self.fps = None
+        # check if not long recording => create attribute of reference
+        # frequency (otherwise already set in ViSiAnnoTLongRec)
+        if not self.flag_long_rec:
+            #: (*int*) Frequency of the video (or the first signal if there is
+            #: no video), it is the reference frequency
+            self.fps = None
 
         #: (*int*) Number of frames in the video (or the first signal if there
         #: is no video)
@@ -646,9 +556,10 @@ class ViSiAnnoT():
 
         # set style sheet
         ToolsPyQt.setStyleSheet(
-            self.app, font_name, font_size, font_color,
-            ["QGroupBox", "QComboBox", "QPushButton", "QRadioButton", "QLabel",
-             "QCheckBox", "QDateTimeEdit", "QTimeEdit"]
+            self.app, font_name, font_size, font_color, [
+                "QGroupBox", "QComboBox", "QPushButton", "QRadioButton",
+                "QLabel", "QCheckBox", "QDateTimeEdit", "QTimeEdit"
+            ]
         )
 
         # get default font for titles in pyqtgraph
@@ -687,11 +598,21 @@ class ViSiAnnoT():
 
         # *************** widget for truncated temporal range *************** #
         if len(self.sig_dict) > 0 and "select_trunc" in poswid_dict.keys():
-            #: (:class:`.TruncTemporalRangeWidget`) Widget for selecting a
-            #: truncated temporal range
-            self.wid_trunc = TruncTemporalRangeWidget(
-                self, poswid_dict['select_trunc'], trunc_duration
-            )
+            # check trunc duration
+            if trunc_duration[0] == 0 and trunc_duration[1] == 0:
+                print(
+                    "Duration of truncated temporal range is 0 => widget not "
+                    "created"
+                )
+
+                self.wid_trunc = None
+
+            else:
+                #: (:class:`.TruncTemporalRangeWidget`) Widget for selecting a
+                #: truncated temporal range
+                self.wid_trunc = TruncTemporalRangeWidget(
+                    self, poswid_dict['select_trunc'], trunc_duration
+                )
 
         else:
             self.wid_trunc = None
@@ -767,12 +688,11 @@ class ViSiAnnoT():
 
         # *********************** signal widgets **************************** #
         #: (*list*) Signal widgets, each element is an instance of
-        #: :class:`.Signal` (same order as :attr:`.sig_dict`
+        #: :class:`.SignalWidget` (same order as :attr:`.sig_dict`)
         self.wid_sig_list = []
 
         if len(self.sig_dict) > 0:
             # create signal widgets and initialize signal plots
-            # it sets the attribute wid_sig_list
             self.initSignalPlot(
                 poswid_dict['progress'], y_range_dict=y_range_dict,
                 left_label_style=font_default_axis_label,
@@ -812,18 +732,19 @@ class ViSiAnnoT():
             self.wid_zoomout = None
 
 
-        # ******************* event annotation widget *********************** #
+        # ******************* events annotation widget ********************** #
         if len(annotevent_dict) > 0:
             if "annot_event" in poswid_dict.keys():
                 #: (:class:`.AnnotEventWidget`) Widget for events annotation
                 self.wid_annotevent = AnnotEventWidget(
                     self, poswid_dict["annot_event"], annotevent_dict,
-                    annot_dir, nb_table=nb_table_annot
+                    annot_dir, flag_annot_overlap=flag_annot_overlap,
+                    nb_table=nb_table_annot
                 )
 
             else:
                 raise Exception(
-                    "No widget position given for the event annotation => "
+                    "No widget position given for the events annotation => "
                     "add key 'annot_event' to positinal argument poswid_dict"
                 )
 
@@ -877,7 +798,7 @@ class ViSiAnnoT():
         #: connected to the method :meth:`.ViSiAnnoT.updatePlot`
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.updatePlot)
-        self.timer.start()
+        self.timer.start(int(1000 / self.fps))
 
 
         # ******************************************************************* #
@@ -894,11 +815,7 @@ class ViSiAnnoT():
 
 
     # *********************************************************************** #
-    # ************************ ViSiAnnoT methods **************************** #
-    # *********************************************************************** #
-
-    # *********************************************************************** #
-    # Group: Miscellaneous methods
+    # Group: Methods for conversion between milliseconds and frame number
     # *********************************************************************** #
 
 
@@ -955,7 +872,7 @@ class ViSiAnnoT():
     # *********************************************************************** #
 
     # *********************************************************************** #
-    # Group: Methods for displaying video / plotting signals and progress bar
+    # Group: Methods for displaying video, signals and progress bar
     # *********************************************************************** #
 
 
@@ -1118,19 +1035,19 @@ class ViSiAnnoT():
                         if os.listdir(annot_path) == []:
                             rmtree(annot_path)
 
-                # check if file of event annotation
+                # check if file of events annotation
                 elif ext == ".txt" and ("datetime" in name or "frame" in name):
                     # check if empty file
                     if os.path.getsize(annot_path) == 0:
                         # remove empty file
                         os.remove(annot_path)
 
-            # check if event annotation
+            # check if events annotation
             if self.wid_annotevent is not None:
                 # update the list of files/folders in the annotation directory
                 annot_path_list = sorted(os.listdir(self.annot_dir))
 
-                # get file name of event annotation of protected label
+                # get file name of events annotation of protected label
                 protected_name_0 = "%s_%s-datetime.txt" % (
                     self.wid_annotevent.file_name_base,
                     self.wid_annotevent.protected_label
@@ -1141,7 +1058,7 @@ class ViSiAnnoT():
                 )
 
                 # check if empty annotation directory (or only filled with
-                # event annotation of protected label)
+                # events annotation of protected label)
                 if len(annot_path_list) == 0 or len(annot_path_list) == 2 and \
                     annot_path_list[0] == protected_name_0 and \
                         annot_path_list[1] == protected_name_1:
@@ -1175,9 +1092,6 @@ class ViSiAnnoT():
         It increments the value of :attr:`.frame_id`.
         """
 
-        # in order to get processing time for updating plot
-        time_start = time()
-
         # update plot only if pause status is False
         if not self.flag_pause_status:
             # plot temporal cursor at the value of self.frame_id
@@ -1187,10 +1101,7 @@ class ViSiAnnoT():
             self.frame_id += 1
 
             # plot in a loop
-            self.app.processEvents()
-
-        # sleep
-        sleep(max(0, 1 / self.fps - (time() - time_start)))
+            # self.app.processEvents() # not sure about the usefullness of this
 
 
     def updateFrameId(self, frame_id):
@@ -1677,34 +1588,7 @@ class ViSiAnnoT():
 
     def keyPress(self, ev):
         """
-        Callback method for key press interaction
-
-        - **Space**: play/pause video playback
-        - **Left**: rewind 1 second (1 minute if **ctrl** key pressed as well)
-        - **Right**: forward 1 second (1 minute if **ctrl** key pressed as
-          well)
-        - **Down**: rewind 10 seconds (10 minutes if **ctrl** key pressed as
-          well)
-        - **Up**: forward 10 seconds (10 minutes if **ctrl** key pressed as
-          well)
-        - **l**: rewind 1 frame
-        - **m**: forward 1 frame
-        - **Home**: set the current frame :attr:`.ViSiAnnoT.frame_id` to 0
-        - **End**: set the current frame :attr:`.ViSiAnnoT.frame_id` to
-          ``ViSiAnnoT.nframes-1``
-        - **i**: zoom in (:meth:`.ViSiAnnoT.zoomIn` is called)
-        - **o**: zoom out (:meth:`.ViSiAnnoT.zoomOut` is called)
-        - **n**: set the temporal range to the fullest
-        - **a**: define start datetime of events annotation
-        - **z**: define end datetime of events annotation
-        - **e**: add events annotation
-        - **s**: display events annotations
-        - **Page down**: load previous file in case of long recordings
-          (:attr:`.ViSiAnnoT.flag_long_rec` is ``True``)
-        - **Page up**: load next file in case of long recordings
-          (:attr:`.ViSiAnnoT.flag_long_rec` is ``True``)
-        - **d** + **ctrl** + **shift**: clear the display of all events
-          annotation descriptions
+        Callback method for key press interaction, see :ref:`keyboard`
 
         :param ev: emmited when a key is pressed
         :type ev: QtGui.QKeyEvent
@@ -1725,7 +1609,7 @@ class ViSiAnnoT():
             else:
                 self.updateFrameId(self.frame_id - self.fps)
 
-            if self.rec_id == 0:
+            if self.ite_file == 0:
                 self.updateFrameId(max(0, self.frame_id))
 
         elif key == QtCore.Qt.Key_Right:
@@ -1735,7 +1619,7 @@ class ViSiAnnoT():
             else:
                 self.updateFrameId(self.frame_id + self.fps)
 
-            if self.rec_id == self.rec_nb - 1:
+            if self.ite_file == self.nb_files - 1:
                 self.updateFrameId(min(self.nframes, self.frame_id))
 
         elif key == QtCore.Qt.Key_Down:
@@ -1745,7 +1629,7 @@ class ViSiAnnoT():
             else:
                 self.updateFrameId(self.frame_id - 10 * self.fps)
 
-            if self.rec_id == 0:
+            if self.ite_file == 0:
                 self.updateFrameId(max(0, self.frame_id))
 
         elif key == QtCore.Qt.Key_Up:
@@ -1755,17 +1639,17 @@ class ViSiAnnoT():
             else:
                 self.updateFrameId(self.frame_id + 10 * self.fps)
 
-            if self.rec_id == self.rec_nb - 1:
+            if self.ite_file == self.nb_files - 1:
                 self.updateFrameId(min(self.nframes, self.frame_id))
 
         elif key == QtCore.Qt.Key_L:
             self.updateFrameId(self.frame_id - 1)
-            if self.rec_id == 0:
+            if self.ite_file == 0:
                 self.updateFrameId(max(0, self.frame_id))
 
         elif key == QtCore.Qt.Key_M:
             self.updateFrameId(self.frame_id + 1)
-            if self.rec_id == self.rec_nb - 1:
+            if self.ite_file == self.nb_files - 1:
                 self.updateFrameId(min(self.nframes, self.frame_id))
 
         elif key == QtCore.Qt.Key_I and len(self.wid_sig_list) > 0 and \
@@ -1797,10 +1681,10 @@ class ViSiAnnoT():
                 self.wid_annotevent.display(self)
 
         elif key == QtCore.Qt.Key_PageDown and self.flag_long_rec:
-            self.changeFileInLongRec(self.rec_id - 1, 0)
+            self.changeFileInLongRec(self.ite_file - 1, 0)
 
         elif key == QtCore.Qt.Key_PageUp and self.flag_long_rec:
-            self.changeFileInLongRec(self.rec_id + 1, 0)
+            self.changeFileInLongRec(self.ite_file + 1, 0)
 
         elif key == QtCore.Qt.Key_Home:
             self.updateFrameId(0)
@@ -1816,9 +1700,7 @@ class ViSiAnnoT():
 
     def keyRelease(self, ev):
         """
-        Callback method for key release interaction
-
-        - **Alt**: show/hide menu bar
+        Callback method for key release interaction, see :ref:`keyboard`
 
         :param ev: emmited when a key is released
         :type ev: QtGui.QKeyEvent
@@ -1861,9 +1743,9 @@ class ViSiAnnoT():
         - :attr:`.sig_dict`
         - :attr:`.interval_dict`
 
-        Otherwise the video thread throws a RunTime error.
-        These attributes are then set thanks to the positional arguments
-        ``video_dict`` and ``signal_dict``.
+        Otherwise the video thread throws a RunTime error. These attributes are
+        then set thanks to the positional arguments ``video_dict`` and
+        ``signal_dict``.
 
         This method sets the following attributes:
 
@@ -1916,20 +1798,19 @@ class ViSiAnnoT():
             # get video configuration
             path_video, delimiter, pos, fmt = video_config
 
-            # get data
-            if path_video != '':
-                self.video_data_dict[video_id], nframes, fps = \
-                    ToolsImage.getDataVideo(path_video)
+            # get video data
+            self.video_data_dict[video_id], nframes, fps = \
+                ToolsImage.getDataVideo(path_video)
 
+            # check if no video data
+            if self.video_data_dict is None:
+                beginning_datetime = None
+
+            else:
+                # get beginning datetime of video file
                 beginning_datetime = ToolsDateTime.getDatetimeFromPath(
                     path_video, delimiter, pos, fmt, time_zone=self.time_zone
                 )
-
-            else:
-                self.video_data_dict[video_id] = None
-                nframes = 0
-                fps = -1
-                beginning_datetime = None
 
             # update lists
             nframes_list.append(nframes)
@@ -1938,8 +1819,7 @@ class ViSiAnnoT():
 
             # check FPS
             if fps <= 0 and path_video != '':
-                print("WARNING: video with null FPS at %s" % path_video)
-                print()
+                raise Warning("Video with null FPS at %s" % path_video)
 
         # check if there is any video
         if any(self.video_data_dict):
@@ -1950,10 +1830,13 @@ class ViSiAnnoT():
                     flag_ok = True
                     break
 
-            if flag_ok:
-                self.fps = fps_list[ite_vid]
-            else:
-                self.fps = 1
+            # check if fps attribute to be set
+            if self.fps is None:
+                if flag_ok:
+                    self.fps = fps_list[ite_vid]
+
+                else:
+                    self.fps = 1
 
             # get number of frames of the video
             self.nframes = nframes_list[ite_vid]
@@ -1996,7 +1879,12 @@ class ViSiAnnoT():
             )
 
             # get first signal configuration
-            path, key_data, self.fps, delimiter, pos, fmt, _ = signal_config
+            path, delimiter, pos, fmt, key_data, freq, _ = signal_config
+
+            # check if attribute fps to be set
+            if self.fps is None:
+                # get frequency and store it as reference frequency
+                self.fps = self.getDataFrequency(path, freq)
 
             # get beginning date-time
             self.beginning_datetime = ToolsDateTime.getDatetimeFromPath(
@@ -2011,22 +1899,14 @@ class ViSiAnnoT():
                 # get first signal file
                 path = lines[1].replace("\n", "")
 
-            # check if audio
-            if os.path.splitext(path)[1] == ".wav":
-                # get fps of audio
-                _, self.fps = ToolsAudio.getAudioWaveFrequency(path)
-
-            # get data
-            data = ToolsData.getDataGeneric(path, key_data)
+            # get number of frames
+            self.nframes = ToolsData.getNbSamplesGeneric(path, key_data)
 
             # check if there is data indeed
-            if data.shape[0] == 0:
+            if self.nframes == 0:
                 raise Exception(
                     "There is no data in the first signal file %s" % path
                 )
-
-            # get number of frames
-            self.nframes = data.shape[0]
 
 
         # ******************************************************************* #
@@ -2034,8 +1914,7 @@ class ViSiAnnoT():
         # ******************************************************************* #
 
         # loop on signals
-        for ite_type, (signal_id, signal_config_list) in \
-                enumerate(signal_dict.items()):
+        for signal_id, signal_config_list in signal_dict.items():
             # initialize temporary list
             sig_list_tmp = []
 
@@ -2047,7 +1926,7 @@ class ViSiAnnoT():
                 )
 
                 # get configuration
-                path_data, key_data, freq_data, _, _, _, plot_style = \
+                path_data, _, _, _, key_data, freq_data, plot_style = \
                     signal_config
 
                 # ******************** load intervals *********************** #
@@ -2064,24 +1943,20 @@ class ViSiAnnoT():
                         )
 
                         # get configuration
-                        path_interval, key_interval, freq_interval, _, _, _, \
+                        path_interval, _, _, _, key_interval, freq_interval, \
                             color_interval = interval_config
 
-                        # get frequency if necessary
-                        if isinstance(freq_interval, str):
-                            freq_interval = ToolsData.getAttributeGeneric(
-                                path_interval, freq_interval
-                            )
-
-                        elif freq_interval == -1:
-                            freq_interval = self.fps
+                        # get frequency
+                        freq_interval = self.getDataFrequency(
+                            path_interval, freq_interval
+                        )
 
                         # check if file exists
                         if os.path.isfile(path_interval):
                             # asynchronous signal
                             if self.flag_long_rec and not self.flag_synchro:
                                 # load intervals data
-                                interval = self.getDataSigTmp(
+                                interval, _ = self.getDataSigTmp(
                                     path_interval, signal_id, key_interval,
                                     freq_interval, self.tmp_delimiter,
                                     flag_interval=True
@@ -2107,31 +1982,20 @@ class ViSiAnnoT():
                             )
 
 
-                # ******************** get frequency ************************ #
-                # get frequency if necessary
-                if os.path.splitext(path_data)[1] == ".wav":
-                    _, freq_data = ToolsAudio.getAudioWaveFrequency(path_data)
-
-                elif isinstance(freq_data, str):
-                    freq_data = ToolsData.getAttributeGeneric(
-                        path_data, freq_data
-                    )
-
-                elif freq_data == -1:
-                    freq_data = self.fps
-
-
                 # ********************** load data ************************** #
                 # asynchronous signal
                 if self.flag_long_rec and not self.flag_synchro:
-                    # get data
-                    data = self.getDataSigTmp(
+                    # get data and frequency
+                    data, freq_data = self.getDataSigTmp(
                         path_data, signal_id, key_data, freq_data,
                         self.tmp_delimiter
                     )
 
                 # synchronous signals
                 else:
+                    # get frequency
+                    freq_data = self.getDataFrequency(path_data, freq_data)
+
                     # keyword arguments for ToolsData.getDataGeneric
                     kwargs = {}
 
@@ -2165,7 +2029,7 @@ class ViSiAnnoT():
                 )
 
                 # downsample if necessary
-                if freq_data > self.down_freq:
+                if freq_data is not None and freq_data > self.down_freq:
                     signal.downsampleSignal(self.down_freq)
 
                 # append temporary signal list
@@ -2173,6 +2037,20 @@ class ViSiAnnoT():
 
             # append list of signals
             self.sig_dict[signal_id] = sig_list_tmp
+
+
+    def getDataFrequency(self, path, freq):
+        # get frequency if necessary
+        if os.path.splitext(path)[1] == ".wav":
+            _, freq, _ = ToolsAudio.getAudioWaveInfo(path)
+
+        elif isinstance(freq, str):
+            freq = ToolsData.getAttributeGeneric(path, freq)
+
+        elif freq == -1:
+            freq = self.fps
+
+        return freq
 
 
     @staticmethod
@@ -2197,6 +2075,7 @@ class ViSiAnnoT():
             line_split = line.split(delimiter)
             path = line_split[0]
             start_sec = int(line_split[1].replace("\n", ""))
+
         else:
             path = line.replace("\n", "")
             start_sec = 0
@@ -2211,15 +2090,17 @@ class ViSiAnnoT():
         """
         Gets signal data after synchronization with video
 
-        :param path: path to the temporary signal file
+        :param path: path to the temporary synchronization file
         :type path: str
         :param signal_id: signal type (key in the dictionary ``signal_dict``,
             second positional argument of :class:`.ViSiAnnoT` constructor)
         :type signal_id: str
         :param key_data: key to access the data (in case of .h5 or .mat file)
         :type key_data: str
-        :param freq_data: signal frequency
-        :type freq_data: float
+        :param freq_data: signal frequency as found in the configuration file,
+            in case this is a string, then the frequency is retrieved in the
+            data file
+        :type freq_data: float or str
         :param delimiter: delimiter used to split the lines of the temporary
             signal files
         :type delimiter: str
@@ -2235,123 +2116,168 @@ class ViSiAnnoT():
 
         # define empty data
         if len(lines) == 0:
-            data = np.array([])
+            data = None
+            freq_data = None
 
         else:
             # initialize data list
             data_list = []
-            start_sec_prev = -1
+            duration_progress = 0
+
+            # look for data file path in order to get frequency if stored in
+            # file attribute
+            if isinstance(freq_data, str):
+                freq_data_tmp = None
+                for line in lines:
+                    data_path, _ = ViSiAnnoT.getFileSigTmp(line, delimiter)
+                    if data_path != "None":
+                        freq_data_tmp = self.getDataFrequency(
+                            data_path, freq_data
+                        )
+                        break
+
+                if freq_data_tmp is not None:
+                    freq_data = freq_data_tmp
+
+            # data frequency is the same as reference frequency
+            elif freq_data == -1:
+                freq_data = self.fps
 
             # loop on temporary file lines
             for ite_line, line in enumerate(lines):
-                # get data file name and starting second
-                file_name, start_sec = ViSiAnnoT.getFileSigTmp(line, delimiter)
+                # get data path and starting second
+                data_path, start_sec = ViSiAnnoT.getFileSigTmp(line, delimiter)
 
                 # no data at the beginning
-                if file_name == "None":
-                    data_list.append(np.zeros((int(start_sec * freq_data),)))
-                    start_sec_prev = start_sec
-                else:
-                    # keyword arguments for ToolsData.getDataGeneric
-                    # used when loading audio in order to specify channel
-                    kwargs = {}
-                    if file_name.split('.')[-1] == "wav":
-                        kwargs["channel_id"] = \
-                            ToolsAudio.convertKeyToChannelId(key_data)
-
-                    # load data
-                    if flag_interval:
-                        next_data = ToolsData.getDataIntervalAsTimeSeries(
-                            file_name, key=key_data
-                        )
+                if data_path == "None":
+                    # check if 2D data (signal not regularly sampled)
+                    if freq_data == 0:
+                        next_data = np.empty((0, 2))
 
                     else:
-                        next_data = ToolsData.getDataGeneric(
-                            file_name, key_data, **kwargs
+                        next_data = np.nan * np.ones(
+                            (int(start_sec * freq_data),)
                         )
+                    
+                    duration_progress += start_sec
+
+                else:
+                    # check if 2D data (signal not regularly sampled)
+                    if freq_data == 0:
+                        # get first column (samples timestamps)
+                        next_data_ts = ToolsData.getDataGeneric(
+                            data_path, key=key_data, slicing=("col", 0)
+                        )
+
+                    # initialize slicing indexes
+                    start_ind = 0
+                    end_ind = None
 
                     # truncate data at the beginning if necessary
                     if ite_line == 0:
-                        # 1D data (constant frequency)
-                        if len(next_data.shape) == 1:
-                            start_frame = int(start_sec * freq_data)
-                            next_data = next_data[start_frame:]
+                        # 1D data (regularly sampled)
+                        if freq_data > 0:
+                            # get slicing index
+                            start_ind = int(start_sec * freq_data)
 
-                        # 2D data => ms timestamp on first axis
+                        # 2D data (not regularly sampled)
                         else:
+                            # get indexes of samples after starting second
                             inds = np.where(
-                                next_data[:, 0] >= start_sec * 1000
+                                next_data_ts >= start_sec * 1000
                             )[0]
 
-                            next_data = next_data[inds]
+                            # get slicing index
+                            start_ind = inds[0]
 
-                            next_data[:, 0] = \
-                                next_data[:, 0] - start_sec * 1000
-
+                            # update temporal offset
+                            duration_progress = - start_sec
 
                     # truncate data at the end if necessary
                     if ite_line == len(lines) - 1:
+                        # get duration of reference data file in seconds
+                        ref_duration = self.nframes / self.fps
+
                         # 1D data
-                        if len(next_data.shape) == 1:
+                        if freq_data > 0:
                             # get length of data so far
                             data_length = 0
                             for data_tmp in data_list:
                                 data_length += data_tmp.shape[0]
 
-                            # get the end frame
-                            end_frame = int(round(
-                                freq_data * self.nframes / self.fps -
-                                data_length
+                            # get remaining data length required to fill
+                            # the reference data file
+                            remaining_length = int(round(
+                                freq_data * ref_duration - data_length
                             ))
 
-                            next_data = next_data[:end_frame]
+                            # get slicing index
+                            end_ind = start_ind + remaining_length
 
-                        # 2D data => ms timestamp on first axis
+                        # 2D data (not regularly sampled)
                         else:
-                            if start_sec_prev != -1:
-                                inds = np.where(
-                                    next_data[:, 0] <= (
-                                        self.nframes / self.fps -
-                                        start_sec_prev
-                                    ) * 1000
-                                )[0]
+                            temporal_limit = (
+                                ref_duration - duration_progress
+                            ) * 1000
 
-                                next_data = next_data[inds]
+                            # get indexes of samples before temporal limit
+                            inds = np.where(
+                                next_data_ts <= temporal_limit
+                            )[0]
 
-                                next_data[:, 0] = \
-                                    next_data[:, 0] + start_sec_prev * 1000
+                            # get slicing indexes
+                            end_ind = inds[-1] + 1
 
-                            else:
-                                inds = np.where(
-                                    next_data[:, 0] <=
-                                    1000 * self.nframes / self.fps
-                                )[0]
+                    # keyword arguments for loading data
+                    kwargs = {"key": key_data}
 
-                                next_data = next_data[inds]
+                    # channel specification when loading audio
+                    if data_path.split('.')[-1] == "wav":
+                        kwargs["channel_id"] = \
+                            ToolsAudio.convertKeyToChannelId(key_data)
 
-                    start_sec_prev = -1
+                    # slicing keyword argument for data loading
+                    if start_ind == 0 and end_ind is None:
+                        kwargs["slicing"] = ()
 
-                    # concatenate data
-                    data_list.append(next_data)
-
-            # check if 2D and zero fill at the beginning
-            if len(data_list) > 1:
-                if len(data_list[0].shape) == 1 \
-                        and len(data_list[1].shape) == 2:
-                    zero_length = data_list[0].shape[0]
-                    if freq_data == 0:
-                        data_list[0] = np.empty((0, 2))
+                    elif end_ind is None:
+                        kwargs["slicing"] = (start_ind,)
 
                     else:
-                        data_list[0] = np.vstack((
-                            np.arange(0, zero_length, int(1000 / freq_data)),
-                            np.zeros((zero_length,))
-                        )).T
+                        kwargs["slicing"] = (start_ind, end_ind)
+
+                    # check if interval data
+                    if flag_interval:
+                        # load data with slicing
+                        next_data = ToolsData.getDataIntervalAsTimeSeries(
+                            data_path, **kwargs
+                        )
+
+                    else:
+                        # load data with slicing
+                        next_data = ToolsData.getDataGeneric(
+                            data_path, **kwargs
+                        )
+
+                    # get duration of truncated data
+                    if freq_data > 0:
+                        duration = next_data.shape[0] / freq_data
+
+                    else:
+                        duration = (next_data[-1, 0] - next_data[0, 0]) / 1000
+
+                        # temporal offset
+                        next_data[:, 0] += duration_progress * 1000
+
+                    duration_progress += duration
+
+                # concatenate data
+                data_list.append(next_data)
 
             # get data as a numpy array
             data = np.concatenate(tuple(data_list))
 
-        return data
+        return data, freq_data
 
 
     # *********************************************************************** #

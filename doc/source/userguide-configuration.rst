@@ -135,9 +135,21 @@ Same configuration with a more compact writing::
     Respiration = [['dir/to/sig', 'resp', 62.5, 'data_*.h5', '_', 1, 'posix', {'pen': {'color': 'm', 'width': 1}}]]
 
 
+YRange
+------
+See section :ref:`yrange` for details about YRange configuration. In a Python script, it is stored in a dictionary as in the following example::
+
+    y_range_dict = {}
+    y_range_dict["ECG"] = (500, 1000)
+
+In the configuration file, we create a section named "YRange", composed of as much keys as signal widgets where to set the Y axis range. Here is the equivalent YRange configuration::
+
+    [YRange]
+    ECG = (500, 1000)
+
+
 Threshold
 ---------
-
 See section :ref:`threshold` for details about threshold configuration. In a Python script, it is stored in a dictionary as in the following example::
 
     threshold_dict = {}
@@ -146,7 +158,7 @@ See section :ref:`threshold` for details about threshold configuration. In a Pyt
         [750, (178, 34, 34)]
     ]
 
-In configuration file, we create a section named "Threshold", composed of as much sub-sections as threshold values. Here is the equivalent threshold configuration::
+In the configuration file, we create a section named "Threshold", composed of as much sub-sections as threshold values. Here is the equivalent threshold configuration::
 
     [Threshold]
     [[RR]]
@@ -270,6 +282,7 @@ In a Python script, the general configuration is specified with the keyword argu
     font_size_title = 8
     nb_table_annot = 10
     time_zone = 'Europe/Paris'
+    flag_annot_overlap = False
     annot_dir = 'Annotations'
     ticks_offset = 5
     font_name = 'Times'
@@ -348,6 +361,17 @@ The user must click on the push button "Add" in order to create a new signal con
   Example of audio signal configuration
 
 
+YRange
+------
+The user can manage the YRange configuration by clicking on the push button "YRange" located above the signal configuration. This opens a new window illustrated in figure :numref:`fig-config-yrange`. The push button "Add" allows to add a YRange configuration that is automatically linked to an existing signal widget.
+
+.. _fig-config-yrange:
+
+.. figure:: images/configuration_yrange.png
+
+  Example of YRange configuration
+
+
 Threshold
 ---------
 The user can manage the threshold configuration by clicking on the push button "Threshold" located above the signal configuration. This opens a new window illustrated in figure :numref:`fig-config-threshold`. The push button "Add" allows to add a threshold configuration that is automatically linked to an existing signal configuration thanks to the signal widget ID. Several thresholds can be added to one signal widget with the push button "Add sub".
@@ -398,7 +422,7 @@ The events annotation configuration is contained in the third group box named "A
 
 .. figure:: images/configuration_annotevent.png
 
-  Screenshot of the event annotation configuration
+  Screenshot of the events annotation configuration
 
 The user must click on the push button "Add" in order to create a new annotation configuration, corresponding to a new label. Once an annotation configuration is added, there are two fields to fill in: 
 
@@ -434,6 +458,8 @@ The "Signals synchronized" check box specifies if the the signals are synchroniz
 
 The "Video paused to launch" check box specifies if the video must be in pause mode when launching the software.
 
+The "Events annotations overlap" check box specifies if the overlap of events annotations is enabled.
+
 The "Layout mode" spin box specifies the layout mode (see :numref:`fig-example-combined`).
 
 The "Time zone" line edit specifies the time zone that is used for date-time comparison.
@@ -464,7 +490,7 @@ The "Font size" spin box specifies the font size for the title of the video widg
 
 The "Font color" spin boxes specify the font color.
 
-The "Maximum number of labels in a row" spin box specifies the maximum number of labels to put in a row in the widgets of event annotation and image annotation.
+The "Maximum number of labels in a row" spin box specifies the maximum number of labels to put in a row in the widgets of events annotation and image annotation.
 
 The "Background color" spin boxes specify the background color of ViSiAnnoT window.
 

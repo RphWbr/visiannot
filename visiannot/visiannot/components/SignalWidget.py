@@ -194,10 +194,10 @@ class SignalWidget(pg.PlotWidget):
 
         :param first_frame_ms: start timestamp of the temporal range to display
             (in milliseconds)
-        :type first_frame_ms: int
+        :type first_frame_ms: float
         :param last_frame_ms: end timestamp of the temporal range to display
             (in milliseconds)
-        :type last_frame_ms: int
+        :type last_frame_ms: float
         :param sig_list: signals to plot, each element is an instance of
             :class:`.Signal`
         :type sig_list: list 
@@ -293,16 +293,16 @@ class SignalWidget(pg.PlotWidget):
                 first_frame_ms, last_frame_ms
             )
 
+            # delete NaNs
+            data_in_current_range = ToolsPyqtgraph.deleteNaNForPlot(
+                data_in_current_range
+            )
+
             # check if empty signal in the temporal range
             if data_in_current_range.shape[0] == 0:
                 sig_plot.clear()
 
             else:
-                # delete NaNs
-                data_in_current_range = ToolsPyqtgraph.deleteNaNForPlot(
-                    data_in_current_range
-                )
-
                 # signal plot
                 sig_plot.setData(data_in_current_range)
 
@@ -402,7 +402,7 @@ class SignalWidget(pg.PlotWidget):
         On the other hand, it allows to define a new annotation and to add it
         the annotation file by calling the method
         :meth:`zoomOrAnnotClicked`. Also, it allows to delete
-        manually a specific event annotation by calling the method
+        manually a specific events annotation by calling the method
         :meth:`.deleteClicked` on the attribute
         :attr:`.ViSiAnnoT.wid_annotevent`.
 

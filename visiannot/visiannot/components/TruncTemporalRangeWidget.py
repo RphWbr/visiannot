@@ -43,35 +43,27 @@ class TruncTemporalRangeWidget():
         #: temporal range
         self.combo_box = None
 
-        # check trunc duration
-        if self.trunc_duration[0] == 0 and self.trunc_duration[1] == 0:
-            print(
-                "Duration of truncated temporal range is 0 => widget not "
-                "created"
-            )
+        # create combo box and add it to the layout of the associated
+        # instance of ViSiAnnoT
+        _, _, self.combo_box = addComboBox(
+            visi.lay, widget_position, [],
+            box_title="%dmin %ds temporal range" % tuple(trunc_duration),
+            flag_enable_key_interaction=False
+        )
 
-        else:
-            # create combo box and add it to the layout of the associated
-            # instance of ViSiAnnoT
-            _, _, self.combo_box = addComboBox(
-                visi.lay, widget_position, [],
-                box_title="%dmin %ds temporal range" % tuple(trunc_duration),
-                flag_enable_key_interaction=False
-            )
+        # set truncated duration and combo box items
+        self.setTrunc(visi)
 
-            # set truncated duration and combo box items
-            self.setTrunc(visi)
+        # initialize selected item of the combo box
+        self.combo_box.setCurrentIndex(1)
 
-            # initialize selected item of the combo box
-            self.combo_box.setCurrentIndex(1)
-
-            # set last frame of associated instance of ViSiAnnoT
-            visi.last_frame = self.nframes_trunc
-            
-            # listen to the callback method
-            self.combo_box.currentIndexChanged.connect(
-                lambda ite_trunc: self.callComboTrunc(ite_trunc, visi)
-            )
+        # set last frame of associated instance of ViSiAnnoT
+        visi.last_frame = self.nframes_trunc
+        
+        # listen to the callback method
+        self.combo_box.currentIndexChanged.connect(
+            lambda ite_trunc: self.callComboTrunc(ite_trunc, visi)
+        )
 
 
     def setTrunc(self, visi):

@@ -21,14 +21,16 @@ from ...tools.ToolsDateTime import convertDatetimeToString, \
 from ...tools.ToolsPyqtgraph import removeItemInWidgets
 import numpy as np
 from datetime import timedelta
+from ...tools.ToolsAnnotation import readAnnotation
 
 
 class AnnotEventWidget():
     def __init__(
-        self, visi, widget_position, label_dict, annot_dir, **kwargs
+        self, visi, widget_position, label_dict, annot_dir,
+        flag_annot_overlap=False, **kwargs
     ):
         """
-        Widget for event annotation
+        Widget for events annotation
 
         :param visi: associated instance of :class:`.ViSiAnnoT`
         :param widget_position: position of the widget in the layout of the
@@ -40,11 +42,17 @@ class AnnotEventWidget():
         :type label_dict: dict
         :param annot_dir: directory where the annotations are saved
         :type annot_dir: str
+        :param flag_annot_overlap: specify if overlap of events annotations is
+            enabled
+        :type flag_annot_overlap: bool
         :param kwargs: keyword arguments of :meth:`.createWidget`
         """
 
         #: (*str*) Directory where the annotations are saved
         self.annot_dir = annot_dir
+
+        #: (*bool*) Specify if overlap of events annotations is enabled
+        self.flag_annot_overlap = flag_annot_overlap
 
         #: (*str*) Base name of the annotation files (to which is appended
         #: the label)
@@ -70,10 +78,10 @@ class AnnotEventWidget():
                 self.protected_label
             )
 
-        #: (*list*) Labels of the event annotation
+        #: (*list*) Labels of the events annotation
         self.label_list = list(label_dict.keys())
 
-        #: (*list*) Colors of the event annotation labels
+        #: (*list*) Colors of the events annotation labels
         #:
         #: each element is a list of length 4 with the RGBA color
         self.color_list = list(label_dict.values())
@@ -98,7 +106,7 @@ class AnnotEventWidget():
             (len(self.label_list), 2, 2), dtype=object
         )
 
-        #: (*dict*) Event annotations descriptions to be displayed
+        #: (*dict*) Events annotations descriptions to be displayed
         #:
         #: Key is the index of a label in :attr:`.label_list`. Value is a
         #: dictionary:
@@ -111,7 +119,7 @@ class AnnotEventWidget():
         #:        corresponds to one signal widget
         self.description_dict = {}
 
-        #: (*list*) Way of storing event annotations
+        #: (*list*) Way of storing events annotations
         #:
         #: Two elements:
         #:
@@ -121,7 +129,7 @@ class AnnotEventWidget():
         self.annot_type_list = ["datetime", "frame"]
 
         if len(self.label_list) > 0:
-            #: (*list*) Files names of event annotation
+            #: (*list*) Files names of events annotation
             #:
             #: Same length as :attr:`.annot_type_list`, there is
             #: one file for each annotation type.
@@ -168,7 +176,7 @@ class AnnotEventWidget():
         self.createWidget(visi.lay, widget_position, **kwargs)
 
         #: (*dict*) Lists of region items (pyqtgraph.LinearRegionItem)
-        #: for the display of event annotations
+        #: for the display of events annotations
         #:
         #: Key is a label index. Value is a list of lists, each sublist
         #: corresponds to one annotation and contains
@@ -320,7 +328,7 @@ class AnnotEventWidget():
         """
         Gets the path of the annotation files corresponding to the input label
 
-        :param label: event annotation label
+        :param label: events annotation label
         :type label: str
 
         :returns: paths of the annotation files, each element corresponds to an
@@ -365,8 +373,8 @@ class AnnotEventWidget():
                     # loop on beginning datetime and duration of reference
                     # modality files in the long recording
                     for beg_datetime, duration in zip(
-                        visi.rec_beginning_datetime_list,
-                        visi.rec_duration_list
+                        visi.ref_beg_datetime_list,
+                        visi.ref_duration_list
                     ):
                         # get end datetime
                         end_datetime = beg_datetime + timedelta(
@@ -385,7 +393,7 @@ class AnnotEventWidget():
                     # loop on duration of reference modality files in the long
                     # recording
                     for ite_file, duration in enumerate(
-                        visi.rec_duration_list
+                        visi.ref_duration_list
                     ):
                         # write annotation file
                         f.write("%d_0 - %d_%d\n" % (
@@ -634,7 +642,7 @@ class AnnotEventWidget():
 
             # set timestamp in frame format
             self.annot_array[self.current_label_id, annot_position, 1] = \
-                '%d_%d' % (visi.rec_id, frame_id)
+                '%d_%d' % (visi.ite_file, frame_id)
 
             # display the beginning time of the annotated interval
             self.push_text_list[annot_position].setText(
@@ -694,38 +702,85 @@ class AnnotEventWidget():
                 self.annot_array[self.current_label_id, [0, 1]] = \
                     self.annot_array[self.current_label_id, [1, 0]]
 
-            # append the annotated interval to the annotation file
-            for ite_annot_type, annot_path in enumerate(self.path_list):
-                with open(annot_path, 'a') as file:
-                    file.write(
-                        "%s - %s\n" % (
-                            self.annot_array[
-                                self.current_label_id, 0, ite_annot_type
-                            ],
-                            self.annot_array[
-                                self.current_label_id, 1, ite_annot_type
-                            ]
-                        )
+            # initialize boolean to specify if annotation must be saved
+            flag_ok = True
+
+            # check if annotations overlap disabled
+            if not self.flag_annot_overlap:
+                # check if annotation overlaps with previous annotations
+                if isfile(self.path_list[0]):
+                    flag_ok = self.checkOverlap(
+                        self.path_list[0], annot_datetime_0, annot_datetime_1,
+                        time_zone=visi.time_zone
                     )
 
-            # update the number of annotations
-            nb_annot = int(self.push_text_list[2].text().split(': ')[1]) + 1
-            self.push_text_list[2].setText("Nb: %d" % nb_annot)
+            # check if annotation must be saved
+            if flag_ok:
+                # append the annotated interval to the annotation file
+                for ite_annot_type, annot_path in enumerate(self.path_list):
+                    with open(annot_path, 'a') as file:
+                        file.write(
+                            "%s - %s\n" % (
+                                self.annot_array[
+                                    self.current_label_id, 0, ite_annot_type
+                                ],
+                                self.annot_array[
+                                    self.current_label_id, 1, ite_annot_type
+                                ]
+                            )
+                        )
 
-            # if display mode is on, display the appended interval
-            if self.push_text_list[3].text() == "On" and \
-                    self.current_label_id in self.region_dict.keys():
-                region_list = self.addRegion(
-                    visi,
-                    self.annot_array[self.current_label_id, 0, 0],
-                    self.annot_array[self.current_label_id, 1, 0],
-                    color=self.color_list[self.current_label_id]
+                # update the number of annotations
+                nb_annot = int(self.push_text_list[2].text().split(': ')[1]) + 1
+                self.push_text_list[2].setText("Nb: %d" % nb_annot)
+
+                # if display mode is on, display the appended interval
+                if self.push_text_list[3].text() == "On" and \
+                        self.current_label_id in self.region_dict.keys():
+                    region_list = self.addRegion(
+                        visi,
+                        self.annot_array[self.current_label_id, 0, 0],
+                        self.annot_array[self.current_label_id, 1, 0],
+                        color=self.color_list[self.current_label_id]
+                    )
+
+                    self.region_dict[self.current_label_id].append(region_list)
+
+            else:
+                print(
+                    "Cannot save annotation because it overlaps with an "
+                    "existing annotation"
                 )
 
-                self.region_dict[self.current_label_id].append(region_list)
-
-            # reset the beginning and ending times of the annotated interval
+            # reset the beginning and ending times of the annotated
+            # interval
             self.resetTimestamp()
+
+
+    @staticmethod
+    def checkOverlap(annot_path, annot_datetime_0, annot_datetime_1, **kwargs):
+        # get existing annotations
+        annot_array_total = readAnnotation(annot_path).flatten()
+
+        # loop on current annotation boundaries
+        diff_array = np.empty((0, len(annot_array_total)))
+        for annot_bound in [annot_datetime_0, annot_datetime_1]:
+            # compute difference with boundaries of existing annotations
+            diff_array_tmp = np.array([(
+                convertStringToDatetime(d, "format_T", **kwargs) - annot_bound
+            ).total_seconds() for d in annot_array_total])
+
+            # binarize difference array
+            diff_array = np.concatenate((
+                diff_array, np.where(diff_array_tmp > 0, 1, 0)[None, :]
+            ))
+
+        # check if no overlap
+        if np.sum(np.diff(diff_array, axis=0)) == 0:
+            return True
+
+        else:
+            return False
 
 
     @staticmethod
@@ -828,7 +883,7 @@ class AnnotEventWidget():
 
     def plotRegions(self, visi):
         """
-        Plots event annotations, depending on the display mode selected with
+        Plots events annotations, depending on the display mode selected with
         :attr:`.button_group_radio_disp`
 
         Make sure that the attribute :attr:`.region_dict` is already created.

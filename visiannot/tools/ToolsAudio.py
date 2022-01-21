@@ -15,9 +15,9 @@ import wave
 import numpy as np
 
 
-def getAudioWaveFrequency(path):
+def getAudioWaveInfo(path):
     """
-    Loads audio wave and gets frequency
+    Loads audio wave and gets frequency and number of samples
 
     :param path: path to the audio file
     :type path: str
@@ -25,7 +25,8 @@ def getAudioWaveFrequency(path):
     :returns:
         - **data_wave** (*wave.Wave_read*) -- see
           https://docs.python.org/3/library/wave.html#wave-read-objects
-        - **freq** (*int* or *float*) -- frequency
+        - **freq** (*float*) -- frequency
+        - **nframes** (*float*) -- number of samples
     """
 
     # get audio wave
@@ -34,10 +35,13 @@ def getAudioWaveFrequency(path):
     # get frequency
     freq = data_wave.getframerate()
 
-    return data_wave, freq
+    # get number of samples
+    nb_samples = data_wave.getnframes()
+
+    return data_wave, freq, nb_samples
 
 
-def getDataAudio(path, channel_id=0):
+def getDataAudio(path, channel_id=0, slicing=()):
     """
     Loads audio data
 
@@ -46,6 +50,12 @@ def getDataAudio(path, channel_id=0):
     :param channel_id: audio channel to be loaded as a numpy array, set it to
         ``-1`` to get all channels
     :type channel_id: int
+    :param slicing: indexes for slicing output data:
+
+        - ``()``: no slicing
+        - ``(start,)``: ``data[start:]``
+        - ``(start, stop)``: ``data[start:stop]``
+    :type slicing: tuple
 
     :returns:
         - **data_wave** (*wave.Wave_read*) -- see
@@ -56,11 +66,11 @@ def getDataAudio(path, channel_id=0):
     """
 
     # get audio wave and frequency
-    data_wave, freq = getAudioWaveFrequency(path)
+    data_wave, freq, nb_samples = getAudioWaveInfo(path)
 
     # get audio data as a numpy array
-    data_audio = data_wave.readframes(data_wave.getnframes())
-    byte_length = int(len(data_audio) / data_wave.getnframes())
+    data_audio = data_wave.readframes(nb_samples)
+    byte_length = int(len(data_audio) / nb_samples)
 
     if byte_length == 2:
         np_type = np.int8
@@ -78,12 +88,18 @@ def getDataAudio(path, channel_id=0):
 
     else:
         data_audio = np.fromstring(data_audio, dtype=np_type).reshape(
-            (data_wave.getnframes(), data_wave.getnchannels())
+            (nb_samples, data_wave.getnchannels())
         )
 
         # get specific channel if necessary
         if channel_id >= 0:
             data_audio = data_audio[:, channel_id]
+
+        if len(slicing) == 1:
+            data_audio = data_audio[slicing[0]:]
+
+        elif len(slicing) == 2:
+            data_audio = data_audio[slicing[0]:slicing[1]]
 
     return data_wave, data_audio, freq
 
