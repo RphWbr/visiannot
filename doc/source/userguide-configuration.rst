@@ -72,16 +72,16 @@ See section :ref:`signal` for details about signal configuration. In a Python sc
     signal_dict = {}
 
     signal_dict["ECG"] = [
-        ["dir/to/sig", "ecg", 500, "data_*.h5", '_', 1, 'posix', None],
+        ["dir/to/sig", "data_*.h5", '_', 1, 'posix', "ecg", 500, None],
         [
-            "dir/to/sig", "tqrs", 0, "tqrs_*.h5", '_', 0, '%Y%m%dT%H%M%S',
+            "dir/to/sig", "tqrs_*.h5", '_', 0, '%Y%m%dT%H%M%S', "tqrs", 0,
             {'pen': None, "symbol": '+', "symbolPen": 'r', "symbolSize": 10}
         ]
     ]
 
     signal_dict["Respiration"] = [
         [
-            "dir/to/sig", "resp", 62.5, "data_*.h5", '_', 1, 'posix',
+            "dir/to/sig", "data_*.h5", '_', 1, 'posix', "resp", 62.5,
             {'pen': {'color': 'm', 'width': 1}}
         ]
     ]
@@ -93,21 +93,21 @@ There are two signal widgets ("ECG" and "Repsiration"), with two signals in the 
     [[ECG]]
     [[[k0]]]
     k0 = 'dir/to/sig'
-    k1 = 'ecg'
-    k2 = 500
-    k3 = 'data_*.h5'
-    k4 = '_'
-    k5 = 1
-    k6 = 'posix'
+    k1 = 'data_*.h5'
+    k2 = '_'
+    k3 = 1
+    k4 = 'posix'
+    k5 = 'ecg'
+    k6 = 500
     k7 = None
     [[[k1]]]
     k0 = 'dir/to/sig'
-    k1 = 'tqrs'
-    k2 = 0
-    k3 = 'tqrs_*.h5'
-    k4 = '_'
-    k5 = 0
-    k6 = '%Y%m%dT%H%M%S'
+    k1 = 'tqrs_*.h5'
+    k2 = '_'
+    k3 = 0
+    k4 = '%Y%m%dT%H%M%S'
+    k5 = 'tqrs'
+    k6 = 0
     [[[[k7]]]]
     pen = None
     symbol = '+'
@@ -117,12 +117,12 @@ There are two signal widgets ("ECG" and "Repsiration"), with two signals in the 
     [[Respiration]]
     [[[k0]]]
     k0 = 'dir/to/sig'
-    k1 = 'resp'
-    k2 = 62.5
-    k3 = 'data_*.h5'
-    k4 = '_'
-    k5 = 1
-    k6 = 'posix'
+    k1 = 'data_*.h5'
+    k2 = '_'
+    k3 = 1
+    k4 = 'posix'
+    k5 = 'resp'
+    k6 = 62.5
     [[[[k7]]]]
     [[[[[pen]]]]]
     color = 'm'
@@ -131,8 +131,8 @@ There are two signal widgets ("ECG" and "Repsiration"), with two signals in the 
 Same configuration with a more compact writing::
 
     [Signal]
-    ECG = [['dir/to/sig', 'ecg', '500', 'data_*.h5', '_', 1, 'posix', None], ['dir/to/sig', 'tqrs', 0, 'tqrs_*.h5', '_', 0, '%Y%m%dT%H%M%S', {'pen': None, 'symbol': '+', 'symbolPen': 'r', 'symbolSize': 10}]]
-    Respiration = [['dir/to/sig', 'resp', 62.5, 'data_*.h5', '_', 1, 'posix', {'pen': {'color': 'm', 'width': 1}}]]
+    ECG = [['dir/to/sig', 'data_*.h5', '_', 1, 'posix', 'ecg', '500', None], ['dir/to/sig', 'tqrs_*.h5', '_', 0, '%Y%m%dT%H%M%S', 'tqrs', 0, {'pen': None, 'symbol': '+', 'symbolPen': 'r', 'symbolSize': 10}]]
+    Respiration = [['dir/to/sig', 'data_*.h5', '_', 1, 'posix', 'resp', 62.5, {'pen': {'color': 'm', 'width': 1}}]]
 
 
 YRange
@@ -184,8 +184,8 @@ See section :ref:`intervals` for details about interval configuration. In a Pyth
 
     interval_dict = {}
     interval_dict["ECG"] = [
-        ["dir/to/interval", "", 500, "I0_*.txt", '_', 0, '%Y%m%dT%H%M%S', (0, 255, 0, 50)],
-        ["dir/to/interval", "", 500, "I1_*.txt", '_', 0, '%Y%m%dT%H%M%S', (255, 200, 0, 50)]
+        ["dir/to/interval", "I0_*.txt", '_', 0, '%Y%m%dT%H%M%S', "", 500, (0, 255, 0, 50)],
+        ["dir/to/interval", "I1_*.txt", '_', 0, '%Y%m%dT%H%M%S', "", 500, (255, 200, 0, 50)]
     ]
 
 Intervals must be plotted only the signal widget "ECG" with two interval types. In the configuration file, we create a section named "Interval", composed of as much sub-sections as signal widgets on which to plot intervals. Each sub-section is composed of as much sub-sub-sections as interval types to plot on the corresponding signal widget. Here is the equivalent interval configuration::
@@ -194,27 +194,27 @@ Intervals must be plotted only the signal widget "ECG" with two interval types. 
     [[ECG]]
     [[[k0]]]
     k0 = "path/to/interval.txt"
-    k1 = ''
-    k2 = "I0_*.txt"
-    k3 = 500
-    k4 = '_'
-    k5 = 0
-    k6 = '%Y%m%dT%H%M%S'
+    k1 = "I0_*.txt"
+    k2 = '_'
+    k3 = 0
+    k4 = '%Y%m%dT%H%M%S'
+    k5 = ''
+    k6 = 500
     k7 = [0, 255, 0, 50]
     [[[k1]]]
     k0 = "path/to/intervalbis.txt"
-    k1 = ''
-    k2 = "I1_*.txt"
-    k3 = 500
-    k4 = '_'
-    k5 = 0
-    k6 = '%Y%m%dT%H%M%S'
+    k1 = "I1_*.txt"
+    k2 = '_'
+    k3 = 0
+    k4 = '%Y%m%dT%H%M%S'
+    k5 = ''
+    k6 = 500
     k7 = [255, 200, 0, 50]
 
 Same configuration with a more compact writing::
 
     [Interval]
-    ECG = [["dir/to/interval", "", 500, "I0_*.txt", '_', 0, '%Y%m%dT%H%M%S', [0, 255, 0, 50]], ["dir/to/interval", "", 500, "I1_*.txt", '_', 0, '%Y%m%dT%H%M%S', [255, 200, 0, 50]]]
+    ECG = [["dir/to/interval", "I0_*.txt", '_', 0, '%Y%m%dT%H%M%S', "", 500, [0, 255, 0, 50]], ["dir/to/interval", "I1_*.txt", '_', 0, '%Y%m%dT%H%M%S', "", 500, [255, 200, 0, 50]]]
 
 
 Events annotation
@@ -335,12 +335,12 @@ The user must click on the push button "Add" in order to create a new signal con
 
 * Signal widget ID (used as the Y axis label on the plot)
 * Directory where to find the signal files,
-* Key to access the data in the file (in case of .h5 or .mat, set it to ``''`` otherwise), also used a legend,
-* Signal frequency (may also be a string with path to the frequency attribute in case of h5 file), set it to ``0`` in case of non-regularly sampled signal,
 * Pattern to find the signal files,
 * Delimiter to get the beginning datetime in the signal file name,
 * Position of the beginning datetime in the signal file name, according to the delimiter,
 * Format of the beginning datetime in the signal file name (``"posix"`` or format compliant with ``datetime``, see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes),
+* Key to access the data in the file (in case of .h5 or .mat, set it to ``''`` otherwise), also used a legend,
+* Signal frequency (may also be a string with path to the frequency attribute in case of h5 file), set it to ``0`` in case of non-regularly sampled signal,
 * Dictionary with plot style.
 
 :numref:`fig-config-signal` shows an example of signal configuration with two plots and three signals. The first widget (resp. second one) contains two signals plots (resp. one signal plot) and would give a display similar to :numref:`fig-example-signal` and :numref:`fig-example-signal-zoom`.
@@ -397,12 +397,12 @@ Similarly to the threshold configuration, the user can manage the interval confi
 Once an interval configuration is added, there are 8 fields to fill in:
 
 * Directory where to find the intervals files,
-* Key to access the data in the file (in case of .h5 or .mat, set it to ``''`` otherwise),
-* Frequency (in case of a time series, may also be a string with path to the frequency attribute in case of h5 file),
 * Pattern to find the intervals files,
 * Delimiter to get the beginning datetime in the signal file name,
 * Position of the beginning datetime in the signal file name, according to the delimiter,
 * Format of the beginning datetime in the signal file name (``"posix"`` or format compliant with ``datetime``, see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes),
+* Key to access the data in the file (in case of .h5 or .mat, set it to ``''`` otherwise),
+* Frequency (in case of a time series, may also be a string with path to the frequency attribute in case of h5 file),
 * Color of the interval (RGBA).
 
 .. _fig-config-intervals:

@@ -285,7 +285,7 @@ class ConfigurationWindow():
                     {"minimum": 0, "maximum": 100}
                 ])
             ],
-            [['', '*', '_', 0, '%Y-%m-%dT%H-%M-%S', 0, '', (0, 0, 0, 50)]],
+            [['', '*', '_', 0, '%Y-%m-%dT%H-%M-%S', '', 0, (0, 0, 0, 50)]],
             help_text="1. Directory\
             2. File pattern\
             3. Timestamp delimiter\
