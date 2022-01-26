@@ -130,7 +130,11 @@ def getVideoDuration(path):
 
     # check if video file exists
     if isfile(path):
-        return TinyTag.get(path).duration
+        duration = TinyTag.get(path).duration
+        if duration is None:
+            raise Warning("Empty metadata for video %s" % path)
+
+        return duration
 
     else:
         return 0
