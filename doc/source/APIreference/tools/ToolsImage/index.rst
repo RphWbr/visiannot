@@ -12,6 +12,7 @@ Functions
 
 .. autosummary::
    visiannot.tools.ToolsImage.getDataVideo
+   visiannot.tools.ToolsImage.getVideoDuration
    visiannot.tools.ToolsImage.readImage
    visiannot.tools.ToolsImage.transformImage
 
@@ -22,6 +23,7 @@ Functions
 ---------
 
 .. autofunction:: visiannot.tools.ToolsImage.getDataVideo
+.. autofunction:: visiannot.tools.ToolsImage.getVideoDuration
 .. autofunction:: visiannot.tools.ToolsImage.readImage
 .. autofunction:: visiannot.tools.ToolsImage.transformImage
 
