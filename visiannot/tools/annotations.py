@@ -13,7 +13,7 @@ Module with functions for loading ViSiAnnoT events annotation files
 
 import numpy as np
 from os.path import isfile
-from .data import convertIntervalsToTimeSeries
+from .dataloader import convertIntervalsToTimeSeries
 
 
 def readAnnotation(path, delimiter=" - "):

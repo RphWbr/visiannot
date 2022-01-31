@@ -14,7 +14,7 @@ from os.path import splitext, basename
 import pyqtgraph as pg
 import numpy as np
 from time import sleep
-from ...tools.image import transformImage
+from ...tools.videoloader import transformImage
 from ...tools.pyqtoverlayer import addWidgetToLayout
 
 

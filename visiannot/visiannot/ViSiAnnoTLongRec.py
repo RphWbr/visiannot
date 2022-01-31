@@ -17,8 +17,8 @@ from glob import glob
 from datetime import timedelta
 from ..tools import pyqtoverlayer
 from ..tools import datetimeconverter
-from ..tools import data
-from ..tools import image
+from ..tools import dataloader
+from ..tools.videoloader import getVideoDuration, getDataVideo
 from .ViSiAnnoT import ViSiAnnoT
 from ..configuration import checkConfiguration
 from .components.LogoWidgets import PreviousWidget, NextWidget
@@ -192,7 +192,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             cam_id_0 = list(video_dict.keys())[0]
             self.fps = 0
             while self.fps <= 0:
-                _, _, self.fps = image.getDataVideo(
+                _, _, self.fps = getDataVideo(
                     self.video_list_dict[cam_id_0][0][ite_vid]
                 )
 
@@ -656,7 +656,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             # (parallelization to improve performance)
             self.ref_duration_list = []
             with ProcessPoolExecutor() as executor:
-                for r in executor.map(image.getVideoDuration, path_list):
+                for r in executor.map(getVideoDuration, path_list):
                     self.ref_duration_list.append(r)
 
         # no video => first signal is the reference modality for
@@ -681,7 +681,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
                 # get duration
                 self.ref_duration_list.append(
-                    data.getDataDuration(path, freq, key=key)
+                    dataloader.getDataDuration(path, freq, key=key)
                 )
 
             # update configuration of first signal to match temporary
@@ -740,7 +740,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 freq = self.getDataFrequency(path, freq)
 
                 # get data file duration
-                duration = data.getDataDuration(
+                duration = dataloader.getDataDuration(
                     path, freq, key=key, flag_interval=flag_interval
                 )
 

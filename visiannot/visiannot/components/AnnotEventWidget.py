@@ -14,7 +14,7 @@ from os.path import isdir, basename, isfile
 from os import makedirs
 from PyQt5 import QtWidgets, QtCore
 from ...tools import pyqtoverlayer
-from ...tools.data import getTxtLines
+from ...tools.dataloader import getTxtLines
 from ...tools.datetimeconverter import convertDatetimeToString, \
     convertAbsoluteDatetimeStringToFrame, convertStringToDatetime, \
     convertFrameToAbsoluteDatetime, convertFrameToAbsoluteDatetimeString

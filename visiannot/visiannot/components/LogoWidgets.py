@@ -12,8 +12,8 @@ possible to click on to activate an action
 """
 
 from ...tools.pyqtgraphoverlayer import createWidgetLogo
-from ...tools.image import readImage
-from ...tools.data import getWorkingDirectory
+from ...tools.videoloader import readImage
+from ...tools.dataloader import getWorkingDirectory
 
 
 # get directory of the module

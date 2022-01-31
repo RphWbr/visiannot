@@ -16,7 +16,7 @@ import sys
 from os.path import isfile, split, abspath, dirname, realpath, splitext
 from scipy.io import loadmat
 from h5py import File
-from .audio import getAudioWaveInfo, getDataAudio
+from .audioloader import getAudioWaveInfo, getDataAudio
 from os import SEEK_END, SEEK_CUR
 from warnings import catch_warnings, simplefilter
 

@@ -21,9 +21,9 @@ from shutil import rmtree
 from ..tools import pyqtoverlayer
 from ..tools import pyqtgraphoverlayer
 from ..tools import datetimeconverter
-from ..tools import data
-from ..tools import image
-from ..tools import audio
+from ..tools import dataloader
+from ..tools.videoloader import getDataVideo
+from ..tools.audioloader import getAudioWaveInfo, convertKeyToChannelId
 from .components.Signal import Signal
 from .components.SignalWidget import SignalWidget
 from .components.MenuBar import MenuBar
@@ -380,7 +380,7 @@ class ViSiAnnoT():
         #: argument of the constructor of :class:`.ViSiAnnoT`).
         #:
         #: Value is an instance of **cv2.VideoCapture** containing the video
-        #: data.
+        #: data
         self.video_data_dict = {}
 
         #: (*dict*) Signal data, each item corresponds to a signal widget
@@ -1799,8 +1799,9 @@ class ViSiAnnoT():
             path_video, delimiter, pos, fmt = video_config
 
             # get video data
-            self.video_data_dict[video_id], nframes, fps = \
-                image.getDataVideo(path_video)
+            self.video_data_dict[video_id], nframes, fps = getDataVideo(
+                path_video
+            )
 
             # check if no video data
             if self.video_data_dict is None:
@@ -1894,13 +1895,13 @@ class ViSiAnnoT():
             # get data path (in case not synchronized)
             if self.flag_long_rec and not self.flag_synchro:
                 # get first synchronization file content
-                lines = data.getTxtLines(path)
+                lines = dataloader.getTxtLines(path)
 
                 # get first signal file
                 path = lines[1].replace("\n", "")
 
             # get number of frames
-            self.nframes = data.getNbSamplesGeneric(path, key_data)
+            self.nframes = dataloader.getNbSamplesGeneric(path, key_data)
 
             # check if there is data indeed
             if self.nframes == 0:
@@ -1965,14 +1966,14 @@ class ViSiAnnoT():
                                 # if time series, convert to intervals
                                 if interval.ndim == 1:
                                     interval = \
-                                        data.convertTimeSeriesToIntervals(
+                                        dataloader.convertTimeSeriesToIntervals(
                                             interval, 1
                                         )
 
                             # synchro OK
                             else:
                                 # load intervals data
-                                interval = data.getDataInterval(
+                                interval = dataloader.getDataInterval(
                                     path_interval, key_interval
                                 )
 
@@ -1996,15 +1997,14 @@ class ViSiAnnoT():
                     # get frequency
                     freq_data = self.getDataFrequency(path_data, freq_data)
 
-                    # keyword arguments for data.getDataGeneric
+                    # keyword arguments for dataloader.getDataGeneric
                     kwargs = {}
 
                     if os.path.splitext(path_data)[1] == ".wav":
-                        kwargs["channel_id"] = \
-                            audio.convertKeyToChannelId(key_data)
+                        kwargs["channel_id"] = convertKeyToChannelId(key_data)
 
                     # load data
-                    data = data.getDataGeneric(
+                    data = dataloader.getDataGeneric(
                         path_data, key_data, **kwargs
                     )
 
@@ -2042,10 +2042,10 @@ class ViSiAnnoT():
     def getDataFrequency(self, path, freq):
         # get frequency if necessary
         if os.path.splitext(path)[1] == ".wav":
-            _, freq, _ = audio.getAudioWaveInfo(path)
+            _, freq, _ = getAudioWaveInfo(path)
 
         elif isinstance(freq, str):
-            freq = data.getAttributeGeneric(path, freq)
+            freq = dataloader.getAttributeGeneric(path, freq)
 
         elif freq == -1:
             freq = self.fps
@@ -2112,7 +2112,7 @@ class ViSiAnnoT():
         """
 
         # read temporary file
-        lines = data.getTxtLines(path)
+        lines = dataloader.getTxtLines(path)
 
         # define empty data
         if len(lines) == 0:
@@ -2165,7 +2165,7 @@ class ViSiAnnoT():
                     # check if 2D data (signal not regularly sampled)
                     if freq_data == 0:
                         # get first column (samples timestamps)
-                        next_data_ts = data.getDataGeneric(
+                        next_data_ts = dataloader.getDataGeneric(
                             data_path, key=key_data, slicing=("col", 0)
                         )
 
@@ -2233,8 +2233,7 @@ class ViSiAnnoT():
 
                     # channel specification when loading audio
                     if data_path.split('.')[-1] == "wav":
-                        kwargs["channel_id"] = \
-                            audio.convertKeyToChannelId(key_data)
+                        kwargs["channel_id"] = convertKeyToChannelId(key_data)
 
                     # slicing keyword argument for data loading
                     if start_ind == 0 and end_ind is None:
@@ -2249,13 +2248,13 @@ class ViSiAnnoT():
                     # check if interval data
                     if flag_interval:
                         # load data with slicing
-                        next_data = data.getDataIntervalAsTimeSeries(
+                        next_data = dataloader.getDataIntervalAsTimeSeries(
                             data_path, **kwargs
                         )
 
                     else:
                         # load data with slicing
-                        next_data = data.getDataGeneric(
+                        next_data = dataloader.getDataGeneric(
                             data_path, **kwargs
                         )
 

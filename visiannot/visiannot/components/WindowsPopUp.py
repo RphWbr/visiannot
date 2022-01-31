@@ -13,8 +13,8 @@ Module defining classes for creating pop-up windows in help menu bar
 
 from ...tools import pyqtoverlayer
 from ...tools import pyqtgraphoverlayer
-from ...tools import image
-from ...tools.data import getWorkingDirectory
+from ...tools.videoloader import readImage
+from ...tools.dataloader import getWorkingDirectory
 from PyQt5.QtWidgets import QLabel, QWidget, QGridLayout
 from PyQt5.QtCore import Qt
 from importlib import import_module
@@ -111,7 +111,7 @@ class WindowAbout(WindowPopUp):
 
         # load Digi-NewB logo
         dir_path = getWorkingDirectory(__file__)
-        logo_im = image.readImage('%s/Images/DIGI-NEWB.jpg' % dir_path)
+        logo_im = readImage('%s/Images/DIGI-NEWB.jpg' % dir_path)
 
         # add logo to layout
         logo_plot = pyqtgraphoverlayer.createWidgetLogo(

@@ -13,7 +13,7 @@ Module defining :class:`.AnnotImageWidget`
 from os.path import isdir
 from os import mkdir, makedirs
 from ...tools.pyqtoverlayer import addWidgetButtonGroup, addPushButton
-from ...tools.image import transformImage
+from ...tools.videoloader import transformImage
 from cv2 import imwrite
 from math import ceil
 
