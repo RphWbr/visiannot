@@ -17,7 +17,7 @@ Functions
 ---------
 
 .. autosummary::
-   visiannot.configuration.Configuration.checkConfiguration
+   visiannot.configuration.Configuration.check_configuration
 
 API
 ===
@@ -34,5 +34,5 @@ Class Configuration
 Functions
 ---------
 
-.. autofunction:: visiannot.configuration.Configuration.checkConfiguration
+.. autofunction:: visiannot.configuration.Configuration.check_configuration
 

@@ -7,4 +7,4 @@ visiannot.configuration
 
    Configuration/index
    ConfigurationWindow/index
-   configUpdateExamples/index
+   update/index

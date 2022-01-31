@@ -5,10 +5,10 @@ visiannot.tools
 .. toctree::
    :titlesonly:
 
-   ToolsAnnotation/index
-   ToolsAudio/index
-   ToolsData/index
-   ToolsDateTime/index
-   ToolsImage/index
-   ToolsPyQt/index
-   ToolsPyqtgraph/index
+   annotations/index
+   audioloader/index
+   dataloader/index
+   datetimeconverter/index
+   pyqtgraphoverlayer/index
+   pyqtoverlayer/index
+   videoloader/index
