@@ -140,7 +140,7 @@ def addSpinBoxTable(grid, pos, nb_rows, nb_cols, name="", params={}):
     Adds a table of spin boxes to an instance of QtWidgets.QGridLayout
 
     The spin boxes are contained in an instance of QtWidgets.QGroupBox filled
-    by an instance of QtWidgets.QGridLayout, see func:`.ToolsPyQt.addGroupBox`.
+    by an instance of QtWidgets.QGridLayout, see func:`.addGroupBox`.
 
     :param grid: parent layout where the spin boxes are added
     :type grid: QtWidgets.QGridLayout
@@ -190,7 +190,7 @@ def setSpinBoxTable(grid, value_list_list, flag_display):
     or returns the values of a table of spin boxes
 
     :param grid: layout containing only the table of spin boxes, see
-        :func:`.ToolsPyQt.addSpinBoxTable` for creating one
+        :func:`.addSpinBoxTable` for creating one
     :type grid: QtWidgets.QGridLayout
     :param value_list_list: in case of ``flag_display`` set to ``True``, each
         element is a list of values for setting the table of spin boxes --
@@ -252,7 +252,7 @@ def addLineEditList(grid, pos, nb_rows, name=""):
 
     The line edits are contained in an instance of QtWidgets.QGroupBox filled
     by an instance of QtWidgets.QGridLayout, see
-    :func:`.ToolsPyQt.addGroupBox`.
+    :func:`.addGroupBox`.
 
     :param grid: parent layout where the line edits are added
     :type grid: QtWidgets.QGridLayout
@@ -421,7 +421,7 @@ def addPushButton(
     :type color: tuple
 
     :returns: push button item (instance of *QtWidgets.QPushButton* or
-        :class:`.ToolsPyQt.PushButton`)
+        :class:`.PushButton`)
     """
 
     # create push button
@@ -698,8 +698,8 @@ def addWidgetButtonGroup(
         ``nb_table``, then the buttons are added on several rows
     :type nb_table: int
     :param kwargs: keyword arguments of the funtion that adds the button to the
-        layout filling the group box (:func:`.ToolsPyQt.addRadioButton`,
-        :func:`.ToolsPyQt.addPushButton` or :func:`.ToolsPyQt.addCheckBox`)
+        layout filling the group box (:func:`.addRadioButton`,
+        :func:`.addPushButton` or :func:`.addCheckBox`)
 
     :returns:
         - **grid** (*QtWidgets.QGridLayout*) -- layout filling the group box
@@ -789,7 +789,7 @@ def addComboBox(
         - **grid** (*QtWidgets.QGridLayout*) -- layout filling the group box
         - **group_box** (*QtWidgets.QGroupBox*) -- widget added to the parent
           layout
-        - **combo_box** (:class:`.ToolsPyQt.ComboBox` or *QtWidgets.QComboBox*)
+        - **combo_box** (:class:`.ComboBox` or *QtWidgets.QComboBox*)
           - combo box item
     """
 

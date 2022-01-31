@@ -313,7 +313,7 @@ def convertAbsoluteDatetimeStringToFrame(
         the converted frame number
     :type beginning_datetime: datetime.datetime
     :param kwargs: keyword argument of
-        :func:`.ToolsDateTime.convertStringToDatetime`
+        :func:`.convertStringToDatetime`
 
     :returns: frame number
     :rtype: int

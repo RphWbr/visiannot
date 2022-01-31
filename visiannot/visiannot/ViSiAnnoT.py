@@ -18,12 +18,12 @@ from threading import Thread
 import os
 from time import sleep
 from shutil import rmtree
-from ..tools import ToolsPyQt
-from ..tools import ToolsPyqtgraph
-from ..tools import ToolsDateTime
-from ..tools import ToolsData
-from ..tools import ToolsImage
-from ..tools import ToolsAudio
+from ..tools import pyqtoverlayer
+from ..tools import pyqtgraphoverlayer
+from ..tools import datetimeconverter
+from ..tools import data
+from ..tools import image
+from ..tools import audio
 from .components.Signal import Signal
 from .components.SignalWidget import SignalWidget
 from .components.MenuBar import MenuBar
@@ -550,12 +550,12 @@ class ViSiAnnoT():
 
         # ************** create GUI application and set font **************** #
         #: (*QtWidgets.QApplication*) GUI initializer
-        self.app = ToolsPyqtgraph.initializeDisplayAndBgColor(
+        self.app = pyqtgraphoverlayer.initializeDisplayAndBgColor(
             color=bg_color_plot
         )
 
         # set style sheet
-        ToolsPyQt.setStyleSheet(
+        pyqtoverlayer.setStyleSheet(
             self.app, font_name, font_size, font_color, [
                 "QGroupBox", "QComboBox", "QPushButton", "QRadioButton",
                 "QLabel", "QCheckBox", "QDateTimeEdit", "QTimeEdit"
@@ -580,7 +580,7 @@ class ViSiAnnoT():
         self.lay = None
 
         # create window
-        self.win, self.lay = ToolsPyQt.createWindow(
+        self.win, self.lay = pyqtoverlayer.createWindow(
             title="ViSiAnnoT", bg_color=bg_color
         )
 
@@ -808,7 +808,7 @@ class ViSiAnnoT():
         # this does not apply in case of long recording, because there are
         # other stuff to do after calling this constructor
         if not self.flag_long_rec and flag_infinite_loop:
-            ToolsPyQt.infiniteLoopDisplay(self.app)
+            pyqtoverlayer.infiniteLoopDisplay(self.app)
 
             # close streams, delete temporary folders
             self.stopProcessing()
@@ -912,7 +912,7 @@ class ViSiAnnoT():
         pos_sig[0] += 1
 
         # create scroll area
-        scroll_lay, _ = ToolsPyQt.addScrollArea(
+        scroll_lay, _ = pyqtoverlayer.addScrollArea(
             self.lay, pos_sig, flag_ignore_wheel_event=True
         )
 
@@ -958,7 +958,7 @@ class ViSiAnnoT():
             )
 
             # set temporal ticks and X axis range
-            ToolsPyqtgraph.setTemporalTicks(
+            pyqtgraphoverlayer.setTemporalTicks(
                 wid, self.nb_ticks, (first_frame_ms, last_frame_ms),
                 self.beginning_datetime
             )
@@ -1286,7 +1286,7 @@ class ViSiAnnoT():
             )
 
             # X axis ticks
-            ToolsPyqtgraph.setTemporalTicks(
+            pyqtgraphoverlayer.setTemporalTicks(
                 wid, self.nb_ticks, (first_frame_ms, last_frame_ms),
                 self.beginning_datetime
             )
@@ -1329,7 +1329,7 @@ class ViSiAnnoT():
         :type region_list: list
         """
 
-        ToolsPyqtgraph.removeItemInWidgets(
+        pyqtgraphoverlayer.removeItemInWidgets(
             [self.wid_progress] + self.wid_sig_list, region_list
         )
 
@@ -1358,7 +1358,7 @@ class ViSiAnnoT():
         region_list = []
 
         # display region in progress bar
-        region = ToolsPyqtgraph.addRegionToWidget(
+        region = pyqtgraphoverlayer.addRegionToWidget(
             bound_1, bound_2, self.wid_progress, color
         )
 
@@ -1371,7 +1371,7 @@ class ViSiAnnoT():
             bound_2_ms = self.getFrameIdInMs(bound_2)
 
             # plot regions in signal widgets
-            region = ToolsPyqtgraph.addRegionToWidget(
+            region = pyqtgraphoverlayer.addRegionToWidget(
                 bound_1_ms, bound_2_ms, wid, color
             )
 
@@ -1566,7 +1566,7 @@ class ViSiAnnoT():
             self.region_zoom_list = []
 
             # remove zoom regions description
-            ToolsPyqtgraph.removeItemInWidgets(
+            pyqtgraphoverlayer.removeItemInWidgets(
                 self.wid_sig_list, self.region_zoom_text_item_list
             )
 
@@ -1800,7 +1800,7 @@ class ViSiAnnoT():
 
             # get video data
             self.video_data_dict[video_id], nframes, fps = \
-                ToolsImage.getDataVideo(path_video)
+                image.getDataVideo(path_video)
 
             # check if no video data
             if self.video_data_dict is None:
@@ -1808,7 +1808,7 @@ class ViSiAnnoT():
 
             else:
                 # get beginning datetime of video file
-                beginning_datetime = ToolsDateTime.getDatetimeFromPath(
+                beginning_datetime = datetimeconverter.getDatetimeFromPath(
                     path_video, delimiter, pos, fmt, time_zone=self.time_zone
                 )
 
@@ -1887,20 +1887,20 @@ class ViSiAnnoT():
                 self.fps = self.getDataFrequency(path, freq)
 
             # get beginning date-time
-            self.beginning_datetime = ToolsDateTime.getDatetimeFromPath(
+            self.beginning_datetime = datetimeconverter.getDatetimeFromPath(
                 path, delimiter, pos, fmt, time_zone=self.time_zone
             )
 
             # get data path (in case not synchronized)
             if self.flag_long_rec and not self.flag_synchro:
                 # get first synchronization file content
-                lines = ToolsData.getTxtLines(path)
+                lines = data.getTxtLines(path)
 
                 # get first signal file
                 path = lines[1].replace("\n", "")
 
             # get number of frames
-            self.nframes = ToolsData.getNbSamplesGeneric(path, key_data)
+            self.nframes = data.getNbSamplesGeneric(path, key_data)
 
             # check if there is data indeed
             if self.nframes == 0:
@@ -1965,14 +1965,14 @@ class ViSiAnnoT():
                                 # if time series, convert to intervals
                                 if interval.ndim == 1:
                                     interval = \
-                                        ToolsData.convertTimeSeriesToIntervals(
+                                        data.convertTimeSeriesToIntervals(
                                             interval, 1
                                         )
 
                             # synchro OK
                             else:
                                 # load intervals data
-                                interval = ToolsData.getDataInterval(
+                                interval = data.getDataInterval(
                                     path_interval, key_interval
                                 )
 
@@ -1996,15 +1996,15 @@ class ViSiAnnoT():
                     # get frequency
                     freq_data = self.getDataFrequency(path_data, freq_data)
 
-                    # keyword arguments for ToolsData.getDataGeneric
+                    # keyword arguments for data.getDataGeneric
                     kwargs = {}
 
                     if os.path.splitext(path_data)[1] == ".wav":
                         kwargs["channel_id"] = \
-                            ToolsAudio.convertKeyToChannelId(key_data)
+                            audio.convertKeyToChannelId(key_data)
 
                     # load data
-                    data = ToolsData.getDataGeneric(
+                    data = data.getDataGeneric(
                         path_data, key_data, **kwargs
                     )
 
@@ -2042,10 +2042,10 @@ class ViSiAnnoT():
     def getDataFrequency(self, path, freq):
         # get frequency if necessary
         if os.path.splitext(path)[1] == ".wav":
-            _, freq, _ = ToolsAudio.getAudioWaveInfo(path)
+            _, freq, _ = audio.getAudioWaveInfo(path)
 
         elif isinstance(freq, str):
-            freq = ToolsData.getAttributeGeneric(path, freq)
+            freq = data.getAttributeGeneric(path, freq)
 
         elif freq == -1:
             freq = self.fps
@@ -2112,7 +2112,7 @@ class ViSiAnnoT():
         """
 
         # read temporary file
-        lines = ToolsData.getTxtLines(path)
+        lines = data.getTxtLines(path)
 
         # define empty data
         if len(lines) == 0:
@@ -2165,7 +2165,7 @@ class ViSiAnnoT():
                     # check if 2D data (signal not regularly sampled)
                     if freq_data == 0:
                         # get first column (samples timestamps)
-                        next_data_ts = ToolsData.getDataGeneric(
+                        next_data_ts = data.getDataGeneric(
                             data_path, key=key_data, slicing=("col", 0)
                         )
 
@@ -2234,7 +2234,7 @@ class ViSiAnnoT():
                     # channel specification when loading audio
                     if data_path.split('.')[-1] == "wav":
                         kwargs["channel_id"] = \
-                            ToolsAudio.convertKeyToChannelId(key_data)
+                            audio.convertKeyToChannelId(key_data)
 
                     # slicing keyword argument for data loading
                     if start_ind == 0 and end_ind is None:
@@ -2249,13 +2249,13 @@ class ViSiAnnoT():
                     # check if interval data
                     if flag_interval:
                         # load data with slicing
-                        next_data = ToolsData.getDataIntervalAsTimeSeries(
+                        next_data = data.getDataIntervalAsTimeSeries(
                             data_path, **kwargs
                         )
 
                     else:
                         # load data with slicing
-                        next_data = ToolsData.getDataGeneric(
+                        next_data = data.getDataGeneric(
                             data_path, **kwargs
                         )
 

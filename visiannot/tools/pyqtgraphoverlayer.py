@@ -15,9 +15,9 @@ See https://pyqtgraph.readthedocs.io/en/latest
 
 import pyqtgraph as pg
 from PyQt5.QtGui import QFont
-from .ToolsPyQt import createWindow, addWidgetToLayout, initializeDisplay
+from .pyqtoverlayer import createWindow, addWidgetToLayout, initializeDisplay
 import numpy as np
-from .ToolsDateTime import convertFrameToAbsoluteTimeString, \
+from .datetimeconverter import convertFrameToAbsoluteTimeString, \
     convertMsecToAbsoluteTimeString
 
 
@@ -38,8 +38,8 @@ def initializeDisplayAndBgColor(color=(255, 255, 255)):
     Creates a Qt application for display and sets background color of the
     pyqtgraph widgets
 
-    It calls the functions :func:`.ToolsPyQt.initializeDisplay` and
-    :func:`.Toolspyqtgraph.setBackgroundColor`.
+    It calls the functions :func:`.pyqtoverlayer.initializeDisplay` and
+    :func:`.setBackgroundColor`.
 
     :param color: background color as a string or RGB
         (see https://pyqtgraph.readthedocs.io/en/latest/style.html for details)
@@ -186,7 +186,7 @@ def createWidgetImage(
     :type title_style: dict
 
     :returns:
-        - **widget** (:class:`.ToolsPyqtgraph.PlotWidget`) -- image container
+        - **widget** (*pyqtgraph.PlotWidget*) -- image container
         - **img** (*pyqtgraph.ImageItem*) -- image item
     """
 
@@ -222,7 +222,7 @@ def createWidgetLogo(lay, widget_position, im, box_size=None):
     :type box_size: int or tuple
 
     :returns: widget containing the image
-    :rtype: ToolsPyqtgraph.PlotWidget
+    :rtype: pyqtgraph.PlotWidget
     """
 
     widget, _ = createWidgetImage(lay, widget_position, im=im)
@@ -395,7 +395,7 @@ def addPlotTo2DWidget(
 
         NB: when calling the method ``plot.setData(data_array)``, the behaviour
         is back to default. If NaNs must be ignored, the function
-        :func:`.ToolsPyqtgraph.deleteNaNForPlot` must be called before.
+        :func:`.deleteNaNForPlot` must be called before.
     :type flag_nan_void: bool
     :param plot_style: plot style, keys are keyword arguments of the
         constructor of pyqtgraph.PlotDataItem, see link above
@@ -440,10 +440,10 @@ def basic2DPlot(
           indexes
     :type data: numpy array
     :param opts_win_dict: keyword arguments of the function
-        :func:`.ToolsPyQt.createWindow`
+        :func:`.pyqtoverlayer.createWindow`
     :type opts_win_dict: dict
     :param opts_wid_dict: keyword arguments of the function
-        :func:`.ToolsPyqtgraph.create2DWidget`
+        :func:`.create2DWidget`
     :type opts_wid_dict: dict
     :param plot_style: plot style, keys are keyword arguments of the
         constructor of pyqtgraph.PlotDataItem, see link above
@@ -476,7 +476,7 @@ def basicImagePlot(im, **kwargs):
     :param im: RGB image array of shape :math:`(width, height, 3)`
     :type im: numpy array
     :param kwargs: keyword arguments of the function
-        :func:`.ToolsPyQt.createWindow`, if background color of the window is
+        :func:`.pyqtoverlayer.createWindow`, if background color of the window is
         specified, then it is also applied to the image widget
 
     :returns:
@@ -727,7 +727,7 @@ def createWidgetColorBar(
     :type img_width: int
 
     :returns:
-        - **wid_bar** (:class:`.ToolsPyqtgraph.PlotWidget`) -- widget
+        - **wid_bar** (*pyqtgraph.PlotWidget*) -- widget
           containing the color bar
         - **bar_img_item** (*pyqtgraph.ImageItem*) -- image item of the color
           bar
@@ -810,7 +810,7 @@ def addMeanStdPlotTo2DWidget(
         ``data_mean``), a text item is then added near each point
     :type n_population_list: list
     :param kwargs: keyword arguments of the function
-        :func:`.ToolsPyqtgraph.addPlotTo2DWidget`, used for the plot item of
+        :func:`.addPlotTo2DWidget`, used for the plot item of
         the mean/median values
 
     :returns:

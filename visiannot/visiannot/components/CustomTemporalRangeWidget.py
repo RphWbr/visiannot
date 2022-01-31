@@ -12,8 +12,8 @@ Module defining :class:`.TimeEditWidget`
 
 from PyQt5.QtWidgets import QDateTimeEdit, QTimeEdit, QLabel
 from PyQt5 import QtCore
-from ...tools.ToolsPyQt import addPushButton, addGroupBox
-from ...tools import ToolsDateTime
+from ...tools.pyqtoverlayer import addPushButton, addGroupBox
+from ...tools import datetimeconverter
 import numpy as np
 from datetime import datetime
 from pytz import timezone
@@ -90,7 +90,7 @@ class CustomTemporalRangeWidget():
         Connected to the signal ``clicked`` of :attr:`.current_push`.
         """
 
-        current_datetime = ToolsDateTime.convertFrameToAbsoluteDatetime(
+        current_datetime = datetimeconverter.convertFrameToAbsoluteDatetime(
             visi.frame_id, visi.fps, visi.beginning_datetime
         )
 
@@ -129,7 +129,7 @@ class CustomTemporalRangeWidget():
         # check duration
         if duration_hour == 0 and duration_minute == 0 and duration_sec == 0:
             duration_hour, duration_minute, duration_sec, _ = \
-                ToolsDateTime.convertFrameToTime(
+                datetimeconverter.convertFrameToTime(
                     visi.last_frame - visi.first_frame, visi.fps
                 )
 
@@ -144,7 +144,7 @@ class CustomTemporalRangeWidget():
         start_date_time = pst.localize(start_date_time)
 
         # get start frame
-        start_frame = ToolsDateTime.convertAbsoluteDatetimeToFrame(
+        start_frame = datetimeconverter.convertAbsoluteDatetimeToFrame(
             start_date_time, visi.fps, visi.beginning_datetime
         )
 
@@ -191,7 +191,7 @@ class CustomTemporalRangeWidget():
         # go for it
         if coherence:
             # define new range
-            start_frame = ToolsDateTime.convertAbsoluteDatetimeToFrame(
+            start_frame = datetimeconverter.convertAbsoluteDatetimeToFrame(
                 start_date_time, visi.fps, visi.beginning_datetime
             )
 
@@ -200,7 +200,7 @@ class CustomTemporalRangeWidget():
 
                 visi.last_frame = min(
                     visi.nframes,
-                    visi.first_frame + ToolsDateTime.convertTimeToFrame(
+                    visi.first_frame + datetimeconverter.convertTimeToFrame(
                         visi.fps, duration_hour, duration_minute, duration_sec
                     )
                 )

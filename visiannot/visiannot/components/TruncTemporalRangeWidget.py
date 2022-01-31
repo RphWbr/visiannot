@@ -10,9 +10,9 @@
 Module defining :class:`.TimeEditWidget`
 """
 
-from ...tools.ToolsDateTime import convertTimeToFrame, \
+from ...tools.datetimeconverter import convertTimeToFrame, \
     convertFrameToAbsoluteTimeString
-from ...tools.ToolsPyQt import addComboBox
+from ...tools.pyqtoverlayer import addComboBox
 
 
 class TruncTemporalRangeWidget():
@@ -39,7 +39,7 @@ class TruncTemporalRangeWidget():
         #: (*int*) Number of splits
         self.nb_trunc = 0
 
-        #: (:class:`.ToolsPyQt.ComboBox`) Combo box for selecting a truncated
+        #: (:class:`.pyqtoverlayer.ComboBox`) Combo box for selecting a truncated
         #: temporal range
         self.combo_box = None
 

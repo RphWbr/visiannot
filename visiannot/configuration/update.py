@@ -13,7 +13,7 @@ launching GUI
 
 
 from . import ConfigurationWindow
-from ..tools.ToolsPyQt import getDirectoryDialog
+from ..tools.pyqtoverlayer import getDirectoryDialog
 from os.path import basename
 
 

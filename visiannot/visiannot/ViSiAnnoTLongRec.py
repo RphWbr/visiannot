@@ -15,10 +15,10 @@ import numpy as np
 import os
 from glob import glob
 from datetime import timedelta
-from ..tools import ToolsPyQt
-from ..tools import ToolsDateTime
-from ..tools import ToolsData
-from ..tools import ToolsImage
+from ..tools import pyqtoverlayer
+from ..tools import datetimeconverter
+from ..tools import data
+from ..tools import image
 from .ViSiAnnoT import ViSiAnnoT
 from ..configuration import checkConfiguration
 from .components.LogoWidgets import PreviousWidget, NextWidget
@@ -192,7 +192,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             cam_id_0 = list(video_dict.keys())[0]
             self.fps = 0
             while self.fps <= 0:
-                _, _, self.fps = ToolsImage.getDataVideo(
+                _, _, self.fps = image.getDataVideo(
                     self.video_list_dict[cam_id_0][0][ite_vid]
                 )
 
@@ -404,7 +404,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
 
         # *********************** infinite loop ***************************** #
-        ToolsPyQt.infiniteLoopDisplay(self.app)
+        pyqtoverlayer.infiniteLoopDisplay(self.app)
 
         # close streams, delete temporary folders
         self.stopProcessing()
@@ -467,7 +467,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         # loop on data files paths
         for path in path_list:
             # get beginning datetime of the video file
-            beginning_datetime = ToolsDateTime.getDatetimeFromPath(
+            beginning_datetime = datetimeconverter.getDatetimeFromPath(
                 path, delimiter, pos, fmt, **kwargs
             )
 
@@ -656,7 +656,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             # (parallelization to improve performance)
             self.ref_duration_list = []
             with ProcessPoolExecutor() as executor:
-                for r in executor.map(ToolsImage.getVideoDuration, path_list):
+                for r in executor.map(image.getVideoDuration, path_list):
                     self.ref_duration_list.append(r)
 
         # no video => first signal is the reference modality for
@@ -681,7 +681,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
                 # get duration
                 self.ref_duration_list.append(
-                    ToolsData.getDataDuration(path, freq, key=key)
+                    data.getDataDuration(path, freq, key=key)
                 )
 
             # update configuration of first signal to match temporary
@@ -740,7 +740,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 freq = self.getDataFrequency(path, freq)
 
                 # get data file duration
-                duration = ToolsData.getDataDuration(
+                duration = data.getDataDuration(
                     path, freq, key=key, flag_interval=flag_interval
                 )
 
@@ -903,7 +903,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             # get synchronization file name
             tmp_path = "%s/%s_%s_%s_%s.txt" % (
                 output_dir, output_dir, signal_id, key_data.replace('/', '-'),
-                ToolsDateTime.convertDatetimeToString(ref_datetime, fmt=1)
+                datetimeconverter.convertDatetimeToString(ref_datetime, fmt=1)
             )
 
             synchro_path_list.append(tmp_path)

@@ -13,15 +13,15 @@ Module defining :class:`.AnnotEventWidget`
 from os.path import isdir, basename, isfile
 from os import makedirs
 from PyQt5 import QtWidgets, QtCore
-from ...tools import ToolsPyQt
-from ...tools.ToolsData import getTxtLines
-from ...tools.ToolsDateTime import convertDatetimeToString, \
+from ...tools import pyqtoverlayer
+from ...tools.data import getTxtLines
+from ...tools.datetimeconverter import convertDatetimeToString, \
     convertAbsoluteDatetimeStringToFrame, convertStringToDatetime, \
     convertFrameToAbsoluteDatetime, convertFrameToAbsoluteDatetimeString
-from ...tools.ToolsPyqtgraph import removeItemInWidgets
+from ...tools.pyqtgraphoverlayer import removeItemInWidgets
 import numpy as np
 from datetime import timedelta
-from ...tools.ToolsAnnotation import readAnnotation
+from ...tools.annotations import readAnnotation
 
 
 class AnnotEventWidget():
@@ -254,12 +254,12 @@ class AnnotEventWidget():
         """
 
         # create group box
-        grid, _ = ToolsPyQt.addGroupBox(
+        grid, _ = pyqtoverlayer.addGroupBox(
             lay, widget_position, title="Events annotation"
         )
 
         # create widget with radio buttons (annotation labels)
-        _, _, self.button_group_radio_label = ToolsPyQt.addWidgetButtonGroup(
+        _, _, self.button_group_radio_label = pyqtoverlayer.addWidgetButtonGroup(
             grid, (0, 0, 1, 2), self.label_list, color_list=self.color_list,
             box_title="Current label selection", nb_table=nb_table
         )
@@ -285,7 +285,7 @@ class AnnotEventWidget():
             button_text_list, push_text_list
         )):
             # add push button
-            push_button = ToolsPyQt.addPushButton(
+            push_button = pyqtoverlayer.addPushButton(
                 grid, (1 + ite_button, 0), text,
                 flag_enable_key_interaction=False
             )
@@ -301,14 +301,14 @@ class AnnotEventWidget():
                 self.push_text_list.append(q_label)
 
         # create widget with radio buttons (display options)
-        _, _, self.button_group_radio_disp = ToolsPyQt.addWidgetButtonGroup(
+        _, _, self.button_group_radio_disp = pyqtoverlayer.addWidgetButtonGroup(
             grid, (2 + ite_button, 0, 1, 2),
             ["Current label", "All labels", "Custom (below)"],
             box_title="Display mode"
         )
 
         # create check boxes with labels
-        _, _, self.button_group_check_custom = ToolsPyQt.addWidgetButtonGroup(
+        _, _, self.button_group_check_custom = pyqtoverlayer.addWidgetButtonGroup(
             grid, (3 + ite_button, 0, 1, 2), self.label_list,
             color_list=self.color_list, box_title="Custom display",
             button_type="check_box", nb_table=nb_table

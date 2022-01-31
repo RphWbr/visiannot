@@ -16,7 +16,7 @@ import sys
 from os.path import isfile, split, abspath, dirname, realpath, splitext
 from scipy.io import loadmat
 from h5py import File
-from .ToolsAudio import getAudioWaveInfo, getDataAudio
+from .audio import getAudioWaveInfo, getDataAudio
 from os import SEEK_END, SEEK_CUR
 from warnings import catch_warnings, simplefilter
 
@@ -145,7 +145,7 @@ def getDataInterval(path, key=""):
     Loads file containing temporal intervals, output shape
     :math:`(n_{intervals},2)`
 
-    The file format must be supported by :func:`.ToolsData.getDataGeneric`.
+    The file format must be supported by :func:`.getDataGeneric`.
 
     The data can be stored in two ways:
 
@@ -419,7 +419,7 @@ def getDataGeneric(path, key='', **kwargs):
     :type key: str
     :param kwargs: keyword arguments of :func:`.getDataMat`,
         :func:`.getDataH5`, :func:`.getDataTxt` or
-        :func:`.ToolsAudio.getDataAudio`, depending on file format
+        :func:`.audio.getDataAudio`, depending on file format
 
     :returns: data
     :rtype: numpy array

@@ -11,10 +11,10 @@ Module defining classes for creating pop-up windows in help menu bar
 """
 
 
-from ...tools import ToolsPyQt
-from ...tools import ToolsPyqtgraph
-from ...tools import ToolsImage
-from ...tools.ToolsData import getWorkingDirectory
+from ...tools import pyqtoverlayer
+from ...tools import pyqtgraphoverlayer
+from ...tools import image
+from ...tools.data import getWorkingDirectory
 from PyQt5.QtWidgets import QLabel, QWidget, QGridLayout
 from PyQt5.QtCore import Qt
 from importlib import import_module
@@ -74,7 +74,7 @@ class WindowPopUp(QWidget):
             label.setAlignment(alignment)
 
         # add label to pop-up window layout
-        ToolsPyQt.addWidgetToLayout(self.lay, label, pos)
+        pyqtoverlayer.addWidgetToLayout(self.lay, label, pos)
 
         # check if label to be added to scroll area
         if scroll_lay is not None:
@@ -91,7 +91,7 @@ class WindowAbout(WindowPopUp):
         WindowPopUp.__init__(self, "About ViSiAnnoT", 550, 300)
 
         # create scroll area
-        scroll_lay, _ = ToolsPyQt.addScrollArea(self.lay, (0, 0))
+        scroll_lay, _ = pyqtoverlayer.addScrollArea(self.lay, (0, 0))
 
         # title label
         text_title = "<b style='font-size:35px;'><u>ViSiAnnoT</u></b>"
@@ -111,10 +111,10 @@ class WindowAbout(WindowPopUp):
 
         # load Digi-NewB logo
         dir_path = getWorkingDirectory(__file__)
-        logo_im = ToolsImage.readImage('%s/Images/DIGI-NEWB.jpg' % dir_path)
+        logo_im = image.readImage('%s/Images/DIGI-NEWB.jpg' % dir_path)
 
         # add logo to layout
-        logo_plot = ToolsPyqtgraph.createWidgetLogo(
+        logo_plot = pyqtgraphoverlayer.createWidgetLogo(
             self.lay, (2, 0), logo_im
         )
 
@@ -150,7 +150,7 @@ class WindowLicense(WindowPopUp):
         WindowPopUp.__init__(self, "ViSiAnnoT license", 600, 500)
 
         # create scroll area
-        scroll_lay, _ = ToolsPyQt.addScrollArea(self.lay, (0, 0))
+        scroll_lay, _ = pyqtoverlayer.addScrollArea(self.lay, (0, 0))
 
         # license label
         license_text = """

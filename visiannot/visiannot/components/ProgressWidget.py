@@ -13,9 +13,9 @@ Module defining :class:`.ProgressWidget`
 
 import pyqtgraph as pg
 from PyQt5 import QtCore
-from ...tools.ToolsPyqtgraph import setTicksTextStyle, setTemporalTicks
-from ...tools.ToolsPyQt import addWidgetToLayout
-from ...tools.ToolsDateTime import convertFrameToString, \
+from ...tools.pyqtgraphoverlayer import setTicksTextStyle, setTemporalTicks
+from ...tools.pyqtoverlayer import addWidgetToLayout
+from ...tools.datetimeconverter import convertFrameToString, \
     convertFrameToAbsoluteDatetimeString
 
 
@@ -325,7 +325,7 @@ class ProgressWidget(pg.PlotWidget):
 
         Connected to the signal ``sigPlotChanged`` of the scatter plot item of
         :attr:`.wid_progress` (accessed with the method
-        :meth:`graphicsoverlayer.ToolsPyqtgraph.ProgressWidget.getProgressPlot`).
+        :meth:`graphicsoverlayer.pyqtgraphoverlayer.ProgressWidget.getProgressPlot`).
         """
 
         # check if dragging

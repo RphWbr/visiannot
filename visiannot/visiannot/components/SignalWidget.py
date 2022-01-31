@@ -14,8 +14,8 @@ Module defining :class:`.SignalWidget` and :class:`.PlotItemCustom`
 import pyqtgraph as pg
 from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtCore import Qt
-from ...tools import ToolsPyqtgraph
-from ...tools.ToolsPyQt import addWidgetToLayout
+from ...tools import pyqtgraphoverlayer
+from ...tools.pyqtoverlayer import addWidgetToLayout
 
 
 class PlotItemCustom(pg.graphicsItems.PlotItem.PlotItem):
@@ -151,12 +151,12 @@ class SignalWidget(pg.PlotWidget):
         """
 
         # set axes font
-        ToolsPyqtgraph.setTicksTextStyle(
+        pyqtgraphoverlayer.setTicksTextStyle(
             self.getAxis('left'), color=ticks_color, size=ticks_size,
             offset=ticks_offset
         )
 
-        ToolsPyqtgraph.setTicksTextStyle(
+        pyqtgraphoverlayer.setTicksTextStyle(
             self.getAxis('bottom'), color=ticks_color, size=ticks_size,
             offset=ticks_offset
         )
@@ -234,7 +234,7 @@ class SignalWidget(pg.PlotWidget):
             )
 
             # plot signal in the widget
-            plot = ToolsPyqtgraph.addPlotTo2DWidget(
+            plot = pyqtgraphoverlayer.addPlotTo2DWidget(
                 self, data_in_current_range, flag_nan_void=True,
                 plot_style=sig.plot_style
             )
@@ -294,7 +294,7 @@ class SignalWidget(pg.PlotWidget):
             )
 
             # delete NaNs
-            data_in_current_range = ToolsPyqtgraph.deleteNaNForPlot(
+            data_in_current_range = pyqtgraphoverlayer.deleteNaNForPlot(
                 data_in_current_range
             )
 
@@ -357,7 +357,7 @@ class SignalWidget(pg.PlotWidget):
                 det_1 = 1000.0 * det_1 / freq
 
             # plot region
-            region = ToolsPyqtgraph.addRegionToWidget(
+            region = pyqtgraphoverlayer.addRegionToWidget(
                 det_0, det_1, self, color
             )
             region_list.append(region)

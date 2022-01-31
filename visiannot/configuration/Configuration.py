@@ -14,7 +14,7 @@ Module defining class :class:`.Configuration`
 from PyQt5 import QtWidgets
 from ast import literal_eval
 import numpy as np
-from ..tools import ToolsPyQt
+from ..tools import pyqtoverlayer
 
 
 def checkConfiguration(config_id, config, config_type, flag_long_rec=True):
@@ -546,12 +546,12 @@ class Configuration():
         """
 
         # create configuration group box
-        self.lay, self.group_box = ToolsPyQt.addGroupBox(
+        self.lay, self.group_box = pyqtoverlayer.addGroupBox(
             self.lay_parent, position, self.type
         )
 
         # create push button for help text
-        self.button_help_show = ToolsPyQt.addPushButton(
+        self.button_help_show = pyqtoverlayer.addPushButton(
             self.lay, (0, 0), "Help", width=100
         )
 
@@ -571,7 +571,7 @@ class Configuration():
         for ite_child, children_config_name in \
                 enumerate(children_config_name_list):
             # create push button for adding intervals
-            push_button = ToolsPyQt.addPushButton(
+            push_button = pyqtoverlayer.addPushButton(
                 self.lay,
                 (0, 2 + ite_child),
                 children_config_name
@@ -579,7 +579,7 @@ class Configuration():
             self.button_group_children.addButton(push_button, ite_child)
 
         # create push buttons for adding configuration
-        push_button_add = ToolsPyQt.addPushButton(
+        push_button_add = pyqtoverlayer.addPushButton(
             self.lay, (0, self.config_grid_span), "Add", width=100
         )
         self.button_group_add.addButton(push_button_add, 0)
@@ -597,12 +597,12 @@ class Configuration():
         """
 
         # create window and layout
-        self.win_help, lay = ToolsPyQt.createWindow(
+        self.win_help, lay = pyqtoverlayer.createWindow(
             size=(800, 100), title="Help %s" % self.type, flag_show=False
         )
 
         # create scroll area
-        scroll_lay, _ = ToolsPyQt.addScrollArea(lay, (0, 0))
+        scroll_lay, _ = pyqtoverlayer.addScrollArea(lay, (0, 0))
 
         # add label with help text
         label = QtWidgets.QLabel(help_text)
@@ -610,7 +610,7 @@ class Configuration():
         scroll_lay.addWidget(label)
 
         # add push button for closing help window
-        self.button_help_hide = ToolsPyQt.addPushButton(
+        self.button_help_hide = pyqtoverlayer.addPushButton(
             lay, (1, 0), "Close", width=80
         )
 
@@ -657,7 +657,7 @@ class Configuration():
             if elt_nb > 1:
                 # check type
                 if elt_type == "spin":
-                    value = ToolsPyQt.setSpinBoxTable(
+                    value = pyqtoverlayer.setSpinBoxTable(
                         widget.layout(), [], False
                     )[0]
 
@@ -963,12 +963,12 @@ class Configuration():
             if elt_nb > 1:
                 # check element type
                 if elt_type == "spin":
-                    ToolsPyQt.addSpinBoxTable(
+                    pyqtoverlayer.addSpinBoxTable(
                         config_grid, (row_ind, col_ind), 1, elt_nb,
                         params=[elt_params]
                     )
 
-                    ToolsPyQt.setSpinBoxTable(
+                    pyqtoverlayer.setSpinBoxTable(
                         config_grid.itemAtPosition(
                             row_ind, col_ind
                         ).widget().layout(),
@@ -992,7 +992,7 @@ class Configuration():
                     widget.setValue(value)
 
                 # add element to configuration grid
-                ToolsPyQt.addWidgetToLayout(
+                pyqtoverlayer.addWidgetToLayout(
                     config_grid, widget, (row_ind, col_ind)
                 )
 
@@ -1054,7 +1054,7 @@ class Configuration():
         # check if directory contained in configuration grid
         if self.pos_dir is not None:
             # create push button for selecting directory
-            push_button_dir = ToolsPyQt.addPushButton(
+            push_button_dir = pyqtoverlayer.addPushButton(
                 config_grid, (sub_ind, col_ind), "Change directory")
 
             # add to button group
@@ -1066,7 +1066,7 @@ class Configuration():
             col_ind += 1
 
         # create push button for deleting configuration
-        push_button_del = ToolsPyQt.addPushButton(
+        push_button_del = pyqtoverlayer.addPushButton(
             config_grid, (sub_ind, col_ind), "Delete"
         )
 
@@ -1115,7 +1115,7 @@ class Configuration():
         # loop on configurations
         for config_key, config_list in config_dict.items():
             # create configuration grid
-            config_grid, config_group_box = ToolsPyQt.addGroupBox(
+            config_grid, config_group_box = pyqtoverlayer.addGroupBox(
                 self.lay, (row_start, 0, 1, self.config_grid_span)
             )
 
@@ -1133,7 +1133,7 @@ class Configuration():
             if self.flag_key:
                 # create line edit for configuration key
                 widget = QtWidgets.QLineEdit(config_key)
-                ToolsPyQt.addWidgetToLayout(config_grid, widget, (0, 0))
+                pyqtoverlayer.addWidgetToLayout(config_grid, widget, (0, 0))
 
                 # listen to callback
                 widget.textChanged.connect(self.configKeyChanged)
@@ -1149,7 +1149,7 @@ class Configuration():
             # configuration level 2 => sub-configurations
             elif self.nb_level == 2:
                 # create push button for adding a sub-configuration
-                push_button = ToolsPyQt.addPushButton(
+                push_button = pyqtoverlayer.addPushButton(
                     self.lay, (row_start, self.config_grid_span), "Add sub"
                 )
 
@@ -1284,7 +1284,7 @@ class Configuration():
         """
 
         # delete the configuration widgets
-        ToolsPyQt.deleteWidgetsFromLayout(
+        pyqtoverlayer.deleteWidgetsFromLayout(
             self.lay, len(self.config_grid_list) * self.nb_level
         )
 

@@ -10,8 +10,8 @@
 Module defining :class:`.TimeEditWidget`
 """
 
-from ...tools.ToolsDateTime import convertTimeToFrame
-from ...tools.ToolsPyQt import addComboBox
+from ...tools.datetimeconverter import convertTimeToFrame
+from ...tools.pyqtoverlayer import addComboBox
 
 
 class FromCursorTemporalRangeWidget():
@@ -44,7 +44,7 @@ class FromCursorTemporalRangeWidget():
             for from_cursor in self.from_cursor_list
         ]
 
-        #: (:class:`.ToolsPyQt.ComboBox`) Combo box for
+        #: (:class:`.pyqtoverlayer.ComboBox`) Combo box for
         #: selecting a temporal range starting at the current frame
         _, _, self.combo_box = addComboBox(
             visi.lay, widget_position, combo_item_list,

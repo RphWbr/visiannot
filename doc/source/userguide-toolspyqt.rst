@@ -1,36 +1,36 @@
-.. _toolspyqt:
+.. _pyqtoverlayer:
 
 =====================
-User guide: ToolsPyQt
+User guide: pyqtoverlayer
 =====================
 
-.. _sec-toolspyqt:
+.. _sec-pyqtoverlayer:
 
 Window display
 ==============
-A GUI application must be created before creating a window. This is done by calling the function :func:`.ToolsPyQt.initializeDisplay`, which creates an instance of **QtCore.QApplication**.
+A GUI application must be created before creating a window. This is done by calling the function :func:`.pyqtoverlayer.initializeDisplay`, which creates an instance of **QtCore.QApplication**.
 
-In order to create a window filled with a grid layout, use the function :func:`.ToolsPyQt.createWindow`. It outputs two variables: an instance of **QtWidgets.QWidget**, which can be seen as the window container, and an instance of **QtWidgets.QGridLayout**, which can be seen as a board where the different elements of the window are added and aranged. It is mandatory to store the first output of the function (instance of **QtWidgets.QWidget**) in a variable so that the window is displayed.
+In order to create a window filled with a grid layout, use the function :func:`.pyqtoverlayer.createWindow`. It outputs two variables: an instance of **QtWidgets.QWidget**, which can be seen as the window container, and an instance of **QtWidgets.QGridLayout**, which can be seen as a board where the different elements of the window are added and aranged. It is mandatory to store the first output of the function (instance of **QtWidgets.QWidget**) in a variable so that the window is displayed.
 
-At the end of the script, there must be an infinite loop so that the window keeps on being displayed until it is closed. This is done by calling the function :func:`.ToolsPyQt.infiniteLoopDisplay` which takes the instance of **QtCore.QApplication** as input argument.
+At the end of the script, there must be an infinite loop so that the window keeps on being displayed until it is closed. This is done by calling the function :func:`.pyqtoverlayer.infiniteLoopDisplay` which takes the instance of **QtCore.QApplication** as input argument.
 
 The following code gives an example for creating and displaying a window::
 
-	from visiannot.tools import ToolsPyQt
+	from visiannot.tools import pyqtoverlayer
 
-	app = ToolsPyQt.initializeDisplay()
+	app = pyqtoverlayer.initializeDisplay()
 
 	# create window and fill it with layout
-	win, lay = ToolsPyQt.createWindow(title="test")
+	win, lay = pyqtoverlayer.createWindow(title="test")
 
 	# infinite loop
-	ToolsPyQt.infiniteLoopDisplay(app)
+	pyqtoverlayer.infiniteLoopDisplay(app)
 
 If several windows are created in a loop, make sure to store the different instances of **QtWidgets.QWidget** in a list. Otherwise the windows won't be displayed. See the example below, where 4 windows are created in a for loop::
 
-	from visiannot.tools import ToolsPyQt
+	from visiannot.tools import pyqtoverlayer
 
-	app = ToolsPyQt.initializeDisplay()
+	app = pyqtoverlayer.initializeDisplay()
 
 	# initialize list of windows
 	win_list = []
@@ -38,49 +38,49 @@ If several windows are created in a loop, make sure to store the different insta
 	# loop
 	for i in range(4):
 	    # create window
-	    win, lay = ToolsPyQt.createWindow(title="test %d" % i)
+	    win, lay = pyqtoverlayer.createWindow(title="test %d" % i)
 
 	    # append list of windows
 	    win_list.append(win)
 
-	ToolsPyQt.infiniteLoopDisplay(app)
+	pyqtoverlayer.infiniteLoopDisplay(app)
 
 
 Widget creation
 ===============
 Next step is to create widgets and add them to the grid layout. The widgets are the elements in the window. Here is an example::
 
-	from visiannot.tools import ToolsPyQt
+	from visiannot.tools import pyqtoverlayer
 
-	app = ToolsPyQt.initializeDisplay()
+	app = pyqtoverlayer.initializeDisplay()
 
 	# create window and fill it with layout
-	win, lay = ToolsPyQt.createWindow(title="test", size=(500, 200))
+	win, lay = pyqtoverlayer.createWindow(title="test", size=(500, 200))
 
 	# first line of widgets
-	ToolsPyQt.addPushButton(lay, (0, 0), "P1")
-	ToolsPyQt.addCheckBox(lay, (0, 1), "C1")
+	pyqtoverlayer.addPushButton(lay, (0, 0), "P1")
+	pyqtoverlayer.addCheckBox(lay, (0, 1), "C1")
 
 	# second line of widgets => same items in a group box
-	grid, _ = ToolsPyQt.addGroupBox(lay, (1, 0, 1, 2), "Group box")
-	ToolsPyQt.addPushButton(grid, (0, 0), "P2")
-	ToolsPyQt.addCheckBox(grid, (0, 1), "C2", flag_checked=True)
+	grid, _ = pyqtoverlayer.addGroupBox(lay, (1, 0, 1, 2), "Group box")
+	pyqtoverlayer.addPushButton(grid, (0, 0), "P2")
+	pyqtoverlayer.addCheckBox(grid, (0, 1), "C2", flag_checked=True)
 
 	# group boxes with a list of identical buttons
-	ToolsPyQt.addWidgetButtonGroup(lay, (2, 0, 1, 2), ["R31", "R32", "R33"], box_title="Radio buttons")
-	ToolsPyQt.addWidgetButtonGroup(lay, (3, 0), ["P41", "P42"], button_type="push", flag_horizontal=False)
+	pyqtoverlayer.addWidgetButtonGroup(lay, (2, 0, 1, 2), ["R31", "R32", "R33"], box_title="Radio buttons")
+	pyqtoverlayer.addWidgetButtonGroup(lay, (3, 0), ["P41", "P42"], button_type="push", flag_horizontal=False)
 
 	# group box with a list of line edits
-	ToolsPyQt.addLineEditList(lay, (3, 1), 2, name="Line edits")
+	pyqtoverlayer.addLineEditList(lay, (3, 1), 2, name="Line edits")
 
 	# table of spin boxes
-	ToolsPyQt.addSpinBoxTable(lay, (0, 2, 4, 1), 4, 2, name="Spin boxes")
+	pyqtoverlayer.addSpinBoxTable(lay, (0, 2, 4, 1), 4, 2, name="Spin boxes")
 
 	# group box with a combo box
-	ToolsPyQt.addComboBox(lay, (4, 0, 1, 3), ["Choice 1", "Choice 2"], box_title='')
+	pyqtoverlayer.addComboBox(lay, (4, 0, 1, 3), ["Choice 1", "Choice 2"], box_title='')
 
 	# infinite loop
-	ToolsPyQt.infiniteLoopDisplay(app)
+	pyqtoverlayer.infiniteLoopDisplay(app)
 
 which renders a window as shown below.
 
@@ -88,7 +88,7 @@ which renders a window as shown below.
 
   Example of widgets creation
 
-ToolsPyQt provides functions for creating six types of objects:
+pyqtoverlayer provides functions for creating six types of objects:
 
 - Push button: :func:`.addPushButton`
 - Check box: :func:`.addCheckBox`
@@ -110,7 +110,7 @@ The figure below shows the same window as above with the position of the widgets
 Let assume that we need to add a line edit without including it in a group box or an object that is not supported here. This is done as follows::
 
 	obj = QtWidgets.QLineEdit()
-	ToolsPyQt.addWidgetToLayout(lay, obj, pos)
+	pyqtoverlayer.addWidgetToLayout(lay, obj, pos)
 
 where QtWidgets is imported from **PyQt5**, ``lay`` is the grid layout where to add the object and ``pos`` is the tuple with position of the object in the layout. ``QLineEdit`` can be replaced by any other type of object provided by Qt.
 
@@ -119,24 +119,24 @@ Button group
 ------------
 The case of radio button is a bit particular. There is no reason to add a single radio button, since it is normally used for an exclusive choice between several options. So it is more likely that we need to add several radio buttons that are grouped together with exclusivity (i.e. only one radio button can be selected). For this purpose, we can use the function :func:`addWidgetButtonGroup`. By default it adds radio button, but it can be used for push buttons and check boxes as well. Here is an example::
 
-	from visiannot.tools import ToolsPyQt
+	from visiannot.tools import pyqtoverlayer
 
-	app = ToolsPyQt.initializeDisplay()
+	app = pyqtoverlayer.initializeDisplay()
 
 	# create window and fill it with layout
-	win, lay = ToolsPyQt.createWindow(title="test", size=(400, 150))
+	win, lay = pyqtoverlayer.createWindow(title="test", size=(400, 150))
 
 	# radio buttons
-	grid, _, _ = ToolsPyQt.addWidgetButtonGroup(lay, (0, 0), ["R1", "R2", "R3", "R4"])
+	grid, _, _ = pyqtoverlayer.addWidgetButtonGroup(lay, (0, 0), ["R1", "R2", "R3", "R4"])
 
 	# push buttons
-	ToolsPyQt.addWidgetButtonGroup(lay, (1, 0), ["P1", "P2", "P3"], button_type="push")
+	pyqtoverlayer.addWidgetButtonGroup(lay, (1, 0), ["P1", "P2", "P3"], button_type="push")
 
 	# check boxes
-	ToolsPyQt.addWidgetButtonGroup(lay, (0, 1, 2, 1), ["C1", "C2"], button_type="check_box", flag_horizontal=False)
+	pyqtoverlayer.addWidgetButtonGroup(lay, (0, 1, 2, 1), ["C1", "C2"], button_type="check_box", flag_horizontal=False)
 
 	# infinite loop
-	ToolsPyQt.infiniteLoopDisplay(app)
+	pyqtoverlayer.infiniteLoopDisplay(app)
 
 which renders a window as shown below.
 
@@ -151,21 +151,21 @@ Setting values in a list of line edits
 --------------------------------------
 It is possible to set the value of a list of line edits directly in a script with the function :func:`.setLineEditList`. The list of line edits must be in a group box that contains only these objects (this can be done with the function :func:`.addLineEditList`). Here is an example with a list of two line edits taking respectively the value "Value 1" and "Value 2"::
 
-	from visiannot.tools import ToolsPyQt
+	from visiannot.tools import pyqtoverlayer
 
-	app = ToolsPyQt.initializeDisplay()
+	app = pyqtoverlayer.initializeDisplay()
 
 	# create window and fill it with layout
-	win, lay = ToolsPyQt.createWindow(title="test", size=(400, 150))
+	win, lay = pyqtoverlayer.createWindow(title="test", size=(400, 150))
 
 	# add list of line edits
-	grid, _ = ToolsPyQt.addLineEditList(lay, (0, 0), 2, name="Line edits")
+	grid, _ = pyqtoverlayer.addLineEditList(lay, (0, 0), 2, name="Line edits")
 
 	# set the value of the line edits
-	ToolsPyQt.setLineEditList(grid, ["Value 1", "Value 2"], 0)
+	pyqtoverlayer.setLineEditList(grid, ["Value 1", "Value 2"], 0)
 
 	# infinite loop
-	ToolsPyQt.infiniteLoopDisplay(app)
+	pyqtoverlayer.infiniteLoopDisplay(app)
 
 The last positional argument of :func:`.setLineEditList` is the setting mode. When it is set to ``0``, the line edits take the value specified by the second positional argument. When it is set to ``1``, then the function returns a list with the values written in the line edits.
 
@@ -174,21 +174,21 @@ Setting values in a table of spin boxes
 ---------------------------------------
 It is possible to set the values in a table of spin boxes directly in a script with the function :func:`.setSpinBoxTable`. The list of line edits must be in a group box that contains only these objects (this can be done with the function :func:`.addLineEditList`). Here is an example::
 
-	from visiannot.tools import ToolsPyQt
+	from visiannot.tools import pyqtoverlayer
 
-	app = ToolsPyQt.initializeDisplay()
+	app = pyqtoverlayer.initializeDisplay()
 
 	# create window and fill it with layout
-	win, lay = ToolsPyQt.createWindow(title="test", size=(400, 150))
+	win, lay = pyqtoverlayer.createWindow(title="test", size=(400, 150))
 
 	# add list of line edits
-	grid, _ = ToolsPyQt.addSpinBoxTable(lay, (0, 0), 2, 3, name="Spin boxes")
+	grid, _ = pyqtoverlayer.addSpinBoxTable(lay, (0, 0), 2, 3, name="Spin boxes")
 
 	# set the value of the line edits
-	ToolsPyQt.setSpinBoxTable(grid, [[4, 5, 6], [7, 8, 9]], 0)
+	pyqtoverlayer.setSpinBoxTable(grid, [[4, 5, 6], [7, 8, 9]], 0)
 
 	# infinite loop
-	ToolsPyQt.infiniteLoopDisplay(app)
+	pyqtoverlayer.infiniteLoopDisplay(app)
 
 which renders the window as shown below.
 
@@ -201,13 +201,13 @@ The last positional argument of :func:`.setSpinBoxTable` is the setting mode. Wh
 
 Callback management
 ===================
-**ToolsPyQt** does not provide an overlayer for callback management. The API provided by PyQt for this purpose is quite easy to use with **ToolsPyQt**.
+**pyqtoverlayer** does not provide an overlayer for callback management. The API provided by PyQt for this purpose is quite easy to use with **pyqtoverlayer**.
 
 Example 1
 ---------
 Here is a simple example::
 
-	from visiannot.tools import ToolsPyQt
+	from visiannot.tools import pyqtoverlayer
 
 	######################
 	# Callback functions #
@@ -235,22 +235,22 @@ Here is a simple example::
 	######################
 	# Script starts here #
 	######################
-	app = ToolsPyQt.initializeDisplay()
+	app = pyqtoverlayer.initializeDisplay()
 
 	# create window and fill it with layout
-	win, lay = ToolsPyQt.createWindow(title="test", size=(300, 180))
+	win, lay = pyqtoverlayer.createWindow(title="test", size=(300, 180))
 
 	# add push button
-	push_button = ToolsPyQt.addPushButton(lay, (0, 0), "Push me")
+	push_button = pyqtoverlayer.addPushButton(lay, (0, 0), "Push me")
 
 	# add list of check boxes
-	_, _, group_check = ToolsPyQt.addWidgetButtonGroup(lay, (1, 0), ["C1", "C2", "C3"], button_type="check_box")
+	_, _, group_check = pyqtoverlayer.addWidgetButtonGroup(lay, (1, 0), ["C1", "C2", "C3"], button_type="check_box")
 
 	# add list of radio buttons
-	_, _, group_radio = ToolsPyQt.addWidgetButtonGroup(lay, (2, 0), ["R1", "R2", "R3"])
+	_, _, group_radio = pyqtoverlayer.addWidgetButtonGroup(lay, (2, 0), ["R1", "R2", "R3"])
 
 	# add combo box
-	_, _, combo_box = ToolsPyQt.addComboBox(lay, (3, 0), ["Option 1", "Option 2"], box_title="Combo box")
+	_, _, combo_box = pyqtoverlayer.addComboBox(lay, (3, 0), ["Option 1", "Option 2"], box_title="Combo box")
 
 	# listen to callbacks
 	push_button.clicked.connect(printText)
@@ -260,7 +260,7 @@ Here is a simple example::
 	combo_box.currentTextChanged.connect(comboOption)
 
 	# infinite loop
-	ToolsPyQt.infiniteLoopDisplay(app)
+	pyqtoverlayer.infiniteLoopDisplay(app)
 
 which renders a window as shown below.
 
@@ -282,7 +282,7 @@ Example 2
 ---------
 We give here a more complex example with two windows: master and slave. The master window allows to control what is displayed in the slave window. The code is based on object-oriented programming and we define a class that encompasses both windows. The advantage of this approach is that we can manipulate all the attributes of the class in the callback methods without having to put them as positional arguments. Here is the code::
 
-	from visiannot.tools import ToolsPyQt
+	from visiannot.tools import pyqtoverlayer
 	from PyQt5.QtWidgets import QLineEdit, QSpinBox
 	from PyQt5 import QtCore
 
@@ -303,11 +303,11 @@ We give here a more complex example with two windows: master and slave. The mast
 	        #################
 
 	        # create window
-	        self.win_m, self.lay_m = ToolsPyQt.createWindow(title="Master", size=(500, 250))
+	        self.win_m, self.lay_m = pyqtoverlayer.createWindow(title="Master", size=(500, 250))
 
 	        # add group box with spin box
 	        spin_name = "Number of push button"
-	        grid_spin, _ = ToolsPyQt.addSpinBoxTable(self.lay_m, (0, 0), 1, 1, name=spin_name)
+	        grid_spin, _ = pyqtoverlayer.addSpinBoxTable(self.lay_m, (0, 0), 1, 1, name=spin_name)
 
 	        # get spin box
 	        self.spin_box_nb = grid_spin.itemAt(0).widget()
@@ -320,28 +320,28 @@ We give here a more complex example with two windows: master and slave. The mast
 
 	        # add line edit
 	        self.line_edit = QLineEdit()
-	        ToolsPyQt.addWidgetToLayout(self.lay_m, self.line_edit, (1, 0))
+	        pyqtoverlayer.addWidgetToLayout(self.lay_m, self.line_edit, (1, 0))
 
 	        # add spin box
 	        self.spin_box_id = QSpinBox()
-	        ToolsPyQt.addWidgetToLayout(self.lay_m, self.spin_box_id, (1, 1))
+	        pyqtoverlayer.addWidgetToLayout(self.lay_m, self.spin_box_id, (1, 1))
 
 	        # set minimum/maximum value of the spin box
 	        self.spin_box_id.setMinimum(1)
 	        self.spin_box_id.setMaximum(self.nb_push_button)
 
 	        # add master push button
-	        self.push_button = ToolsPyQt.addPushButton(self.lay_m, (1, 2), "Set push button")
+	        self.push_button = pyqtoverlayer.addPushButton(self.lay_m, (1, 2), "Set push button")
 
 	        # add check box
-	        self.check_box = ToolsPyQt.addCheckBox(self.lay_m, (2, 0), "Online")
+	        self.check_box = pyqtoverlayer.addCheckBox(self.lay_m, (2, 0), "Online")
 
 	        ################
 	        # slave window #
 	        ################
 
 	        # create window
-	        self.win_s, self.lay_s = ToolsPyQt.createWindow(title="Slave", size=(150, 250))
+	        self.win_s, self.lay_s = pyqtoverlayer.createWindow(title="Slave", size=(150, 250))
 	        self.win_s.setFixedSize(150, 250) 	# so that the size of the window does not change when adding push buttons
 
 	        # initialize list of slave push buttons
@@ -426,7 +426,7 @@ We give here a more complex example with two windows: master and slave. The mast
 	            default_text = "Default %d" % (i + 1)
 
 	            # add push button
-	            push_button = ToolsPyQt.addPushButton(self.lay_s, (i, 0), default_text)
+	            push_button = pyqtoverlayer.addPushButton(self.lay_s, (i, 0), default_text)
 
 	            # append list
 	            self.push_button_list.append(push_button)
@@ -440,7 +440,7 @@ We give here a more complex example with two windows: master and slave. The mast
 	        nb_to_remove = nb_push_button - self.nb_push_button
 
 	        # remove push buttons
-	        ToolsPyQt.deleteWidgetsFromLayout(self.lay_s, nb_to_remove)
+	        pyqtoverlayer.deleteWidgetsFromLayout(self.lay_s, nb_to_remove)
 	        for i in range(nb_to_remove):
 	            self.push_button_list.pop()
 
@@ -448,9 +448,9 @@ We give here a more complex example with two windows: master and slave. The mast
 	######################
 	# Script starts here #
 	######################
-	app = ToolsPyQt.initializeDisplay()
+	app = pyqtoverlayer.initializeDisplay()
 	w = windowCouple(2)
-	ToolsPyQt.infiniteLoopDisplay(app)
+	pyqtoverlayer.infiniteLoopDisplay(app)
 
 which renders the windows as shown below.
 
@@ -483,28 +483,28 @@ Scroll area
 ===========
 If we need to add a lot of widgets in a window, we may exceed the window size and get an unreadable layout. In this case, the scroll area is the solution. Here is an example::
 
-	from visiannot.tools import ToolsPyQt
+	from visiannot.tools import pyqtoverlayer
 
 	# number of buttons in the window
 	nb_buttons = 20
 
-	app = ToolsPyQt.initializeDisplay()
+	app = pyqtoverlayer.initializeDisplay()
 
 	# create window
-	win, lay = ToolsPyQt.createWindow(size=(150, 250))
+	win, lay = pyqtoverlayer.createWindow(size=(150, 250))
 
 	# add scroll area
-	scroll_lay, _ = ToolsPyQt.addScrollArea(lay, (0, 0))
+	scroll_lay, _ = pyqtoverlayer.addScrollArea(lay, (0, 0))
 
 	# loop on buttons
 	for i in range(nb_buttons):
 	    # add push button
-	    push_button = ToolsPyQt.addPushButton(lay, (i, 0), "%d" % i)
+	    push_button = pyqtoverlayer.addPushButton(lay, (i, 0), "%d" % i)
 
 	    # add push button to the scroll area
 	    scroll_lay.addWidget(push_button)
 
-	ToolsPyQt.infiniteLoopDisplay(app)
+	pyqtoverlayer.infiniteLoopDisplay(app)
 
 which renders the window as shown below.
 
@@ -513,6 +513,6 @@ which renders the window as shown below.
   Example of scroll area
 
 
-``scroll_lay, _ = ToolsPyQt.addScrollArea(lay, (0, 0, nb_buttons, 1))``: when we create the scroll area, we need to specify the position range of the widgets that must be included in it. In the example, the first widget is at position ``(0, 0)`` and all the widgets span ``nb_buttons`` rows and one column.
+``scroll_lay, _ = pyqtoverlayer.addScrollArea(lay, (0, 0, nb_buttons, 1))``: when we create the scroll area, we need to specify the position range of the widgets that must be included in it. In the example, the first widget is at position ``(0, 0)`` and all the widgets span ``nb_buttons`` rows and one column.
 
 ``scroll_lay.addWidget(push_button)``: when we add a widget to the layout, we must also add it to the scroll layout.

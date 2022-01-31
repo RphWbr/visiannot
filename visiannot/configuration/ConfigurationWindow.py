@@ -15,7 +15,7 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 import os
 from configobj import ConfigObj
 import numpy as np
-from ..tools import ToolsPyQt
+from ..tools import pyqtoverlayer
 from .Configuration import Configuration
 
 
@@ -114,7 +114,7 @@ class ConfigurationWindow():
         # *********************** create window ***************************** #
 
         #: (*QtWidgets.QApplication*) Display initializer
-        self.app = ToolsPyQt.initializeDisplay()
+        self.app = pyqtoverlayer.initializeDisplay()
 
         # set default font
         self.app.setFont(QtGui.QFont("Times", 12))
@@ -126,12 +126,12 @@ class ConfigurationWindow():
         self.lay = None
 
         # create window
-        self.win, self.lay = ToolsPyQt.createWindow(
+        self.win, self.lay = pyqtoverlayer.createWindow(
             title="ViSiAnnoT configuration"
         )
 
         # create scroll area
-        scroll_lay, _ = ToolsPyQt.addScrollArea(self.lay, (0, 0))
+        scroll_lay, _ = pyqtoverlayer.addScrollArea(self.lay, (0, 0))
 
 
         # ******************** create video widget ************************** #
@@ -252,7 +252,7 @@ class ConfigurationWindow():
         self.button_group_lsd = None
 
         _, group_box_lsd, self.button_group_lsd = \
-            ToolsPyQt.addWidgetButtonGroup(
+            pyqtoverlayer.addWidgetButtonGroup(
                 self.lay, (5, 0), ["Load", "Save", "Done"],
                 button_type="push", box_title="Configuration file", width=120
             )
@@ -404,7 +404,7 @@ class ConfigurationWindow():
         self.load(path)
 
         # infinite loop
-        ToolsPyQt.infiniteLoopDisplay(self.app)
+        pyqtoverlayer.infiniteLoopDisplay(self.app)
 
 
 
@@ -439,7 +439,7 @@ class ConfigurationWindow():
         """
 
         # create general configuration group box
-        self.general_lay, self.general_group_box = ToolsPyQt.addGroupBox(
+        self.general_lay, self.general_group_box = pyqtoverlayer.addGroupBox(
             self.lay, widget_position, "General"
         )
 
@@ -572,20 +572,20 @@ class ConfigurationWindow():
                 self.general_config_position_dict[key].append(wid_pos[:2])
 
                 # add widget
-                ToolsPyQt.addWidgetToLayout(self.general_lay, widget, wid_pos)
+                pyqtoverlayer.addWidgetToLayout(self.general_lay, widget, wid_pos)
 
         # get index of row with annotation base directory
         i = [key for _, key, _, _, _ in elt_list].index("annot_dir")
 
         # create push button used to change the directory of anntotations
-        self.general_push_button = ToolsPyQt.addPushButton(
+        self.general_push_button = pyqtoverlayer.addPushButton(
             self.general_lay, (i, nb_cols_max + 1), "Change directory",
             width=200
         )
         self.general_push_button.setMinimumHeight(height)
 
         # create list of "from cursor" durations
-        ToolsPyQt.addSpinBoxTable(
+        pyqtoverlayer.addSpinBoxTable(
             self.general_lay, (0, nb_cols_max + 2, nb_rows, 1), 10, 2,
             "'from cursor' durations (min, sec)", {"minimum": 0, "maximum": 59}
         )
@@ -632,12 +632,12 @@ class ConfigurationWindow():
         """
 
         # create configuration window
-        win, lay = ToolsPyQt.createWindow(
+        win, lay = pyqtoverlayer.createWindow(
             size=win_size, title="%s configuration" % args[0], flag_show=False
         )
 
         # create scroll area
-        scroll_lay, scroll_area = ToolsPyQt.addScrollArea(lay, (0, 0))
+        scroll_lay, scroll_area = pyqtoverlayer.addScrollArea(lay, (0, 0))
 
         # set size
         scroll_area.setMinimumSize(win_size[0], win_size[1])
@@ -654,7 +654,7 @@ class ConfigurationWindow():
         parent_config.addChildConfiguration(config)
 
         # create push button for hiding configuration window
-        push_button_ok = ToolsPyQt.addPushButton(lay, (1, 0), "Ok", width=80)
+        push_button_ok = pyqtoverlayer.addPushButton(lay, (1, 0), "Ok", width=80)
 
         # listen to callback
         push_button_ok.clicked.connect(win.hide)
@@ -1042,7 +1042,7 @@ class ConfigurationWindow():
         value_list = self.general_dict[key]
 
         # list of list of spin boxes
-        value_list = ToolsPyQt.setSpinBoxTable(
+        value_list = pyqtoverlayer.setSpinBoxTable(
             grid, value_list, flag_display
         )
 

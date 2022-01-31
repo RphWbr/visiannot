@@ -10,7 +10,7 @@
 Module defining :class:`.FileSelectionWidget`
 """
 
-from ...tools.ToolsPyQt import addComboBox
+from ...tools.pyqtoverlayer import addComboBox
 
 
 class FileSelectionWidget():
