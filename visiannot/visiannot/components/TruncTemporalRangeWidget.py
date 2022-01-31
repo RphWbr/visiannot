@@ -10,9 +10,9 @@
 Module defining :class:`.TimeEditWidget`
 """
 
-from ...tools.datetimeconverter import convertTimeToFrame, \
-    convertFrameToAbsoluteTimeString
-from ...tools.pyqtoverlayer import addComboBox
+from ...tools.datetimeconverter import convert_time_to_frame, \
+    convert_frame_to_absolute_time_string
+from ...tools.pyqtoverlayer import add_combo_box
 
 
 class TruncTemporalRangeWidget():
@@ -45,14 +45,14 @@ class TruncTemporalRangeWidget():
 
         # create combo box and add it to the layout of the associated
         # instance of ViSiAnnoT
-        _, _, self.combo_box = addComboBox(
+        _, _, self.combo_box = add_combo_box(
             visi.lay, widget_position, [],
             box_title="%dmin %ds temporal range" % tuple(trunc_duration),
             flag_enable_key_interaction=False
         )
 
         # set truncated duration and combo box items
-        self.setTrunc(visi)
+        self.set_trunc(visi)
 
         # initialize selected item of the combo box
         self.combo_box.setCurrentIndex(1)
@@ -62,11 +62,11 @@ class TruncTemporalRangeWidget():
         
         # listen to the callback method
         self.combo_box.currentIndexChanged.connect(
-            lambda ite_trunc: self.callComboTrunc(ite_trunc, visi)
+            lambda ite_trunc: self.call_combo_trunc(ite_trunc, visi)
         )
 
 
-    def setTrunc(self, visi):
+    def set_trunc(self, visi):
         """
         Sets duration of truncated temporal ranges and combo box items
 
@@ -77,7 +77,7 @@ class TruncTemporalRangeWidget():
 
         # get number of frames corresponding to the duration of truncated
         # temporal ranges
-        self.nframes_trunc = convertTimeToFrame(
+        self.nframes_trunc = convert_time_to_frame(
             visi.fps, minute=self.trunc_duration[0], sec=self.trunc_duration[1]
         )
 
@@ -99,10 +99,10 @@ class TruncTemporalRangeWidget():
 
             # set combo box items
             self.combo_box.clear()
-            self.combo_box.addItems(self.getTruncIntervals(visi))
+            self.combo_box.addItems(self.get_trunc_intervals(visi))
 
 
-    def getTruncIntervals(self, visi):
+    def get_trunc_intervals(self, visi):
         """
         Gets the strings associated to the truncated temporal ranges
 
@@ -114,18 +114,18 @@ class TruncTemporalRangeWidget():
 
         trunc_list = ['']
         for ite_trunc in range(self.nb_trunc):
-            string_1 = convertFrameToAbsoluteTimeString(
+            string_1 = convert_frame_to_absolute_time_string(
                 ite_trunc * self.nframes_trunc, visi.fps,
                 visi.beginning_datetime
             )
 
             if (ite_trunc + 1) == self.nb_trunc:
-                string_2 = convertFrameToAbsoluteTimeString(
+                string_2 = convert_frame_to_absolute_time_string(
                     visi.nframes, visi.fps, visi.beginning_datetime
                 )
 
             else:
-                string_2 = convertFrameToAbsoluteTimeString(
+                string_2 = convert_frame_to_absolute_time_string(
                     (ite_trunc + 1) * self.nframes_trunc, visi.fps,
                     visi.beginning_datetime
                 )
@@ -136,7 +136,7 @@ class TruncTemporalRangeWidget():
         return trunc_list
 
 
-    def callComboTrunc(self, ite_trunc, visi):
+    def call_combo_trunc(self, ite_trunc, visi):
         """
         Callback method for selecting a part of the video/signal defined by
         :attr:`.trunc_duration` via the combo box
@@ -149,7 +149,7 @@ class TruncTemporalRangeWidget():
         :attr:`.ViSiAnnoT.last_frame`) with the selected value in the combo
         box. The current frame :attr:`.ViSiAnnoT.frame_id` is set to the new
         :attr:`.ViSiAnnoT.first_frame`. Then it calls the method
-        :meth:`.ViSiAnnoT.updateSignalPlot`.
+        :meth:`.ViSiAnnoT.update_signal_plot`.
 
         :param ite_trunc: index of the selected value in the combo box
             :attr:`.combo_box`
@@ -167,7 +167,7 @@ class TruncTemporalRangeWidget():
             )
 
             # update plots signals
-            visi.updateSignalPlot(flag_reset_combo_trunc=False)
+            visi.update_signal_plot(flag_reset_combo_trunc=False)
 
             # update frame id
-            visi.updateFrameId(ite_trunc * self.nframes_trunc)
+            visi.update_frame_id(ite_trunc * self.nframes_trunc)

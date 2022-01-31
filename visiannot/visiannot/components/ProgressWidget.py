@@ -13,10 +13,11 @@ Module defining :class:`.ProgressWidget`
 
 import pyqtgraph as pg
 from PyQt5 import QtCore
-from ...tools.pyqtgraphoverlayer import setTicksTextStyle, setTemporalTicks
-from ...tools.pyqtoverlayer import addWidgetToLayout
-from ...tools.datetimeconverter import convertFrameToString, \
-    convertFrameToAbsoluteDatetimeString
+from ...tools.pyqtgraphoverlayer import set_ticks_text_style, \
+    set_temporal_ticks
+from ...tools.pyqtoverlayer import add_widget_to_layout
+from ...tools.datetimeconverter import convert_frame_to_string, \
+    convert_frame_to_absolute_datetime_string
 
 
 class ProgressWidget(pg.PlotWidget):
@@ -118,13 +119,13 @@ class ProgressWidget(pg.PlotWidget):
         self.showAxis('left', show=False)
 
         # set X axis ticks style
-        setTicksTextStyle(
+        set_ticks_text_style(
             self.getAxis('bottom'), color=ticks_color, size=ticks_size,
             offset=ticks_offset
         )
 
         # set temporal ticks and X axis range
-        setTemporalTicks(
+        set_temporal_ticks(
             self, self.nb_ticks, (0, self.nframes, visi.fps),
             visi.beginning_datetime
         )
@@ -134,7 +135,7 @@ class ProgressWidget(pg.PlotWidget):
         self.updateTitle(visi.fps, visi.beginning_datetime)
 
         # add widget to the layout of the associated instance of ViSiAnnoT
-        addWidgetToLayout(visi.lay, self, widget_position)
+        add_widget_to_layout(visi.lay, self, widget_position)
 
         # listen to the callback method
         self.progress_plot.sigPlotChanged.connect(
@@ -249,7 +250,7 @@ class ProgressWidget(pg.PlotWidget):
         :type beginning_datetime: datetime.datetime
         """
 
-        current_range_string = convertFrameToString(
+        current_range_string = convert_frame_to_string(
             self.last_line.value() - self.first_line.value(), fps
         )
 
@@ -257,7 +258,7 @@ class ProgressWidget(pg.PlotWidget):
             self.progress_plot.getData()[0][0]
         )
 
-        frame_id_string = convertFrameToAbsoluteDatetimeString(
+        frame_id_string = convert_frame_to_absolute_datetime_string(
             temporal_position, fps, beginning_datetime
         )
 
@@ -308,7 +309,7 @@ class ProgressWidget(pg.PlotWidget):
         self.progress_curve.setData([0, self.nframes], [0, 0])
 
         # set X axis ticks style
-        setTemporalTicks(
+        set_temporal_ticks(
             self, self.nb_ticks, (0, self.nframes, fps), beginning_datetime
         )
 
@@ -336,7 +337,7 @@ class ProgressWidget(pg.PlotWidget):
             )
 
             # update current frame
-            visi.updateFrameId(temporal_position)
+            visi.update_frame_id(temporal_position)
 
             # define new range
             current_range = visi.last_frame - visi.first_frame
@@ -350,4 +351,4 @@ class ProgressWidget(pg.PlotWidget):
                 visi.last_frame = visi.first_frame + current_range
 
             # update plots signals
-            visi.updateSignalPlot()
+            visi.update_signal_plot()

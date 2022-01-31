@@ -16,12 +16,12 @@ import sys
 from os.path import isfile, split, abspath, dirname, realpath, splitext
 from scipy.io import loadmat
 from h5py import File
-from .audioloader import getAudioWaveInfo, getDataAudio
+from .audioloader import get_audio_wave_info, get_data_audio
 from os import SEEK_END, SEEK_CUR
 from warnings import catch_warnings, simplefilter
 
 
-def getWorkingDirectory(path):
+def get_working_directory(path):
     """
     Gets working directory when ViSiAnnoT is launched, which depends on wether
     it is launched as a Python script or an executable (generated with
@@ -50,7 +50,7 @@ def getWorkingDirectory(path):
     return path_w
 
 
-def convertIntervalsToTimeSeries(intervals, n_samples=0):
+def convert_intervals_to_time_series(intervals, n_samples=0):
     """
     Converts intervals as 2D array to a time series of 0 and 1 (1D array)
 
@@ -70,7 +70,7 @@ def convertIntervalsToTimeSeries(intervals, n_samples=0):
     Example::
 
         >>> a = np.array([[4, 5], [9, 12], [16, -1]])
-        >>> convertIntervalsToTimeSeries(a, 20)
+        >>> convert_intervals_to_time_series(a, 20)
         array([0., 0., 0., 0., 1., 0., 0., 0., 0., 1., 1., 1., 0., 0., 0., 0.,
                1., 1., 1., 1.])
     """
@@ -94,7 +94,7 @@ def convertIntervalsToTimeSeries(intervals, n_samples=0):
     return time_series
 
 
-def convertTimeSeriesToIntervals(data, value):
+def convert_time_series_to_intervals(data, value):
     """
     Gets the intervals of a 1D signal with a specific value
 
@@ -109,12 +109,12 @@ def convertTimeSeriesToIntervals(data, value):
     Example::
 
         >>> a = np.array([0, 0, 0, 0, 5, 1, 1, 1, 1, 5, 5, 5, 0, 0, 0, 0])
-        >>> convertTimeSeriesToIntervals(a,0)
+        >>> convert_time_series_to_intervals(a,0)
         array([[ 0,  4],
                [12, 16]])
-        >>> convertTimeSeriesToIntervals(a,1)
+        >>> convert_time_series_to_intervals(a,1)
         array([[5, 9]])
-        >>> convertTimeSeriesToIntervals(a,5)
+        >>> convert_time_series_to_intervals(a,5)
         array([[ 4,  5],
                [ 9, 12]])
     """
@@ -140,12 +140,12 @@ def convertTimeSeriesToIntervals(data, value):
         return np.vstack((start_inds, end_inds)).T
 
 
-def getDataInterval(path, key=""):
+def get_data_interval(path, key=""):
     """
     Loads file containing temporal intervals, output shape
     :math:`(n_{intervals},2)`
 
-    The file format must be supported by :func:`.getDataGeneric`.
+    The file format must be supported by :func:`.get_data_generic`.
 
     The data can be stored in two ways:
 
@@ -166,10 +166,10 @@ def getDataInterval(path, key=""):
     """
 
     if isfile(path):
-        data_array = np.squeeze(getDataGeneric(path, key=key, ndmin=2))
+        data_array = np.squeeze(get_data_generic(path, key=key, ndmin=2))
 
         if data_array.ndim == 1:
-            data_array = convertTimeSeriesToIntervals(data_array, 1)
+            data_array = convert_time_series_to_intervals(data_array, 1)
 
         elif data_array.shape[0] == 0:
             data_array = np.empty((0, 2))
@@ -180,7 +180,7 @@ def getDataInterval(path, key=""):
     return data_array
 
 
-def getDataIntervalAsTimeSeries(path, n_samples=0, key="", slicing=()):
+def get_data_interval_as_time_series(path, n_samples=0, key="", slicing=()):
     """
     Loads file containing temporal intervals, output shape
     :math:`(n_{samples},)`
@@ -197,7 +197,7 @@ def getDataIntervalAsTimeSeries(path, n_samples=0, key="", slicing=()):
     :param path: path to the data file
     :type path: str
     :param n_samples: number of samples of the time series, see
-        :func:`.convertIntervalsToTimeSeries`
+        :func:`.convert_intervals_to_time_series`
     :type n_samples: int
     :param key: key to access the data in case of mat or h5 file, for txt file
         it is ignored
@@ -215,11 +215,11 @@ def getDataIntervalAsTimeSeries(path, n_samples=0, key="", slicing=()):
     """
 
     if isfile(path):
-        data_array = np.squeeze(getDataGeneric(path, key=key, ndmin=2))
+        data_array = np.squeeze(get_data_generic(path, key=key, ndmin=2))
 
         if data_array.ndim == 2:
             data_array[np.where(data_array < 0)] = 0
-            data_array = convertIntervalsToTimeSeries(
+            data_array = convert_intervals_to_time_series(
                 data_array, n_samples=n_samples
             )
 
@@ -236,7 +236,7 @@ def getDataIntervalAsTimeSeries(path, n_samples=0, key="", slicing=()):
     return data_array
 
 
-def getTxtLines(path):
+def get_txt_lines(path):
     """
     Loads a file as a list of lines
 
@@ -253,7 +253,7 @@ def getTxtLines(path):
     return lines
 
 
-def getDataDuration(
+def get_data_duration(
     path, freq, key='', flag_interval=False, **kwargs
 ):
     """
@@ -271,7 +271,7 @@ def getDataDuration(
     :type key: str
     :param flag_interval: specify if data is intervals
     :type flag_interval: bool
-    :param kwargs: keyword arguments of :func:`.getNbSamplesGeneric`
+    :param kwargs: keyword arguments of :func:`.get_nb_samples_generic`
 
     :returns: duration of the data file in seconds
     :rtype: int
@@ -280,7 +280,7 @@ def getDataDuration(
     # check if interval data
     if flag_interval:
         # load intervals
-        data = getDataInterval(path, key=key)
+        data = get_data_interval(path, key=key)
 
         if data.size > 0:
             # get ending frame of last interval
@@ -296,7 +296,7 @@ def getDataDuration(
         # check if signal not regularly sampled
         if freq == 0:
             # get last sample of the data file
-            last_sample = getLastSampleGeneric(path, key=key)
+            last_sample = get_last_sample_generic(path, key=key)
 
             if last_sample is not None:
                 # get duration in seconds
@@ -307,7 +307,7 @@ def getDataDuration(
 
         else:
             # get number of samples
-            nb_samples = getNbSamplesGeneric(path, key, **kwargs)
+            nb_samples = get_nb_samples_generic(path, key, **kwargs)
 
             # get duration in seconds
             duration = nb_samples / freq
@@ -315,7 +315,7 @@ def getDataDuration(
     return duration
 
 
-def getNbSamplesGeneric(path, key='', **kwargs):
+def get_nb_samples_generic(path, key='', **kwargs):
     """
     Gets number of samples in a data file (.mat, .h5 or .txt)
 
@@ -341,7 +341,7 @@ def getNbSamplesGeneric(path, key='', **kwargs):
             nb_samples = len(f.readlines())
 
     elif ext == ".wav":
-        _, _, nb_samples = getAudioWaveInfo(path, **kwargs)
+        _, _, nb_samples = get_audio_wave_info(path, **kwargs)
 
     else:
         raise Exception("Data format not supported: %s" % ext)
@@ -349,7 +349,7 @@ def getNbSamplesGeneric(path, key='', **kwargs):
     return nb_samples
 
 
-def getLastSampleGeneric(path, key=''):
+def get_last_sample_generic(path, key=''):
     """
     Gets the last sample in a data file (.mat, .h5 or .txt)
 
@@ -406,7 +406,7 @@ def getLastSampleGeneric(path, key=''):
     return last_sample
 
 
-def getDataGeneric(path, key='', **kwargs):
+def get_data_generic(path, key='', **kwargs):
     """
     Loads data from a file (.h5, .mat or .txt)
 
@@ -417,9 +417,9 @@ def getDataGeneric(path, key='', **kwargs):
        string containing the path to the data
     :param key: key to access the data (in case of .mat or .h5)
     :type key: str
-    :param kwargs: keyword arguments of :func:`.getDataMat`,
-        :func:`.getDataH5`, :func:`.getDataTxt` or
-        :func:`.audio.getDataAudio`, depending on file format
+    :param kwargs: keyword arguments of :func:`.get_data_mat`,
+        :func:`.get_data_h5`, :func:`.get_data_txt` or
+        :func:`.audio.get_data_audio`, depending on file format
 
     :returns: data
     :rtype: numpy array
@@ -428,16 +428,16 @@ def getDataGeneric(path, key='', **kwargs):
     _, ext = splitext(path)
 
     if ext == ".mat":
-        data = getDataMat(path, key, **kwargs)
+        data = get_data_mat(path, key, **kwargs)
 
     elif ext == ".h5":
-        data = getDataH5(path, key, **kwargs)
+        data = get_data_h5(path, key, **kwargs)
 
     elif ext == ".txt":
-        data = getDataTxt(path, **kwargs)
+        data = get_data_txt(path, **kwargs)
 
     elif ext == ".wav":
-        _, data, _ = getDataAudio(path, **kwargs)
+        _, data, _ = get_data_audio(path, **kwargs)
 
     else:
         raise Exception("Data format not supported: %s" % ext)
@@ -445,7 +445,7 @@ def getDataGeneric(path, key='', **kwargs):
     return data
 
 
-def getDataTxt(path, slicing=(), **kwargs):
+def get_data_txt(path, slicing=(), **kwargs):
     """
     Loads data from a .txt file
 
@@ -486,7 +486,7 @@ def getDataTxt(path, slicing=(), **kwargs):
     return data
 
 
-def getDataMat(path, key, slicing=()):
+def get_data_mat(path, key, slicing=()):
     """
     Loads data from a .mat file
 
@@ -525,12 +525,12 @@ def getDataMat(path, key, slicing=()):
                 data = data[slicing[0]:slicing[1]]
 
     except Exception:
-        data = getDataH5(path, key, slicing=slicing)
+        data = get_data_h5(path, key, slicing=slicing)
 
     return np.squeeze(data)
 
 
-def getAttributeH5(path, key_path):
+def get_attribute_h5(path, key_path):
     """
     Gets an attribute in a .h5 file
 
@@ -554,7 +554,7 @@ def getAttributeH5(path, key_path):
     return attr
 
 
-def getAttributeGeneric(path, key):
+def get_attribute_generic(path, key):
     """
     Gets an attribute in a .mat or .h5 file
 
@@ -569,10 +569,10 @@ def getAttributeGeneric(path, key):
     _, ext = splitext(path)
 
     if ext == ".mat":
-        attr = getDataMat(path, key)
+        attr = get_data_mat(path, key)
 
     elif ext == ".h5":
-        attr = getAttributeH5(path, key)
+        attr = get_attribute_h5(path, key)
 
     else:
         attr = key
@@ -580,7 +580,7 @@ def getAttributeGeneric(path, key):
     return attr
 
 
-def getDataH5(path, key, slicing=()):
+def get_data_h5(path, key, slicing=()):
     """
     Reads a dataset in a .h5 file
 

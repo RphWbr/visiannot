@@ -14,8 +14,8 @@ from os.path import splitext, basename
 import pyqtgraph as pg
 import numpy as np
 from time import sleep
-from ...tools.videoloader import transformImage
-from ...tools.pyqtoverlayer import addWidgetToLayout
+from ...tools.videoloader import transform_image
+from ...tools.pyqtoverlayer import add_widget_to_layout
 
 
 class VideoWidget(pg.PlotWidget):
@@ -60,7 +60,7 @@ class VideoWidget(pg.PlotWidget):
         self.addItem(self.img_item)
 
         # add widget to the layout of the associated instance of ViSiAnnoT
-        addWidgetToLayout(visi_lay, self, widget_position)
+        add_widget_to_layout(visi_lay, self, widget_position)
 
 
     def setImage(self, data_video, frame_id):
@@ -104,7 +104,7 @@ class VideoWidget(pg.PlotWidget):
             # cv2 returns BGR => converted to RGB
             # cv2 returns image with shape (height,width,3) => transposed to
             # (width, height, 3) for display
-            self.image = transformImage(im)
+            self.image = transform_image(im)
 
             return 0
 

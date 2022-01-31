@@ -13,11 +13,11 @@ launching GUI
 
 
 from . import ConfigurationWindow
-from ..tools.pyqtoverlayer import getDirectoryDialog
+from ..tools.pyqtoverlayer import get_directory_dialog
 from os.path import basename
 
 
-def updateDataAndAnnotationDirectory(config_path):
+def update_data_and_annotations_directory(config_path):
     """
     Opens a dialog window for selecting a directory containing data to display
     in ViSiAnnoT, loads a configuration file and updates configuration
@@ -45,7 +45,7 @@ def updateDataAndAnnotationDirectory(config_path):
     """
 
     # get configuration
-    config_dict = ConfigurationWindow.loadConfigFile(config_path)
+    config_dict = ConfigurationWindow.load_config_file(config_path)
 
     # select data directory
     if "data_dir_base" in config_dict["General"].keys():
@@ -55,7 +55,7 @@ def updateDataAndAnnotationDirectory(config_path):
     else:
         data_dir_base = None
     
-    dir_data = getDirectoryDialog(dir_root=data_dir_base)
+    dir_data = get_directory_dialog(dir_root=data_dir_base)
 
     if dir_data == "":
         print("No input directory specified => exit")

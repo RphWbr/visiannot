@@ -6,7 +6,7 @@ Customization
 
 It is possible to call a function to automatically update the configuration before launching the GUIs::
 
-    $ python3 -m visiannot -c path/to/config.ini -n -u visiannot.configuration.update.updateDataAndAnnotationDirectory
+    $ python3 -m visiannot -c path/to/config.ini -n -u visiannot.configuration.update.update_data_and_annotations_directory
 
 The option ``-c`` specifies the path to the configuration file to load. The option ``-n`` disables configuration GUI. With the option ``-u``, we give the path to a function in **visiannot** package that updates the loaded configuration dictionary. The update function may be in a module that is not in a package (``moduleName.functionName``). It must have one positional argument (path to the configuration file) and must return the updated configuration dictionary.
 
@@ -60,7 +60,7 @@ When we change subject and/or recording, we need to update the following fields 
 * First field of each signal configuration (directory where to find signal files),
 * Field ``annot_dir`` in the section ``General``.
 
-Thanks to the option ``-u``, it is possible to automate this process of configuration update. When running the command above, the function :func:`.updateDataAndAnnotationDirectory` is called before launching the GUIs. It runs the following steps:
+Thanks to the option ``-u``, it is possible to automate this process of configuration update. When running the command above, the function :func:`.update_data_and_annotations_directory` is called before launching the GUIs. It runs the following steps:
 
 * Load the configuration file as a dictionary,
 * Open a dialog window for selecting a recording folder (e.g. "*DATA/Subject02/Subject02_2021-01-03T01-00-00*"),

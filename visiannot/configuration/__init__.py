@@ -4,7 +4,7 @@ from os.path import dirname
 from pkgutil import iter_modules
 
 # import classes/functions to ease import outside of the package
-from .Configuration import Configuration, checkConfiguration
+from .Configuration import Configuration, check_configuration
 from .ConfigurationWindow import ConfigurationWindow
 
 

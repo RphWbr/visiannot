@@ -17,7 +17,7 @@ from os.path import isfile
 from tinytag import TinyTag
 
 
-def transformImage(im, RGB_combination="BGR", flag_transpose=True):
+def transform_image(im, RGB_combination="BGR", flag_transpose=True):
     """
     Changes the order of an image channels in order to get RGB color,
     may reverse the first and second axis (in order to transform shape
@@ -69,7 +69,7 @@ def transformImage(im, RGB_combination="BGR", flag_transpose=True):
         return im_out
 
 
-def readImage(path):
+def read_image(path):
     """
     Reads an image with openCV
 
@@ -83,10 +83,10 @@ def readImage(path):
     im = imread(path)
 
     # because of opencv, convert BGR to RGB and invert width/height
-    return transformImage(im)
+    return transform_image(im)
 
 
-def getDataVideo(path):
+def get_data_video(path):
     """
     Loads video data with openCV
 
@@ -117,7 +117,7 @@ def getDataVideo(path):
         return None, 0, -1
 
 
-def getVideoDuration(path):
+def get_duration_video(path):
     """
     Gets duration of a video file
 

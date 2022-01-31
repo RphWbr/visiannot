@@ -12,7 +12,7 @@ Module defining :class:`.TimeEditWidget`
 
 from PyQt5.QtWidgets import QDateTimeEdit, QTimeEdit, QLabel
 from PyQt5 import QtCore
-from ...tools.pyqtoverlayer import addPushButton, addGroupBox
+from ...tools.pyqtoverlayer import add_push_button, add_group_box
 from ...tools import datetimeconverter
 import numpy as np
 from datetime import datetime
@@ -31,7 +31,7 @@ class CustomTemporalRangeWidget():
         """
 
         # create group box
-        grid, _ = addGroupBox(
+        grid, _ = add_group_box(
             visi.lay, widget_position, "Custom temporal range"
         )
 
@@ -60,7 +60,7 @@ class CustomTemporalRangeWidget():
 
         #: (*QtWidgets.QPushButton*) Push button for defining the starting
         #: datetime of custom temporal range as the current frame
-        self.current_push = addPushButton(grid, (0, 2), "Current")
+        self.current_push = add_push_button(grid, (0, 2), "Current")
 
         # add qlabel
         q_label = QLabel("Temporal range duration")
@@ -75,14 +75,14 @@ class CustomTemporalRangeWidget():
 
         #: (*QtWidgets.QPushButton*) Push button for validating custom
         #: temporal range
-        self.time_edit_push = addPushButton(grid, (1, 2), "Ok")
+        self.time_edit_push = add_push_button(grid, (1, 2), "Ok")
 
         # listen to the callback methods
-        self.current_push.clicked.connect(lambda: self.timeEditCurrent(visi))
-        self.time_edit_push.clicked.connect(lambda: self.timeEditOk(visi))
+        self.current_push.clicked.connect(lambda: self.time_edit_current(visi))
+        self.time_edit_push.clicked.connect(lambda: self.time_edit_ok(visi))
 
 
-    def timeEditCurrent(self, visi):
+    def time_edit_current(self, visi):
         """
         Callback method to set :attr:`.edit_start` to the current
         frame :attr:`.ViSiAnnoT.frame_id`
@@ -90,7 +90,7 @@ class CustomTemporalRangeWidget():
         Connected to the signal ``clicked`` of :attr:`.current_push`.
         """
 
-        current_datetime = datetimeconverter.convertFrameToAbsoluteDatetime(
+        current_datetime = datetimeconverter.convert_frame_to_absolute_datetime(
             visi.frame_id, visi.fps, visi.beginning_datetime
         )
 
@@ -107,7 +107,7 @@ class CustomTemporalRangeWidget():
         )
 
 
-    def timeEditOk(self, visi):
+    def time_edit_ok(self, visi):
         """
         Callback method to set the temporal range
         (:attr:`.ViSiAnnoT.first_frame` and :attr:`.ViSiAnnoT.last_frame`) to
@@ -129,7 +129,7 @@ class CustomTemporalRangeWidget():
         # check duration
         if duration_hour == 0 and duration_minute == 0 and duration_sec == 0:
             duration_hour, duration_minute, duration_sec, _ = \
-                datetimeconverter.convertFrameToTime(
+                datetimeconverter.convert_frame_to_time(
                     visi.last_frame - visi.first_frame, visi.fps
                 )
 
@@ -144,7 +144,7 @@ class CustomTemporalRangeWidget():
         start_date_time = pst.localize(start_date_time)
 
         # get start frame
-        start_frame = datetimeconverter.convertAbsoluteDatetimeToFrame(
+        start_frame = datetimeconverter.convert_absolute_datetime_to_frame(
             start_date_time, visi.fps, visi.beginning_datetime
         )
 
@@ -178,7 +178,7 @@ class CustomTemporalRangeWidget():
                 else:
                     # change recording
                     new_ite_file = new_ite_file[0] - 1
-                    coherence = visi.prepareNewFile(new_ite_file)
+                    coherence = visi.prepare_new_file(new_ite_file)
 
             else:
                 print(
@@ -191,7 +191,7 @@ class CustomTemporalRangeWidget():
         # go for it
         if coherence:
             # define new range
-            start_frame = datetimeconverter.convertAbsoluteDatetimeToFrame(
+            start_frame = datetimeconverter.convert_absolute_datetime_to_frame(
                 start_date_time, visi.fps, visi.beginning_datetime
             )
 
@@ -200,18 +200,18 @@ class CustomTemporalRangeWidget():
 
                 visi.last_frame = min(
                     visi.nframes,
-                    visi.first_frame + datetimeconverter.convertTimeToFrame(
+                    visi.first_frame + datetimeconverter.convert_time_to_frame(
                         visi.fps, duration_hour, duration_minute, duration_sec
                     )
                 )
 
             # udpdate current frame
-            visi.updateFrameId(start_frame)
+            visi.update_frame_id(start_frame)
 
             # update signals plots
-            visi.updateSignalPlot()
+            visi.update_signal_plot()
 
             # update annotation regions plot
             if visi.wid_annotevent is not None:
-                visi.wid_annotevent.clearRegions(visi)
-                visi.wid_annotevent.plotRegions(visi)
+                visi.wid_annotevent.clear_regions(visi)
+                visi.wid_annotevent.plot_regions(visi)

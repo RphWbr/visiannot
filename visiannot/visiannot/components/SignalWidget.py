@@ -15,7 +15,7 @@ import pyqtgraph as pg
 from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtCore import Qt
 from ...tools import pyqtgraphoverlayer
-from ...tools.pyqtoverlayer import addWidgetToLayout
+from ...tools.pyqtoverlayer import add_widget_to_layout
 
 
 class PlotItemCustom(pg.graphicsItems.PlotItem.PlotItem):
@@ -113,7 +113,7 @@ class SignalWidget(pg.PlotWidget):
         self.region_interval_list = []
 
         # add widget to the layout of the associated instance of ViSiAnnoT
-        addWidgetToLayout(visi.lay, self, widget_position)
+        add_widget_to_layout(visi.lay, self, widget_position)
 
         # listen to callback
         self.scene().sigMouseClicked.connect(
@@ -151,12 +151,12 @@ class SignalWidget(pg.PlotWidget):
         """
 
         # set axes font
-        pyqtgraphoverlayer.setTicksTextStyle(
+        pyqtgraphoverlayer.set_ticks_text_style(
             self.getAxis('left'), color=ticks_color, size=ticks_size,
             offset=ticks_offset
         )
 
-        pyqtgraphoverlayer.setTicksTextStyle(
+        pyqtgraphoverlayer.set_ticks_text_style(
             self.getAxis('bottom'), color=ticks_color, size=ticks_size,
             offset=ticks_offset
         )
@@ -229,12 +229,12 @@ class SignalWidget(pg.PlotWidget):
         # loop on signals to plot
         for sig in sig_list:
             # get sub-array of the signal in the temporal range
-            data_in_current_range = sig.getDataInRange(
+            data_in_current_range = sig.get_data_in_range(
                 first_frame_ms, last_frame_ms
             )
 
             # plot signal in the widget
-            plot = pyqtgraphoverlayer.addPlotTo2DWidget(
+            plot = pyqtgraphoverlayer.add_plot_to_widget(
                 self, data_in_current_range, flag_nan_void=True,
                 plot_style=sig.plot_style
             )
@@ -289,12 +289,12 @@ class SignalWidget(pg.PlotWidget):
         # loop on signals to plot
         for sig, sig_plot in zip(sig_list, self.plot_list):
             # get data in the current temporal range
-            data_in_current_range = sig.getDataInRange(
+            data_in_current_range = sig.get_data_in_range(
                 first_frame_ms, last_frame_ms
             )
 
             # delete NaNs
-            data_in_current_range = pyqtgraphoverlayer.deleteNaNForPlot(
+            data_in_current_range = pyqtgraphoverlayer.delete_nan_for_plot(
                 data_in_current_range
             )
 
@@ -357,7 +357,7 @@ class SignalWidget(pg.PlotWidget):
                 det_1 = 1000.0 * det_1 / freq
 
             # plot region
-            region = pyqtgraphoverlayer.addRegionToWidget(
+            region = pyqtgraphoverlayer.add_region_to_widget(
                 det_0, det_1, self, color
             )
             region_list.append(region)
@@ -397,13 +397,13 @@ class SignalWidget(pg.PlotWidget):
         :attr:`scene`.
 
         On one hand, it allows to define manually a temporal interval on which
-        to zoom by calling the method :meth:`.zoomOrAnnotClicked`.
+        to zoom by calling the method :meth:`.zoom_or_annot_clicked`.
 
         On the other hand, it allows to define a new annotation and to add it
         the annotation file by calling the method
-        :meth:`zoomOrAnnotClicked`. Also, it allows to delete
+        :meth:`zoom_or_annot_clicked`. Also, it allows to delete
         manually a specific events annotation by calling the method
-        :meth:`.deleteClicked` on the attribute
+        :meth:`.delete_clicked` on the attribute
         :attr:`.ViSiAnnoT.wid_annotevent`.
 
         It also updates the position of the temporal cursor by calling the
@@ -421,7 +421,7 @@ class SignalWidget(pg.PlotWidget):
 
         # convert from plot coordinates to frame number sampled at reference
         # frequency in ViSiAnnoT
-        pos_frame = visi.convertMsToFrameRef(pos_ms)
+        pos_frame = visi.convert_ms_to_frame_ref(pos_ms)
 
         # check if mouse clicked on a signal widget
         if pos_frame >= 0:
@@ -432,7 +432,7 @@ class SignalWidget(pg.PlotWidget):
                         (Qt.ControlModifier | Qt.ShiftModifier):
                     # only when display mode is on
                     if visi.wid_annotevent.push_text_list[3].text() == "On":
-                        visi.wid_annotevent.deleteClicked(visi, pos_frame)
+                        visi.wid_annotevent.delete_clicked(visi, pos_frame)
 
                 # alt key => display description
                 elif keyboard_modifiers == Qt.AltModifier:
@@ -445,7 +445,7 @@ class SignalWidget(pg.PlotWidget):
                     self.currentCursorClicked(pos_frame, visi)
 
             elif ev.button() == Qt.RightButton:
-                visi.zoomOrAnnotClicked(ev, pos_frame, pos_ms)
+                visi.zoom_or_annot_clicked(ev, pos_frame, pos_ms)
 
 
     def currentCursorClicked(self, position, visi):
@@ -466,7 +466,7 @@ class SignalWidget(pg.PlotWidget):
         # check if temporal_position is in the current range
         if position >= visi.first_frame and position < visi.last_frame:
             # update current frame
-            visi.updateFrameId(position)
+            visi.update_frame_id(position)
 
 
     def currentCursorDragged(self, cursor, visi):
@@ -484,4 +484,4 @@ class SignalWidget(pg.PlotWidget):
         """
 
         # update frame id (convert frame id from signal to ref)
-        visi.updateFrameId(visi.convertMsToFrameRef(int(cursor.value())))
+        visi.update_frame_id(visi.convert_ms_to_frame_ref(int(cursor.value())))

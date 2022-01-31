@@ -18,9 +18,9 @@ from datetime import timedelta
 from ..tools import pyqtoverlayer
 from ..tools import datetimeconverter
 from ..tools import dataloader
-from ..tools.videoloader import getVideoDuration, getDataVideo
+from ..tools.videoloader import get_duration_video, get_data_video
 from .ViSiAnnoT import ViSiAnnoT
-from ..configuration import checkConfiguration
+from ..configuration import check_configuration
 from .components.LogoWidgets import PreviousWidget, NextWidget
 from .components.FileSelectionWidget import FileSelectionWidget
 from concurrent.futures import ProcessPoolExecutor
@@ -174,12 +174,12 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         self.video_list_dict = {}
 
         # get list of video paths and beginning datetimes for each camera
-        self.setVideoListDict(video_dict, time_zone=time_zone)
+        self.set_video_list_dict(video_dict, time_zone=time_zone)
 
         # check if more than one camera
         if len(video_dict) > 1:
             # check for "holes" in videos
-            self.checkVideoHoles()
+            self.check_video_holes()
 
         ###########################
         # get reference frequency #
@@ -192,7 +192,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             cam_id_0 = list(video_dict.keys())[0]
             self.fps = 0
             while self.fps <= 0:
-                _, _, self.fps = getDataVideo(
+                _, _, self.fps = get_data_video(
                     self.video_list_dict[cam_id_0][0][ite_vid]
                 )
 
@@ -205,7 +205,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             signal_config = list(signal_dict.values())[0][0]
 
             # check number of elements in first signal configuration
-            checkConfiguration(signal_id, signal_config, "Signal")
+            check_configuration(signal_id, signal_config, "Signal")
 
             # get info for first signal
             data_dir, pattern, _, _, _, _, freq, _ = signal_config
@@ -221,7 +221,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 )
 
             # store frequency as the reference frequency
-            self.fps = self.getDataFrequency(data_list_tmp[0], freq)
+            self.fps = self.get_data_frequency(data_list_tmp[0], freq)
 
 
         # ******************************************************************* #
@@ -258,7 +258,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
         # get list of data paths and beginning datetimes for each signal and
         # interval
-        self.setSignalIntervalList(
+        self.set_signal_interval_list(
             signal_dict, interval_dict, time_zone=time_zone
         )
 
@@ -290,7 +290,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
             # synchronize signals and intervals w.r.t. reference modality and
             # create temporary synchronization files
-            self.processSynchronizationAll()
+            self.process_synchronization_all()
 
 
         # ******************************************************************* #
@@ -362,7 +362,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         # get configuration dictionaries for first file
         self.ite_file = 0
         video_dict_current, signal_dict_current, interval_dict_current = \
-            self.getCurrentFileConfiguration()
+            self.get_current_file_configuration()
 
         # lauch ViSiAnnoT
         ViSiAnnoT.__init__(
@@ -393,7 +393,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             self.wid_next = None
 
         if "file_selection" in poswid_dict.keys():
-            #: (:class:`.FileSelectionWidget`) Widget for selecting a in a
+            #: (:class:`.file_selectionWidget`) Widget for selecting a in a
             #: combo box
             self.file_selection_widget = FileSelectionWidget(
                 self, poswid_dict["file_selection"]
@@ -404,10 +404,10 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
 
         # *********************** infinite loop ***************************** #
-        pyqtoverlayer.infiniteLoopDisplay(self.app)
+        pyqtoverlayer.infinite_loop_gui(self.app)
 
         # close streams, delete temporary folders
-        self.stopProcessing()
+        self.stop_processing()
 
 
     # *********************************************************************** #
@@ -416,7 +416,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
 
     @staticmethod
-    def getPathList(
+    def get_path_list(
         config_id, config, config_type, flag_raise_exception=False,
         **kwargs
     ):
@@ -435,7 +435,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         :param flag_raise_exception: specify if an exception must be raised i
             case no file is found
         :type flag_raise_exception: bool
-        :param kwargs: keyword arguments of :func:`.getDatetimeFromPath`
+        :param kwargs: keyword arguments of :func:`.get_datetime_from_path`
 
         :returns: 2 elements:
 
@@ -446,7 +446,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         """
 
         # check number of elements in configuration
-        checkConfiguration(config_id, config, config_type)
+        check_configuration(config_id, config, config_type)
 
         # get configuration
         data_dir, pattern, delimiter, pos, fmt = config[:5]
@@ -467,7 +467,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         # loop on data files paths
         for path in path_list:
             # get beginning datetime of the video file
-            beginning_datetime = datetimeconverter.getDatetimeFromPath(
+            beginning_datetime = datetimeconverter.get_datetime_from_path(
                 path, delimiter, pos, fmt, **kwargs
             )
 
@@ -482,7 +482,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         return [path_list, datetime_list]
 
 
-    def setVideoListDict(self, video_dict, **kwargs):
+    def set_video_list_dict(self, video_dict, **kwargs):
         """
         Finds the list of video files (path and beginning datetime) in the
         long recording
@@ -492,7 +492,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         :param video_dict: see first positional argument of
             :class:`.ViSiAnnoTLongRec`
         :type video_dict: dict
-        :param kwargs: keyword arguments of :meth:`.getPathList`
+        :param kwargs: keyword arguments of :meth:`.get_path_list`
         """
 
         # initialize dictionaries
@@ -501,13 +501,13 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         # loop on cameras
         for ite_id, (video_id, video_config) in enumerate(video_dict.items()):
             # get list of video paths and beginning datetimes
-            self.video_list_dict[video_id] = self.getPathList(
+            self.video_list_dict[video_id] = self.get_path_list(
                 video_id, video_config, "Video", flag_raise_exception=True,
                 **kwargs
             )
 
 
-    def checkVideoHoles(self):
+    def check_video_holes(self):
         """
         Checks if there are holes in the list of video files when comparing
         the different cameras
@@ -576,7 +576,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                     )
 
 
-    def setSignalIntervalList(self, signal_dict, interval_dict, **kwargs):
+    def set_signal_interval_list(self, signal_dict, interval_dict, **kwargs):
         """
         Finds the list of data files (path and beginning datetime) in the
         long recording for signals and intervals
@@ -590,7 +590,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         :param interval_dict: see keyword argument of
             :class:`.ViSiAnnoTLongRec`
         :type interval_dict: dict
-        :param kwargs: keyword arguments of :meth:`.getPathList`
+        :param kwargs: keyword arguments of :meth:`.get_path_list`
         """
 
         # initialize dictionaries
@@ -606,7 +606,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 for data_info in interval_dict[signal_id]:
                     # get list of interval files
                     interval_list_tmp.append(
-                        self.getPathList(
+                        self.get_path_list(
                             signal_id, data_info, "Interval", **kwargs
                         )
                     )
@@ -617,7 +617,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             signal_list_tmp = []
             for data_info in data_info_list:
                 signal_list_tmp.append(
-                    self.getPathList(signal_id, data_info, "Signal", **kwargs)
+                    self.get_path_list(signal_id, data_info, "Signal", **kwargs)
                 )
 
             self.signal_list_dict[signal_id] = signal_list_tmp
@@ -632,7 +632,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
     # *********************************************************************** #
 
 
-    def setReferenceModalityInfo(self):
+    def set_reference_modality_info(self):
         """
         Finds the beginning datetimes and the durations of the files of
         reference modality along the recording
@@ -656,7 +656,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             # (parallelization to improve performance)
             self.ref_duration_list = []
             with ProcessPoolExecutor() as executor:
-                for r in executor.map(getVideoDuration, path_list):
+                for r in executor.map(get_duration_video, path_list):
                     self.ref_duration_list.append(r)
 
         # no video => first signal is the reference modality for
@@ -677,11 +677,11 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             # loop on data files of first signal
             for path in path_list:
                 # get frequency
-                freq = self.getDataFrequency(path, freq)
+                freq = self.get_data_frequency(path, freq)
 
                 # get duration
                 self.ref_duration_list.append(
-                    dataloader.getDataDuration(path, freq, key=key)
+                    dataloader.get_data_duration(path, freq, key=key)
                 )
 
             # update configuration of first signal to match temporary
@@ -691,7 +691,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             self.signal_config_dict[sig_id_0][0][2] = "%Y-%m-%dT%H-%M-%S"
 
 
-    def processSynchronizationSingleWidget(
+    def process_synchronization_single_widget(
         self, signal_id, flag_interval=False
     ):
         """
@@ -737,10 +737,10 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 path_list, beginning_datetime_list
             ):
                 # get frequency
-                freq = self.getDataFrequency(path, freq)
+                freq = self.get_data_frequency(path, freq)
 
                 # get data file duration
-                duration = dataloader.getDataDuration(
+                duration = dataloader.get_data_duration(
                     path, freq, key=key, flag_interval=flag_interval
                 )
 
@@ -750,7 +750,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 )
             
             # create temporary synchronization files    
-            synchro_path_list = self.createSynchronizationFiles(
+            synchro_path_list = self.create_synchronization_files(
                 path_list, signal_id, key, self.ref_beg_datetime_list,
                 self.ref_duration_list, beginning_datetime_list,
                 ending_datetime_list, self.tmp_name, self.tmp_delimiter
@@ -766,32 +766,32 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                     synchro_path_list
 
 
-    def processSynchronizationAll(self):
+    def process_synchronization_all(self):
         """
         Creates temporary synchronization files for all signals and intervals
         and updates the attributes :attr:`.signal_list_dict` and
         :attr:`.interval_list_dict` with the synchronization files
 
-        First it calls :meth:`.setReferenceModalityInfo`, then it calls
-        :meth:`.processSynchronizationSingleWidget` for each signal
+        First it calls :meth:`.set_reference_modality_info`, then it calls
+        :meth:`.process_synchronization_single_widget` for each signal
         widget.
         """
 
-        self.setReferenceModalityInfo()
+        self.set_reference_modality_info()
 
         # loop on signal widgets
         for signal_id in self.signal_list_dict.keys():
             # check if any interval in the current widget
             if signal_id in self.interval_list_dict.keys():
-                self.processSynchronizationSingleWidget(
+                self.process_synchronization_single_widget(
                     signal_id, flag_interval=True
                 )
 
-            self.processSynchronizationSingleWidget(signal_id)
+            self.process_synchronization_single_widget(signal_id)
 
 
     @staticmethod
-    def createSynchronizationFiles(
+    def create_synchronization_files(
         data_path_list, signal_id, key_data, ref_beginning_datetime_list,
         ref_duration_list, data_beginning_datetime_list,
         data_ending_datetime_list, output_dir, delimiter
@@ -903,7 +903,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             # get synchronization file name
             tmp_path = "%s/%s_%s_%s_%s.txt" % (
                 output_dir, output_dir, signal_id, key_data.replace('/', '-'),
-                datetimeconverter.convertDatetimeToString(ref_datetime, fmt=1)
+                datetimeconverter.convert_datetime_to_string(ref_datetime, fmt=1)
             )
 
             synchro_path_list.append(tmp_path)
@@ -954,7 +954,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
     # *********************************************************************** #
 
 
-    def getCurrentFileConfiguration(self):
+    def get_current_file_configuration(self):
         """
         Gets configuration dictionaries for the current file in the recording
         to provide to :class:`.ViSiAnnoT`
@@ -995,14 +995,14 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         return video_dict, signal_dict, interval_dict
 
 
-    def changeFileInLongRec(
+    def change_file_in_long_rec(
         self, ite_file, new_frame_id, flag_previous_scroll=False
     ):
         """
         Changes file in the long recording
 
         It loads new data files by calling
-        :meth:`.ViSiAnnoTLongRec.prepareNewFile`. Then it updates the
+        :meth:`.ViSiAnnoTLongRec.prepare_new_file`. Then it updates the
         display.
 
         :param ite_file: index of the new file in the long recording
@@ -1027,7 +1027,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             flag_reset_pause = False
 
         # set new file
-        ok = self.prepareNewFile(ite_file)
+        ok = self.prepare_new_file(ite_file)
 
         if ok:
             # reset previous frame id
@@ -1035,7 +1035,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 wid_vid.previous_frame_id = None
 
             # update frame id
-            self.updateFrameId(new_frame_id)
+            self.update_frame_id(new_frame_id)
 
             # new temporal range
             current_range = self.last_frame - self.first_frame
@@ -1053,14 +1053,14 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             )
 
             # update signals plot
-            self.updateSignalPlot()
+            self.update_signal_plot()
 
             # update annotation regions plot if necessary
             if self.wid_annotevent is not None:
                 if self.wid_annotevent.push_text_list[3].text() == "On":
-                    self.wid_annotevent.clearRegions(self)
+                    self.wid_annotevent.clear_regions(self)
                     self.wid_annotevent.description_dict = {}
-                    self.wid_annotevent.plotRegions(self)
+                    self.wid_annotevent.plot_regions(self)
 
         if flag_reset_pause:
             self.flag_pause_status = False
@@ -1068,18 +1068,18 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         return ok
 
 
-    def previousFile(self):
+    def previous_file(self):
         """
         Loads previous file in the long recording
         """
 
-        self.changeFileInLongRec(
+        self.change_file_in_long_rec(
             self.ite_file - 1, self.frame_id + self.nframes,
             flag_previous_scroll=True
         )
 
 
-    def nextFile(self):
+    def next_file(self):
         """
         Loads next file in the long recording
 
@@ -1087,14 +1087,14 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         :rtype: bool
         """
 
-        ok = self.changeFileInLongRec(
+        ok = self.change_file_in_long_rec(
             self.ite_file + 1, self.frame_id - self.nframes
         )
 
         return ok
 
 
-    def prepareNewFile(self, ite_file):
+    def prepare_new_file(self, ite_file):
         """
         Loads data of a new file in the long recording
 
@@ -1115,7 +1115,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             self.ite_file = ite_file
 
             video_dict_current, signal_dict_current, interval_dict_current = \
-                self.getCurrentFileConfiguration()
+                self.get_current_file_configuration()
 
             # loop on cameras
             for cam_id, config in video_dict_current.items():
@@ -1123,14 +1123,14 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 self.wid_vid_dict[cam_id].setWidgetTitle(config[0])
 
             # set new data
-            self.setAllData(
+            self.set_all_data(
                 video_dict_current, signal_dict_current, interval_dict_current
             )
 
             # set recording choice combo box
             if self.file_selection_widget is not None:
                 # to prevent the combo box callback method from being called
-                # (which would imply calling method changeFileInLongRec twice
+                # (which would imply calling method change_file_in_long_rec twice
                 # if file selection not done with combo box), the combo box
                 # signal is blocked and then unblocked
                 self.file_selection_widget.combo_box.blockSignals(True)
@@ -1141,7 +1141,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
             # set items of combo box for truncated temporal ranges
             if self.wid_trunc is not None:
-                self.wid_trunc.setTrunc(self)
+                self.wid_trunc.set_trunc(self)
 
             # reset selected item of combo box for temporal range from cursor
             if self.wid_from_cursor is not None:

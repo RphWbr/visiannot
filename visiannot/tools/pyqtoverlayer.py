@@ -20,9 +20,7 @@ from sys import flags, argv
 
 
 # *************************************************************************** #
-# *************************************************************************** #
 # ************************* QtWidgets subclasses **************************** #
-# *************************************************************************** #
 # *************************************************************************** #
 
 class ComboBox(QtWidgets.QComboBox):
@@ -65,12 +63,10 @@ class ScrollArea(QtWidgets.QScrollArea):
 
 
 # *************************************************************************** #
-# *************************************************************************** #
 # ******************************* Functions ********************************* #
 # *************************************************************************** #
-# *************************************************************************** #
 
-def initializeDisplay():
+def initialize_gui():
     """
     Creates a GUI application for display
 
@@ -84,7 +80,7 @@ def initializeDisplay():
     return app
 
 
-def infiniteLoopDisplay(app):
+def infinite_loop_gui(app):
     """
     Creates an event loop for a given GUI application, so that the windows
     do not disappear right after being created
@@ -97,7 +93,7 @@ def infiniteLoopDisplay(app):
         app.instance().exec_()
 
 
-def infiniteLoopDisplayParallel(app, win):
+def infinite_loop_gui_parallel(app, win):
     """
     Creates a specific event loop for a given window while an event loop is
     already running, the specific event loop is stopped when the window is
@@ -114,7 +110,7 @@ def infiniteLoopDisplayParallel(app, win):
     app.processEvents()
 
 
-def getDirectoryDialog(desc_text="Select directory", dir_root=None):
+def get_directory_dialog(desc_text="Select directory", dir_root=None):
     """
     Opens a dialog window in order to select a directory
 
@@ -126,7 +122,7 @@ def getDirectoryDialog(desc_text="Select directory", dir_root=None):
     :type dir_root: str
     """
 
-    app = initializeDisplay()
+    app = initialize_gui()
     dir_selected = QFileDialog.getExistingDirectory(
         None, desc_text, dir_root, QFileDialog.ShowDirsOnly
     )
@@ -135,12 +131,12 @@ def getDirectoryDialog(desc_text="Select directory", dir_root=None):
     return dir_selected
 
 
-def addSpinBoxTable(grid, pos, nb_rows, nb_cols, name="", params={}):
+def add_spin_box_table(grid, pos, nb_rows, nb_cols, name="", params={}):
     """
     Adds a table of spin boxes to an instance of QtWidgets.QGridLayout
 
     The spin boxes are contained in an instance of QtWidgets.QGroupBox filled
-    by an instance of QtWidgets.QGridLayout, see func:`.addGroupBox`.
+    by an instance of QtWidgets.QGridLayout, see func:`.add_group_box`.
 
     :param grid: parent layout where the spin boxes are added
     :type grid: QtWidgets.QGridLayout
@@ -168,7 +164,7 @@ def addSpinBoxTable(grid, pos, nb_rows, nb_cols, name="", params={}):
     """
 
     # create group box
-    grid_sub, group_box = addGroupBox(grid, pos, name)
+    grid_sub, group_box = add_group_box(grid, pos, name)
 
     # add spin boxes in the group box
     for i in range(nb_rows):
@@ -184,13 +180,13 @@ def addSpinBoxTable(grid, pos, nb_rows, nb_cols, name="", params={}):
     return grid_sub, group_box
 
 
-def setSpinBoxTable(grid, value_list_list, flag_display):
+def set_spin_box_table(grid, value_list_list, flag_display):
     """
     Sets the values of a table of spin boxes from an input list of lists
     or returns the values of a table of spin boxes
 
     :param grid: layout containing only the table of spin boxes, see
-        :func:`.addSpinBoxTable` for creating one
+        :func:`.add_spin_box_table` for creating one
     :type grid: QtWidgets.QGridLayout
     :param value_list_list: in case of ``flag_display`` set to ``True``, each
         element is a list of values for setting the table of spin boxes --
@@ -246,13 +242,13 @@ def setSpinBoxTable(grid, value_list_list, flag_display):
     return value_list_list
 
 
-def addLineEditList(grid, pos, nb_rows, name=""):
+def add_line_edit_list(grid, pos, nb_rows, name=""):
     """
     Adds a list of line edits to a layout
 
     The line edits are contained in an instance of QtWidgets.QGroupBox filled
     by an instance of QtWidgets.QGridLayout, see
-    :func:`.addGroupBox`.
+    :func:`.add_group_box`.
 
     :param grid: parent layout where the line edits are added
     :type grid: QtWidgets.QGridLayout
@@ -273,7 +269,7 @@ def addLineEditList(grid, pos, nb_rows, name=""):
     """
 
     # create group box
-    grid_sub, group_box = addGroupBox(grid, pos, name)
+    grid_sub, group_box = add_group_box(grid, pos, name)
 
     # add spin boxes in the group box
     for i in range(nb_rows):
@@ -283,7 +279,7 @@ def addLineEditList(grid, pos, nb_rows, name=""):
     return grid_sub, group_box
 
 
-def setLineEditList(grid, value_list, mode):
+def set_line_edit_list(grid, value_list, mode):
     """
     Sets the values of a list of QLineEdit from a list of lists (mode 0) or
     sets the values of a list of lists from the values of a list of QLineEdit
@@ -332,7 +328,7 @@ def setLineEditList(grid, value_list, mode):
     return value_list
 
 
-def addWidgetToLayout(lay, wid, wid_pos):
+def add_widget_to_layout(lay, wid, wid_pos):
     """
     Adds a widget to a layout
 
@@ -362,7 +358,7 @@ def addWidgetToLayout(lay, wid, wid_pos):
             lay.addWidget(wid, wid_pos[0], wid_pos[1], wid_pos[2], wid_pos[3])
 
 
-def addGroupBox(layout, position, title=""):
+def add_group_box(layout, position, title=""):
     """
     Adds a group box to a grid layout
 
@@ -390,12 +386,12 @@ def addGroupBox(layout, position, title=""):
     grid = QtWidgets.QGridLayout(group_box)
 
     # add the group box to the layout
-    addWidgetToLayout(layout, group_box, position)
+    add_widget_to_layout(layout, group_box, position)
 
     return grid, group_box
 
 
-def addPushButton(
+def add_push_button(
     layout, position, text, width=0, flag_enable_key_interaction=True,
     color=None
 ):
@@ -445,12 +441,12 @@ def addPushButton(
         )
 
     # add push button to the layout
-    addWidgetToLayout(layout, push_button, position)
+    add_widget_to_layout(layout, push_button, position)
 
     return push_button
 
 
-def addRadioButton(layout, position, text, flag_checked=False, color=None):
+def add_radio_button(layout, position, text, flag_checked=False, color=None):
     """
     Adds a radio button to a grid layout
 
@@ -486,12 +482,12 @@ def addRadioButton(layout, position, text, flag_checked=False, color=None):
         radio_button.setChecked(True)
 
     # add radio button to the layout
-    addWidgetToLayout(layout, radio_button, position)
+    add_widget_to_layout(layout, radio_button, position)
 
     return radio_button
 
 
-def addCheckBox(layout, position, text, flag_checked=False, color=None):
+def add_check_box(layout, position, text, flag_checked=False, color=None):
     """
     Adds a check box to a grid layout
 
@@ -525,12 +521,12 @@ def addCheckBox(layout, position, text, flag_checked=False, color=None):
         check_box.setChecked(True)
 
     # add radio button to the layout
-    addWidgetToLayout(layout, check_box, position)
+    add_widget_to_layout(layout, check_box, position)
 
     return check_box
 
 
-def addScrollArea(
+def add_scroll_area(
     layout, position, width=0, height=0, flag_ignore_wheel_event=False
 ):
     """
@@ -587,12 +583,12 @@ def addScrollArea(
     scroll_lay = QtWidgets.QGridLayout(scroll_widget)
 
     # set scroll area to input layout
-    addWidgetToLayout(layout, scroll_area, position)
+    add_widget_to_layout(layout, scroll_area, position)
 
     return scroll_lay, scroll_area
 
 
-def createWindow(
+def create_window(
     size=(0, 0), title=None, bg_color=(240, 240, 240), flag_show=True
 ):
     """
@@ -664,7 +660,7 @@ def createWindow(
     return win, layout
 
 
-def addWidgetButtonGroup(
+def add_widget_button_group(
     lay, widget_position, label_list, button_type="radio", color_list=[],
     box_title="", flag_horizontal=True, nb_table=0, **kwargs
 ):
@@ -698,8 +694,8 @@ def addWidgetButtonGroup(
         ``nb_table``, then the buttons are added on several rows
     :type nb_table: int
     :param kwargs: keyword arguments of the funtion that adds the button to the
-        layout filling the group box (:func:`.addRadioButton`,
-        :func:`.addPushButton` or :func:`.addCheckBox`)
+        layout filling the group box (:func:`.add_radio_button`,
+        :func:`.add_push_button` or :func:`.add_check_box`)
 
     :returns:
         - **grid** (*QtWidgets.QGridLayout*) -- layout filling the group box
@@ -710,7 +706,7 @@ def addWidgetButtonGroup(
     """
 
     # create group box containing the radio buttons
-    grid, group_box = addGroupBox(lay, widget_position, box_title)
+    grid, group_box = add_group_box(lay, widget_position, box_title)
 
     # create group for radio buttons
     group_button = QtWidgets.QButtonGroup()
@@ -737,13 +733,13 @@ def addWidgetButtonGroup(
 
         # create button and add it to the layout
         if button_type == "radio":
-            button = addRadioButton(grid, position, label, **kwargs)
+            button = add_radio_button(grid, position, label, **kwargs)
 
         elif button_type == "check_box":
-            button = addCheckBox(grid, position, label, **kwargs)
+            button = add_check_box(grid, position, label, **kwargs)
 
         elif button_type == "push":
-            button = addPushButton(grid, position, label, **kwargs)
+            button = add_push_button(grid, position, label, **kwargs)
 
         else:
             raise ValueError(
@@ -765,7 +761,7 @@ def addWidgetButtonGroup(
     return grid, group_box, group_button
 
 
-def addComboBox(
+def add_combo_box(
     lay, widget_position, item_list, box_title=None,
     flag_enable_key_interaction=True
 ):
@@ -806,7 +802,7 @@ def addComboBox(
     # check if group box must be created
     if box_title is not None:
         # create group box
-        grid, group_box = addGroupBox(lay, widget_position, box_title)
+        grid, group_box = add_group_box(lay, widget_position, box_title)
 
         # add combo box to group box
         grid.addWidget(combo_box, 0, 0)
@@ -815,12 +811,12 @@ def addComboBox(
         grid, group_box = None, None
 
         # add combo box to layout
-        addWidgetToLayout(lay, combo_box, widget_position)
+        add_widget_to_layout(lay, combo_box, widget_position)
 
     return grid, group_box, combo_box
 
 
-def deleteWidgetsFromLayout(grid, nb_items_to_delete=None):
+def delete_widgets_from_layout(grid, nb_items_to_delete=None):
     """
     Deletes a specified number of widgets in a grid layout
 
@@ -844,7 +840,7 @@ def deleteWidgetsFromLayout(grid, nb_items_to_delete=None):
         wid_to_remove.deleteLater()
 
 
-def setStyleSheet(app, font_name, font_size, font_color, qobj_list):
+def set_style_sheet(app, font_name, font_size, font_color, qobj_list):
     """
     Sets the style sheet for a list of Qt classes in a QApplication
 

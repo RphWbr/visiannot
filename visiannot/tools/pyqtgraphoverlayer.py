@@ -15,13 +15,13 @@ See https://pyqtgraph.readthedocs.io/en/latest
 
 import pyqtgraph as pg
 from PyQt5.QtGui import QFont
-from .pyqtoverlayer import createWindow, addWidgetToLayout, initializeDisplay
+from .pyqtoverlayer import create_window, add_widget_to_layout, initialize_gui
 import numpy as np
-from .datetimeconverter import convertFrameToAbsoluteTimeString, \
-    convertMsecToAbsoluteTimeString
+from .datetimeconverter import convert_frame_to_absolute_time_string, \
+    convert_msec_to_absolute_time_string
 
 
-def setBackgroundColor(color=(255, 255, 255)):
+def set_background_color(color=(255, 255, 255)):
     """
     Sets background color of pyqtgraph widgets (independent of PyQt5 widgets)
 
@@ -33,13 +33,13 @@ def setBackgroundColor(color=(255, 255, 255)):
     pg.setConfigOption('background', color)
 
 
-def initializeDisplayAndBgColor(color=(255, 255, 255)):
+def initialize_gui_and_bg_color(color=(255, 255, 255)):
     """
     Creates a Qt application for display and sets background color of the
     pyqtgraph widgets
 
-    It calls the functions :func:`.pyqtoverlayer.initializeDisplay` and
-    :func:`.setBackgroundColor`.
+    It calls the functions :func:`.pyqtoverlayer.initialize_gui` and
+    :func:`.set_background_color`.
 
     :param color: background color as a string or RGB
         (see https://pyqtgraph.readthedocs.io/en/latest/style.html for details)
@@ -48,13 +48,13 @@ def initializeDisplayAndBgColor(color=(255, 255, 255)):
     :returns: instance of QtCore.QCoreApplication or QtWidgets.QApplication
     """
 
-    app = initializeDisplay()
-    setBackgroundColor(color=color)
+    app = initialize_gui()
+    set_background_color(color=color)
 
     return app
 
 
-def create2DWidget(
+def create_widget(
     lay, widget_position, widget_size=(0, 0), widget_title=None,
     title_style={'color': '#0000', 'size': '9pt'},
     x_range=[], y_range=[], axes_label_dict={"left": None, "bottom": None},
@@ -161,12 +161,12 @@ def create2DWidget(
         widget.setYRange(y_range[0], y_range[1])
 
     # add the widget to the layout
-    addWidgetToLayout(lay, widget, widget_position)
+    add_widget_to_layout(lay, widget, widget_position)
 
     return widget
 
 
-def createWidgetImage(
+def create_widget_image(
     lay, widget_position, im=None, title=None,
     title_style={'color': '#000', 'size': '9pt'}
 ):
@@ -191,7 +191,7 @@ def createWidgetImage(
     """
 
     # create the widget
-    widget = create2DWidget(
+    widget = create_widget(
         lay, widget_position, widget_title=title, title_style=title_style,
         axes_label_dict={}, flag_invert_y=True, flag_aspect_locked=True,
         flag_plot_menu=False
@@ -204,7 +204,7 @@ def createWidgetImage(
     return widget, img
 
 
-def createWidgetLogo(lay, widget_position, im, box_size=None):
+def create_widget_logo(lay, widget_position, im, box_size=None):
     """
     Creates a widget with no mouse interaction containing an image and adds it
     to a grid layout
@@ -225,7 +225,7 @@ def createWidgetLogo(lay, widget_position, im, box_size=None):
     :rtype: pyqtgraph.PlotWidget
     """
 
-    widget, _ = createWidgetImage(lay, widget_position, im=im)
+    widget, _ = create_widget_image(lay, widget_position, im=im)
     widget.setMouseEnabled(x=False, y=False)
     widget.hideButtons()
 
@@ -240,7 +240,7 @@ def createWidgetLogo(lay, widget_position, im, box_size=None):
     return widget
 
 
-def setTicksTextStyle(axis_item, color="#000", size=9, offset=0):
+def set_ticks_text_style(axis_item, color="#000", size=9, offset=0):
     """
     Sets ticks text style of an axis item
 
@@ -272,7 +272,7 @@ def setTicksTextStyle(axis_item, color="#000", size=9, offset=0):
     axis_item.setStyle(tickTextOffset=offset)
 
 
-def setTemporalTicks(widget, nb_ticks, temporal_info, ref_datetime):
+def set_temporal_ticks(widget, nb_ticks, temporal_info, ref_datetime):
     """
     Sets the ticks of the X axis of a widget in datetime format and the X axis
     range according to a temporal range
@@ -316,14 +316,14 @@ def setTemporalTicks(widget, nb_ticks, temporal_info, ref_datetime):
 
         # define temporal labels
         temporal_labels = [
-            convertFrameToAbsoluteTimeString(frame_id, freq, ref_datetime)
+            convert_frame_to_absolute_time_string(frame_id, freq, ref_datetime)
             for frame_id in temporal_range
         ]
 
     else:
         # define temporal labels
         temporal_labels = [
-            convertMsecToAbsoluteTimeString(msec, ref_datetime)
+            convert_msec_to_absolute_time_string(msec, ref_datetime)
             for msec in temporal_range
         ]
 
@@ -334,7 +334,7 @@ def setTemporalTicks(widget, nb_ticks, temporal_info, ref_datetime):
     axis.setTicks(ticks)
 
 
-def deleteNaNForPlot(data):
+def delete_nan_for_plot(data):
     """
     Deletes NaNs from an array so that they are ignored for plotting
 
@@ -362,7 +362,7 @@ def deleteNaNForPlot(data):
     return data
 
 
-def addPlotTo2DWidget(
+def add_plot_to_widget(
     widget, data, flag_clear=False, flag_nan_void=True,
     plot_style={'pen': {'color': 'b', 'width': 1}}
 ):
@@ -395,7 +395,7 @@ def addPlotTo2DWidget(
 
         NB: when calling the method ``plot.setData(data_array)``, the behaviour
         is back to default. If NaNs must be ignored, the function
-        :func:`.deleteNaNForPlot` must be called before.
+        :func:`.delete_nan_for_plot` must be called before.
     :type flag_nan_void: bool
     :param plot_style: plot style, keys are keyword arguments of the
         constructor of pyqtgraph.PlotDataItem, see link above
@@ -410,7 +410,7 @@ def addPlotTo2DWidget(
         widget.clear()
 
     if flag_nan_void:
-        data = deleteNaNForPlot(data)
+        data = delete_nan_for_plot(data)
 
     plot = pg.PlotDataItem(data, **plot_style)
     widget.addItem(plot)
@@ -418,7 +418,7 @@ def addPlotTo2DWidget(
     return plot
 
 
-def basic2DPlot(
+def basic_plot(
     data, opts_win_dict={}, opts_wid_dict={},
     plot_style={'pen': {'color': 'b', 'width': 1}}
 ):
@@ -440,10 +440,10 @@ def basic2DPlot(
           indexes
     :type data: numpy array
     :param opts_win_dict: keyword arguments of the function
-        :func:`.pyqtoverlayer.createWindow`
+        :func:`.pyqtoverlayer.create_window`
     :type opts_win_dict: dict
     :param opts_wid_dict: keyword arguments of the function
-        :func:`.create2DWidget`
+        :func:`.create_widget`
     :type opts_wid_dict: dict
     :param plot_style: plot style, keys are keyword arguments of the
         constructor of pyqtgraph.PlotDataItem, see link above
@@ -457,26 +457,26 @@ def basic2DPlot(
         - **plot** (*pyqtgraph.PlotDataItem*) -- plot item
     """
 
-    win, lay = createWindow(**opts_win_dict)
+    win, lay = create_window(**opts_win_dict)
 
     if "bg_color" in opts_win_dict.keys():
-        setBackgroundColor(opts_win_dict["bg_color"])
+        set_background_color(opts_win_dict["bg_color"])
 
-    widget = create2DWidget(lay, (0, 0), **opts_wid_dict)
+    widget = create_widget(lay, (0, 0), **opts_wid_dict)
 
-    plot = addPlotTo2DWidget(widget, data, plot_style=plot_style)
+    plot = add_plot_to_widget(widget, data, plot_style=plot_style)
 
     return win, lay, widget, plot
 
 
-def basicImagePlot(im, **kwargs):
+def basic_image_plot(im, **kwargs):
     """
     Creates a window with an image
 
     :param im: RGB image array of shape :math:`(width, height, 3)`
     :type im: numpy array
     :param kwargs: keyword arguments of the function
-        :func:`.pyqtoverlayer.createWindow`, if background color of the window is
+        :func:`.pyqtoverlayer.create_window`, if background color of the window is
         specified, then it is also applied to the image widget
 
     :returns:
@@ -487,17 +487,17 @@ def basicImagePlot(im, **kwargs):
         - **img** (*pyqtgraph.ImageItem*) -- image item
     """
 
-    win, lay = createWindow(**kwargs)
+    win, lay = create_window(**kwargs)
 
     if "bg_color" in kwargs.keys():
-        setBackgroundColor(kwargs["bg_color"])
+        set_background_color(kwargs["bg_color"])
 
-    widget, img = createWidgetImage(lay, (0, 0), im=im)
+    widget, img = create_widget_image(lay, (0, 0), im=im)
 
     return win, lay, widget, img
 
 
-def addLegendTo2DWidget(
+def add_legend_to_widget(
     widget, item_dict, position='inside', legend_wid_size=(0, 0), **kwargs
 ):
     """
@@ -566,7 +566,7 @@ def addLegendTo2DWidget(
         # check if the legend widget has already been created
         if layout.itemAtPosition(legend_wid_pos[0], legend_wid_pos[1]) is None:
             # create the legend widget
-            legend_widget = create2DWidget(
+            legend_widget = create_widget(
                 layout, legend_wid_pos, axes_label_dict={}
             )
 
@@ -600,7 +600,7 @@ def addLegendTo2DWidget(
     return legend, legend_widget
 
 
-def addTextItemTo2DWidget(
+def add_text_item_to_widget(
     widget, pos, flag_arrow=False, text_alignement=None,
     opts_text_dict={"color": 'k', "anchor": (0.5, 0.5)},
     opts_arrow_dict={
@@ -674,7 +674,7 @@ def addTextItemTo2DWidget(
     return text_item, arrow_item
 
 
-def createColorMap(values, colors, lut_dim=256):
+def set_color_map(values, colors, lut_dim=256):
     """
     Creates a color map
 
@@ -701,7 +701,7 @@ def createColorMap(values, colors, lut_dim=256):
     return color_map, lut
 
 
-def createWidgetColorBar(
+def create_widget_color_bar(
     lay, widget_position, color_map, lut, ticks_values, widget_width=80,
     ticks_val_formatting="%s", img_width=5
 ):
@@ -738,7 +738,7 @@ def createWidgetColorBar(
     lut_img = np.tile(lut_img, (img_width, 1, 1))
 
     # create legend widget
-    wid_bar, bar_img_item = createWidgetImage(lay, widget_position, im=lut_img)
+    wid_bar, bar_img_item = create_widget_image(lay, widget_position, im=lut_img)
     wid_bar.invertY(False)
     wid_bar.setMaximumWidth(widget_width)
     wid_bar.showAxis("right")
@@ -782,7 +782,7 @@ def createWidgetColorBar(
     return wid_bar, bar_img_item
 
 
-def addMeanStdPlotTo2DWidget(
+def add_mean_std_plot_to_widget(
     wid, data_mean, data_std, data_X=None, pen_std_style={'color': 'k'},
     n_population_list=[], **kwargs
 ):
@@ -810,7 +810,7 @@ def addMeanStdPlotTo2DWidget(
         ``data_mean``), a text item is then added near each point
     :type n_population_list: list
     :param kwargs: keyword arguments of the function
-        :func:`.addPlotTo2DWidget`, used for the plot item of
+        :func:`.add_plot_to_widget`, used for the plot item of
         the mean/median values
 
     :returns:
@@ -848,7 +848,7 @@ def addMeanStdPlotTo2DWidget(
         n_population_list = [None for i in range(data_mean.shape[0])]
 
     # plot mean data
-    mean_plot = addPlotTo2DWidget(wid, data_mean_tmp, **kwargs)
+    mean_plot = add_plot_to_widget(wid, data_mean_tmp, **kwargs)
 
     # create X data if necessary
     if data_X is None:
@@ -883,7 +883,7 @@ def addMeanStdPlotTo2DWidget(
 
             # add text item with number of data
             if nb_samples is not None:
-                text_item, _ = addTextItemTo2DWidget(
+                text_item, _ = add_text_item_to_widget(
                     wid, (x + x_step / 8, med + std / 2),
                     text="%d" % nb_samples
                 )
@@ -900,7 +900,7 @@ def addMeanStdPlotTo2DWidget(
     return mean_plot, std_plot, text_item_list
 
 
-def removeItemInWidgets(wid_list, item_list):
+def remove_item_in_widgets(wid_list, item_list):
     """
     Removes an item from a list of widgets
 
@@ -918,7 +918,7 @@ def removeItemInWidgets(wid_list, item_list):
         wid.removeItem(item)
 
 
-def addRegionToWidget(bound_1, bound_2, wid, color):
+def add_region_to_widget(bound_1, bound_2, wid, color):
     """
     Creates a region item (**pyqtgraph.LinearRegionItem**) and displays it in a
     widget

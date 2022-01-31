@@ -13,10 +13,10 @@ Module with functions for loading ViSiAnnoT events annotation files
 
 import numpy as np
 from os.path import isfile
-from .dataloader import convertIntervalsToTimeSeries
+from .dataloader import convert_intervals_to_time_series
 
 
-def readAnnotation(path, delimiter=" - "):
+def read_annotation(path, delimiter=" - "):
     """
     Reads an annotation file
 
@@ -40,7 +40,7 @@ def readAnnotation(path, delimiter=" - "):
     return annot_array
 
 
-def addElement(dic, key, element):
+def add_element(dic, key, element):
     """
     Appends an element to a list in a dictionary where each value is a list
 
@@ -60,7 +60,7 @@ def addElement(dic, key, element):
     dic[key].append(element)
 
 
-def readAnnotFrames(path, nb_files=-1, delimiter=" - "):
+def read_annot_frames(path, nb_files=-1, delimiter=" - "):
     """
     Reads an annotation file in format vid-id_frame-id as a list of lists of
     intervals in frame number
@@ -121,7 +121,7 @@ def readAnnotFrames(path, nb_files=-1, delimiter=" - "):
     # check if file exists
     if isfile(path):
         # read file line-wise
-        annot_array = readAnnotation(path, delimiter=delimiter)
+        annot_array = read_annotation(path, delimiter=delimiter)
 
         # loop on annotation lines
         for annot_0, annot_1 in annot_array:
@@ -133,15 +133,15 @@ def readAnnotFrames(path, nb_files=-1, delimiter=" - "):
 
             # check if annotation spans several
             if vid_1 > vid_0:
-                addElement(result_dict, vid_0, [frame_0, -1])
+                add_element(result_dict, vid_0, [frame_0, -1])
 
                 for vid_id in range(vid_0 + 1, vid_1):
-                    addElement(result_dict, vid_id, [0, -1])
+                    add_element(result_dict, vid_id, [0, -1])
 
-                addElement(result_dict, vid_1, [0, frame_1])
+                add_element(result_dict, vid_1, [0, frame_1])
 
             else:
-                addElement(result_dict, vid_0, [frame_0, frame_1])
+                add_element(result_dict, vid_0, [frame_0, frame_1])
 
     # get maximum video id
     if len(result_dict) > 0:
@@ -164,7 +164,7 @@ def readAnnotFrames(path, nb_files=-1, delimiter=" - "):
     return result_list
 
 
-def convertAnnotArray(
+def convert_annot_array(
     annot_path, nb_frames_list, fps, ref_fps=25, flag_invert=False
 ):
     """
@@ -194,12 +194,12 @@ def convertAnnotArray(
     output_array = np.array([])
 
     # get annotation intervals
-    annot_list_list = readAnnotFrames(annot_path, nb_files=len(nb_frames_list))
+    annot_list_list = read_annot_frames(annot_path, nb_files=len(nb_frames_list))
 
     # loop on intervals
     for inter_list, nb_frames in zip(annot_list_list, nb_frames_list):
         # get annotation as a time series
-        annot = convertIntervalsToTimeSeries(inter_list, nb_frames)
+        annot = convert_intervals_to_time_series(inter_list, nb_frames)
 
         # downsample to output fps
         output_array = np.concatenate((output_array, annot[::factor]))

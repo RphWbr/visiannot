@@ -7,10 +7,10 @@
 # http://www.cecill.info
 
 """
-Module defining :class:`.FileSelectionWidget`
+Module defining :class:`.file_selectionWidget`
 """
 
-from ...tools.pyqtoverlayer import addComboBox
+from ...tools.pyqtoverlayer import add_combo_box
 
 
 class FileSelectionWidget():
@@ -28,7 +28,7 @@ class FileSelectionWidget():
         self.combo_box = None
 
         # create combo box widget
-        _, group_box, self.combo_box = addComboBox(
+        _, group_box, self.combo_box = add_combo_box(
             visi.lay, widget_position,
             [str(ite_file + 1) for ite_file in range(visi.nb_files)],
             box_title="File ID / %d" % visi.nb_files
@@ -38,11 +38,11 @@ class FileSelectionWidget():
 
         # listen to callbacks
         self.combo_box.currentIndexChanged.connect(
-            lambda ite_file: self.fileSelection(ite_file, visi)
+            lambda ite_file: self.file_selection(ite_file, visi)
         )
 
 
-    def fileSelection(self, ite_file, visi):
+    def file_selection(self, ite_file, visi):
         """
         Callback method for selecting a new file in the long recording with the
         combo box
@@ -56,4 +56,4 @@ class FileSelectionWidget():
         """
 
         # change recording
-        visi.changeFileInLongRec(ite_file, 0)
+        visi.change_file_in_long_rec(ite_file, 0)

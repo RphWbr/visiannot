@@ -15,7 +15,7 @@ import wave
 import numpy as np
 
 
-def getAudioWaveInfo(path):
+def get_audio_wave_info(path):
     """
     Loads audio wave and gets frequency and number of samples
 
@@ -41,7 +41,7 @@ def getAudioWaveInfo(path):
     return data_wave, freq, nb_samples
 
 
-def getDataAudio(path, channel_id=0, slicing=()):
+def get_data_audio(path, channel_id=0, slicing=()):
     """
     Loads audio data
 
@@ -66,7 +66,7 @@ def getDataAudio(path, channel_id=0, slicing=()):
     """
 
     # get audio wave and frequency
-    data_wave, freq, nb_samples = getAudioWaveInfo(path)
+    data_wave, freq, nb_samples = get_audio_wave_info(path)
 
     # get audio data as a numpy array
     data_audio = data_wave.readframes(nb_samples)
@@ -104,7 +104,7 @@ def getDataAudio(path, channel_id=0, slicing=()):
     return data_wave, data_audio, freq
 
 
-def convertKeyToChannelId(key_data):
+def convert_key_to_channel_id(key_data):
     """
     Converts a key to access data (configuration for :class:`.ViSiAnnoT`) to
     the index of an audio channel

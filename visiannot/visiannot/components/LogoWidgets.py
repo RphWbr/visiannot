@@ -11,13 +11,13 @@ Module defining classes for creating a widget with a logo image on which it is
 possible to click on to activate an action
 """
 
-from ...tools.pyqtgraphoverlayer import createWidgetLogo
-from ...tools.videoloader import readImage
-from ...tools.dataloader import getWorkingDirectory
+from ...tools.pyqtgraphoverlayer import create_widget_logo
+from ...tools.videoloader import read_image
+from ...tools.dataloader import get_working_directory
 
 
 # get directory of the module
-MODULE_DIR = getWorkingDirectory(__file__)
+MODULE_DIR = get_working_directory(__file__)
 
 
 class LogoWidget():
@@ -34,7 +34,7 @@ class LogoWidget():
             must be located in the folder ``Images`` next to the module
         :type im_path: str
         :param box_size: see keyword argument ``box_size`` of
-            :func:`.createWidgetLogo`
+            :func:`.create_widget_logo`
         :type box_size: int or tuple
         """
 
@@ -43,8 +43,8 @@ class LogoWidget():
 
         # create widget with image and add it to the layout of the
         # associated instance of ViSiAnnoT
-        wid = createWidgetLogo(
-            visi.lay, widget_position, readImage(im_path), box_size=box_size
+        wid = create_widget_logo(
+            visi.lay, widget_position, read_image(im_path), box_size=box_size
         )
 
         # listen to callback
@@ -94,8 +94,8 @@ class ZoomInWidget(ZoomWidget):
         axis_range_min, axis_range_max = axis.range[0], axis.range[1]
 
         # convert from signal to ref
-        axis_range_min = visi.convertMsToFrameRef(axis_range_min)
-        axis_range_max = visi.convertMsToFrameRef(axis_range_max)
+        axis_range_min = visi.convert_ms_to_frame_ref(axis_range_min)
+        axis_range_max = visi.convert_ms_to_frame_ref(axis_range_max)
 
         # check if current range is large enough for zoom in
         if axis_range_max - axis_range_min > 5:
@@ -113,7 +113,7 @@ class ZoomInWidget(ZoomWidget):
             )
 
             # update signals plots
-            visi.updateSignalPlot()
+            visi.update_signal_plot()
 
 
 class ZoomOutWidget(ZoomWidget):
@@ -129,8 +129,8 @@ class ZoomOutWidget(ZoomWidget):
         axis_range_min, axis_range_max = axis.range[0], axis.range[1]
 
         # convert from signal to ref
-        axis_range_min = visi.convertMsToFrameRef(axis_range_min)
-        axis_range_max = visi.convertMsToFrameRef(axis_range_max)
+        axis_range_min = visi.convert_ms_to_frame_ref(axis_range_min)
+        axis_range_max = visi.convert_ms_to_frame_ref(axis_range_max)
 
         # compute the range on the left/right side of the temporal cursor
         left = visi.frame_id - axis_range_min
@@ -144,7 +144,7 @@ class ZoomOutWidget(ZoomWidget):
         )
 
         # update signals plots
-        visi.updateSignalPlot()
+        visi.update_signal_plot()
 
 
 class FullVisiWidget(LogoWidget):
@@ -160,7 +160,7 @@ class FullVisiWidget(LogoWidget):
         visi.last_frame = visi.nframes
 
         # update signal plots
-        visi.updateSignalPlot()
+        visi.update_signal_plot()
 
 
 class PreviousWidget(LogoWidget):
@@ -171,7 +171,7 @@ class PreviousWidget(LogoWidget):
         :param visi: associated instance of :class:`.ViSiAnnoT`
         """
 
-        visi.changeFileInLongRec(visi.ite_file - 1, 0)
+        visi.change_file_in_long_rec(visi.ite_file - 1, 0)
 
 
 class NextWidget(LogoWidget):
@@ -182,4 +182,4 @@ class NextWidget(LogoWidget):
         :param visi: associated instance of :class:`.ViSiAnnoT`
         """
 
-        visi.changeFileInLongRec(visi.ite_file + 1, 0)
+        visi.change_file_in_long_rec(visi.ite_file + 1, 0)

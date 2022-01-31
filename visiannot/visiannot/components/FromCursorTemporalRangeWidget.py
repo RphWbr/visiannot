@@ -10,8 +10,8 @@
 Module defining :class:`.TimeEditWidget`
 """
 
-from ...tools.datetimeconverter import convertTimeToFrame
-from ...tools.pyqtoverlayer import addComboBox
+from ...tools.datetimeconverter import convert_time_to_frame
+from ...tools.pyqtoverlayer import add_combo_box
 
 
 class FromCursorTemporalRangeWidget():
@@ -46,7 +46,7 @@ class FromCursorTemporalRangeWidget():
 
         #: (:class:`.pyqtoverlayer.ComboBox`) Combo box for
         #: selecting a temporal range starting at the current frame
-        _, _, self.combo_box = addComboBox(
+        _, _, self.combo_box = add_combo_box(
             visi.lay, widget_position, combo_item_list,
             box_title="Temporal range duration",
             flag_enable_key_interaction=False
@@ -54,11 +54,11 @@ class FromCursorTemporalRangeWidget():
 
         # listen to the callback method
         self.combo_box.currentIndexChanged.connect(
-            lambda ite_combo: self.callComboFromCursor(ite_combo, visi)
+            lambda ite_combo: self.call_combo_from_cursor(ite_combo, visi)
         )
 
 
-    def callComboFromCursor(self, ite_combo, visi):
+    def call_combo_from_cursor(self, ite_combo, visi):
         """
         Callback method for selecting a pre-defined temporal range that begins
         at the current temporal cursor position
@@ -69,7 +69,7 @@ class FromCursorTemporalRangeWidget():
         It sets :attr:`.first_frame` to :attr:`.frame_id`
         and :attr:`.last_frame` so that the temporal range spans the
         selected value of the combo box :attr:`.combo_box`.
-        Then it calls the method :meth:`.updateSignalPlot`.
+        Then it calls the method :meth:`.update_signal_plot`.
 
         :param ite_combo: index of the selected value in the combo box
             :attr:`.combo_box`
@@ -80,7 +80,7 @@ class FromCursorTemporalRangeWidget():
         if ite_combo > 0:
             # get the value of the combo box and convert it to frame number
             ite_combo -= 1
-            frame_interval = convertTimeToFrame(
+            frame_interval = convert_time_to_frame(
                 visi.fps, minute=self.from_cursor_list[ite_combo][0],
                 sec=self.from_cursor_list[ite_combo][1]
             )
@@ -90,4 +90,4 @@ class FromCursorTemporalRangeWidget():
             visi.last_frame = min(visi.frame_id + frame_interval, visi.nframes)
 
             # update plots signals
-            visi.updateSignalPlot(flag_reset_combo_from_cursor=False)
+            visi.update_signal_plot(flag_reset_combo_from_cursor=False)

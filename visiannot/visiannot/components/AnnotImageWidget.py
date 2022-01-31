@@ -12,8 +12,8 @@ Module defining :class:`.AnnotImageWidget`
 
 from os.path import isdir
 from os import mkdir, makedirs
-from ...tools.pyqtoverlayer import addWidgetButtonGroup, addPushButton
-from ...tools.videoloader import transformImage
+from ...tools.pyqtoverlayer import add_widget_button_group, add_push_button
+from ...tools.videoloader import transform_image
 from cv2 import imwrite
 from math import ceil
 
@@ -77,7 +77,7 @@ class AnnotImageWidget():
         #: (*QtWidgets.QButtonGroup*) Set of radio buttons for selecting a
         #: label
         self.radio_button_group = None
-        grid, _, self.radio_button_group = addWidgetButtonGroup(
+        grid, _, self.radio_button_group = add_widget_button_group(
             visi.lay, widget_position, self.label_list, button_type="radio",
             box_title="Image extraction", flag_horizontal=flag_horizontal,
             nb_table=nb_table
@@ -85,16 +85,16 @@ class AnnotImageWidget():
 
         #: (:class:`.pyqtoverlayer.PushButton`) Push
         #: button for saving image extraction
-        self.push_button = addPushButton(
+        self.push_button = add_push_button(
             grid, pos_push_button, "Save", flag_enable_key_interaction=False
         )
 
 
         # listen to the callback method
-        self.push_button.clicked.connect(lambda: self.callPushButton(visi))
+        self.push_button.clicked.connect(lambda: self.call_push_button(visi))
 
 
-    def callPushButton(self, visi):
+    def call_push_button(self, visi):
         """
         Callback method for saving the image at current frame in ViSiAnnoT
 
@@ -112,7 +112,7 @@ class AnnotImageWidget():
         # loop on cameras
         for wid_vid in visi.wid_vid_dict.values():
             # read image
-            im = transformImage(wid_vid.image)
+            im = transform_image(wid_vid.image)
 
             # save image
             im_path = "%s/%s_%s.png" % (

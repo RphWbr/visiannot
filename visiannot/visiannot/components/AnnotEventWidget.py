@@ -14,14 +14,12 @@ from os.path import isdir, basename, isfile
 from os import makedirs
 from PyQt5 import QtWidgets, QtCore
 from ...tools import pyqtoverlayer
-from ...tools.dataloader import getTxtLines
-from ...tools.datetimeconverter import convertDatetimeToString, \
-    convertAbsoluteDatetimeStringToFrame, convertStringToDatetime, \
-    convertFrameToAbsoluteDatetime, convertFrameToAbsoluteDatetimeString
-from ...tools.pyqtgraphoverlayer import removeItemInWidgets
+from ...tools.dataloader import get_txt_lines
+from ...tools import datetimeconverter
+from ...tools.pyqtgraphoverlayer import remove_item_in_widgets
 import numpy as np
 from datetime import timedelta
-from ...tools.annotations import readAnnotation
+from ...tools.annotations import read_annotation
 
 
 class AnnotEventWidget():
@@ -45,7 +43,7 @@ class AnnotEventWidget():
         :param flag_annot_overlap: specify if overlap of events annotations is
             enabled
         :type flag_annot_overlap: bool
-        :param kwargs: keyword arguments of :meth:`.createWidget`
+        :param kwargs: keyword arguments of :meth:`.create_widget`
         """
 
         #: (*str*) Directory where the annotations are saved
@@ -133,7 +131,7 @@ class AnnotEventWidget():
             #:
             #: Same length as :attr:`.annot_type_list`, there is
             #: one file for each annotation type.
-            self.path_list = self.getPathList(
+            self.path_list = self.get_path_list(
                 self.label_list[0]
             )
 
@@ -143,7 +141,7 @@ class AnnotEventWidget():
 
             # create annotation file with duration of video files
             # (or first signal if no video)
-            self.createAnnotDuration(visi)
+            self.create_annot_duration(visi)
 
         else:
             self.path_list = []
@@ -173,7 +171,7 @@ class AnnotEventWidget():
 
         # create widget with button groups and add it to the layout of
         # ViSiAnnoT
-        self.createWidget(visi.lay, widget_position, **kwargs)
+        self.create_widget(visi.lay, widget_position, **kwargs)
 
         #: (*dict*) Lists of region items (pyqtgraph.LinearRegionItem)
         #: for the display of events annotations
@@ -201,23 +199,23 @@ class AnnotEventWidget():
         self.region_dict = {}
 
         # plot annotations
-        self.plotRegions(visi)
+        self.plot_regions(visi)
 
         # listen to the callback methods
         self.button_group_push.buttonClicked[int].connect(
-            lambda button_id: self.callPushButton(button_id, visi)
+            lambda button_id: self.call_push_button(button_id, visi)
         )
 
         self.button_group_radio_label.buttonClicked.connect(
-            lambda ev: self.callRadio(ev, visi)
+            lambda ev: self.call_radio(ev, visi)
         )
 
         self.button_group_radio_disp.buttonClicked.connect(
-            lambda: self.plotRegions(visi)
+            lambda: self.plot_regions(visi)
         )
 
         self.button_group_check_custom.buttonClicked.connect(
-            lambda: self.plotRegions(visi)
+            lambda: self.plot_regions(visi)
         )
 
 
@@ -226,7 +224,7 @@ class AnnotEventWidget():
     # *********************************************************************** #
 
 
-    def createWidget(self, lay, widget_position, nb_table=5):
+    def create_widget(self, lay, widget_position, nb_table=5):
         """
         Creates a widget with the events annotation tool and adds it to the
         layout of the associated instance of :class:`.ViSiAnnoT`
@@ -254,19 +252,19 @@ class AnnotEventWidget():
         """
 
         # create group box
-        grid, _ = pyqtoverlayer.addGroupBox(
+        grid, _ = pyqtoverlayer.add_group_box(
             lay, widget_position, title="Events annotation"
         )
 
         # create widget with radio buttons (annotation labels)
-        _, _, self.button_group_radio_label = pyqtoverlayer.addWidgetButtonGroup(
+        _, _, self.button_group_radio_label = pyqtoverlayer.add_widget_button_group(
             grid, (0, 0, 1, 2), self.label_list, color_list=self.color_list,
             box_title="Current label selection", nb_table=nb_table
         )
 
         # get number of annotations already stored (default first label)
         if isfile(self.path_list[0]):
-            lines = getTxtLines(self.path_list[0])
+            lines = get_txt_lines(self.path_list[0])
             nb_annot = len(lines)
         else:
             nb_annot = 0
@@ -285,7 +283,7 @@ class AnnotEventWidget():
             button_text_list, push_text_list
         )):
             # add push button
-            push_button = pyqtoverlayer.addPushButton(
+            push_button = pyqtoverlayer.add_push_button(
                 grid, (1 + ite_button, 0), text,
                 flag_enable_key_interaction=False
             )
@@ -301,14 +299,14 @@ class AnnotEventWidget():
                 self.push_text_list.append(q_label)
 
         # create widget with radio buttons (display options)
-        _, _, self.button_group_radio_disp = pyqtoverlayer.addWidgetButtonGroup(
+        _, _, self.button_group_radio_disp = pyqtoverlayer.add_widget_button_group(
             grid, (2 + ite_button, 0, 1, 2),
             ["Current label", "All labels", "Custom (below)"],
             box_title="Display mode"
         )
 
         # create check boxes with labels
-        _, _, self.button_group_check_custom = pyqtoverlayer.addWidgetButtonGroup(
+        _, _, self.button_group_check_custom = pyqtoverlayer.add_widget_button_group(
             grid, (3 + ite_button, 0, 1, 2), self.label_list,
             color_list=self.color_list, box_title="Custom display",
             button_type="check_box", nb_table=nb_table
@@ -324,7 +322,7 @@ class AnnotEventWidget():
     # *********************************************************************** #
 
 
-    def getPathList(self, label):
+    def get_path_list(self, label):
         """
         Gets the path of the annotation files corresponding to the input label
 
@@ -347,7 +345,7 @@ class AnnotEventWidget():
         return path_list
 
 
-    def createAnnotDuration(self, visi):
+    def create_annot_duration(self, visi):
         """
         Creates annotation events files for the duration of each file of the
         reference modality (only one file if not a long recording)
@@ -382,8 +380,8 @@ class AnnotEventWidget():
                         )
 
                         # convert datetime to string
-                        beg_string = convertDatetimeToString(beg_datetime)
-                        end_string = convertDatetimeToString(end_datetime)
+                        beg_string = datetimeconverter.convert_datetime_to_string(beg_datetime)
+                        end_string = datetimeconverter.convert_datetime_to_string(end_datetime)
 
                         # write annotation file
                         f.write("%s - %s\n" % (beg_string, end_string))
@@ -410,11 +408,11 @@ class AnnotEventWidget():
                     )
 
                     # convert datetime to string
-                    beg_string = convertDatetimeToString(
+                    beg_string = datetimeconverter.convert_datetime_to_string(
                         visi.beginning_datetime
                     )
 
-                    end_string = convertDatetimeToString(
+                    end_string = datetimeconverter.convert_datetime_to_string(
                         end_datetime
                     )
 
@@ -427,7 +425,7 @@ class AnnotEventWidget():
                     f.write("0_0 - 0_%d\n" % visi.nframes)
 
 
-    def callRadio(self, ev, visi):
+    def call_radio(self, ev, visi):
         """
         Callback method for changing label
 
@@ -440,10 +438,10 @@ class AnnotEventWidget():
         """
 
         # get the new annotation file name
-        self.changeLabel(visi, ev.text())
+        self.change_label(visi, ev.text())
 
 
-    def changeLabel(self, visi, new_label):
+    def change_label(self, visi, new_label):
         """
         Changes label and loads corresponding annotation files
 
@@ -452,7 +450,7 @@ class AnnotEventWidget():
         - :attr:`.current_label_id` with the index of the new label in
           :attr:`.label_list`
         - :attr:`.path_list` with the new list of annotation file paths (by
-          calling :meth:`.getPathList`)
+          calling :meth:`.get_path_list`)
 
         It also manages the display of the annotations.
 
@@ -465,11 +463,11 @@ class AnnotEventWidget():
         self.current_label_id = self.label_list.index(new_label)
 
         # get the new annotation file name
-        self.path_list = self.getPathList(new_label)
+        self.path_list = self.get_path_list(new_label)
 
         # get number of annotation already stored
         if isfile(self.path_list[0]):
-            lines = getTxtLines(self.path_list[0])
+            lines = get_txt_lines(self.path_list[0])
             nb_annot = len(lines)
 
         else:
@@ -502,10 +500,10 @@ class AnnotEventWidget():
             )
 
         # plot annotations
-        self.plotRegions(visi)
+        self.plot_regions(visi)
 
 
-    def getAnnotIdFromPosition(self, visi, position):
+    def get_annot_id_from_position(self, visi, position):
         """
         Looks for the index of the annotation at the given frame for the
         current label
@@ -526,23 +524,23 @@ class AnnotEventWidget():
         # check if annotation file exists
         if isfile(self.path_list[0]):
             # convert mouse position to datetime
-            position_date_time = convertFrameToAbsoluteDatetime(
+            position_date_time = datetimeconverter.convert_frame_to_absolute_datetime(
                 position, visi.fps, visi.beginning_datetime
             )
 
             # get annotations for current label
-            lines = getTxtLines(self.path_list[0])
+            lines = get_txt_lines(self.path_list[0])
 
             # loop on annotations
             for ite_annot, line in enumerate(lines):
                 # get annotation
                 line = line.replace("\n", "")
 
-                start_date_time = convertStringToDatetime(
+                start_date_time = datetimeconverter.convert_string_to_datetime(
                     line.split(" - ")[0], "format_T", time_zone=visi.time_zone
                 )
 
-                end_date_time = convertStringToDatetime(
+                end_date_time = datetimeconverter.convert_string_to_datetime(
                     line.split(" - ")[1], "format_T", time_zone=visi.time_zone
                 )
 
@@ -562,7 +560,7 @@ class AnnotEventWidget():
         return annot_id
 
 
-    def callPushButton(self, button_id, visi):
+    def call_push_button(self, button_id, visi):
         """
         Callback method for managing annotation with push buttons
 
@@ -587,11 +585,11 @@ class AnnotEventWidget():
 
         # set beginning time of the annotated interval
         if button_id == 0:
-            self.setTimestamp(visi, visi.frame_id, 0)
+            self.set_timestamp(visi, visi.frame_id, 0)
 
         # set ending time of the annotated interval
         elif button_id == 1:
-            self.setTimestamp(visi, visi.frame_id, 1)
+            self.set_timestamp(visi, visi.frame_id, 1)
 
         # add the annotated interval to the annotation file
         elif button_id == 2:
@@ -615,7 +613,7 @@ class AnnotEventWidget():
             self.display(visi)
 
 
-    def setTimestamp(self, visi, frame_id, annot_position):
+    def set_timestamp(self, visi, frame_id, annot_position):
         """
         Sets the start or end timestamp of the current unsaved annotation for
         the current label
@@ -636,7 +634,7 @@ class AnnotEventWidget():
                 len(self.label_list) > 0:
             # set timestamp in datetime string format
             self.annot_array[self.current_label_id, annot_position, 0] = \
-                convertFrameToAbsoluteDatetimeString(
+                datetimeconverter.convert_frame_to_absolute_datetime_string(
                     frame_id, visi.fps, visi.beginning_datetime
             )
 
@@ -650,7 +648,7 @@ class AnnotEventWidget():
             )
 
 
-    def resetTimestamp(self):
+    def reset_timestamp(self):
         """
         Resets the timestamps of the current unsaved annotation for the current
         label
@@ -687,12 +685,12 @@ class AnnotEventWidget():
         # otherwise all good
         else:
             # convert timestamps to datetime
-            annot_datetime_0 = convertStringToDatetime(
+            annot_datetime_0 = datetimeconverter.convert_string_to_datetime(
                 self.annot_array[self.current_label_id, 0, 0],
                 "format_T", time_zone=visi.time_zone
             )
 
-            annot_datetime_1 = convertStringToDatetime(
+            annot_datetime_1 = datetimeconverter.convert_string_to_datetime(
                 self.annot_array[self.current_label_id, 1, 0],
                 "format_T", time_zone=visi.time_zone
             )
@@ -709,7 +707,7 @@ class AnnotEventWidget():
             if not self.flag_annot_overlap:
                 # check if annotation overlaps with previous annotations
                 if isfile(self.path_list[0]):
-                    flag_ok = self.checkOverlap(
+                    flag_ok = self.check_overlap(
                         self.path_list[0], annot_datetime_0, annot_datetime_1,
                         time_zone=visi.time_zone
                     )
@@ -737,7 +735,7 @@ class AnnotEventWidget():
                 # if display mode is on, display the appended interval
                 if self.push_text_list[3].text() == "On" and \
                         self.current_label_id in self.region_dict.keys():
-                    region_list = self.addRegion(
+                    region_list = self.add_region(
                         visi,
                         self.annot_array[self.current_label_id, 0, 0],
                         self.annot_array[self.current_label_id, 1, 0],
@@ -754,20 +752,20 @@ class AnnotEventWidget():
 
             # reset the beginning and ending times of the annotated
             # interval
-            self.resetTimestamp()
+            self.reset_timestamp()
 
 
     @staticmethod
-    def checkOverlap(annot_path, annot_datetime_0, annot_datetime_1, **kwargs):
+    def check_overlap(annot_path, annot_datetime_0, annot_datetime_1, **kwargs):
         # get existing annotations
-        annot_array_total = readAnnotation(annot_path).flatten()
+        annot_array_total = read_annotation(annot_path).flatten()
 
         # loop on current annotation boundaries
         diff_array = np.empty((0, len(annot_array_total)))
         for annot_bound in [annot_datetime_0, annot_datetime_1]:
             # compute difference with boundaries of existing annotations
             diff_array_tmp = np.array([(
-                convertStringToDatetime(d, "format_T", **kwargs) - annot_bound
+                datetimeconverter.convert_string_to_datetime(d, "format_T", **kwargs) - annot_bound
             ).total_seconds() for d in annot_array_total])
 
             # binarize difference array
@@ -784,7 +782,7 @@ class AnnotEventWidget():
 
 
     @staticmethod
-    def deleteLineInFile(path, line_id):
+    def delete_line_in_file(path, line_id):
         """
         Class method for deleting a line in a txt file
 
@@ -795,7 +793,7 @@ class AnnotEventWidget():
         """
 
         # read annotation file lines
-        lines = getTxtLines(path)
+        lines = get_txt_lines(path)
 
         # remove specified line
         del lines[line_id]
@@ -816,7 +814,7 @@ class AnnotEventWidget():
 
         # delete annotation in the txt file
         for annot_path in self.path_list:
-            AnnotEventWidget.deleteLineInFile(annot_path, annot_id)
+            AnnotEventWidget.delete_line_in_file(annot_path, annot_id)
 
         # update number of annotations
         nb_annot = max(
@@ -830,14 +828,14 @@ class AnnotEventWidget():
             description_dict = self.description_dict[self.current_label_id]
 
             if annot_id in description_dict.keys():
-                removeItemInWidgets(
+                remove_item_in_widgets(
                     visi.wid_sig_list, description_dict[annot_id]
                 )
 
                 del description_dict[annot_id]
 
             elif annot_id == -1 and nb_annot in description_dict.keys():
-                removeItemInWidgets(
+                remove_item_in_widgets(
                     visi.wid_sig_list, description_dict[nb_annot]
                 )
 
@@ -845,14 +843,14 @@ class AnnotEventWidget():
 
         # if display mode is on, remove the deleted annotation
         if self.push_text_list[3].text() == "On":
-            visi.removeRegionInWidgets(
+            visi.remove_region_in_widgets(
                 self.region_dict[self.current_label_id][annot_id]
             )
 
             del self.region_dict[self.current_label_id][annot_id]
 
 
-    def deleteClicked(self, visi, position):
+    def delete_clicked(self, visi, position):
         """
         Deletes an annotion that is clicked on
 
@@ -864,7 +862,7 @@ class AnnotEventWidget():
         """
 
         # get annotated event ID
-        annot_id = self.getAnnotIdFromPosition(visi, position)
+        annot_id = self.get_annot_id_from_position(visi, position)
 
         # check if an annotated event must be deleted
         if annot_id >= 0:
@@ -881,7 +879,7 @@ class AnnotEventWidget():
     # *********************************************************************** #
 
 
-    def plotRegions(self, visi):
+    def plot_regions(self, visi):
         """
         Plots events annotations, depending on the display mode selected with
         :attr:`.button_group_radio_disp`
@@ -930,7 +928,7 @@ class AnnotEventWidget():
                 # if label not to be plotted anymore
                 if label_id not in plot_dict.keys():
                     # clear display
-                    self.clearRegionsSingleLabel(visi, label_id)
+                    self.clear_regions_single_label(visi, label_id)
 
             # loop on labels to plot
             for label_id, color in plot_dict.items():
@@ -938,7 +936,7 @@ class AnnotEventWidget():
                 if label_id not in self.region_dict.keys():
                     # get annotation path
                     label = self.label_list[label_id]
-                    annot_path = self.getPathList(label)[0]
+                    annot_path = self.get_path_list(label)[0]
 
                     # initialize list of region items for the label
                     region_annotation_list = []
@@ -946,14 +944,14 @@ class AnnotEventWidget():
                     # check if annotation file exists
                     if isfile(annot_path):
                         # read annotation file
-                        lines = getTxtLines(annot_path)
+                        lines = get_txt_lines(annot_path)
 
                         # loop on annotations
                         for annot_line in lines:
                             # display region
                             annot_line_content = annot_line.split(' - ')
 
-                            region_list = self.addRegion(
+                            region_list = self.add_region(
                                 visi,
                                 annot_line_content[0],
                                 annot_line_content[1].replace("\n", ""),
@@ -970,7 +968,7 @@ class AnnotEventWidget():
                     if label_id in self.description_dict.keys():
                         for description_list in \
                                 self.description_dict[label_id].values():
-                            visi.addItemToSignals(description_list)
+                            visi.add_item_to_signals(description_list)
 
 
     def display(self, visi):
@@ -986,17 +984,17 @@ class AnnotEventWidget():
             self.push_text_list[3].setText("On")
 
             # display regions from the annotation file
-            self.plotRegions(visi)
+            self.plot_regions(visi)
 
         # display mode is on, put it off
         else:
-            self.clearRegions(visi)
+            self.clear_regions(visi)
 
             # notify that display mode is now off
             self.push_text_list[3].setText("Off")
 
 
-    def clearRegions(self, visi):
+    def clear_regions(self, visi):
         """
         Clears the display of annotations for all labels (but does not
         delete the annotations)
@@ -1006,10 +1004,10 @@ class AnnotEventWidget():
 
         # loop on labels
         for label_id in range(len(self.label_list)):
-            self.clearRegionsSingleLabel(visi, label_id)
+            self.clear_regions_single_label(visi, label_id)
 
 
-    def clearRegionsSingleLabel(self, visi, label_id):
+    def clear_regions_single_label(self, visi, label_id):
         """
         Clears the display of annotations for a specific label
 
@@ -1022,24 +1020,24 @@ class AnnotEventWidget():
         # clear annotations display
         if label_id in self.region_dict.keys():
             for region_list in self.region_dict[label_id]:
-                visi.removeRegionInWidgets(region_list)
+                visi.remove_region_in_widgets(region_list)
             del self.region_dict[label_id]
 
         # clear descriptions display
         if label_id in self.description_dict:
             for description_list in \
                     self.description_dict[label_id].values():
-                removeItemInWidgets(
+                remove_item_in_widgets(
                     visi.wid_sig_list, description_list
                 )
 
 
-    def addRegion(self, visi, bound_1, bound_2, **kwargs):
+    def add_region(self, visi, bound_1, bound_2, **kwargs):
         """
         Displays a region in the progress bar and the signal widgets
 
         It converts the bounds to frame numbers and then calls the
-        method :meth:`.ViSiAnnoT.addRegionToWidgets`.
+        method :meth:`.ViSiAnnoT.add_region_to_widgets`.
 
         :param visi: associated instance of :class:`.ViSiAnnoT`
         :param bound_1: start datetime of the region
@@ -1047,16 +1045,16 @@ class AnnotEventWidget():
         :param bound_2: end datetime of the region
         :type bound_2: str
         :param kwargs: keyword arguments of
-            :meth:`.ViSiAnnoT.addRegionToWidgets`
+            :meth:`.ViSiAnnoT.add_region_to_widgets`
         """
 
         # convert bounds to frame numbers
-        frame_1 = convertAbsoluteDatetimeStringToFrame(
+        frame_1 = datetimeconverter.convert_absolute_datetime_string_to_frame(
             bound_1, visi.fps, visi.beginning_datetime,
             time_zone=visi.time_zone
         )
 
-        frame_2 = convertAbsoluteDatetimeStringToFrame(
+        frame_2 = datetimeconverter.convert_absolute_datetime_string_to_frame(
             bound_2, visi.fps, visi.beginning_datetime,
             time_zone=visi.time_zone
         )
@@ -1066,7 +1064,7 @@ class AnnotEventWidget():
             or frame_2 >= 0 and frame_2 < visi.nframes \
                 or frame_1 < 0 and frame_2 >= visi.nframes:
             # display region in each signal plot
-            region_list = visi.addRegionToWidgets(frame_1, frame_2, **kwargs)
+            region_list = visi.add_region_to_widgets(frame_1, frame_2, **kwargs)
 
             return region_list
 
@@ -1101,7 +1099,7 @@ class AnnotEventWidget():
         """
 
         # get annotation ID that has been clicked
-        annot_id = self.getAnnotIdFromPosition(visi, pos_frame)
+        annot_id = self.get_annot_id_from_position(visi, pos_frame)
 
         # check if mouse clicked on an annotation
         if annot_id >= 0:
@@ -1118,7 +1116,7 @@ class AnnotEventWidget():
             # check if description already displayed
             if annot_id in description_dict.keys():
                 # remove display
-                removeItemInWidgets(
+                remove_item_in_widgets(
                     visi.wid_sig_list, description_dict[annot_id]
                 )
 
@@ -1127,20 +1125,20 @@ class AnnotEventWidget():
 
             else:
                 # get list of Y position of the mouse in each signal widget
-                pos_y_list = visi.getMouseYPosition(ev)
+                pos_y_list = visi.get_mouse_y_position(ev)
 
                 # get date-time string annotation
-                annot = getTxtLines(self.path_list[0])[annot_id]
+                annot = get_txt_lines(self.path_list[0])[annot_id]
 
                 # get date-time start/stop of the annotation
                 start, stop = annot.replace("\n", "").split(" - ")
 
                 # convert date-time string to datetime
-                start = convertStringToDatetime(
+                start = datetimeconverter.convert_string_to_datetime(
                     start, "format_T", time_zone=visi.time_zone
                 )
 
-                stop = convertStringToDatetime(
+                stop = datetimeconverter.convert_string_to_datetime(
                     stop, "format_T", time_zone=visi.time_zone
                 )
 
@@ -1158,12 +1156,12 @@ class AnnotEventWidget():
 
                 # create list of description text items for the annotation
                 self.description_dict[self.current_label_id][annot_id] = \
-                    visi.createTextItem(
+                    visi.create_text_item(
                         description, pos_ms, pos_y_list, border_color=color
                 )
 
 
-    def clearDescriptions(self, visi):
+    def clear_descriptions(self, visi):
         """
         Clears the display of all the annotations descriptions
 
@@ -1172,7 +1170,7 @@ class AnnotEventWidget():
 
         for description_dict in self.description_dict.values():
             for description_list in description_dict.values():
-                removeItemInWidgets(visi.wid_sig_list, description_list)
+                remove_item_in_widgets(visi.wid_sig_list, description_list)
 
         self.description_dict = {}
 

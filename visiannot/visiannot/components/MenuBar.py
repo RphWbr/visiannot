@@ -51,16 +51,16 @@ class MenuBar(QMenuBar):
         self.win_license = WindowsPopUp.WindowLicense()
 
         # add a menu with actions to menu bar
-        self.addMenuWithActions(
+        self.add_menu_with_actions(
             "Help", {
-                "Documentation": MenuBar.openDocumentation,
+                "Documentation": MenuBar.open_documentation,
                 "License": self.win_license.show,
                 "About ViSiAnnoT": self.win_about.show
             }
         )
 
 
-    def addMenuWithActions(self, menu_name, action_dict):
+    def add_menu_with_actions(self, menu_name, action_dict):
         """
         Adds menus with actions to menu bar
 
@@ -88,7 +88,7 @@ class MenuBar(QMenuBar):
 
 
     @staticmethod
-    def openDocumentation():
+    def open_documentation():
         """
         Static method for launching the default web browser and loading
         **ViSiAnnoT** ReadTheDocs documentation

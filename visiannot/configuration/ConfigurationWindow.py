@@ -66,7 +66,7 @@ class ConfigurationWindow():
         - ``ConfigurationWindow.meta_dict["AnnotImage"].dict``
 
         When values are modified manually in the window, these dictionaries are
-        not updated. The method :meth:`.setConfigurationDictionaries` must
+        not updated. The method :meth:`.set_configuration_dictionaries` must
         be called to do so.
         """
 
@@ -114,7 +114,7 @@ class ConfigurationWindow():
         # *********************** create window ***************************** #
 
         #: (*QtWidgets.QApplication*) Display initializer
-        self.app = pyqtoverlayer.initializeDisplay()
+        self.app = pyqtoverlayer.initialize_gui()
 
         # set default font
         self.app.setFont(QtGui.QFont("Times", 12))
@@ -126,12 +126,12 @@ class ConfigurationWindow():
         self.lay = None
 
         # create window
-        self.win, self.lay = pyqtoverlayer.createWindow(
+        self.win, self.lay = pyqtoverlayer.create_window(
             title="ViSiAnnoT configuration"
         )
 
         # create scroll area
-        scroll_lay, _ = pyqtoverlayer.addScrollArea(self.lay, (0, 0))
+        scroll_lay, _ = pyqtoverlayer.add_scroll_area(self.lay, (0, 0))
 
 
         # ******************** create video widget ************************** #
@@ -194,7 +194,7 @@ class ConfigurationWindow():
 
         # listen to callback
         self.meta_dict["Signal"].button_group_children.buttonClicked[int].connect(
-            self.showChildWindow
+            self.show_child_window
         )
 
 
@@ -236,13 +236,13 @@ class ConfigurationWindow():
 
 
         # ******************* create general widget ************************* #
-        self.createWidgetGeneral((4, 0))
+        self.create_widget_general((4, 0))
 
         # add group box to scroll area
         scroll_lay.addWidget(self.general_group_box)
 
         # listen to callback
-        self.general_push_button.clicked.connect(self.setDirectoryAnnotation)
+        self.general_push_button.clicked.connect(self.set_directory_annotations)
 
 
         # ***************** create load/save/done widget ******************** #
@@ -252,7 +252,7 @@ class ConfigurationWindow():
         self.button_group_lsd = None
 
         _, group_box_lsd, self.button_group_lsd = \
-            pyqtoverlayer.addWidgetButtonGroup(
+            pyqtoverlayer.add_widget_button_group(
                 self.lay, (5, 0), ["Load", "Save", "Done"],
                 button_type="push", box_title="Configuration file", width=120
             )
@@ -261,7 +261,7 @@ class ConfigurationWindow():
         group_box_lsd.setMaximumHeight(80)
 
         # listen to callback
-        self.button_group_lsd.buttonClicked[int].connect(self.callLSD)
+        self.button_group_lsd.buttonClicked[int].connect(self.call_lsd)
 
 
         # ******************* create children windows ********************** #
@@ -271,7 +271,7 @@ class ConfigurationWindow():
         self.children_win_list = []
 
         # interval configuration
-        self.createChildConfigurationWindow(
+        self.create_child_configuration_window(
             self.meta_dict["Signal"],
             "Interval",
             2,
@@ -300,7 +300,7 @@ class ConfigurationWindow():
         )
 
         # threshold configuration
-        self.createChildConfigurationWindow(
+        self.create_child_configuration_window(
             self.meta_dict["Signal"],
             "Threshold",
             2,
@@ -320,7 +320,7 @@ class ConfigurationWindow():
         )
 
         # Y range configuration
-        self.createChildConfigurationWindow(
+        self.create_child_configuration_window(
             self.meta_dict["Signal"],
             "YRange",
             1,
@@ -404,7 +404,7 @@ class ConfigurationWindow():
         self.load(path)
 
         # infinite loop
-        pyqtoverlayer.infiniteLoopDisplay(self.app)
+        pyqtoverlayer.infinite_loop_gui(self.app)
 
 
 
@@ -418,7 +418,7 @@ class ConfigurationWindow():
     # *********************************************************************** #
 
 
-    def createWidgetGeneral(self, widget_position):
+    def create_widget_general(self, widget_position):
         """
         Adds a widget with the general configuration to the layout
         :attr:`ConfigurationWindow.lay`
@@ -439,7 +439,7 @@ class ConfigurationWindow():
         """
 
         # create general configuration group box
-        self.general_lay, self.general_group_box = pyqtoverlayer.addGroupBox(
+        self.general_lay, self.general_group_box = pyqtoverlayer.add_group_box(
             self.lay, widget_position, "General"
         )
 
@@ -572,20 +572,20 @@ class ConfigurationWindow():
                 self.general_config_position_dict[key].append(wid_pos[:2])
 
                 # add widget
-                pyqtoverlayer.addWidgetToLayout(self.general_lay, widget, wid_pos)
+                pyqtoverlayer.add_widget_to_layout(self.general_lay, widget, wid_pos)
 
         # get index of row with annotation base directory
         i = [key for _, key, _, _, _ in elt_list].index("annot_dir")
 
         # create push button used to change the directory of anntotations
-        self.general_push_button = pyqtoverlayer.addPushButton(
+        self.general_push_button = pyqtoverlayer.add_push_button(
             self.general_lay, (i, nb_cols_max + 1), "Change directory",
             width=200
         )
         self.general_push_button.setMinimumHeight(height)
 
         # create list of "from cursor" durations
-        pyqtoverlayer.addSpinBoxTable(
+        pyqtoverlayer.add_spin_box_table(
             self.general_lay, (0, nb_cols_max + 2, nb_rows, 1), 10, 2,
             "'from cursor' durations (min, sec)", {"minimum": 0, "maximum": 59}
         )
@@ -593,7 +593,7 @@ class ConfigurationWindow():
             [(0, nb_cols_max + 2)]
 
 
-    def createChildConfigurationWindow(
+    def create_child_configuration_window(
         self, parent_config, *args, win_size=(0, 0), **kwargs
     ):
         """
@@ -632,12 +632,12 @@ class ConfigurationWindow():
         """
 
         # create configuration window
-        win, lay = pyqtoverlayer.createWindow(
+        win, lay = pyqtoverlayer.create_window(
             size=win_size, title="%s configuration" % args[0], flag_show=False
         )
 
         # create scroll area
-        scroll_lay, scroll_area = pyqtoverlayer.addScrollArea(lay, (0, 0))
+        scroll_lay, scroll_area = pyqtoverlayer.add_scroll_area(lay, (0, 0))
 
         # set size
         scroll_area.setMinimumSize(win_size[0], win_size[1])
@@ -651,10 +651,10 @@ class ConfigurationWindow():
         scroll_lay.addWidget(config.group_box)
 
         # add child to parent configuration
-        parent_config.addChildConfiguration(config)
+        parent_config.add_child_configuration(config)
 
         # create push button for hiding configuration window
-        push_button_ok = pyqtoverlayer.addPushButton(lay, (1, 0), "Ok", width=80)
+        push_button_ok = pyqtoverlayer.add_push_button(lay, (1, 0), "Ok", width=80)
 
         # listen to callback
         push_button_ok.clicked.connect(win.hide)
@@ -674,7 +674,7 @@ class ConfigurationWindow():
     # *********************************************************************** #
 
 
-    def showChildWindow(self, button_id):
+    def show_child_window(self, button_id):
         """
         Callback method for opening child configuration window related to
         signal configuration
@@ -695,9 +695,9 @@ class ConfigurationWindow():
         self.children_win_list[button_id].show()
 
 
-    def setDirectoryAnnotation(self):
+    def set_directory_annotations(self):
         """
-        Callback method for annotation directory selection
+        Callback method for annotations directory selection
 
         Connected to the signal ``clicked`` of
         :attr:`.general_push_button`.
@@ -718,7 +718,7 @@ class ConfigurationWindow():
             edit_dir.setText(directory)
 
 
-    def callLSD(self, button_id):
+    def call_lsd(self, button_id):
         """
         Callback method for Load/Save/Done push buttons
 
@@ -758,13 +758,13 @@ class ConfigurationWindow():
 
             # write configuration file
             if path != '':
-                self.writeConfigObjFile(path)
+                self.write_configobj_file(path)
                 print("Configuration file written")
 
         # done
         elif button_id == 2:
             # set configuration dictionaries
-            self.setConfigurationDictionaries()
+            self.set_configuration_dictionaries()
 
             # close window(s)
             self.win.close()
@@ -784,7 +784,7 @@ class ConfigurationWindow():
 
 
     @staticmethod
-    def loadConfigFile(
+    def load_config_file(
         path,
         key_dict={
             "General": 0,
@@ -830,7 +830,7 @@ class ConfigurationWindow():
                     config_dict[key] = {}
                     for key_sub, dict_tmp in config[key].items():
                         config_dict[key][key_sub] = \
-                            ConfigurationWindow.convertDictToListNested(
+                            ConfigurationWindow.convert_dict_to_list_nested(
                                 dict_tmp, level=convert_level
                         )
 
@@ -842,7 +842,7 @@ class ConfigurationWindow():
         Loads a configuration file and store it directly in the configuration
         dictionaries
 
-        It calls the static method :meth:`.loadConfigFile`
+        It calls the static method :meth:`.load_config_file`
         and then sets the following attributes:
 
         - :attr:`.general_dict`
@@ -858,7 +858,7 @@ class ConfigurationWindow():
             # check if file exists
             if os.path.isfile(path):
                 # load configuration file
-                config_dict = ConfigurationWindow.loadConfigFile(path)
+                config_dict = ConfigurationWindow.load_config_file(path)
                 print("Configuration file loaded")
 
             else:
@@ -889,36 +889,36 @@ class ConfigurationWindow():
                 self.meta_dict[config_type].dict = config_dict[config_type]
 
         # display configuration
-        self.resetDisplay()
+        self.reset_display()
 
 
-    def resetDisplay(self):
+    def reset_display(self):
         """
         Deletes the whole configuration display and replaces it with the
         current values of the attribute dictionaries
         """
 
         # reset general
-        self.setGeneralConfiguration(True)
+        self.set_general_configuration(True)
 
         # reset configurations
         for config_type in self.config_type_list:
-            self.meta_dict[config_type].resetDisplay()
+            self.meta_dict[config_type].reset_display()
 
 
-    def writeConfigObjFile(self, path):
+    def write_configobj_file(self, path):
         """
         Creates a .ini configuration file with the current configuration
 
         Before writing the file, the method calls
-        :meth:`.setConfigurationDictionaries`.
+        :meth:`.set_configuration_dictionaries`.
 
         :param path: path to the configuration file to create
         :type path: str
         """
 
         # set configuration dictionaries
-        self.setConfigurationDictionaries()
+        self.set_configuration_dictionaries()
 
         # remove configuration file if necessary
         if os.path.isfile(path):
@@ -938,7 +938,7 @@ class ConfigurationWindow():
         config.write()
 
 
-    def setConfigurationDictionaries(self):
+    def set_configuration_dictionaries(self):
         """
         Sets the configuration dictionaries with the values filled in the GUI
 
@@ -949,12 +949,12 @@ class ConfigurationWindow():
           in :attr:`.config_type_list`
         """
 
-        self.setGeneralConfiguration(False)
+        self.set_general_configuration(False)
         for config_type in self.config_type_list:
-            self.meta_dict[config_type].setDictionary()
+            self.meta_dict[config_type].set_dictionary()
 
 
-    def setGeneralConfiguration(self, flag_display):
+    def set_general_configuration(self, flag_display):
         """
         Displays the values in the general configuration widget from
         :attr:`.general_dict` or sets the values
@@ -1042,7 +1042,7 @@ class ConfigurationWindow():
         value_list = self.general_dict[key]
 
         # list of list of spin boxes
-        value_list = pyqtoverlayer.setSpinBoxTable(
+        value_list = pyqtoverlayer.set_spin_box_table(
             grid, value_list, flag_display
         )
 
@@ -1072,7 +1072,7 @@ class ConfigurationWindow():
 
 
     @staticmethod
-    def convertDictToList(dic):
+    def convert_dict_to_list(dic):
         """
         Puts the values of a dictionary in a list
 
@@ -1093,7 +1093,7 @@ class ConfigurationWindow():
 
 
     @staticmethod
-    def convertDictToListNested(dic, level=1):
+    def convert_dict_to_list_nested(dic, level=1):
         """
         Puts the values of a nested dictionary in a nested list
 
@@ -1104,7 +1104,7 @@ class ConfigurationWindow():
         :rtype: list
         """
 
-        dic_list = ConfigurationWindow.convertDictToList(dic)
+        dic_list = ConfigurationWindow.convert_dict_to_list(dic)
 
         if level == 1 or not isinstance(dic_list, list):
             return dic_list
@@ -1113,7 +1113,7 @@ class ConfigurationWindow():
             output = []
             for dic_tmp in dic_list:
                 output.append(
-                    ConfigurationWindow.convertDictToListNested(
+                    ConfigurationWindow.convert_dict_to_list_nested(
                         dic_tmp, level=level - 1
                     )
                 )

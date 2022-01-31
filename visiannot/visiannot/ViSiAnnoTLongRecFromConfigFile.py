@@ -20,8 +20,8 @@ class ViSiAnnoTLongRecFromConfigFile(ViSiAnnoTLongRec):
     Subclass of :class:`.ViSiAnnoTLongRec` for launching ViSiAnnoT directly
     from a configuration file
 
-    It calls the method :meth:`.ConfigurationWindow.loadConfigFile` in order to
-    load the configuration file. Then it calls the constructor of
+    It calls the method :meth:`.ConfigurationWindow.load_config_file` in order
+    to load the configuration file. Then it calls the constructor of
     :class:`.ViSiAnnoTLongRec`.
 
     :param path_config: path to the configuration file, it may be directly a
@@ -33,7 +33,7 @@ class ViSiAnnoTLongRecFromConfigFile(ViSiAnnoTLongRec):
         # check type
         if isinstance(path_config, str):
             # load configuration file
-            config_dict = ConfigurationWindow.loadConfigFile(
+            config_dict = ConfigurationWindow.load_config_file(
                 path_config
             )
 

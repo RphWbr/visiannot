@@ -7,7 +7,8 @@
 # http://www.cecill.info
 
 """
-Module defining class :class:`.Configuration`
+Module defining class :class:`.Configuration` and function
+:func:`.check_configuration`
 """
 
 
@@ -17,7 +18,7 @@ import numpy as np
 from ..tools import pyqtoverlayer
 
 
-def checkConfiguration(config_id, config, config_type, flag_long_rec=True):
+def check_configuration(config_id, config, config_type, flag_long_rec=True):
     """
     Checks if a configuration list has the right number of elements
 
@@ -92,11 +93,11 @@ class Configuration():
 
         There are 3 callback methods for user interaction:
 
-        - :meth:`.addConfigCallback` => adding a
+        - :meth:`.add_config_callback` => adding a
           (sub-)configuration
-        - :meth:`.deleteConfiguration` => deleting a
+        - :meth:`.delete_configuration` => deleting a
           (sub-)configuration
-        - :meth:`.setDirectory` => setting the directory where to
+        - :meth:`.set_directory` => setting the directory where to
           find data (if necessary)
 
         We can add a new configuration to the widget thanks to the push button
@@ -394,8 +395,8 @@ class Configuration():
         #: display.
         #:
         #: When listening to the callbacks methods
-        #: :meth:`.deleteConfiguration` and
-        #: :meth:`.setDirectory`, the input argument is the push
+        #: :meth:`.delete_configuration` and
+        #: :meth:`.set_directory`, the input argument is the push
         #: button index in the button group. We cannot link it explicitely to
         #: the configuration grid position. So, when a push button is added to
         #: the button group, the new sub-configuration grid position is
@@ -477,7 +478,7 @@ class Configuration():
         self.button_help_show = None
 
         # create group box
-        self.createConfigurationGroupBox(
+        self.create_configuration_group_box(
             position, children_config_name_list
         )
 
@@ -488,24 +489,24 @@ class Configuration():
         self.button_help_hide = None
 
         # create help window
-        self.createHelpWindow(help_text)
+        self.create_help_window(help_text)
 
         # listen to callbacks
         self.button_group_add.buttonClicked[int].connect(
-            self.addConfigCallback
+            self.add_config_callback
         )
 
         self.button_group_del.buttonClicked[int].connect(
-            self.deleteConfiguration
+            self.delete_configuration
         )
 
-        self.button_group_dir.buttonClicked[int].connect(self.setDirectory)
+        self.button_group_dir.buttonClicked[int].connect(self.set_directory)
 
         self.button_help_show.clicked.connect(self.win_help.show)
         self.button_help_hide.clicked.connect(self.win_help.hide)
 
 
-    def addChildConfiguration(self, config_child):
+    def add_child_configuration(self, config_child):
         """
         Adds a child configuration to :attr:`.children_configuration_list`
 
@@ -516,7 +517,7 @@ class Configuration():
         self.children_configuration_list.append(config_child)
 
 
-    def createConfigurationGroupBox(
+    def create_configuration_group_box(
         self, position, children_config_name_list
     ):
         """
@@ -546,12 +547,12 @@ class Configuration():
         """
 
         # create configuration group box
-        self.lay, self.group_box = pyqtoverlayer.addGroupBox(
+        self.lay, self.group_box = pyqtoverlayer.add_group_box(
             self.lay_parent, position, self.type
         )
 
         # create push button for help text
-        self.button_help_show = pyqtoverlayer.addPushButton(
+        self.button_help_show = pyqtoverlayer.add_push_button(
             self.lay, (0, 0), "Help", width=100
         )
 
@@ -571,7 +572,7 @@ class Configuration():
         for ite_child, children_config_name in \
                 enumerate(children_config_name_list):
             # create push button for adding intervals
-            push_button = pyqtoverlayer.addPushButton(
+            push_button = pyqtoverlayer.add_push_button(
                 self.lay,
                 (0, 2 + ite_child),
                 children_config_name
@@ -579,13 +580,13 @@ class Configuration():
             self.button_group_children.addButton(push_button, ite_child)
 
         # create push buttons for adding configuration
-        push_button_add = pyqtoverlayer.addPushButton(
+        push_button_add = pyqtoverlayer.add_push_button(
             self.lay, (0, self.config_grid_span), "Add", width=100
         )
         self.button_group_add.addButton(push_button_add, 0)
 
 
-    def createHelpWindow(self, help_text):
+    def create_help_window(self, help_text):
         """
         Creates help window without showing it
 
@@ -597,12 +598,12 @@ class Configuration():
         """
 
         # create window and layout
-        self.win_help, lay = pyqtoverlayer.createWindow(
+        self.win_help, lay = pyqtoverlayer.create_window(
             size=(800, 100), title="Help %s" % self.type, flag_show=False
         )
 
         # create scroll area
-        scroll_lay, _ = pyqtoverlayer.addScrollArea(lay, (0, 0))
+        scroll_lay, _ = pyqtoverlayer.add_scroll_area(lay, (0, 0))
 
         # add label with help text
         label = QtWidgets.QLabel(help_text)
@@ -610,12 +611,12 @@ class Configuration():
         scroll_lay.addWidget(label)
 
         # add push button for closing help window
-        self.button_help_hide = pyqtoverlayer.addPushButton(
+        self.button_help_hide = pyqtoverlayer.add_push_button(
             lay, (1, 0), "Close", width=80
         )
 
 
-    def getConfigurationSimple(self, config_grid, row_ind):
+    def get_configuration_simple(self, config_grid, row_ind):
         """
         Reads the values filled in a single row of a configuration grid in
         order to get the corresponding configuration list
@@ -657,7 +658,7 @@ class Configuration():
             if elt_nb > 1:
                 # check type
                 if elt_type == "spin":
-                    value = pyqtoverlayer.setSpinBoxTable(
+                    value = pyqtoverlayer.set_spin_box_table(
                         widget.layout(), [], False
                     )[0]
 
@@ -710,7 +711,7 @@ class Configuration():
         return config_list
 
 
-    def setDictionary(self):
+    def set_dictionary(self):
         """
         Sets the attribute :attr:`.dict` with the current values
         filled in the configuration grids (:attr:`config_grid_list`)
@@ -742,7 +743,7 @@ class Configuration():
 
             # check level
             if self.nb_level == 1:
-                config_list = self.getConfigurationSimple(config_grid, 0)
+                config_list = self.get_configuration_simple(config_grid, 0)
 
                 # update configuration dictionary
                 self.dict[config_key] = config_list
@@ -756,7 +757,7 @@ class Configuration():
 
                 # loop on sub-configurations
                 for ite_sub in range(nb_sub_config):
-                    config_sub_list = self.getConfigurationSimple(
+                    config_sub_list = self.get_configuration_simple(
                         config_grid, ite_sub
                     )
 
@@ -767,7 +768,7 @@ class Configuration():
                 self.dict[config_key] = config_list
 
 
-    def setDirectory(self, button_id):
+    def set_directory(self, button_id):
         """
         Callback method for directory selection
 
@@ -829,7 +830,7 @@ class Configuration():
                 edit_dir.setText(directory)
 
 
-    def addConfigCallback(self, button_id):
+    def add_config_callback(self, button_id):
         """
         Callback method for adding a (sub-)configuration
 
@@ -916,19 +917,19 @@ class Configuration():
                 config_dict = {config_key: self.default_config_list}
 
             # add configuration
-            self.addConfiguration(config_dict)
+            self.add_configuration(config_dict)
 
         # add sub-configuration
         elif button_id >= 1:
             # loop on sub-configurations
             for config_sub_list in self.default_config_list:
                 # add sub-configuration
-                self.addConfigurationSimple(
+                self.add_configuration_simple(
                     config_sub_list, config_id=button_id - 1,
                 )
 
 
-    def createWidgetsInConfigGrid(
+    def create_widgets_in_config_grid(
         self, config_grid, config_list, row_ind, start_col_ind
     ):
         """
@@ -963,12 +964,12 @@ class Configuration():
             if elt_nb > 1:
                 # check element type
                 if elt_type == "spin":
-                    pyqtoverlayer.addSpinBoxTable(
+                    pyqtoverlayer.add_spin_box_table(
                         config_grid, (row_ind, col_ind), 1, elt_nb,
                         params=[elt_params]
                     )
 
-                    pyqtoverlayer.setSpinBoxTable(
+                    pyqtoverlayer.set_spin_box_table(
                         config_grid.itemAtPosition(
                             row_ind, col_ind
                         ).widget().layout(),
@@ -992,7 +993,7 @@ class Configuration():
                     widget.setValue(value)
 
                 # add element to configuration grid
-                pyqtoverlayer.addWidgetToLayout(
+                pyqtoverlayer.add_widget_to_layout(
                     config_grid, widget, (row_ind, col_ind)
                 )
 
@@ -1000,7 +1001,7 @@ class Configuration():
             col_ind += 1
 
 
-    def addConfigurationSimple(self, config_list, config_id=None):
+    def add_configuration_simple(self, config_list, config_id=None):
         """
         Adds a single (sub-)configuration list to a configuration grid
 
@@ -1044,7 +1045,7 @@ class Configuration():
         sub_ind = self.nb_sub_list[config_id]
 
         # create widgets in the configuration grid
-        self.createWidgetsInConfigGrid(
+        self.create_widgets_in_config_grid(
             config_grid, config_list, sub_ind, start_col_ind
         )
 
@@ -1054,7 +1055,7 @@ class Configuration():
         # check if directory contained in configuration grid
         if self.pos_dir is not None:
             # create push button for selecting directory
-            push_button_dir = pyqtoverlayer.addPushButton(
+            push_button_dir = pyqtoverlayer.add_push_button(
                 config_grid, (sub_ind, col_ind), "Change directory")
 
             # add to button group
@@ -1066,7 +1067,7 @@ class Configuration():
             col_ind += 1
 
         # create push button for deleting configuration
-        push_button_del = pyqtoverlayer.addPushButton(
+        push_button_del = pyqtoverlayer.add_push_button(
             config_grid, (sub_ind, col_ind), "Delete"
         )
 
@@ -1084,7 +1085,7 @@ class Configuration():
         self.nb_sub_list[config_id] += 1
 
 
-    def addConfiguration(self, config_dict):
+    def add_configuration(self, config_dict):
         """
         Adds one or several configurations
 
@@ -1115,7 +1116,7 @@ class Configuration():
         # loop on configurations
         for config_key, config_list in config_dict.items():
             # create configuration grid
-            config_grid, config_group_box = pyqtoverlayer.addGroupBox(
+            config_grid, config_group_box = pyqtoverlayer.add_group_box(
                 self.lay, (row_start, 0, 1, self.config_grid_span)
             )
 
@@ -1133,23 +1134,23 @@ class Configuration():
             if self.flag_key:
                 # create line edit for configuration key
                 widget = QtWidgets.QLineEdit(config_key)
-                pyqtoverlayer.addWidgetToLayout(config_grid, widget, (0, 0))
+                pyqtoverlayer.add_widget_to_layout(config_grid, widget, (0, 0))
 
                 # listen to callback
-                widget.textChanged.connect(self.configKeyChanged)
+                widget.textChanged.connect(self.config_key_changed)
 
             # configuration level 1 => simple configuration
             if self.nb_level == 1:
                 # check number of elements in configuration list
-                checkConfiguration(config_key, config_list, self.type)
+                check_configuration(config_key, config_list, self.type)
 
                 # add configuration
-                self.addConfigurationSimple(config_list)
+                self.add_configuration_simple(config_list)
 
             # configuration level 2 => sub-configurations
             elif self.nb_level == 2:
                 # create push button for adding a sub-configuration
-                push_button = pyqtoverlayer.addPushButton(
+                push_button = pyqtoverlayer.add_push_button(
                     self.lay, (row_start, self.config_grid_span), "Add sub"
                 )
 
@@ -1161,10 +1162,10 @@ class Configuration():
                 # loop on sub-configurations
                 for config_sub_list in config_list:
                     # check number of elements in configuration list
-                    checkConfiguration(config_key, config_sub_list, self.type)
+                    check_configuration(config_key, config_sub_list, self.type)
 
                     # add sub-configuration
-                    self.addConfigurationSimple(config_sub_list)
+                    self.add_configuration_simple(config_sub_list)
 
             # update index of the row in the grid where to add the
             # configuration grid
@@ -1174,13 +1175,13 @@ class Configuration():
         self.dict.update(config_dict)
 
 
-    def configKeyChanged(self, text):
+    def config_key_changed(self, text):
         """
         Callback method for updating configuration key, as well as those of the
         children configurations, when it is edited in the QLineEdit
 
         Connected to the signal ``textChanged`` of the instances of
-        QtWidgets.QLineEdit created in :meth:`.addConfiguration`.
+        QtWidgets.QLineEdit created in :meth:`.add_configuration`.
 
         It sets the attribute :attr:`.dict` and the configuration
         dictionary of the children configurations.
@@ -1199,7 +1200,7 @@ class Configuration():
         config_key = list(self.dict.keys())[ind]
 
         # set configuration dictionary
-        self.setDictionary()
+        self.set_dictionary()
 
         # loop on children configuration
         for child_config in self.children_configuration_list:
@@ -1215,10 +1216,10 @@ class Configuration():
                         child_config_group_box.setTitle(text)
 
                 # set child configuration dictionary
-                child_config.setDictionary()
+                child_config.set_dictionary()
 
 
-    def deleteConfiguration(self, button_id):
+    def delete_configuration(self, button_id):
         """
         Callback method for deleting a (sub-)configuration
 
@@ -1237,7 +1238,7 @@ class Configuration():
         """
 
         # update configuration dictionary with current values filled in
-        self.setDictionary()
+        self.set_dictionary()
 
         # get flatten index of the (sub-)configuration grid to delete
         config_id, sub_config_id = self.btn_id_to_config_id[button_id]
@@ -1265,13 +1266,13 @@ class Configuration():
                     # check if child configuration must be deleted
                     if config_key in child_config.dict.keys():
                         del child_config.dict[config_key]
-                        child_config.resetDisplay()
+                        child_config.reset_display()
 
         # reset display
-        self.resetDisplay()
+        self.reset_display()
 
 
-    def resetDisplay(self):
+    def reset_display(self):
         """
         Deletes the configuration grids in :attr:`.config_grid_list`) and
         replaces them with :attr:`.ConfigurationWindow.dict`
@@ -1284,7 +1285,7 @@ class Configuration():
         """
 
         # delete the configuration widgets
-        pyqtoverlayer.deleteWidgetsFromLayout(
+        pyqtoverlayer.delete_widgets_from_layout(
             self.lay, len(self.config_grid_list) * self.nb_level
         )
 
@@ -1300,4 +1301,4 @@ class Configuration():
         self.btn_id_to_config_id = []
 
         # display the values of the configuration dictionary
-        self.addConfiguration(self.dict)
+        self.add_configuration(self.dict)

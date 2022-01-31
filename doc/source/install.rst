@@ -70,4 +70,4 @@ Disable ViSiAnnoT GUI (only configuration GUI is launched)::
 
 Call a function in order to automatically update the configuration before launching the GUIs (see :ref:`customization` for details)::
 
-    $ python3 -m visiannot -c path/to/config.ini -u visiannot.configuration.update.updateDataAndAnnotationDirectory
+    $ python3 -m visiannot -c path/to/config.ini -u visiannot.configuration.update.update_data_and_annotations_directory

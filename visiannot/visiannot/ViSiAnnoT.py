@@ -22,8 +22,8 @@ from ..tools import pyqtoverlayer
 from ..tools import pyqtgraphoverlayer
 from ..tools import datetimeconverter
 from ..tools import dataloader
-from ..tools.videoloader import getDataVideo
-from ..tools.audioloader import getAudioWaveInfo, convertKeyToChannelId
+from ..tools.videoloader import get_data_video
+from ..tools.audioloader import get_audio_wave_info, convert_key_to_channel_id
 from .components.Signal import Signal
 from .components.SignalWidget import SignalWidget
 from .components.MenuBar import MenuBar
@@ -36,7 +36,7 @@ from .components.FromCursorTemporalRangeWidget import \
 from .components.LogoWidgets import ZoomInWidget, ZoomOutWidget, FullVisiWidget
 from .components.AnnotEventWidget import AnnotEventWidget
 from .components.AnnotImageWidget import AnnotImageWidget
-from ..configuration import checkConfiguration
+from ..configuration import check_configuration
 
 
 class ViSiAnnoT():
@@ -81,7 +81,7 @@ class ViSiAnnoT():
 
         The constructor takes as arguments dictionaries with the path to the
         video files and signal files. It calls the method
-        :meth:`.setAllData` in order to load data and store them in
+        :meth:`.set_all_data` in order to load data and store them in
         attributes.
 
         For a given video file, data are loaded in an instance of
@@ -105,14 +105,14 @@ class ViSiAnnoT():
         :attr:`.last_frame` (sampled at :attr:`.ViSiAnnoT.fps`).
         The signal widgets display the signal between those bounds. So when
         zooming in/out, the temporal range is modified and then the display is
-        updated with the method :meth:`.updateSignalPlot`.
+        updated with the method :meth:`.update_signal_plot`.
 
         The playback is managed with two separate threads:
 
         - Reading next video frame - an instance of threading.Thread with the
-          method :meth:`.updateVideoFrame` as target,
+          method :meth:`.update_video_frame` as target,
         - Updating plot - an instance of QtCore.QTimer connected to the method
-          :meth:`.updatePlot`.
+          :meth:`.update_plot`.
 
         The current position in the video file (i.e. the current position of
         the temporal cursor) is :attr:`.frame_id` (sampled at
@@ -271,7 +271,7 @@ class ViSiAnnoT():
             :class:`.ViSiAnnoT` windows must be displayed simultaneousely, do
             not forget to store each instance of :class:`.ViSiAnnoT` in a
             variable and to set manually the infinite loop with
-            :func:`.infiniteLoopDisplay`
+            :func:`.infinite_loop_gui`
         :type flag_infinite_loop: bool
         :param bg_color: backgroud color of the GUI, RGB or HEX string
         :type bg_color: tuple or str
@@ -372,7 +372,7 @@ class ViSiAnnoT():
         # *************************** data ********************************** #
         # ******************************************************************* #
 
-        # initialize attributes that are set in the method setAllData
+        # initialize attributes that are set in the method set_all_data
 
         #: (*dict*) Video data, each item corresponds to one camera
         #:
@@ -425,7 +425,7 @@ class ViSiAnnoT():
         self.beginning_datetime = None
 
         # set data
-        self.setAllData(video_dict, signal_dict, interval_dict)
+        self.set_all_data(video_dict, signal_dict, interval_dict)
 
         #: (*dict*) Thresholds to plot on signals widgets, each item
         #: corresponds to one signal widget
@@ -550,12 +550,12 @@ class ViSiAnnoT():
 
         # ************** create GUI application and set font **************** #
         #: (*QtWidgets.QApplication*) GUI initializer
-        self.app = pyqtgraphoverlayer.initializeDisplayAndBgColor(
+        self.app = pyqtgraphoverlayer.initialize_gui_and_bg_color(
             color=bg_color_plot
         )
 
         # set style sheet
-        pyqtoverlayer.setStyleSheet(
+        pyqtoverlayer.set_style_sheet(
             self.app, font_name, font_size, font_color, [
                 "QGroupBox", "QComboBox", "QPushButton", "QRadioButton",
                 "QLabel", "QCheckBox", "QDateTimeEdit", "QTimeEdit"
@@ -580,19 +580,19 @@ class ViSiAnnoT():
         self.lay = None
 
         # create window
-        self.win, self.lay = pyqtoverlayer.createWindow(
+        self.win, self.lay = pyqtoverlayer.create_window(
             title="ViSiAnnoT", bg_color=bg_color
         )
 
         # listen to the callback method (keyboard interaction)
-        self.win.keyPressEvent = self.keyPress
-        self.win.keyReleaseEvent = self.keyRelease
+        self.win.keyPressEvent = self.key_press
+        self.win.keyReleaseEvent = self.key_release
 
 
         # ************************** menu *********************************** #
         #: (:class:`.MenuBar`) Menu bar item, instance of a sub-class of
         #: **QtWidgets.QMenuBar**, by default it is hidden, see
-        #: :meth:`.keyRelease` for the keyword shortcut for displaying it
+        #: :meth:`.key_release` for the keyword shortcut for displaying it
         self.menu_bar = MenuBar(self.win, self.lay)
 
 
@@ -693,7 +693,7 @@ class ViSiAnnoT():
 
         if len(self.sig_dict) > 0:
             # create signal widgets and initialize signal plots
-            self.initSignalPlot(
+            self.init_signal_plot(
                 poswid_dict['progress'], y_range_dict=y_range_dict,
                 left_label_style=font_default_axis_label,
                 ticks_color=ticks_color, ticks_size=ticks_size, ticks_offset=2,
@@ -785,8 +785,8 @@ class ViSiAnnoT():
 
         if any(self.video_data_dict):
             #: (*threading.Thread*) Thread for getting video frames, connected
-            #: to the method :meth:`.ViSiAnnoT.updateVideoFrame`
-            self.update_frame_thread = Thread(target=self.updateVideoFrame)
+            #: to the method :meth:`.ViSiAnnoT.update_video_frame`
+            self.update_frame_thread = Thread(target=self.update_video_frame)
             self.update_frame_thread.start()
 
 
@@ -795,9 +795,9 @@ class ViSiAnnoT():
         # ******************************************************************* #
 
         #: (*QtCore.QTimer*) Thread for updating the current frame position,
-        #: connected to the method :meth:`.ViSiAnnoT.updatePlot`
+        #: connected to the method :meth:`.ViSiAnnoT.update_plot`
         self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.updatePlot)
+        self.timer.timeout.connect(self.update_plot)
         self.timer.start(int(1000 / self.fps))
 
 
@@ -808,10 +808,10 @@ class ViSiAnnoT():
         # this does not apply in case of long recording, because there are
         # other stuff to do after calling this constructor
         if not self.flag_long_rec and flag_infinite_loop:
-            pyqtoverlayer.infiniteLoopDisplay(self.app)
+            pyqtoverlayer.infinite_loop_gui(self.app)
 
             # close streams, delete temporary folders
-            self.stopProcessing()
+            self.stop_processing()
 
 
     # *********************************************************************** #
@@ -819,7 +819,7 @@ class ViSiAnnoT():
     # *********************************************************************** #
 
 
-    def getFrameIdInMs(self, frame_id):
+    def get_frame_id_in_ms(self, frame_id):
         """
         Converts a frame number to milliseconds
 
@@ -834,7 +834,7 @@ class ViSiAnnoT():
         return 1000 * frame_id / self.fps
 
 
-    def convertMsToFrameRef(self, frame_ms):
+    def convert_ms_to_frame_ref(self, frame_ms):
         """
         Converts milliseconds to frame number sampled at the reference
         frequency :attr:`.ViSiAnnoT.fps`
@@ -850,7 +850,7 @@ class ViSiAnnoT():
         return int(frame_ms * self.fps / 1000)
 
 
-    def getCurrentRangeInMs(self):
+    def get_current_range_in_ms(self):
         """
         Converts the current temporal range defined by
         :attr:`.ViSiAnnoT.first_frame` and :attr:`.ViSiAnnoT.last_frame` to
@@ -863,8 +863,8 @@ class ViSiAnnoT():
               range in milliseconds
         """
 
-        return self.getFrameIdInMs(self.first_frame), \
-            self.getFrameIdInMs(self.last_frame)
+        return self.get_frame_id_in_ms(self.first_frame), \
+            self.get_frame_id_in_ms(self.last_frame)
 
 
     # *********************************************************************** #
@@ -876,7 +876,7 @@ class ViSiAnnoT():
     # *********************************************************************** #
 
 
-    def initSignalPlot(
+    def init_signal_plot(
         self, progbar_wid_pos, y_range_dict={}, **kwargs
     ):
         """
@@ -902,7 +902,7 @@ class ViSiAnnoT():
         """
 
         # get current range in milliseconds
-        first_frame_ms, last_frame_ms = self.getCurrentRangeInMs()
+        first_frame_ms, last_frame_ms = self.get_current_range_in_ms()
 
         # convert progress bar widget position to a list
         pos_sig = list(progbar_wid_pos)
@@ -912,7 +912,7 @@ class ViSiAnnoT():
         pos_sig[0] += 1
 
         # create scroll area
-        scroll_lay, _ = pyqtoverlayer.addScrollArea(
+        scroll_lay, _ = pyqtoverlayer.add_scroll_area(
             self.lay, pos_sig, flag_ignore_wheel_event=True
         )
 
@@ -924,7 +924,7 @@ class ViSiAnnoT():
                 y_range = y_range_dict[signal_id]
 
                 # check number of elements in yrange configuration
-                checkConfiguration(signal_id, y_range, "YRange")
+                check_configuration(signal_id, y_range, "YRange")
 
             else:
                 y_range = []
@@ -941,7 +941,7 @@ class ViSiAnnoT():
                 threshold_list = self.threshold_dict[signal_id]
 
                 # check number of elements in threshold configuration
-                checkConfiguration(signal_id, threshold_list, "Threshold")
+                check_configuration(signal_id, threshold_list, "Threshold")
 
             else:
                 threshold_list = []
@@ -958,7 +958,7 @@ class ViSiAnnoT():
             )
 
             # set temporal ticks and X axis range
-            pyqtgraphoverlayer.setTemporalTicks(
+            pyqtgraphoverlayer.set_temporal_ticks(
                 wid, self.nb_ticks, (first_frame_ms, last_frame_ms),
                 self.beginning_datetime
             )
@@ -969,15 +969,15 @@ class ViSiAnnoT():
             # append widget to list of widgets
             self.wid_sig_list.append(wid)
 
-            # reconnect to keypress event callback, so that keypress events of
+            # reconnect to key_press event callback, so that key_press events of
             # scroll are ignored
-            wid.keyPressEvent = self.keyPress
+            wid.key_pressEvent = self.key_press
 
             # get position of next signal widget
             pos_sig[0] += 1
 
 
-    def updateVideoFrame(self):
+    def update_video_frame(self):
         """
         Reads the video stream (launched in a thread)
 
@@ -1000,7 +1000,7 @@ class ViSiAnnoT():
                 sleep(0.001)
 
 
-    def stopProcessing(self):
+    def stop_processing(self):
         """
         Closes streams (elements of :attr:`.video_data_dict`) and
         deletes temporary signal folder
@@ -1076,7 +1076,7 @@ class ViSiAnnoT():
             rmtree(self.tmp_name, ignore_errors=True)
 
 
-    def updatePlot(self):
+    def update_plot(self):
         """
         Updates (during playback) the displayed video frame and the plots of
         the temporal cursor at the current frame :attr:`.frame_id`
@@ -1084,7 +1084,7 @@ class ViSiAnnoT():
         It is called by the thread :attr:`.timer`.
 
         The displayed video frame and the plots are updated by calling the
-        method :meth:`.plotFrameIdPosition`.
+        method :meth:`.plot_frame_id_position`.
 
         It is only effective if :attr:`.flag_pause_status` is
         ``False``.
@@ -1095,7 +1095,7 @@ class ViSiAnnoT():
         # update plot only if pause status is False
         if not self.flag_pause_status:
             # plot temporal cursor at the value of self.frame_id
-            self.plotFrameIdPosition()
+            self.plot_frame_id_position()
 
             # increment current frame
             self.frame_id += 1
@@ -1104,14 +1104,14 @@ class ViSiAnnoT():
             # self.app.processEvents() # not sure about the usefullness of this
 
 
-    def updateFrameId(self, frame_id):
+    def update_frame_id(self, frame_id):
         """
         Sets the value of current frame :attr:`.frame_id` and updates
         the displayed video frame and the plots of the temporal cursor at new
         current frame
 
         The displayed video frame and the plots are updated by calling the
-        method :meth:`.plotFrameIdPosition`.
+        method :meth:`.plot_frame_id_position`.
 
         :param frame_id: new current frame index
         :type frame_id: int
@@ -1128,10 +1128,10 @@ class ViSiAnnoT():
                 )
 
         # plot frame id position
-        self.plotFrameIdPosition()
+        self.plot_frame_id_position()
 
 
-    def plotFrameIdPosition(self):
+    def plot_frame_id_position(self):
         """
         Updates the displayed video frame and the plots of the temporal cursor
         at the current frame position :attr:`.frame_id`
@@ -1141,7 +1141,7 @@ class ViSiAnnoT():
         the temporal range is updated. For example, in the context of long
         recording, this might happen when navigating from one file to another.
         If the temporal range is updated, then the method
-        :meth:`.updateSignalPlot` is called in order to update the
+        :meth:`.update_signal_plot` is called in order to update the
         signal plots with the new temporal range.
 
         The attribute :attr:`.img_vid_dict` is set with the values in
@@ -1166,7 +1166,7 @@ class ViSiAnnoT():
 
                 else:
                     # long recordings => change file
-                    ok = self.nextFile()
+                    ok = self.next_file()
                     if not ok:
                         self.frame_id = self.nframes - 1
 
@@ -1189,14 +1189,14 @@ class ViSiAnnoT():
                     self.last_frame = self.first_frame + temporal_width
 
                 # update signals plot
-                self.updateSignalPlot()
+                self.update_signal_plot()
 
         # check if frame_id undertakes the current range
         elif self.frame_id < self.first_frame:
             # check if frame undertakes the video
             if self.frame_id < 0 and self.flag_long_rec:
                 # long recordings => change file
-                self.previousFile()
+                self.previous_file()
 
             else:
                 # get width of the current temporal range
@@ -1217,11 +1217,11 @@ class ViSiAnnoT():
                     self.first_frame = self.last_frame - temporal_width
 
                 # update signals plots
-                self.updateSignalPlot()
+                self.update_signal_plot()
 
         # update temporal cursor
         for wid in self.wid_sig_list:
-            wid.cursor.setPos(self.getFrameIdInMs(self.frame_id))
+            wid.cursor.setPos(self.get_frame_id_in_ms(self.frame_id))
 
         # update progress bar (if the progress bar is dragged, then there is no
         # need to update it)
@@ -1236,7 +1236,7 @@ class ViSiAnnoT():
             wid_vid.displayImage()
 
 
-    def updateSignalPlot(
+    def update_signal_plot(
         self, flag_reset_combo_trunc=True, flag_reset_combo_from_cursor=True
     ):
         """
@@ -1267,7 +1267,7 @@ class ViSiAnnoT():
         self.wid_progress.updateTitle(self.fps, self.beginning_datetime)
 
         # get current range in milliseconds
-        first_frame_ms, last_frame_ms = self.getCurrentRangeInMs()
+        first_frame_ms, last_frame_ms = self.get_current_range_in_ms()
 
         # update plots
         for wid, (signal_id, sig_list) in zip(
@@ -1286,7 +1286,7 @@ class ViSiAnnoT():
             )
 
             # X axis ticks
-            pyqtgraphoverlayer.setTemporalTicks(
+            pyqtgraphoverlayer.set_temporal_ticks(
                 wid, self.nb_ticks, (first_frame_ms, last_frame_ms),
                 self.beginning_datetime
             )
@@ -1301,7 +1301,7 @@ class ViSiAnnoT():
     # *********************************************************************** #
 
 
-    def addItemToSignals(self, item_list):
+    def add_item_to_signals(self, item_list):
         """
         Displays items in the signal widgets
 
@@ -1315,7 +1315,7 @@ class ViSiAnnoT():
             wid.addItem(item)
 
 
-    def removeRegionInWidgets(self, region_list):
+    def remove_region_in_widgets(self, region_list):
         """
         Removes a region item from the progress bar widget and the signal
         widgets
@@ -1329,12 +1329,12 @@ class ViSiAnnoT():
         :type region_list: list
         """
 
-        pyqtgraphoverlayer.removeItemInWidgets(
+        pyqtgraphoverlayer.remove_item_in_widgets(
             [self.wid_progress] + self.wid_sig_list, region_list
         )
 
 
-    def addRegionToWidgets(self, bound_1, bound_2, color=(150, 150, 150, 50)):
+    def add_region_to_widgets(self, bound_1, bound_2, color=(150, 150, 150, 50)):
         """
         Creates and displays a region item (pyqtgraph.LinearRegionItem) for the
         progress bar (:attr:`.wid_progress`) and the signal widgets
@@ -1358,7 +1358,7 @@ class ViSiAnnoT():
         region_list = []
 
         # display region in progress bar
-        region = pyqtgraphoverlayer.addRegionToWidget(
+        region = pyqtgraphoverlayer.add_region_to_widget(
             bound_1, bound_2, self.wid_progress, color
         )
 
@@ -1367,11 +1367,11 @@ class ViSiAnnoT():
         # display region in each signal plot
         for wid in self.wid_sig_list:
             # convert bounds in milliseconds
-            bound_1_ms = self.getFrameIdInMs(bound_1)
-            bound_2_ms = self.getFrameIdInMs(bound_2)
+            bound_1_ms = self.get_frame_id_in_ms(bound_1)
+            bound_2_ms = self.get_frame_id_in_ms(bound_2)
 
             # plot regions in signal widgets
-            region = pyqtgraphoverlayer.addRegionToWidget(
+            region = pyqtgraphoverlayer.add_region_to_widget(
                 bound_1_ms, bound_2_ms, wid, color
             )
 
@@ -1380,7 +1380,7 @@ class ViSiAnnoT():
         return region_list
 
 
-    def createTextItem(
+    def create_text_item(
         self, text, pos_ms, pos_y_list, text_color=(0, 0, 0),
         border_color=(255, 255, 255), border_width=3
     ):
@@ -1445,7 +1445,7 @@ class ViSiAnnoT():
     # *********************************************************************** #
 
 
-    def getMouseYPosition(self, ev):
+    def get_mouse_y_position(self, ev):
         """
         Gets position of the mouse on the Y axis of all the signal widgets
 
@@ -1474,7 +1474,7 @@ class ViSiAnnoT():
         return position_y_list
 
 
-    def zoomOrAnnotClicked(self, ev, pos_frame, pos_ms):
+    def zoom_or_annot_clicked(self, ev, pos_frame, pos_ms):
         """
         Manages mouse click for zoom or annotation
 
@@ -1497,7 +1497,7 @@ class ViSiAnnoT():
             # ctrl key => add annotation
             if keyboard_modifiers == QtCore.Qt.ControlModifier and \
                     self.wid_annotevent is not None:
-                self.wid_annotevent.setTimestamp(self, self.zoom_pos_1, 0)
+                self.wid_annotevent.set_timestamp(self, self.zoom_pos_1, 0)
 
         # define position 2
         elif self.zoom_pos_2 == -1:
@@ -1507,7 +1507,7 @@ class ViSiAnnoT():
             # ctrl key => add annotation
             if keyboard_modifiers == QtCore.Qt.ControlModifier and \
                     self.wid_annotevent is not None:
-                self.wid_annotevent.setTimestamp(self, self.zoom_pos_2, 1)
+                self.wid_annotevent.set_timestamp(self, self.zoom_pos_2, 1)
 
             # swap pos_1 and pos_2 if necessary
             if self.zoom_pos_1 > self.zoom_pos_2:
@@ -1515,7 +1515,7 @@ class ViSiAnnoT():
                     self.zoom_pos_2, self.zoom_pos_1
 
             # plot zoom region
-            self.region_zoom_list = self.addRegionToWidgets(
+            self.region_zoom_list = self.add_region_to_widgets(
                 self.zoom_pos_1, self.zoom_pos_2
             )
 
@@ -1523,10 +1523,10 @@ class ViSiAnnoT():
             duration = (self.zoom_pos_2 - self.zoom_pos_1) / self.fps
 
             # get list of Y position of the mouse in each signal widget
-            pos_y_list = self.getMouseYPosition(ev)
+            pos_y_list = self.get_mouse_y_position(ev)
 
             # display zoom region duration
-            self.region_zoom_text_item_list = self.createTextItem(
+            self.region_zoom_text_item_list = self.create_text_item(
                 "%.3f s" % duration, pos_ms, pos_y_list,
                 border_color=(150, 150, 150)
             )
@@ -1549,24 +1549,24 @@ class ViSiAnnoT():
                     # update current frame if necessary
                     if self.frame_id < self.first_frame \
                             or self.frame_id >= self.last_frame:
-                        self.updateFrameId(self.first_frame)
+                        self.update_frame_id(self.first_frame)
 
                     # update signals plots
-                    self.updateSignalPlot()
+                    self.update_signal_plot()
 
             # in case the click is outside the zoom in area
             else:
                 if self.wid_annotevent is not None:
                     if self.wid_annotevent.annot_array.size > 0:
                         # reset annotation times
-                        self.wid_annotevent.resetTimestamp()
+                        self.wid_annotevent.reset_timestamp()
 
             # remove zoom regions
-            self.removeRegionInWidgets(self.region_zoom_list)
+            self.remove_region_in_widgets(self.region_zoom_list)
             self.region_zoom_list = []
 
             # remove zoom regions description
-            pyqtgraphoverlayer.removeItemInWidgets(
+            pyqtgraphoverlayer.remove_item_in_widgets(
                 self.wid_sig_list, self.region_zoom_text_item_list
             )
 
@@ -1586,7 +1586,7 @@ class ViSiAnnoT():
     # *********************************************************************** #
 
 
-    def keyPress(self, ev):
+    def key_press(self, ev):
         """
         Callback method for key press interaction, see :ref:`keyboard`
 
@@ -1604,53 +1604,53 @@ class ViSiAnnoT():
 
         elif key == QtCore.Qt.Key_Left:
             if keyboard_modifiers == QtCore.Qt.ControlModifier:
-                self.updateFrameId(self.frame_id - 60 * self.fps)
+                self.update_frame_id(self.frame_id - 60 * self.fps)
 
             else:
-                self.updateFrameId(self.frame_id - self.fps)
+                self.update_frame_id(self.frame_id - self.fps)
 
             if self.ite_file == 0:
-                self.updateFrameId(max(0, self.frame_id))
+                self.update_frame_id(max(0, self.frame_id))
 
         elif key == QtCore.Qt.Key_Right:
             if keyboard_modifiers == QtCore.Qt.ControlModifier:
-                self.updateFrameId(self.frame_id + 60 * self.fps)
+                self.update_frame_id(self.frame_id + 60 * self.fps)
 
             else:
-                self.updateFrameId(self.frame_id + self.fps)
+                self.update_frame_id(self.frame_id + self.fps)
 
             if self.ite_file == self.nb_files - 1:
-                self.updateFrameId(min(self.nframes, self.frame_id))
+                self.update_frame_id(min(self.nframes, self.frame_id))
 
         elif key == QtCore.Qt.Key_Down:
             if keyboard_modifiers == QtCore.Qt.ControlModifier:
-                self.updateFrameId(self.frame_id - 600 * self.fps)
+                self.update_frame_id(self.frame_id - 600 * self.fps)
 
             else:
-                self.updateFrameId(self.frame_id - 10 * self.fps)
+                self.update_frame_id(self.frame_id - 10 * self.fps)
 
             if self.ite_file == 0:
-                self.updateFrameId(max(0, self.frame_id))
+                self.update_frame_id(max(0, self.frame_id))
 
         elif key == QtCore.Qt.Key_Up:
             if keyboard_modifiers == QtCore.Qt.ControlModifier:
-                self.updateFrameId(self.frame_id + 600 * self.fps)
+                self.update_frame_id(self.frame_id + 600 * self.fps)
 
             else:
-                self.updateFrameId(self.frame_id + 10 * self.fps)
+                self.update_frame_id(self.frame_id + 10 * self.fps)
 
             if self.ite_file == self.nb_files - 1:
-                self.updateFrameId(min(self.nframes, self.frame_id))
+                self.update_frame_id(min(self.nframes, self.frame_id))
 
         elif key == QtCore.Qt.Key_L:
-            self.updateFrameId(self.frame_id - 1)
+            self.update_frame_id(self.frame_id - 1)
             if self.ite_file == 0:
-                self.updateFrameId(max(0, self.frame_id))
+                self.update_frame_id(max(0, self.frame_id))
 
         elif key == QtCore.Qt.Key_M:
-            self.updateFrameId(self.frame_id + 1)
+            self.update_frame_id(self.frame_id + 1)
             if self.ite_file == self.nb_files - 1:
-                self.updateFrameId(min(self.nframes, self.frame_id))
+                self.update_frame_id(min(self.nframes, self.frame_id))
 
         elif key == QtCore.Qt.Key_I and len(self.wid_sig_list) > 0 and \
                 self.wid_zoomin is not None:
@@ -1666,11 +1666,11 @@ class ViSiAnnoT():
 
         elif key == QtCore.Qt.Key_A and self.wid_annotevent is not None:
             if len(self.wid_annotevent.label_list) > 0:
-                self.wid_annotevent.setTimestamp(self, self.frame_id, 0)
+                self.wid_annotevent.set_timestamp(self, self.frame_id, 0)
 
         elif key == QtCore.Qt.Key_Z and self.wid_annotevent is not None:
             if len(self.wid_annotevent.label_list) > 0:
-                self.wid_annotevent.setTimestamp(self, self.frame_id, 1)
+                self.wid_annotevent.set_timestamp(self, self.frame_id, 1)
 
         elif key == QtCore.Qt.Key_E and self.wid_annotevent is not None:
             if len(self.wid_annotevent.label_list) > 0:
@@ -1681,24 +1681,24 @@ class ViSiAnnoT():
                 self.wid_annotevent.display(self)
 
         elif key == QtCore.Qt.Key_PageDown and self.flag_long_rec:
-            self.changeFileInLongRec(self.ite_file - 1, 0)
+            self.change_file_in_long_rec(self.ite_file - 1, 0)
 
         elif key == QtCore.Qt.Key_PageUp and self.flag_long_rec:
-            self.changeFileInLongRec(self.ite_file + 1, 0)
+            self.change_file_in_long_rec(self.ite_file + 1, 0)
 
         elif key == QtCore.Qt.Key_Home:
-            self.updateFrameId(0)
+            self.update_frame_id(0)
 
         elif key == QtCore.Qt.Key_End:
-            self.updateFrameId(self.nframes - 1)
+            self.update_frame_id(self.nframes - 1)
 
         elif key == QtCore.Qt.Key_D and keyboard_modifiers == \
                 (QtCore.Qt.ControlModifier | QtCore.Qt.ShiftModifier):
             if self.wid_annotevent is not None:
-                self.wid_annotevent.clearDescriptions(self)
+                self.wid_annotevent.clear_descriptions(self)
 
 
-    def keyRelease(self, ev):
+    def key_release(self, ev):
         """
         Callback method for key release interaction, see :ref:`keyboard`
 
@@ -1726,7 +1726,7 @@ class ViSiAnnoT():
     # *********************************************************************** #
 
 
-    def setAllData(self, video_dict, signal_dict, interval_dict):
+    def set_all_data(self, video_dict, signal_dict, interval_dict):
         """
         Sets video and signal data (to be called before plotting)
 
@@ -1791,7 +1791,7 @@ class ViSiAnnoT():
         # loop on video
         for ite, (video_id, video_config) in enumerate(video_dict.items()):
             # check number of elements in configuration
-            checkConfiguration(
+            check_configuration(
                 video_id, video_config, "Video", flag_long_rec=False
             )
 
@@ -1799,7 +1799,7 @@ class ViSiAnnoT():
             path_video, delimiter, pos, fmt = video_config
 
             # get video data
-            self.video_data_dict[video_id], nframes, fps = getDataVideo(
+            self.video_data_dict[video_id], nframes, fps = get_data_video(
                 path_video
             )
 
@@ -1809,7 +1809,7 @@ class ViSiAnnoT():
 
             else:
                 # get beginning datetime of video file
-                beginning_datetime = datetimeconverter.getDatetimeFromPath(
+                beginning_datetime = datetimeconverter.get_datetime_from_path(
                     path_video, delimiter, pos, fmt, time_zone=self.time_zone
                 )
 
@@ -1875,7 +1875,7 @@ class ViSiAnnoT():
             signal_config = list(signal_dict.values())[0][0]
 
             # check number of elements in first signal configuration
-            checkConfiguration(
+            check_configuration(
                 signal_id, signal_config, "Signal", flag_long_rec=False
             )
 
@@ -1885,23 +1885,23 @@ class ViSiAnnoT():
             # check if attribute fps to be set
             if self.fps is None:
                 # get frequency and store it as reference frequency
-                self.fps = self.getDataFrequency(path, freq)
+                self.fps = self.get_data_frequency(path, freq)
 
             # get beginning date-time
-            self.beginning_datetime = datetimeconverter.getDatetimeFromPath(
+            self.beginning_datetime = datetimeconverter.get_datetime_from_path(
                 path, delimiter, pos, fmt, time_zone=self.time_zone
             )
 
             # get data path (in case not synchronized)
             if self.flag_long_rec and not self.flag_synchro:
                 # get first synchronization file content
-                lines = dataloader.getTxtLines(path)
+                lines = dataloader.get_txt_lines(path)
 
                 # get first signal file
                 path = lines[1].replace("\n", "")
 
             # get number of frames
-            self.nframes = dataloader.getNbSamplesGeneric(path, key_data)
+            self.nframes = dataloader.get_nb_samples_generic(path, key_data)
 
             # check if there is data indeed
             if self.nframes == 0:
@@ -1922,7 +1922,7 @@ class ViSiAnnoT():
             # loop on sub-signals
             for ite_data, signal_config in enumerate(signal_config_list):
                 # check number of elements in signal configuration
-                checkConfiguration(
+                check_configuration(
                     signal_id, signal_config, "Signal", flag_long_rec=False
                 )
 
@@ -1938,7 +1938,7 @@ class ViSiAnnoT():
                     # loop on intervals paths
                     for interval_config in interval_dict[signal_id]:
                         # check number of elements in interval configuration
-                        checkConfiguration(
+                        check_configuration(
                             signal_id, interval_config, "Interval",
                             flag_long_rec=False
                         )
@@ -1948,7 +1948,7 @@ class ViSiAnnoT():
                             color_interval = interval_config
 
                         # get frequency
-                        freq_interval = self.getDataFrequency(
+                        freq_interval = self.get_data_frequency(
                             path_interval, freq_interval
                         )
 
@@ -1957,7 +1957,7 @@ class ViSiAnnoT():
                             # asynchronous signal
                             if self.flag_long_rec and not self.flag_synchro:
                                 # load intervals data
-                                interval, _ = self.getDataSigTmp(
+                                interval, _ = self.get_data_sig_tmp(
                                     path_interval, signal_id, key_interval,
                                     freq_interval, self.tmp_delimiter,
                                     flag_interval=True
@@ -1966,14 +1966,14 @@ class ViSiAnnoT():
                                 # if time series, convert to intervals
                                 if interval.ndim == 1:
                                     interval = \
-                                        dataloader.convertTimeSeriesToIntervals(
+                                        dataloader.convert_time_series_to_intervals(
                                             interval, 1
                                         )
 
                             # synchro OK
                             else:
                                 # load intervals data
-                                interval = dataloader.getDataInterval(
+                                interval = dataloader.get_data_interval(
                                     path_interval, key_interval
                                 )
 
@@ -1987,7 +1987,7 @@ class ViSiAnnoT():
                 # asynchronous signal
                 if self.flag_long_rec and not self.flag_synchro:
                     # get data and frequency
-                    data, freq_data = self.getDataSigTmp(
+                    data, freq_data = self.get_data_sig_tmp(
                         path_data, signal_id, key_data, freq_data,
                         self.tmp_delimiter
                     )
@@ -1995,16 +1995,16 @@ class ViSiAnnoT():
                 # synchronous signals
                 else:
                     # get frequency
-                    freq_data = self.getDataFrequency(path_data, freq_data)
+                    freq_data = self.get_data_frequency(path_data, freq_data)
 
-                    # keyword arguments for dataloader.getDataGeneric
+                    # keyword arguments for dataloader.get_data_generic
                     kwargs = {}
 
                     if os.path.splitext(path_data)[1] == ".wav":
-                        kwargs["channel_id"] = convertKeyToChannelId(key_data)
+                        kwargs["channel_id"] = convert_key_to_channel_id(key_data)
 
                     # load data
-                    data = dataloader.getDataGeneric(
+                    data = dataloader.get_data_generic(
                         path_data, key_data, **kwargs
                     )
 
@@ -2030,7 +2030,7 @@ class ViSiAnnoT():
 
                 # downsample if necessary
                 if freq_data is not None and freq_data > self.down_freq:
-                    signal.downsampleSignal(self.down_freq)
+                    signal.downsample_signal(self.down_freq)
 
                 # append temporary signal list
                 sig_list_tmp.append(signal)
@@ -2039,13 +2039,13 @@ class ViSiAnnoT():
             self.sig_dict[signal_id] = sig_list_tmp
 
 
-    def getDataFrequency(self, path, freq):
+    def get_data_frequency(self, path, freq):
         # get frequency if necessary
         if os.path.splitext(path)[1] == ".wav":
-            _, freq, _ = getAudioWaveInfo(path)
+            _, freq, _ = get_audio_wave_info(path)
 
         elif isinstance(freq, str):
-            freq = dataloader.getAttributeGeneric(path, freq)
+            freq = dataloader.get_attribute_generic(path, freq)
 
         elif freq == -1:
             freq = self.fps
@@ -2054,7 +2054,7 @@ class ViSiAnnoT():
 
 
     @staticmethod
-    def getFileSigTmp(line, delimiter):
+    def get_file_sig_tmp(line, delimiter):
         """
         Gets the file name and the start second in a line of a temporary
         synchronization file (in case signal is not synchronized with video)
@@ -2083,7 +2083,7 @@ class ViSiAnnoT():
         return path, start_sec
 
 
-    def getDataSigTmp(
+    def get_data_sig_tmp(
         self, path, signal_id, key_data, freq_data, delimiter,
         flag_interval=False
     ):
@@ -2112,7 +2112,7 @@ class ViSiAnnoT():
         """
 
         # read temporary file
-        lines = dataloader.getTxtLines(path)
+        lines = dataloader.get_txt_lines(path)
 
         # define empty data
         if len(lines) == 0:
@@ -2129,9 +2129,9 @@ class ViSiAnnoT():
             if isinstance(freq_data, str):
                 freq_data_tmp = None
                 for line in lines:
-                    data_path, _ = ViSiAnnoT.getFileSigTmp(line, delimiter)
+                    data_path, _ = ViSiAnnoT.get_file_sig_tmp(line, delimiter)
                     if data_path != "None":
-                        freq_data_tmp = self.getDataFrequency(
+                        freq_data_tmp = self.get_data_frequency(
                             data_path, freq_data
                         )
                         break
@@ -2146,7 +2146,7 @@ class ViSiAnnoT():
             # loop on temporary file lines
             for ite_line, line in enumerate(lines):
                 # get data path and starting second
-                data_path, start_sec = ViSiAnnoT.getFileSigTmp(line, delimiter)
+                data_path, start_sec = ViSiAnnoT.get_file_sig_tmp(line, delimiter)
 
                 # no data at the beginning
                 if data_path == "None":
@@ -2165,7 +2165,7 @@ class ViSiAnnoT():
                     # check if 2D data (signal not regularly sampled)
                     if freq_data == 0:
                         # get first column (samples timestamps)
-                        next_data_ts = dataloader.getDataGeneric(
+                        next_data_ts = dataloader.get_data_generic(
                             data_path, key=key_data, slicing=("col", 0)
                         )
 
@@ -2233,7 +2233,7 @@ class ViSiAnnoT():
 
                     # channel specification when loading audio
                     if data_path.split('.')[-1] == "wav":
-                        kwargs["channel_id"] = convertKeyToChannelId(key_data)
+                        kwargs["channel_id"] = convert_key_to_channel_id(key_data)
 
                     # slicing keyword argument for data loading
                     if start_ind == 0 and end_ind is None:
@@ -2248,13 +2248,13 @@ class ViSiAnnoT():
                     # check if interval data
                     if flag_interval:
                         # load data with slicing
-                        next_data = dataloader.getDataIntervalAsTimeSeries(
+                        next_data = dataloader.get_data_interval_as_time_series(
                             data_path, **kwargs
                         )
 
                     else:
                         # load data with slicing
-                        next_data = dataloader.getDataGeneric(
+                        next_data = dataloader.get_data_generic(
                             data_path, **kwargs
                         )
 

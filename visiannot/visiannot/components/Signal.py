@@ -21,7 +21,7 @@ class Signal():
         Class defining a signal to plot in :class:`.ViSiAnnoT`
 
         The signal data can be accessed with the methods
-        :meth:`.Signal.getData` and :meth:`.Signal.getDataInRange`.
+        :meth:`.Signal.getData` and :meth:`.Signal.get_data_in_range`.
 
         The attributes have the prefix _, so one should call the get methods to
         access them.
@@ -35,7 +35,7 @@ class Signal():
         :param freq: signal frequency, set it to ``0`` if not regularly sampled
         :type freq: int or float
         :param max_points: maximum number of points to display in
-            :class:`.ViSiAnnoT` (used in :meth:`.Signal.getDataInRange`)
+            :class:`.ViSiAnnoT` (used in :meth:`.Signal.get_data_in_range`)
         :type max_points: int
         :param plot_style: plot style of the signal, see
             https://pyqtgraph.readthedocs.io/en/latest/graphicsItems/plotdataitem.html
@@ -71,7 +71,7 @@ class Signal():
         self.legend_text = legend_text
 
 
-    def setSignal(self, *args, **kwargs):
+    def set_signal(self, *args, **kwargs):
         """
         Sets the instance with new values
 
@@ -87,7 +87,7 @@ class Signal():
         self.__init__(*args, **kwargs)
 
 
-    def getDataInRange(self, first_frame_ms, last_frame_ms):
+    def get_data_in_range(self, first_frame_ms, last_frame_ms):
         """
         Returns the signal data in the range defined by
         ``first_frame_ms:last_frame_ms``
@@ -142,12 +142,12 @@ class Signal():
                 return self.data[start_id:stop_id:step]
 
 
-    def downsampleSignal(self, new_freq):
+    def downsample_signal(self, new_freq):
         """
         Sets the instance with a new signal frequency
 
         Once the signal data is downsampled, the method calls the method
-        :meth:`.Signal.setSignal`.
+        :meth:`.Signal.set_signal`.
 
         NB: make sure that this method is called only if the signal is
         regularly sampled.
@@ -178,7 +178,7 @@ class Signal():
             new_data = np.hstack((data, np.nan * np.ones((fill_nb,))))
 
             # downsample
-            new_data = Signal.downSample(new_data, factor)
+            new_data = Signal.downsample(new_data, factor)
 
             # delete nan
             nan_nb = np.where(np.isnan(new_data))[0].shape[0]
@@ -186,14 +186,14 @@ class Signal():
                 new_data = new_data[:-nan_nb]
 
         # reset signal
-        self.setSignal(
+        self.set_signal(
             new_data, new_freq, plot_style=self.plot_style,
             legend_text=self.legend_text
         )
 
 
     @staticmethod
-    def downSample(data, factor):
+    def downsample(data, factor):
         """
         Downsamples the input data by the specified factor using mean
 
