@@ -279,51 +279,51 @@ def add_line_edit_list(grid, pos, nb_rows, name=""):
     return grid_sub, group_box
 
 
-def set_line_edit_list(grid, value_list, mode):
+def set_line_edit_list(grid, value_list, flag_display):
     """
-    Sets the values of a list of QLineEdit from a list of lists (mode 0) or
-    sets the values of a list of lists from the values of a list of QLineEdit
-    (mode 1)
+    Sets the values of a list of lines edits from an input list or returns the
+    values of a table of lines edits
 
-    :param grid: layout containing only the edit lines
+    :param grid: layout containing only the list of lines edits, see
+        :func:`.add_line_edit_list` for creating one
     :type grid: QtWidgets.QGridLayout
-    :param value_list: in case of mode 0, each element is a value for setting
-        the corresponding line edit -- in case of mode 1, let it be an empty
-        list
+    :param value_list: in case of ``flag_display`` set to ``True``, each
+        element is a string for setting the list of lines edits --
+        otherwise, let it be an empty list
     :type value_list: list
-    :param mode: either 0 or 1
-    :type mode: int
+    :param flag_display: specify if displaying values in the list of lines
+        edits
+    :type flag_display: bool
 
-    :returns: list of values contained in the list of QLineEdit
-        (same as input argument ``value_list`` in case of mode 0)
+    :returns: list of values contained in the list of lines edits
+        (same as input argument ``value_list`` in case of ``flag_display`` set
+        to ``True``)
     :rtype: list
     """
 
-    # check mode
-    if mode == 0 or mode == 1:
-        # if setting self.general_dict, reset its value
-        if mode == 1:
-            value_list = []
+    # if setting value_list, reset its value
+    if not flag_display:
+        value_list = []
 
-        # get number of rows in the grid <=> number of items in the list
-        nb_rows = grid.count()
+    # get number of rows in the grid <=> number of items in the list
+    nb_rows = grid.count()
 
-        # loop on the number of rows
-        for i in range(nb_rows):
-            # get edit text
-            edit = grid.itemAtPosition(i, 0).widget()
+    # loop on the number of rows
+    for i in range(nb_rows):
+        # get edit text
+        edit = grid.itemAtPosition(i, 0).widget()
 
-            if mode == 0:
-                if i < len(value_list):
-                    # set edit text
-                    edit.setText(value_list[i])
-                else:
-                    # set edit text
-                    edit.setText("")
+        if flag_display:
+            if i < len(value_list):
+                # set edit text
+                edit.setText(value_list[i])
+            else:
+                # set edit text
+                edit.setText("")
 
-            elif mode == 1:
-                # append value list
-                value_list.append(edit.text())
+        else:
+            # append value list
+            value_list.append(edit.text())
 
     return value_list
 

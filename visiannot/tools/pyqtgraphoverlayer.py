@@ -871,12 +871,14 @@ def add_mean_std_plot_to_widget(
         # check if not NaN
         if ~np.isnan(med):
             # create std curve sub-array
-            data = np.array([[x, med - std],
-                             [x, med + std],
-                             [x - x_step / 4, med - std],
-                             [x + x_step / 4, med - std],
-                             [x - x_step / 4, med + std],
-                             [x + x_step / 4, med + std]])
+            data = np.array([
+                [x, med - std],
+                [x, med + std],
+                [x - x_step / 4, med - std],
+                [x + x_step / 4, med - std],
+                [x - x_step / 4, med + std],
+                [x + x_step / 4, med + std]
+            ])
 
             # concatenate std curve array
             data_std_tmp = np.concatenate((data_std_tmp, data))
@@ -885,7 +887,10 @@ def add_mean_std_plot_to_widget(
             if nb_samples is not None:
                 text_item, _ = add_text_item_to_widget(
                     wid, (x + x_step / 8, med + std / 2),
-                    text="%d" % nb_samples
+                    opts_text_dict={
+                        "text": "%d" % nb_samples, "color": 'k',
+                        "anchor": (0.5, 0.5)
+                    }
                 )
                 text_item_list.append(text_item)
 

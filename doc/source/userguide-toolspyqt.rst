@@ -1,8 +1,8 @@
 .. _pyqtoverlayer:
 
-=====================
+=========================
 User guide: pyqtoverlayer
-=====================
+=========================
 
 .. _sec-pyqtoverlayer:
 
@@ -162,7 +162,7 @@ It is possible to set the value of a list of line edits directly in a script wit
 	grid, _ = pyqtoverlayer.add_line_edit_list(lay, (0, 0), 2, name="Line edits")
 
 	# set the value of the line edits
-	pyqtoverlayer.set_line_edit_list(grid, ["Value 1", "Value 2"], 0)
+	pyqtoverlayer.set_line_edit_list(grid, ["Value 1", "Value 2"], True)
 
 	# infinite loop
 	pyqtoverlayer.infinite_loop_gui(app)
@@ -185,7 +185,7 @@ It is possible to set the values in a table of spin boxes directly in a script w
 	grid, _ = pyqtoverlayer.add_spin_box_table(lay, (0, 0), 2, 3, name="Spin boxes")
 
 	# set the value of the line edits
-	pyqtoverlayer.set_spin_box_table(grid, [[4, 5, 6], [7, 8, 9]], 0)
+	pyqtoverlayer.set_spin_box_table(grid, [[4, 5, 6], [7, 8, 9]], True)
 
 	# infinite loop
 	pyqtoverlayer.infinite_loop_gui(app)
@@ -212,23 +212,23 @@ Here is a simple example::
 	######################
 	# Callback functions #
 	######################
-	def printText():
+	def print_text():
 	    print("Top button pushed")
 
 
-	def checkClicked(ev):
+	def check_clicked(ev):
 	    print(ev.text(), ev.isChecked())
 
 
-	def radioClicked(i):
+	def radio_clicked(i):
 	    print("Radio button n°%d" % (i + 1))
 
 
-	def comboIndexModif(i):
+	def combo_index_modif(i):
 	    print("Combo box index: %d" % (i + 1))
 
 
-	def comboOption(text):
+	def combo_option(text):
 	    print(text)
 
 
@@ -244,20 +244,26 @@ Here is a simple example::
 	push_button = pyqtoverlayer.add_push_button(lay, (0, 0), "Push me")
 
 	# add list of check boxes
-	_, _, group_check = pyqtoverlayer.add_widget_button_group(lay, (1, 0), ["C1", "C2", "C3"], button_type="check_box")
+	_, _, group_check = pyqtoverlayer.add_widget_button_group(
+		lay, (1, 0), ["C1", "C2", "C3"], button_type="check_box"
+	)
 
 	# add list of radio buttons
-	_, _, group_radio = pyqtoverlayer.add_widget_button_group(lay, (2, 0), ["R1", "R2", "R3"])
+	_, _, group_radio = pyqtoverlayer.add_widget_button_group(
+		lay, (2, 0), ["R1", "R2", "R3"]
+	)
 
 	# add combo box
-	_, _, combo_box = pyqtoverlayer.add_combo_box(lay, (3, 0), ["Option 1", "Option 2"], box_title="Combo box")
+	_, _, combo_box = pyqtoverlayer.add_combo_box(
+		lay, (3, 0), ["Option 1", "Option 2"], box_title="Combo box"
+	)
 
 	# listen to callbacks
-	push_button.clicked.connect(printText)
-	group_check.buttonClicked.connect(checkClicked)
-	group_radio.buttonClicked[int].connect(radioClicked)
-	combo_box.currentIndexChanged.connect(comboIndexModif)
-	combo_box.currentTextChanged.connect(comboOption)
+	push_button.clicked.connect(print_text)
+	group_check.buttonClicked.connect(check_clicked)
+	group_radio.buttonClicked[int].connect(radio_clicked)
+	combo_box.currentIndexChanged.connect(combo_index_modif)
+	combo_box.currentTextChanged.connect(combo_option)
 
 	# infinite loop
 	pyqtoverlayer.infinite_loop_gui(app)
@@ -270,11 +276,11 @@ which renders a window as shown below.
 
 There are three widgets: one push button, a group of check boxes and a group of radio buttons. These objects emit a signal when they are clicked. We can connect this signal to a slot, i.e. a function that is called every time the signal is emitted.
 
-The push button emits the signal ``clicked`` when it is clicked. It is connected to the function ``printText`` with the following code: ``push_button.clicked.connect(printText)``.
+The push button emits the signal ``clicked`` when it is clicked. It is connected to the function ``print_text`` with the following code: ``push_button.clicked.connect(print_text)``.
 
-The group of check boxes emits the signal ``buttonClicked`` when one check box is clicked. It is connected to the function ``checkClicked`` with the following code: ``group_check.buttonClicked.connect(checkClicked)``. The callback function takes one positional argument: the check box that has been clicked. So, inside this function, we can manipulate the check box that has been clicked. In the example, we print the text associated to the check box and a boolean specifying if the check box is checked.
+The group of check boxes emits the signal ``buttonClicked`` when one check box is clicked. It is connected to the function ``check_clicked`` with the following code: ``group_check.buttonClicked.connect(check_clicked)``. The callback function takes one positional argument: the check box that has been clicked. So, inside this function, we can manipulate the check box that has been clicked. In the example, we print the text associated to the check box and a boolean specifying if the check box is checked.
 
-The group of radio buttons is also a button group, so it emits the same signal ``buttonClicked``. It is connected to the function ``radioClicked`` with the following code: ``group_radio.buttonClicked[int].connect(radioClicked)``. This time, we add ``[int]`` so that the positional argument of the callback function is the index of the button that has been clicked (this is generic to button group, so it can be applied to check boxes and push buttons as well).
+The group of radio buttons is also a button group, so it emits the same signal ``buttonClicked``. It is connected to the function ``radio_clicked`` with the following code: ``group_radio.buttonClicked[int].connect(radio_clicked)``. This time, we add ``[int]`` so that the positional argument of the callback function is the index of the button that has been clicked (this is generic to button group, so it can be applied to check boxes and push buttons as well).
 
 The combo box emits several signals, among them ``currentIndexChanged`` and ``currentTextChanged`` that are emitted when a new text is selected. First signal is linked to the index of the text in the combo box, second signal is linked to the text in the combo box.
 
@@ -290,7 +296,7 @@ We give here a more complex example with two windows: master and slave. The mast
 	####################
 	# Class definition #
 	####################
-	class windowCouple():
+	class WindowCouple():
 	    def __init__(self, nb_push_button):
 	        # input attribute
 	        if nb_push_button > 0:
@@ -307,7 +313,9 @@ We give here a more complex example with two windows: master and slave. The mast
 
 	        # add group box with spin box
 	        spin_name = "Number of push button"
-	        grid_spin, _ = pyqtoverlayer.add_spin_box_table(self.lay_m, (0, 0), 1, 1, name=spin_name)
+	        grid_spin, _ = pyqtoverlayer.add_spin_box_table(
+	        	self.lay_m, (0, 0), 1, 1, name=spin_name
+	        )
 
 	        # get spin box
 	        self.spin_box_nb = grid_spin.itemAt(0).widget()
@@ -331,7 +339,9 @@ We give here a more complex example with two windows: master and slave. The mast
 	        self.spin_box_id.setMaximum(self.nb_push_button)
 
 	        # add master push button
-	        self.push_button = pyqtoverlayer.add_push_button(self.lay_m, (1, 2), "Set push button")
+	        self.push_button = pyqtoverlayer.add_push_button(
+	        	self.lay_m, (1, 2), "Set push button"
+	        )
 
 	        # add check box
 	        self.check_box = pyqtoverlayer.add_check_box(self.lay_m, (2, 0), "Online")
@@ -341,8 +351,13 @@ We give here a more complex example with two windows: master and slave. The mast
 	        ################
 
 	        # create window
-	        self.win_s, self.lay_s = pyqtoverlayer.create_window(title="Slave", size=(150, 250))
-	        self.win_s.setFixedSize(150, 250) 	# so that the size of the window does not change when adding push buttons
+	        self.win_s, self.lay_s = pyqtoverlayer.create_window(
+	        	title="Slave", size=(150, 250)
+	        )
+	        
+	        # so that the size of the window does not change
+	        # when adding push buttons
+	        self.win_s.setFixedSize(150, 250)
 
 	        # initialize list of slave push buttons
 	        self.push_button_list = []
@@ -355,9 +370,9 @@ We give here a more complex example with two windows: master and slave. The mast
 	        #######################
 	        self.win_m.keyPressEvent = self.key_press
 	        self.win_s.keyPressEvent = self.key_press
-	        self.spin_box_nb.valueChanged.connect(self.setNbTxtItems)
-	        self.line_edit.textEdited.connect(self.editTextOnline)
-	        self.push_button.clicked.connect(self.editTextOffline)
+	        self.spin_box_nb.valueChanged.connect(self.set_nb_txt_items)
+	        self.line_edit.textEdited.connect(self.edit_text_online)
+	        self.push_button.clicked.connect(self.edit_text_offline)
 
 	    ####################
 	    # callback methods #
@@ -379,7 +394,7 @@ We give here a more complex example with two windows: master and slave. The mast
 	                self.spin_box_nb.setValue(1)
 
 
-	    def setNbTxtItems(self, i):
+	    def set_nb_txt_items(self, i):
 	        self.nb_push_button = i
 
 	        # update maximum value of spin box with button ID
@@ -392,7 +407,7 @@ We give here a more complex example with two windows: master and slave. The mast
 	            self.removePushButton()
 
 
-	    def editTextOnline(self, text):
+	    def edit_text_online(self, text):
 	        # check if online mode enabled
 	        if self.check_box.isChecked():
 	            # get ID of the push button to edit
@@ -402,7 +417,7 @@ We give here a more complex example with two windows: master and slave. The mast
 	            self.push_button_list[button_id].setText(text)
 
 
-	    def editTextOffline(self):
+	    def edit_text_offline(self):
 	        # get ID of the push button to edit
 	        button_id = self.spin_box_id.value() - 1
 
@@ -422,7 +437,7 @@ We give here a more complex example with two windows: master and slave. The mast
 
         	# loop on push buttons to create
         	for i in range(nb_push_button, self.nb_push_button):
-                # get default text
+        	    # get default text
 	            default_text = "Default %d" % (i + 1)
 
 	            # add push button
@@ -432,7 +447,7 @@ We give here a more complex example with two windows: master and slave. The mast
 	            self.push_button_list.append(push_button)
 
 
-	    def removePushButton(self):
+	    def remove_push_button(self):
 	        # get number of push buttons already created
 	        nb_push_button = len(self.push_button_list)
 
@@ -449,7 +464,7 @@ We give here a more complex example with two windows: master and slave. The mast
 	# Script starts here #
 	######################
 	app = pyqtoverlayer.initialize_gui()
-	w = windowCouple(2)
+	w = WindowCouple(2)
 	pyqtoverlayer.infinite_loop_gui(app)
 
 which renders the windows as shown below.
@@ -464,17 +479,17 @@ In the constructor, we first create the master and slave windows and add widgets
 
     self.win_m.keyPressEvent = self.key_press
     self.win_s.keyPressEvent = self.key_press
-    self.spin_box_nb.valueChanged.connect(self.setNbTxtItems)
-    self.line_edit.textEdited.connect(self.editTextOnline)
-    self.push_button.clicked.connect(self.editTextOffline)
+    self.spin_box_nb.valueChanged.connect(self.set_nb_txt_items)
+    self.line_edit.textEdited.connect(self.edit_text_online)
+    self.push_button.clicked.connect(self.edit_text_offline)
 
 The first two lines are for the key_press interaction. The syntax is different in this case: ``win.keyPressEvent = key_press`` where ``win`` is the instance of **QtWidgets.QWidget** containing the window and ``key_press`` is the callback method. We must listen to the callback on both windows so that the key press interaction works regardless of the current window. The callback function takes as positional argument the instance of **QtGui.QKeyEvent** emitted when a key is pressed. We retrieve the modifier key with ``keyboard_modifiers = ev.modifiers()`` and the pressed key with ``key = ev.key()``. First, we check if the pressed key is escape. In this case both windows are closed. Second, we check if the pressed key is R and and if the modifier key is control (this means that both R and control keys are pressed). Then, we reset the number of slave push buttons to 1.
 
-``self.spin_box_nb.valueChanged.connect(self.setNbTxtItems)``: in order to change the number of slave push buttons, we listen to the signal ``valueChanged`` emitted by ``self.spin_box_nb`` and we connect it to the callback method ``setNbTxtItems``. It takes as positional arguments the value in the spin box (i.e. the new number of slave push buttons).
+``self.spin_box_nb.valueChanged.connect(self.set_nb_txt_items)``: in order to change the number of slave push buttons, we listen to the signal ``valueChanged`` emitted by ``self.spin_box_nb`` and we connect it to the callback method ``set_nb_txt_items``. It takes as positional arguments the value in the spin box (i.e. the new number of slave push buttons).
 
-``self.line_edit.textEdited.connect(self.editTextOnline)``: we listen to the signal ``textEdited`` emitted when the line edit is edited and we connect it to the callback method ``editTextOnline``. It takes as positional argument the content of the line edit. In the callback method, we first check if the online mode is enabled, i.e. if the check box is checked. Then we get the index of the slave push button to modify, i.e. the value of the spin box. Lastly, we modify the text of the corresponding slave push button.
+``self.line_edit.textEdited.connect(self.edit_text_online)``: we listen to the signal ``textEdited`` emitted when the line edit is edited and we connect it to the callback method ``edit_text_online``. It takes as positional argument the content of the line edit. In the callback method, we first check if the online mode is enabled, i.e. if the check box is checked. Then we get the index of the slave push button to modify, i.e. the value of the spin box. Lastly, we modify the text of the corresponding slave push button.
 
-``self.push_button.clicked.connect(self.editTextOffline)``: we listen to the signal ``clicked`` emitted when the master push button is clicked and connect it to the callback method ``editTextOffline``. In the callback method, we first get the index of the slave push button to modify, i.e. the value of the spin box. Then we get the content of the line edit. Lastly, we modify the text of the corresponding slave push button.
+``self.push_button.clicked.connect(self.edit_text_offline)``: we listen to the signal ``clicked`` emitted when the master push button is clicked and connect it to the callback method ``edit_text_offline``. In the callback method, we first get the index of the slave push button to modify, i.e. the value of the spin box. Then we get the content of the line edit. Lastly, we modify the text of the corresponding slave push button.
 
 If we add more than 12 slave push buttons, we observe that they start to be unreadable. This is because we forced the window to have a fixed size and the push buttons must fit in. In the next section, we show how to add a scroll area so that the widgets can span more width/height than the window size.
 

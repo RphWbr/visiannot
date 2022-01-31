@@ -1,8 +1,8 @@
 .. _pyqtgraphoverlayer:
 
-==========================
+==============================
 User guide: pyqtgraphoverlayer
-==========================
+==============================
 
 See :ref:`sec-pyqtoverlayer` for details about window creation.
 
@@ -173,8 +173,10 @@ It is possible to customize the aspect of the ticks and ticks text of the axes. 
 	wid = pyqtgraphoverlayer.create_widget(
 	    lay, (0, 0), widget_title="Simple plot",
 	    title_style={'color': '#0000', 'size': '16pt'},
-	    axes_label_dict={"left": ["Voltage (V)", None],
-	                     "bottom": ["Time (s)", {"color": "#90A", "font-size": "14pt"}]}
+	    axes_label_dict={
+	        "left": ["Voltage (V)", None],
+	        "bottom": ["Time (s)", {"color": "#90A", "font-size": "14pt"}]
+	    }
 	)
 
 	# add plot
@@ -247,7 +249,9 @@ Here is an example of a scatter plot with a text item associated to each point::
 	    pos = data[i]
 
 	    # add text item
-	    pyqtgraphoverlayer.add_text_item_to_widget(wid, pos, text=text, anchor=(0, 0))
+	    pyqtgraphoverlayer.add_text_item_to_widget(
+	        wid, pos, opts_text_dict: {"text": text, "anchor": (0, 0)}
+	    )
 
 	infinite_loop_gui(app)
 
@@ -369,7 +373,7 @@ It is also possible to use callback management in order to control the animation
 	# class definition #
 	####################
 
-	class animatedWindow():
+	class AnimatedWindow():
 	    def __init__(self, data_array):
 	        # input attribute
 	        self.data_array = data_array
@@ -410,7 +414,7 @@ It is also possible to use callback management in order to control the animation
 
 	        # forward
 	        elif key == QtCore.Qt.Key_Right:
-			    if self.trial_id < self.data_array.shape[0] - 1:
+			        if self.trial_id < self.data_array.shape[0] - 1:
 	                self.trial_id += 1
 
 	        # update plot
@@ -426,7 +430,7 @@ It is also possible to use callback management in order to control the animation
 	data_array = np.random.rand(10, 150)
 
 	# create window
-	w = animatedWindow(data_array)
+	w = AnimatedWindow(data_array)
 
 We define a class ``animatedWindow`` which takes the data array as input. The attribute ``self.trial_id`` is the current index of the displayed trial. The key press signal is connected to the method ``key_press`` where the attribute ``self.trial_id`` and the plot are updated. If the left key is pressed, then we go to the previous trial. If the right key is pressed, then we go to the next trial. The plot update is performed by the method ``setData`` of the instance of ``pyqtgraph.PlotWidget`` returned by the function :func:`.add_plot_to_widget`.
 
@@ -560,7 +564,7 @@ Color map
 
 Here is an example of a color map along with a color bar::
 
-	from visiannot.tools.pyqtoverlayer import create_window, infinite_loop_gui
+	from visiannot.tools.pyqtoverlayer import infinite_loop_gui
 	from visiannot.tools import pyqtgraphoverlayer
 	import numpy as np
 
