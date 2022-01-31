@@ -6,7 +6,7 @@ Customization
 
 It is possible to call a function to automatically update the configuration before launching the GUIs::
 
-    $ python3 -m visiannot -c path/to/config.ini -n -u visiannot.configuration.configUpdateExamples.updateDataAndAnnotationDirectory
+    $ python3 -m visiannot -c path/to/config.ini -n -u visiannot.configuration.update.updateDataAndAnnotationDirectory
 
 The option ``-c`` specifies the path to the configuration file to load. The option ``-n`` disables configuration GUI. With the option ``-u``, we give the path to a function in **visiannot** package that updates the loaded configuration dictionary. The update function may be in a module that is not in a package (``moduleName.functionName``). It must have one positional argument (path to the configuration file) and must return the updated configuration dictionary.
 

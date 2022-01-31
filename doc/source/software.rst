@@ -12,7 +12,7 @@ The tree view of source files is reported below::
           |__ Configuration.py
           |__ ConfigurationWindow.py
           |__ __init__.py
-          |__ configUpdateExamples.py
+          |__ update.py
       |__ visiannot/tools
           |__ ToolsAnnotation.py
           |__ ToolsAudio.py
