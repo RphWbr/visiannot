@@ -1963,13 +1963,6 @@ class ViSiAnnoT():
                                     flag_interval=True
                                 )
 
-                                # if time series, convert to intervals
-                                if interval.ndim == 1:
-                                    interval = \
-                                        dataloader.convert_time_series_to_intervals(
-                                            interval, 1
-                                        )
-
                             # synchro OK
                             else:
                                 # load intervals data
@@ -2275,6 +2268,10 @@ class ViSiAnnoT():
 
             # get data as a numpy array
             data = np.concatenate(tuple(data_list))
+
+            # convert intervals data from time series to intervals
+            if flag_interval:
+                data = dataloader.convert_time_series_to_intervals(data, 1)
 
         return data, freq_data
 
