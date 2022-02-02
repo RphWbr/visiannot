@@ -194,7 +194,9 @@ def convert_annot_array(
     output_array = np.array([])
 
     # get annotation intervals
-    annot_list_list = read_annot_frames(annot_path, nb_files=len(nb_frames_list))
+    annot_list_list = read_annot_frames(
+        annot_path, nb_files=len(nb_frames_list)
+    )
 
     # loop on intervals
     for inter_list, nb_frames in zip(annot_list_list, nb_frames_list):

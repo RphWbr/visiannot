@@ -242,7 +242,9 @@ class ConfigurationWindow():
         scroll_lay.addWidget(self.general_group_box)
 
         # listen to callback
-        self.general_push_button.clicked.connect(self.set_directory_annotations)
+        self.general_push_button.clicked.connect(
+            self.set_directory_annotations
+        )
 
 
         # ***************** create load/save/done widget ******************** #
@@ -572,7 +574,9 @@ class ConfigurationWindow():
                 self.general_config_position_dict[key].append(wid_pos[:2])
 
                 # add widget
-                pyqtoverlayer.add_widget_to_layout(self.general_lay, widget, wid_pos)
+                pyqtoverlayer.add_widget_to_layout(
+                    self.general_lay, widget, wid_pos
+                )
 
         # get index of row with annotation base directory
         i = [key for _, key, _, _, _ in elt_list].index("annot_dir")
@@ -654,7 +658,9 @@ class ConfigurationWindow():
         parent_config.add_child_configuration(config)
 
         # create push button for hiding configuration window
-        push_button_ok = pyqtoverlayer.add_push_button(lay, (1, 0), "Ok", width=80)
+        push_button_ok = pyqtoverlayer.add_push_button(
+            lay, (1, 0), "Ok", width=80
+        )
 
         # listen to callback
         push_button_ok.clicked.connect(win.hide)

@@ -320,7 +320,11 @@ def convert_absolute_datetime_string_to_frame(
     """
 
     date_time = convert_string_to_datetime(content, "format_T", **kwargs)
-    return convert_absolute_datetime_to_frame(date_time, fps, beginning_datetime)
+    frame_id = convert_absolute_datetime_to_frame(
+        date_time, fps, beginning_datetime
+    )
+
+    return frame_id
 
 
 def convert_absolute_datetime_to_frame(date_time, fps, beginning_datetime):

@@ -38,7 +38,7 @@ def initialize_gui_and_bg_color(color=(255, 255, 255)):
     Creates a Qt application for display and sets background color of the
     pyqtgraph widgets
 
-    It calls the functions :func:`.pyqtoverlayer.initialize_gui` and
+    It calls the functions :func:`.initialize_gui` and
     :func:`.set_background_color`.
 
     :param color: background color as a string or RGB
@@ -440,7 +440,7 @@ def basic_plot(
           indexes
     :type data: numpy array
     :param opts_win_dict: keyword arguments of the function
-        :func:`.pyqtoverlayer.create_window`
+        :func:`.create_window`
     :type opts_win_dict: dict
     :param opts_wid_dict: keyword arguments of the function
         :func:`.create_widget`
@@ -476,7 +476,7 @@ def basic_image_plot(im, **kwargs):
     :param im: RGB image array of shape :math:`(width, height, 3)`
     :type im: numpy array
     :param kwargs: keyword arguments of the function
-        :func:`.pyqtoverlayer.create_window`, if background color of the window is
+        :func:`.create_window`, if background color of the window is
         specified, then it is also applied to the image widget
 
     :returns:

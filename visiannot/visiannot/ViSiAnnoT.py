@@ -1334,7 +1334,9 @@ class ViSiAnnoT():
         )
 
 
-    def add_region_to_widgets(self, bound_1, bound_2, color=(150, 150, 150, 50)):
+    def add_region_to_widgets(
+        self, bound_1, bound_2, color=(150, 150, 150, 50)
+    ):
         """
         Creates and displays a region item (pyqtgraph.LinearRegionItem) for the
         progress bar (:attr:`.wid_progress`) and the signal widgets
@@ -1975,7 +1977,6 @@ class ViSiAnnoT():
                                 [interval, freq_interval, color_interval]
                             )
 
-
                 # ********************** load data ************************** #
                 # asynchronous signal
                 if self.flag_long_rec and not self.flag_synchro:
@@ -1994,7 +1995,9 @@ class ViSiAnnoT():
                     kwargs = {}
 
                     if os.path.splitext(path_data)[1] == ".wav":
-                        kwargs["channel_id"] = convert_key_to_channel_id(key_data)
+                        kwargs["channel_id"] = convert_key_to_channel_id(
+                            key_data
+                        )
 
                     # load data
                     data = dataloader.get_data_generic(
@@ -2139,7 +2142,9 @@ class ViSiAnnoT():
             # loop on temporary file lines
             for ite_line, line in enumerate(lines):
                 # get data path and starting second
-                data_path, start_sec = ViSiAnnoT.get_file_sig_tmp(line, delimiter)
+                data_path, start_sec = ViSiAnnoT.get_file_sig_tmp(
+                    line, delimiter
+                )
 
                 # no data at the beginning
                 if data_path == "None":
@@ -2226,7 +2231,9 @@ class ViSiAnnoT():
 
                     # channel specification when loading audio
                     if data_path.split('.')[-1] == "wav":
-                        kwargs["channel_id"] = convert_key_to_channel_id(key_data)
+                        kwargs["channel_id"] = convert_key_to_channel_id(
+                            key_data
+                        )
 
                     # slicing keyword argument for data loading
                     if start_ind == 0 and end_ind is None:
@@ -2241,9 +2248,10 @@ class ViSiAnnoT():
                     # check if interval data
                     if flag_interval:
                         # load data with slicing
-                        next_data = dataloader.get_data_interval_as_time_series(
-                            data_path, **kwargs
-                        )
+                        next_data = \
+                            dataloader.get_data_interval_as_time_series(
+                                data_path, **kwargs
+                            )
 
                     else:
                         # load data with slicing

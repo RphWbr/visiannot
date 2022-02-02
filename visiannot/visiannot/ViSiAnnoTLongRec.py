@@ -617,7 +617,9 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             signal_list_tmp = []
             for data_info in data_info_list:
                 signal_list_tmp.append(
-                    self.get_path_list(signal_id, data_info, "Signal", **kwargs)
+                    self.get_path_list(
+                        signal_id, data_info, "Signal", **kwargs
+                    )
                 )
 
             self.signal_list_dict[signal_id] = signal_list_tmp
@@ -903,7 +905,9 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             # get synchronization file name
             tmp_path = "%s/%s_%s_%s_%s.txt" % (
                 output_dir, output_dir, signal_id, key_data.replace('/', '-'),
-                datetimeconverter.convert_datetime_to_string(ref_datetime, fmt=1)
+                datetimeconverter.convert_datetime_to_string(
+                    ref_datetime, fmt=1
+                )
             )
 
             synchro_path_list.append(tmp_path)
@@ -1130,9 +1134,9 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             # set recording choice combo box
             if self.file_selection_widget is not None:
                 # to prevent the combo box callback method from being called
-                # (which would imply calling method change_file_in_long_rec twice
-                # if file selection not done with combo box), the combo box
-                # signal is blocked and then unblocked
+                # (which would imply calling method change_file_in_long_rec
+                # twice if file selection not done with combo box), the combo
+                # box signal is blocked and then unblocked
                 self.file_selection_widget.combo_box.blockSignals(True)
                 self.file_selection_widget.combo_box.setCurrentIndex(
                     self.ite_file

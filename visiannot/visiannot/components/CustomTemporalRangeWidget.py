@@ -90,9 +90,10 @@ class CustomTemporalRangeWidget():
         Connected to the signal ``clicked`` of :attr:`.current_push`.
         """
 
-        current_datetime = datetimeconverter.convert_frame_to_absolute_datetime(
-            visi.frame_id, visi.fps, visi.beginning_datetime
-        )
+        current_datetime = \
+            datetimeconverter.convert_frame_to_absolute_datetime(
+                visi.frame_id, visi.fps, visi.beginning_datetime
+            )
 
         self.edit_start.setDate(
             QtCore.QDate(current_datetime.year,

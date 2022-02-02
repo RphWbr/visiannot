@@ -257,10 +257,12 @@ class AnnotEventWidget():
         )
 
         # create widget with radio buttons (annotation labels)
-        _, _, self.button_group_radio_label = pyqtoverlayer.add_widget_button_group(
-            grid, (0, 0, 1, 2), self.label_list, color_list=self.color_list,
-            box_title="Current label selection", nb_table=nb_table
-        )
+        _, _, self.button_group_radio_label = \
+            pyqtoverlayer.add_widget_button_group(
+                grid, (0, 0, 1, 2), self.label_list,
+                color_list=self.color_list,
+                box_title="Current label selection", nb_table=nb_table
+            )
 
         # get number of annotations already stored (default first label)
         if isfile(self.path_list[0]):
@@ -299,18 +301,20 @@ class AnnotEventWidget():
                 self.push_text_list.append(q_label)
 
         # create widget with radio buttons (display options)
-        _, _, self.button_group_radio_disp = pyqtoverlayer.add_widget_button_group(
-            grid, (2 + ite_button, 0, 1, 2),
-            ["Current label", "All labels", "Custom (below)"],
-            box_title="Display mode"
-        )
+        _, _, self.button_group_radio_disp = \
+            pyqtoverlayer.add_widget_button_group(
+                grid, (2 + ite_button, 0, 1, 2),
+                ["Current label", "All labels", "Custom (below)"],
+                box_title="Display mode"
+            )
 
         # create check boxes with labels
-        _, _, self.button_group_check_custom = pyqtoverlayer.add_widget_button_group(
-            grid, (3 + ite_button, 0, 1, 2), self.label_list,
-            color_list=self.color_list, box_title="Custom display",
-            button_type="check_box", nb_table=nb_table
-        )
+        _, _, self.button_group_check_custom = \
+            pyqtoverlayer.add_widget_button_group(
+                grid, (3 + ite_button, 0, 1, 2), self.label_list,
+                color_list=self.color_list, box_title="Custom display",
+                button_type="check_box", nb_table=nb_table
+            )
 
 
     # *********************************************************************** #
@@ -380,8 +384,15 @@ class AnnotEventWidget():
                         )
 
                         # convert datetime to string
-                        beg_string = datetimeconverter.convert_datetime_to_string(beg_datetime)
-                        end_string = datetimeconverter.convert_datetime_to_string(end_datetime)
+                        beg_string = \
+                            datetimeconverter.convert_datetime_to_string(
+                                beg_datetime
+                            )
+
+                        end_string = \
+                            datetimeconverter.convert_datetime_to_string(
+                                end_datetime
+                            )
 
                         # write annotation file
                         f.write("%s - %s\n" % (beg_string, end_string))
@@ -524,9 +535,10 @@ class AnnotEventWidget():
         # check if annotation file exists
         if isfile(self.path_list[0]):
             # convert mouse position to datetime
-            position_date_time = datetimeconverter.convert_frame_to_absolute_datetime(
-                position, visi.fps, visi.beginning_datetime
-            )
+            position_date_time = \
+                datetimeconverter.convert_frame_to_absolute_datetime(
+                    position, visi.fps, visi.beginning_datetime
+                )
 
             # get annotations for current label
             lines = get_txt_lines(self.path_list[0])
@@ -729,7 +741,10 @@ class AnnotEventWidget():
                         )
 
                 # update the number of annotations
-                nb_annot = int(self.push_text_list[2].text().split(': ')[1]) + 1
+                nb_annot = int(
+                    self.push_text_list[2].text().split(': ')[1]
+                ) + 1
+
                 self.push_text_list[2].setText("Nb: %d" % nb_annot)
 
                 # if display mode is on, display the appended interval
@@ -756,7 +771,9 @@ class AnnotEventWidget():
 
 
     @staticmethod
-    def check_overlap(annot_path, annot_datetime_0, annot_datetime_1, **kwargs):
+    def check_overlap(
+        annot_path, annot_datetime_0, annot_datetime_1, **kwargs
+    ):
         # get existing annotations
         annot_array_total = read_annotation(annot_path).flatten()
 
@@ -765,7 +782,8 @@ class AnnotEventWidget():
         for annot_bound in [annot_datetime_0, annot_datetime_1]:
             # compute difference with boundaries of existing annotations
             diff_array_tmp = np.array([(
-                datetimeconverter.convert_string_to_datetime(d, "format_T", **kwargs) - annot_bound
+                datetimeconverter.convert_string_to_datetime(
+                    d, "format_T", **kwargs) - annot_bound
             ).total_seconds() for d in annot_array_total])
 
             # binarize difference array
@@ -1064,7 +1082,9 @@ class AnnotEventWidget():
             or frame_2 >= 0 and frame_2 < visi.nframes \
                 or frame_1 < 0 and frame_2 >= visi.nframes:
             # display region in each signal plot
-            region_list = visi.add_region_to_widgets(frame_1, frame_2, **kwargs)
+            region_list = visi.add_region_to_widgets(
+                frame_1, frame_2, **kwargs
+            )
 
             return region_list
 
