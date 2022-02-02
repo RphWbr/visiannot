@@ -969,9 +969,9 @@ class ViSiAnnoT():
             # append widget to list of widgets
             self.wid_sig_list.append(wid)
 
-            # reconnect to key_press event callback, so that key_press events of
+            # reconnect to key_press event callback, so that keyPress events of
             # scroll are ignored
-            wid.key_pressEvent = self.key_press
+            wid.keyPressEvent = self.key_press
 
             # get position of next signal widget
             pos_sig[0] += 1
