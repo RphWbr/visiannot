@@ -15,10 +15,10 @@ import numpy as np
 import os
 from glob import glob
 from datetime import timedelta
-from ..tools import pyqtoverlayer
-from ..tools import datetimeconverter
-from ..tools import dataloader
-from ..tools.videoloader import get_duration_video, get_data_video
+from ..tools import pyqt_overlayer
+from ..tools import datetime_converter
+from ..tools import data_loader
+from ..tools.video_loader import get_duration_video, get_data_video
 from .ViSiAnnoT import ViSiAnnoT
 from ..configuration import check_configuration
 from .components.LogoWidgets import PreviousWidget, NextWidget
@@ -404,7 +404,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
 
         # *********************** infinite loop ***************************** #
-        pyqtoverlayer.infinite_loop_gui(self.app)
+        pyqt_overlayer.infinite_loop_gui(self.app)
 
         # close streams, delete temporary folders
         self.stop_processing()
@@ -467,7 +467,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         # loop on data files paths
         for path in path_list:
             # get beginning datetime of the video file
-            beginning_datetime = datetimeconverter.get_datetime_from_path(
+            beginning_datetime = datetime_converter.get_datetime_from_path(
                 path, delimiter, pos, fmt, **kwargs
             )
 
@@ -683,7 +683,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
                 # get duration
                 self.ref_duration_list.append(
-                    dataloader.get_data_duration(path, freq, key=key)
+                    data_loader.get_data_duration(path, freq, key=key)
                 )
 
             # update configuration of first signal to match temporary
@@ -742,7 +742,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 freq = self.get_data_frequency(path, freq)
 
                 # get data file duration
-                duration = dataloader.get_data_duration(
+                duration = data_loader.get_data_duration(
                     path, freq, key=key, flag_interval=flag_interval
                 )
 
@@ -905,9 +905,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             # get synchronization file name
             tmp_path = "%s/%s_%s_%s_%s.txt" % (
                 output_dir, output_dir, signal_id, key_data.replace('/', '-'),
-                datetimeconverter.convert_datetime_to_string(
-                    ref_datetime, fmt=1
-                )
+                ref_datetime.strftime("%Y-%m-%dT%H-%M-%S")
             )
 
             synchro_path_list.append(tmp_path)

@@ -10,9 +10,9 @@
 Module defining :class:`.TimeEditWidget`
 """
 
-from ...tools.datetimeconverter import convert_time_to_frame, \
+from ...tools.datetime_converter import convert_time_to_frame, \
     convert_frame_to_absolute_time_string
-from ...tools.pyqtoverlayer import add_combo_box
+from ...tools.pyqt_overlayer import add_combo_box
 
 
 class TruncTemporalRangeWidget():

@@ -15,7 +15,7 @@ Module defining class :class:`.Configuration` and function
 from PyQt5 import QtWidgets
 from ast import literal_eval
 import numpy as np
-from ..tools import pyqtoverlayer
+from ..tools import pyqt_overlayer
 
 
 def check_configuration(config_id, config, config_type, flag_long_rec=True):
@@ -547,12 +547,12 @@ class Configuration():
         """
 
         # create configuration group box
-        self.lay, self.group_box = pyqtoverlayer.add_group_box(
+        self.lay, self.group_box = pyqt_overlayer.add_group_box(
             self.lay_parent, position, self.type
         )
 
         # create push button for help text
-        self.button_help_show = pyqtoverlayer.add_push_button(
+        self.button_help_show = pyqt_overlayer.add_push_button(
             self.lay, (0, 0), "Help", width=100
         )
 
@@ -572,7 +572,7 @@ class Configuration():
         for ite_child, children_config_name in \
                 enumerate(children_config_name_list):
             # create push button for adding intervals
-            push_button = pyqtoverlayer.add_push_button(
+            push_button = pyqt_overlayer.add_push_button(
                 self.lay,
                 (0, 2 + ite_child),
                 children_config_name
@@ -580,7 +580,7 @@ class Configuration():
             self.button_group_children.addButton(push_button, ite_child)
 
         # create push buttons for adding configuration
-        push_button_add = pyqtoverlayer.add_push_button(
+        push_button_add = pyqt_overlayer.add_push_button(
             self.lay, (0, self.config_grid_span), "Add", width=100
         )
         self.button_group_add.addButton(push_button_add, 0)
@@ -598,12 +598,12 @@ class Configuration():
         """
 
         # create window and layout
-        self.win_help, lay = pyqtoverlayer.create_window(
+        self.win_help, lay = pyqt_overlayer.create_window(
             size=(800, 100), title="Help %s" % self.type, flag_show=False
         )
 
         # create scroll area
-        scroll_lay, _ = pyqtoverlayer.add_scroll_area(lay, (0, 0))
+        scroll_lay, _ = pyqt_overlayer.add_scroll_area(lay, (0, 0))
 
         # add label with help text
         label = QtWidgets.QLabel(help_text)
@@ -611,7 +611,7 @@ class Configuration():
         scroll_lay.addWidget(label)
 
         # add push button for closing help window
-        self.button_help_hide = pyqtoverlayer.add_push_button(
+        self.button_help_hide = pyqt_overlayer.add_push_button(
             lay, (1, 0), "Close", width=80
         )
 
@@ -658,7 +658,7 @@ class Configuration():
             if elt_nb > 1:
                 # check type
                 if elt_type == "spin":
-                    value = pyqtoverlayer.set_spin_box_table(
+                    value = pyqt_overlayer.set_spin_box_table(
                         widget.layout(), [], False
                     )[0]
 
@@ -964,12 +964,12 @@ class Configuration():
             if elt_nb > 1:
                 # check element type
                 if elt_type == "spin":
-                    pyqtoverlayer.add_spin_box_table(
+                    pyqt_overlayer.add_spin_box_table(
                         config_grid, (row_ind, col_ind), 1, elt_nb,
                         params=[elt_params]
                     )
 
-                    pyqtoverlayer.set_spin_box_table(
+                    pyqt_overlayer.set_spin_box_table(
                         config_grid.itemAtPosition(
                             row_ind, col_ind
                         ).widget().layout(),
@@ -993,7 +993,7 @@ class Configuration():
                     widget.setValue(value)
 
                 # add element to configuration grid
-                pyqtoverlayer.add_widget_to_layout(
+                pyqt_overlayer.add_widget_to_layout(
                     config_grid, widget, (row_ind, col_ind)
                 )
 
@@ -1055,7 +1055,7 @@ class Configuration():
         # check if directory contained in configuration grid
         if self.pos_dir is not None:
             # create push button for selecting directory
-            push_button_dir = pyqtoverlayer.add_push_button(
+            push_button_dir = pyqt_overlayer.add_push_button(
                 config_grid, (sub_ind, col_ind), "Change directory")
 
             # add to button group
@@ -1067,7 +1067,7 @@ class Configuration():
             col_ind += 1
 
         # create push button for deleting configuration
-        push_button_del = pyqtoverlayer.add_push_button(
+        push_button_del = pyqt_overlayer.add_push_button(
             config_grid, (sub_ind, col_ind), "Delete"
         )
 
@@ -1116,7 +1116,7 @@ class Configuration():
         # loop on configurations
         for config_key, config_list in config_dict.items():
             # create configuration grid
-            config_grid, config_group_box = pyqtoverlayer.add_group_box(
+            config_grid, config_group_box = pyqt_overlayer.add_group_box(
                 self.lay, (row_start, 0, 1, self.config_grid_span)
             )
 
@@ -1134,7 +1134,7 @@ class Configuration():
             if self.flag_key:
                 # create line edit for configuration key
                 widget = QtWidgets.QLineEdit(config_key)
-                pyqtoverlayer.add_widget_to_layout(config_grid, widget, (0, 0))
+                pyqt_overlayer.add_widget_to_layout(config_grid, widget, (0, 0))
 
                 # listen to callback
                 widget.textChanged.connect(self.config_key_changed)
@@ -1150,7 +1150,7 @@ class Configuration():
             # configuration level 2 => sub-configurations
             elif self.nb_level == 2:
                 # create push button for adding a sub-configuration
-                push_button = pyqtoverlayer.add_push_button(
+                push_button = pyqt_overlayer.add_push_button(
                     self.lay, (row_start, self.config_grid_span), "Add sub"
                 )
 
@@ -1285,7 +1285,7 @@ class Configuration():
         """
 
         # delete the configuration widgets
-        pyqtoverlayer.delete_widgets_from_layout(
+        pyqt_overlayer.delete_widgets_from_layout(
             self.lay, len(self.config_grid_list) * self.nb_level
         )
 

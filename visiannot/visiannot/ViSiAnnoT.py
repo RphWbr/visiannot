@@ -18,12 +18,12 @@ from threading import Thread
 import os
 from time import sleep
 from shutil import rmtree
-from ..tools import pyqtoverlayer
-from ..tools import pyqtgraphoverlayer
-from ..tools import datetimeconverter
-from ..tools import dataloader
-from ..tools.videoloader import get_data_video
-from ..tools.audioloader import get_audio_wave_info, convert_key_to_channel_id
+from ..tools import pyqt_overlayer
+from ..tools import pyqtgraph_overlayer
+from ..tools import datetime_converter
+from ..tools import data_loader
+from ..tools.video_loader import get_data_video
+from ..tools.audio_loader import get_audio_wave_info, convert_key_to_channel_id
 from .components.Signal import Signal
 from .components.SignalWidget import SignalWidget
 from .components.MenuBar import MenuBar
@@ -550,12 +550,12 @@ class ViSiAnnoT():
 
         # ************** create GUI application and set font **************** #
         #: (*QtWidgets.QApplication*) GUI initializer
-        self.app = pyqtgraphoverlayer.initialize_gui_and_bg_color(
+        self.app = pyqtgraph_overlayer.initialize_gui_and_bg_color(
             color=bg_color_plot
         )
 
         # set style sheet
-        pyqtoverlayer.set_style_sheet(
+        pyqt_overlayer.set_style_sheet(
             self.app, font_name, font_size, font_color, [
                 "QGroupBox", "QComboBox", "QPushButton", "QRadioButton",
                 "QLabel", "QCheckBox", "QDateTimeEdit", "QTimeEdit"
@@ -580,7 +580,7 @@ class ViSiAnnoT():
         self.lay = None
 
         # create window
-        self.win, self.lay = pyqtoverlayer.create_window(
+        self.win, self.lay = pyqt_overlayer.create_window(
             title="ViSiAnnoT", bg_color=bg_color
         )
 
@@ -808,7 +808,7 @@ class ViSiAnnoT():
         # this does not apply in case of long recording, because there are
         # other stuff to do after calling this constructor
         if not self.flag_long_rec and flag_infinite_loop:
-            pyqtoverlayer.infinite_loop_gui(self.app)
+            pyqt_overlayer.infinite_loop_gui(self.app)
 
             # close streams, delete temporary folders
             self.stop_processing()
@@ -912,7 +912,7 @@ class ViSiAnnoT():
         pos_sig[0] += 1
 
         # create scroll area
-        scroll_lay, _ = pyqtoverlayer.add_scroll_area(
+        scroll_lay, _ = pyqt_overlayer.add_scroll_area(
             self.lay, pos_sig, flag_ignore_wheel_event=True
         )
 
@@ -958,7 +958,7 @@ class ViSiAnnoT():
             )
 
             # set temporal ticks and X axis range
-            pyqtgraphoverlayer.set_temporal_ticks(
+            pyqtgraph_overlayer.set_temporal_ticks(
                 wid, self.nb_ticks, (first_frame_ms, last_frame_ms),
                 self.beginning_datetime
             )
@@ -1036,7 +1036,7 @@ class ViSiAnnoT():
                             rmtree(annot_path)
 
                 # check if file of events annotation
-                elif ext == ".txt" and ("datetime" in name or "frame" in name):
+                elif ext == ".txt":
                     # check if empty file
                     if os.path.getsize(annot_path) == 0:
                         # remove empty file
@@ -1045,23 +1045,18 @@ class ViSiAnnoT():
             # check if events annotation
             if self.wid_annotevent is not None:
                 # update the list of files/folders in the annotation directory
-                annot_path_list = sorted(os.listdir(self.annot_dir))
+                annot_path_list = os.listdir(self.annot_dir)
 
                 # get file name of events annotation of protected label
-                protected_name_0 = "%s_%s-datetime.txt" % (
-                    self.wid_annotevent.file_name_base,
-                    self.wid_annotevent.protected_label
-                )
-                protected_name_1 = "%s_%s-frame.txt" % (
+                protected_name = "%s_%s.txt" % (
                     self.wid_annotevent.file_name_base,
                     self.wid_annotevent.protected_label
                 )
 
                 # check if empty annotation directory (or only filled with
                 # events annotation of protected label)
-                if len(annot_path_list) == 0 or len(annot_path_list) == 2 and \
-                    annot_path_list[0] == protected_name_0 and \
-                        annot_path_list[1] == protected_name_1:
+                if len(annot_path_list) == 0 or len(annot_path_list) == 1 and \
+                        annot_path_list[0] == protected_name:
                     rmtree(self.annot_dir)
 
         # close videos
@@ -1286,7 +1281,7 @@ class ViSiAnnoT():
             )
 
             # X axis ticks
-            pyqtgraphoverlayer.set_temporal_ticks(
+            pyqtgraph_overlayer.set_temporal_ticks(
                 wid, self.nb_ticks, (first_frame_ms, last_frame_ms),
                 self.beginning_datetime
             )
@@ -1329,7 +1324,7 @@ class ViSiAnnoT():
         :type region_list: list
         """
 
-        pyqtgraphoverlayer.remove_item_in_widgets(
+        pyqtgraph_overlayer.remove_item_in_widgets(
             [self.wid_progress] + self.wid_sig_list, region_list
         )
 
@@ -1360,7 +1355,7 @@ class ViSiAnnoT():
         region_list = []
 
         # display region in progress bar
-        region = pyqtgraphoverlayer.add_region_to_widget(
+        region = pyqtgraph_overlayer.add_region_to_widget(
             bound_1, bound_2, self.wid_progress, color
         )
 
@@ -1373,7 +1368,7 @@ class ViSiAnnoT():
             bound_2_ms = self.get_frame_id_in_ms(bound_2)
 
             # plot regions in signal widgets
-            region = pyqtgraphoverlayer.add_region_to_widget(
+            region = pyqtgraph_overlayer.add_region_to_widget(
                 bound_1_ms, bound_2_ms, wid, color
             )
 
@@ -1568,7 +1563,7 @@ class ViSiAnnoT():
             self.region_zoom_list = []
 
             # remove zoom regions description
-            pyqtgraphoverlayer.remove_item_in_widgets(
+            pyqtgraph_overlayer.remove_item_in_widgets(
                 self.wid_sig_list, self.region_zoom_text_item_list
             )
 
@@ -1811,7 +1806,7 @@ class ViSiAnnoT():
 
             else:
                 # get beginning datetime of video file
-                beginning_datetime = datetimeconverter.get_datetime_from_path(
+                beginning_datetime = datetime_converter.get_datetime_from_path(
                     path_video, delimiter, pos, fmt, time_zone=self.time_zone
                 )
 
@@ -1890,20 +1885,20 @@ class ViSiAnnoT():
                 self.fps = self.get_data_frequency(path, freq)
 
             # get beginning date-time
-            self.beginning_datetime = datetimeconverter.get_datetime_from_path(
+            self.beginning_datetime = datetime_converter.get_datetime_from_path(
                 path, delimiter, pos, fmt, time_zone=self.time_zone
             )
 
             # get data path (in case not synchronized)
             if self.flag_long_rec and not self.flag_synchro:
                 # get first synchronization file content
-                lines = dataloader.get_txt_lines(path)
+                lines = data_loader.get_txt_lines(path)
 
                 # get first signal file
                 path = lines[1].replace("\n", "")
 
             # get number of frames
-            self.nframes = dataloader.get_nb_samples_generic(path, key_data)
+            self.nframes = data_loader.get_nb_samples_generic(path, key_data)
 
             # check if there is data indeed
             if self.nframes == 0:
@@ -1968,7 +1963,7 @@ class ViSiAnnoT():
                             # synchro OK
                             else:
                                 # load intervals data
-                                interval = dataloader.get_data_interval(
+                                interval = data_loader.get_data_interval(
                                     path_interval, key_interval
                                 )
 
@@ -1991,7 +1986,7 @@ class ViSiAnnoT():
                     # get frequency
                     freq_data = self.get_data_frequency(path_data, freq_data)
 
-                    # keyword arguments for dataloader.get_data_generic
+                    # keyword arguments for data_loader.get_data_generic
                     kwargs = {}
 
                     if os.path.splitext(path_data)[1] == ".wav":
@@ -2000,7 +1995,7 @@ class ViSiAnnoT():
                         )
 
                     # load data
-                    data = dataloader.get_data_generic(
+                    data = data_loader.get_data_generic(
                         path_data, key_data, **kwargs
                     )
 
@@ -2041,7 +2036,7 @@ class ViSiAnnoT():
             _, freq, _ = get_audio_wave_info(path)
 
         elif isinstance(freq, str):
-            freq = dataloader.get_attribute_generic(path, freq)
+            freq = data_loader.get_attribute_generic(path, freq)
 
         elif freq == -1:
             freq = self.fps
@@ -2108,7 +2103,7 @@ class ViSiAnnoT():
         """
 
         # read temporary file
-        lines = dataloader.get_txt_lines(path)
+        lines = data_loader.get_txt_lines(path)
 
         # define empty data
         if len(lines) == 0:
@@ -2163,7 +2158,7 @@ class ViSiAnnoT():
                     # check if 2D data (signal not regularly sampled)
                     if freq_data == 0:
                         # get first column (samples timestamps)
-                        next_data_ts = dataloader.get_data_generic(
+                        next_data_ts = data_loader.get_data_generic(
                             data_path, key=key_data, slicing=("col", 0)
                         )
 
@@ -2249,13 +2244,13 @@ class ViSiAnnoT():
                     if flag_interval:
                         # load data with slicing
                         next_data = \
-                            dataloader.get_data_interval_as_time_series(
+                            data_loader.get_data_interval_as_time_series(
                                 data_path, **kwargs
                             )
 
                     else:
                         # load data with slicing
-                        next_data = dataloader.get_data_generic(
+                        next_data = data_loader.get_data_generic(
                             data_path, **kwargs
                         )
 
@@ -2279,7 +2274,7 @@ class ViSiAnnoT():
 
             # convert intervals data from time series to intervals
             if flag_interval:
-                data = dataloader.convert_time_series_to_intervals(data, 1)
+                data = data_loader.convert_time_series_to_intervals(data, 1)
 
         return data, freq_data
 

@@ -1,18 +1,18 @@
-.. _pyqtgraphoverlayer:
+.. _pyqtgraph_overlayer:
 
 ==============================
-User guide: pyqtgraphoverlayer
+User guide: pyqtgraph_overlayer
 ==============================
 
-See :ref:`sec-pyqtoverlayer` for details about window creation.
+See :ref:`sec-pyqt_overlayer` for details about window creation.
 
 Basic 2D plot
 =============
 
 Here is an example for basic 2D plot::
 
-	from visiannot.tools.pyqtoverlayer import create_window, infinite_loop_gui
-	from visiannot.tools import pyqtgraphoverlayer
+	from visiannot.tools.pyqt_overlayer import create_window, infinite_loop_gui
+	from visiannot.tools import pyqtgraph_overlayer
 	import numpy as np
 
 	###################
@@ -29,17 +29,17 @@ Here is an example for basic 2D plot::
 	###########
 	# display #
 	###########
-	app = pyqtgraphoverlayer.initialize_gui_and_bg_color()
+	app = pyqtgraph_overlayer.initialize_gui_and_bg_color()
 
 	# create window
 	win, lay = create_window()
 
 	# add widget
-	wid = pyqtgraphoverlayer.create_widget(lay, (0, 0))
+	wid = pyqtgraph_overlayer.create_widget(lay, (0, 0))
 
 	# add plot
-	pyqtgraphoverlayer.add_plot_to_widget(wid, data_1)
-	pyqtgraphoverlayer.add_plot_to_widget(
+	pyqtgraph_overlayer.add_plot_to_widget(wid, data_1)
+	pyqtgraph_overlayer.add_plot_to_widget(
 	    wid, data_2,
 	    plot_style={'pen': {'color': 'm', 'width': 2},
 	                'symbol': 'o', 'symbolPen': 'r', 'symbolBrush': 'r'}
@@ -53,14 +53,14 @@ which renders the window as shown below.
 
   Example of plot
 
-The function :func:`.initialize_gui_and_bg_color` calls the function :func:`.pyqtoverlayer.initialize_gui` and sets the background color to white by default (otherwise Pyqtgraph sets the background color to black). After having creating the window and the layout, we create the 2D widget for plotting, as an instance of pyqtgraph.PlotWidget. Then, we add plots to this widget. Data can be stored in two ways, either in a 1D numpy array or in a 2D numpy array. In the first case, the value on the X axis is the array index. In the second case, the shape is :math:`(n, 2)` where each line corresponds to one point with X/Y coordinates. The keyword argument ``plot_style`` allows to change the plot style. By default it is a blue line.
+The function :func:`.initialize_gui_and_bg_color` calls the function :func:`.pyqt_overlayer.initialize_gui` and sets the background color to white by default (otherwise Pyqtgraph sets the background color to black). After having creating the window and the layout, we create the 2D widget for plotting, as an instance of pyqtgraph.PlotWidget. Then, we add plots to this widget. Data can be stored in two ways, either in a 1D numpy array or in a 2D numpy array. In the first case, the value on the X axis is the array index. In the second case, the shape is :math:`(n, 2)` where each line corresponds to one point with X/Y coordinates. The keyword argument ``plot_style`` allows to change the plot style. By default it is a blue line.
 
-**pyqtgraphoverlayer** provides the function :func:`.basic_plot` that gathers the three steps. The following code is equivalent to above::
+**pyqtgraph_overlayer** provides the function :func:`.basic_plot` that gathers the three steps. The following code is equivalent to above::
 
-	app = pyqtgraphoverlayer.initialize_gui_and_bg_color()
+	app = pyqtgraph_overlayer.initialize_gui_and_bg_color()
 
-	win, _, wid, _ = pyqtgraphoverlayer.basic_plot(data_1)
-	pyqtgraphoverlayer.add_plot_to_widget(
+	win, _, wid, _ = pyqtgraph_overlayer.basic_plot(data_1)
+	pyqtgraph_overlayer.add_plot_to_widget(
 	    wid, data_2,
 	    plot_style={'pen': {'color': 'm', 'width': 2},
 	                'symbol': 'o', 'symbolPen': 'r', 'symbolBrush': 'r'}
@@ -93,8 +93,8 @@ Legend
 
 Taking the same example, here is how to add a legend::
 
-	from visiannot.tools.pyqtoverlayer import create_window, infinite_loop_gui
-	from visiannot.tools import pyqtgraphoverlayer
+	from visiannot.tools.pyqt_overlayer import create_window, infinite_loop_gui
+	from visiannot.tools import pyqtgraph_overlayer
 	import numpy as np
 
 	###################
@@ -111,17 +111,17 @@ Taking the same example, here is how to add a legend::
 	###########
 	# display #
 	###########
-	app = pyqtgraphoverlayer.initialize_gui_and_bg_color()
+	app = pyqtgraph_overlayer.initialize_gui_and_bg_color()
 
 	# create window
 	win, lay = create_window(size=(800, 500))
 
 	# add widget
-	wid = pyqtgraphoverlayer.create_widget(lay, (0, 0))
+	wid = pyqtgraph_overlayer.create_widget(lay, (0, 0))
 
 	# add plot
-	plot_1 = pyqtgraphoverlayer.add_plot_to_widget(wid, data_1)
-	plot_2 = pyqtgraphoverlayer.add_plot_to_widget(
+	plot_1 = pyqtgraph_overlayer.add_plot_to_widget(wid, data_1)
+	plot_2 = pyqtgraph_overlayer.add_plot_to_widget(
 	    wid, data_2,
 	    plot_style={'pen': {'color': 'm', 'width': 2},
 	                'symbol': 'o', 'symbolPen': 'r', 'symbolBrush': 'r'}
@@ -129,7 +129,7 @@ Taking the same example, here is how to add a legend::
 
 	# add legend
 	legend_dict = {plot_1: "Plot 1", plot_2: "Plot 2"}
-	pyqtgraphoverlayer.add_legend_to_widget(wid, legend_dict, offset=(50, 80))
+	pyqtgraph_overlayer.add_legend_to_widget(wid, legend_dict, offset=(50, 80))
 
 	infinite_loop_gui(app)
 
@@ -139,7 +139,7 @@ which renders the window as shown below.
 
   Example of basic 2D plot with legend
 
-By default, the legend is inside the widget at the bottom right corner. With the keyword argument ``offset`` we can change this position inside the widget. It also possible to put the legend in a separate widget with the following line: ``pyqtgraphoverlayer.add_legend_to_widget(wid, legend_dict, position='right', legend_wid_size=(50, 0))``. It renders the following window.
+By default, the legend is inside the widget at the bottom right corner. With the keyword argument ``offset`` we can change this position inside the widget. It also possible to put the legend in a separate widget with the following line: ``pyqtgraph_overlayer.add_legend_to_widget(wid, legend_dict, position='right', legend_wid_size=(50, 0))``. It renders the following window.
 
 .. figure:: images/pyqtgr_ex2bis.png
 
@@ -150,8 +150,8 @@ Customization of axes
 =====================
 It is possible to customize the aspect of the ticks and ticks text of the axes. First, in the function :func:`.create_widget`, the keyword argument ``axes_label_dict`` allows to choose which axes to show and to associate a label. Second, the function :func:`.set_ticks_text_style` allows to change the color of the axis ticks, ticks text and label. Here is an example::
 
-	from visiannot.tools.pyqtoverlayer import create_window, infinite_loop_gui
-	from visiannot.tools import pyqtgraphoverlayer
+	from visiannot.tools.pyqt_overlayer import create_window, infinite_loop_gui
+	from visiannot.tools import pyqtgraph_overlayer
 	import numpy as np
 
 	###################
@@ -164,13 +164,13 @@ It is possible to customize the aspect of the ticks and ticks text of the axes. 
 	###########
 	# display #
 	###########
-	app = pyqtgraphoverlayer.initialize_gui_and_bg_color()
+	app = pyqtgraph_overlayer.initialize_gui_and_bg_color()
 
 	# create window
 	win, lay = create_window(size=(800, 500))
 
 	# add widget
-	wid = pyqtgraphoverlayer.create_widget(
+	wid = pyqtgraph_overlayer.create_widget(
 	    lay, (0, 0), widget_title="Simple plot",
 	    title_style={'color': '#0000', 'size': '16pt'},
 	    axes_label_dict={
@@ -180,7 +180,7 @@ It is possible to customize the aspect of the ticks and ticks text of the axes. 
 	)
 
 	# add plot
-	pyqtgraphoverlayer.add_plot_to_widget(wid, data_1)
+	pyqtgraph_overlayer.add_plot_to_widget(wid, data_1)
 
 	# set ticks on X axis
 	x_ticks_list = [[(i, i * 2 + 3) for i in range(len(data_1))]]
@@ -197,7 +197,7 @@ which renders the window as shown below.
 
 We have also used the keyword arguments ``widget_title`` and ``title_style`` in the function :func:`.create_widget` in order to add a title to the widget. The default color for the axes is grey. We defined a custom color for the label of the X axis. In order to change the aspect of the bottom axis, we add the following line before the infinite loop::
 
-	pyqtgraphoverlayer.set_ticks_text_style(bottom_axis, color='r', size=14, offset=4)
+	pyqtgraph_overlayer.set_ticks_text_style(bottom_axis, color='r', size=14, offset=4)
 
 It renders the following window. We note that it overwrites the color of the bottom axis label.
 
@@ -210,8 +210,8 @@ Scatter plot and text item
 ==========================
 Here is an example of a scatter plot with a text item associated to each point::
 
-	from visiannot.tools.pyqtoverlayer import create_window, infinite_loop_gui
-	from visiannot.tools import pyqtgraphoverlayer
+	from visiannot.tools.pyqt_overlayer import create_window, infinite_loop_gui
+	from visiannot.tools import pyqtgraph_overlayer
 	import numpy as np
 
 	###################
@@ -229,16 +229,16 @@ Here is an example of a scatter plot with a text item associated to each point::
 	###########
 	# display #
 	###########
-	app = pyqtgraphoverlayer.initialize_gui_and_bg_color()
+	app = pyqtgraph_overlayer.initialize_gui_and_bg_color()
 
 	# create window
 	win, lay = create_window(size=(800, 500))
 
 	# add widget
-	wid = pyqtgraphoverlayer.create_widget(lay, (0, 0))
+	wid = pyqtgraph_overlayer.create_widget(lay, (0, 0))
 
 	# add plot
-	pyqtgraphoverlayer.add_plot_to_widget(
+	pyqtgraph_overlayer.add_plot_to_widget(
 	    wid, data,
 	    plot_style={'pen': None, "symbol": 's', "symbolPen": 'r', "symbolBrush": 'r'}
 	)
@@ -249,7 +249,7 @@ Here is an example of a scatter plot with a text item associated to each point::
 	    pos = data[i]
 
 	    # add text item
-	    pyqtgraphoverlayer.add_text_item_to_widget(
+	    pyqtgraph_overlayer.add_text_item_to_widget(
 	        wid, pos, opts_text_dict: {"text": text, "anchor": (0, 0)}
 	    )
 
@@ -267,8 +267,8 @@ Plot with mean/std
 
 Let assume that we retrieve the temporal evolution of a value for each subject of a dataset. The function :func:`.add_mean_std_plot_to_widget` allows to display the temporal evolution of the mean and standard deviation along the subjects. Here is an example::
 
-	from visiannot.tools.pyqtoverlayer import create_window, infinite_loop_gui
-	from visiannot.tools import pyqtgraphoverlayer
+	from visiannot.tools.pyqt_overlayer import create_window, infinite_loop_gui
+	from visiannot.tools import pyqtgraph_overlayer
 	import numpy as np
 
 	###################
@@ -299,16 +299,16 @@ Let assume that we retrieve the temporal evolution of a value for each subject o
 	###########
 	# display #
 	###########
-	app = pyqtgraphoverlayer.initialize_gui_and_bg_color()
+	app = pyqtgraph_overlayer.initialize_gui_and_bg_color()
 
 	# create window
 	win, lay = create_window(size=(800, 500))
 
 	# add widget
-	wid = pyqtgraphoverlayer.create_widget(lay, (0, 0))
+	wid = pyqtgraph_overlayer.create_widget(lay, (0, 0))
 
 	# add mean/std plot
-	pyqtgraphoverlayer.add_mean_std_plot_to_widget(
+	pyqtgraph_overlayer.add_mean_std_plot_to_widget(
 	    wid, data_mean, data_std, n_population_list=n_population_list
 	)
 
@@ -327,8 +327,8 @@ Animated plot
 =============
 It is possible to update the content of the widget in a for loop in order to get an animated plot. In this case, we need to add the line ``app.processEvents()`` at the end of the for loop. Here is an example::
 
-	from visiannot.tools.pyqtoverlayer import create_window, infinite_loop_gui
-	from visiannot.tools import pyqtgraphoverlayer
+	from visiannot.tools.pyqt_overlayer import create_window, infinite_loop_gui
+	from visiannot.tools import pyqtgraph_overlayer
 	import numpy as np
 	from time import sleep
 
@@ -343,17 +343,17 @@ It is possible to update the content of the widget in a for loop in order to get
 	###########
 	# display #
 	###########
-	app = pyqtgraphoverlayer.initialize_gui_and_bg_color()
+	app = pyqtgraph_overlayer.initialize_gui_and_bg_color()
 
 	# create window
 	win, lay = create_window(size=(800, 500))
 
 	# add widget
-	wid = pyqtgraphoverlayer.create_widget(lay, (0, 0))
+	wid = pyqtgraph_overlayer.create_widget(lay, (0, 0))
 
 	# loop on trials
 	for data in data_array:
-	    pyqtgraphoverlayer.add_plot_to_widget(wid, data, flag_clear=True)
+	    pyqtgraph_overlayer.add_plot_to_widget(wid, data, flag_clear=True)
 	    sleep(1)
 	    app.processEvents()
 
@@ -363,8 +363,8 @@ We define 10 arrays to be plotted sequentially. With the function ``sleep``, we 
 
 It is also possible to use callback management in order to control the animation with keyboard interaction, as in the following example::
 
-	from visiannot.tools.pyqtoverlayer import create_window, infinite_loop_gui
-	from visiannot.tools import pyqtgraphoverlayer
+	from visiannot.tools.pyqt_overlayer import create_window, infinite_loop_gui
+	from visiannot.tools import pyqtgraph_overlayer
 	import numpy as np
 	from PyQt5 import QtCore
 
@@ -381,7 +381,7 @@ It is also possible to use callback management in order to control the animation
 	        # initialize index of trial
 	        self.trial_id = 0
 
-	        self.app = pyqtgraphoverlayer.initialize_gui_and_bg_color()
+	        self.app = pyqtgraph_overlayer.initialize_gui_and_bg_color()
 
 	        # create window
 	        self.win, self.lay = create_window(size=(800, 500))
@@ -389,12 +389,12 @@ It is also possible to use callback management in order to control the animation
 	        # add widget
 	        self.pattern_title = "Trial %d"
 	        widget_title = self.pattern_title % self.trial_id
-	        self.wid = pyqtgraphoverlayer.create_widget(
+	        self.wid = pyqtgraph_overlayer.create_widget(
 	            self.lay, (0, 0), widget_title=widget_title
 	        )
 
 	        # initialize plot
-	        self.plot = pyqtgraphoverlayer.add_plot_to_widget(
+	        self.plot = pyqtgraph_overlayer.add_plot_to_widget(
 	            self.wid, self.data_array[self.trial_id]
 	        )
 
@@ -439,8 +439,8 @@ Mouse click interaction
 =======================
 Callback management can be used to define a user interaction with mouse click, as in the following example::
 
-	from visiannot.tools.pyqtoverlayer import create_window, infinite_loop_gui
-	from visiannot.tools import pyqtgraphoverlayer
+	from visiannot.tools.pyqt_overlayer import create_window, infinite_loop_gui
+	from visiannot.tools import pyqtgraph_overlayer
 	import numpy as np
 	from pyqtgraph import LinearRegionItem
 
@@ -476,16 +476,16 @@ Callback management can be used to define a user interaction with mouse click, a
 	# display #
 	###########
 
-	app = pyqtgraphoverlayer.initialize_gui_and_bg_color()
+	app = pyqtgraph_overlayer.initialize_gui_and_bg_color()
 
 	# create window
 	win, lay = create_window(size=(800, 800))
 
 	# add widget with full signal
-	wid_1 = pyqtgraphoverlayer.create_widget(lay, (0, 0))
+	wid_1 = pyqtgraph_overlayer.create_widget(lay, (0, 0))
 
 	# initialize plot
-	pyqtgraphoverlayer.add_plot_to_widget(wid_1, data_array)
+	pyqtgraph_overlayer.add_plot_to_widget(wid_1, data_array)
 
 	# plot region
 	region = LinearRegionItem(
@@ -495,12 +495,12 @@ Callback management can be used to define a user interaction with mouse click, a
 	wid_1.addItem(region)
 
 	# add widget with zoomed signal
-	wid_2 = pyqtgraphoverlayer.create_widget(lay, (1, 0))
+	wid_2 = pyqtgraph_overlayer.create_widget(lay, (1, 0))
 
 	# initialize plot
 	ind_0 = int(region.getRegion()[0])
 	ind_1 = int(region.getRegion()[1])
-	plot_2 = pyqtgraphoverlayer.add_plot_to_widget(wid_2, data_array[ind_0:ind_1 + 1])
+	plot_2 = pyqtgraph_overlayer.add_plot_to_widget(wid_2, data_array[ind_0:ind_1 + 1])
 
 	# listen to callback for mouse click
 	callback_lambda_1 = lambda x: mouseClicked(x, wid_1)
@@ -527,8 +527,8 @@ Image display
 =============
 In the following example, a random black & white image is displayed::
 
-	from visiannot.tools.pyqtoverlayer import create_window, infinite_loop_gui
-	from visiannot.tools import pyqtgraphoverlayer
+	from visiannot.tools.pyqt_overlayer import create_window, infinite_loop_gui
+	from visiannot.tools import pyqtgraph_overlayer
 	import numpy as np
 
 
@@ -544,19 +544,19 @@ In the following example, a random black & white image is displayed::
 	# display #
 	###########
 
-	app = pyqtgraphoverlayer.initialize_gui_and_bg_color()
+	app = pyqtgraph_overlayer.initialize_gui_and_bg_color()
 
 	# create window
 	win, lay = create_window(size=(800, 800))
 
 	# add widget with image
-	pyqtgraphoverlayer.create_widget_image(lay, (0, 0), im=im_array)
+	pyqtgraph_overlayer.create_widget_image(lay, (0, 0), im=im_array)
 
 	infinite_loop_gui(app)
 
 Mouse interaction is enabled in order to zoom and navigate in the image. If we need to disable this behavior, we can use the function :func:`.create_widget_logo` instead of :func:`.create_widget_image`.
 
-The function :func:`.basic_image_plot` is also provided for convenience. The two lines for creating the window and the widget are equivalent to this line: ``win, _, _, _ = pyqtgraphoverlayer.basic_image_plot(im_array, size=(800, 800))``.
+The function :func:`.basic_image_plot` is also provided for convenience. The two lines for creating the window and the widget are equivalent to this line: ``win, _, _, _ = pyqtgraph_overlayer.basic_image_plot(im_array, size=(800, 800))``.
 
 
 Color map
@@ -564,8 +564,8 @@ Color map
 
 Here is an example of a color map along with a color bar::
 
-	from visiannot.tools.pyqtoverlayer import infinite_loop_gui
-	from visiannot.tools import pyqtgraphoverlayer
+	from visiannot.tools.pyqt_overlayer import infinite_loop_gui
+	from visiannot.tools import pyqtgraph_overlayer
 	import numpy as np
 
 
@@ -581,19 +581,19 @@ Here is an example of a color map along with a color bar::
 	# display #
 	###########
 
-	app = pyqtgraphoverlayer.initialize_gui_and_bg_color()
+	app = pyqtgraph_overlayer.initialize_gui_and_bg_color()
 
 	# create window with image
-	win, lay, wid, _ = pyqtgraphoverlayer.basic_image_plot(im_array, size=(800, 800))
+	win, lay, wid, _ = pyqtgraph_overlayer.basic_image_plot(im_array, size=(800, 800))
 
 	# create color map
-	color_map, lut = pyqtgraphoverlayer.set_color_map(
+	color_map, lut = pyqtgraph_overlayer.set_color_map(
 	    [-5, 5],
 	    [(0, 0, 0), (255, 255, 255)]
 	)
 
 	# create color bar
-	pyqtgraphoverlayer.create_widget_color_bar(lay, (0, 1), color_map, lut, [-5, 0, 5])
+	pyqtgraph_overlayer.create_widget_color_bar(lay, (0, 1), color_map, lut, [-5, 0, 5])
 
 	infinite_loop_gui(app)
 

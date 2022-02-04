@@ -11,9 +11,9 @@ Module defining classes for creating a widget with a logo image on which it is
 possible to click on to activate an action
 """
 
-from ...tools.pyqtgraphoverlayer import create_widget_logo
-from ...tools.videoloader import read_image
-from ...tools.dataloader import get_working_directory
+from ...tools.pyqtgraph_overlayer import create_widget_logo
+from ...tools.video_loader import read_image
+from ...tools.data_loader import get_working_directory
 
 
 # get directory of the module

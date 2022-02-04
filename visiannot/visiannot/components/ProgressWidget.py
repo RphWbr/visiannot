@@ -13,10 +13,10 @@ Module defining :class:`.ProgressWidget`
 
 import pyqtgraph as pg
 from PyQt5 import QtCore
-from ...tools.pyqtgraphoverlayer import set_ticks_text_style, \
+from ...tools.pyqtgraph_overlayer import set_ticks_text_style, \
     set_temporal_ticks
-from ...tools.pyqtoverlayer import add_widget_to_layout
-from ...tools.datetimeconverter import convert_frame_to_string, \
+from ...tools.pyqt_overlayer import add_widget_to_layout
+from ...tools.datetime_converter import convert_frame_to_string, \
     convert_frame_to_absolute_datetime_string
 
 
@@ -259,7 +259,7 @@ class ProgressWidget(pg.PlotWidget):
         )
 
         frame_id_string = convert_frame_to_absolute_datetime_string(
-            temporal_position, fps, beginning_datetime
+            temporal_position, fps, beginning_datetime, "%Y-%m-%dT%H:%M:%S.%f"
         )
 
         self.setTitle(
@@ -326,7 +326,7 @@ class ProgressWidget(pg.PlotWidget):
 
         Connected to the signal ``sigPlotChanged`` of the scatter plot item of
         :attr:`.wid_progress` (accessed with the method
-        :meth:`graphicsoverlayer.pyqtgraphoverlayer.ProgressWidget.getProgressPlot`).
+        :meth:`graphicsoverlayer.pyqtgraph_overlayer.ProgressWidget.getProgressPlot`).
         """
 
         # check if dragging

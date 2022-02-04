@@ -15,9 +15,9 @@ See https://pyqtgraph.readthedocs.io/en/latest
 
 import pyqtgraph as pg
 from PyQt5.QtGui import QFont
-from .pyqtoverlayer import create_window, add_widget_to_layout, initialize_gui
+from .pyqt_overlayer import create_window, add_widget_to_layout, initialize_gui
 import numpy as np
-from .datetimeconverter import convert_frame_to_absolute_time_string, \
+from .datetime_converter import convert_frame_to_absolute_time_string, \
     convert_msec_to_absolute_time_string
 
 

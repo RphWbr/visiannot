@@ -43,16 +43,12 @@ We want the annotations to be stored as follows (two labels, "Label1" and "Label
     |__ Annnotations
         |__ Subject01
             |__ Subject01_2021-01-01T00-00-00
-                |__ Subject01_2021-01-01T00-00-00_Label1-datetime.txt
-                |__ Subject01_2021-01-01T00-00-00_Label1-frame.txt
-                |__ Subject01_2021-01-01T00-00-00_Label2-datetime.txt
-                |__ Subject01_2021-01-01T00-00-00_Label2-frame.txt
+                |__ Subject01_2021-01-01T00-00-00_Label1.txt
+                |__ Subject01_2021-01-01T00-00-00_Label2.txt
         |__ Subject02
             |__ Subject02_2021-01-03T01-00-00
-                |__ Subject02_2021-01-03T01-00-00_Label1-datetime.txt
-                |__ Subject02_2021-01-03T01-00-00_Label1-frame.txt
-                |__ Subject02_2021-01-03T01-00-00_Label2-datetime.txt
-                |__ Subject02_2021-01-03T01-00-00_Label2-frame.txt
+                |__ Subject02_2021-01-03T01-00-00_Label1.txt
+                |__ Subject02_2021-01-03T01-00-00_Label2.txt
 
 When we change subject and/or recording, we need to update the following fields in the configuration file (see :ref:`configuration`):
 

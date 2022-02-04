@@ -13,13 +13,12 @@ Module defining :class:`.AnnotEventWidget`
 from os.path import isdir, basename, isfile
 from os import makedirs
 from PyQt5 import QtWidgets, QtCore
-from ...tools import pyqtoverlayer
-from ...tools.dataloader import get_txt_lines
-from ...tools import datetimeconverter
-from ...tools.pyqtgraphoverlayer import remove_item_in_widgets
+from ...tools import pyqt_overlayer
+from ...tools.data_loader import get_txt_lines
+from ...tools import datetime_converter
+from ...tools.pyqtgraph_overlayer import remove_item_in_widgets
 import numpy as np
 from datetime import timedelta
-from ...tools.annotations import read_annotation
 
 
 class AnnotEventWidget():
@@ -45,6 +44,13 @@ class AnnotEventWidget():
         :type flag_annot_overlap: bool
         :param kwargs: keyword arguments of :meth:`.create_widget`
         """
+
+        #: (*str*) Text for empty annotation timestamp next to push buttons
+        #: "Start" and "Stop"
+        self.empty_annotation = "YYYY-MM-DDThh:mm:ss.ssssss"
+
+        #: (*str*) Datetime string format of the annotations timestamps
+        self.timestamp_format = "%Y-%m-%dT%H:%M:%S.%f"
 
         #: (*str*) Directory where the annotations are saved
         self.annot_dir = annot_dir
@@ -91,18 +97,11 @@ class AnnotEventWidget():
 
         #: (*numpy array*) Array with unsaved annotated event
         #:
-        #: Shape :math:`(n_{label}, 2, 2)`, where :math:`n_{label}` is the
-        #: length of :attr:`.label_list`. For a given label with index ``n`` in
-        #: :attr:`.label_list`, the sub-array
-        #: ``self.annot_array[n]`` is organized as follows:
-        #:
-        #: =====================  ===============================================
-        #: start datetime string  start frame index in the format "recId_frameId"
-        #: end datetime string    end frame index in the format "recId_frameId"
-        #: =====================  ===============================================
-        self.annot_array = np.zeros(
-            (len(self.label_list), 2, 2), dtype=object
-        )
+        #: Shape :math:`(n_{label}, 2)`, where :math:`n_{label}` is the
+        #: length of :attr:`.label_list`. Each row corresponds to a label
+        #: and is composed of the beginning datetime and ending datetime of
+        #: the current annotation not saved yet.
+        self.annot_array = np.zeros((len(self.label_list), 2), dtype=object)
 
         #: (*dict*) Events annotations descriptions to be displayed
         #:
@@ -117,23 +116,10 @@ class AnnotEventWidget():
         #:        corresponds to one signal widget
         self.description_dict = {}
 
-        #: (*list*) Way of storing events annotations
-        #:
-        #: Two elements:
-        #:
-        #: - ``"datetime"``: datetime string in the format
-        #:   ``%Y-%M-%DT%h-%m-%s.%ms``
-        #: - ``"frame"``: recId_frameId
-        self.annot_type_list = ["datetime", "frame"]
-
         if len(self.label_list) > 0:
-            #: (*list*) Files names of events annotation
-            #:
-            #: Same length as :attr:`.annot_type_list`, there is
-            #: one file for each annotation type.
-            self.path_list = self.get_path_list(
-                self.label_list[0]
-            )
+            #: (*list*) Path to the annotation file of the currently selected
+            #: label
+            self.path = self.get_path(self.label_list[0])
 
             # create directory if necessary
             if not isdir(self.annot_dir):
@@ -144,7 +130,7 @@ class AnnotEventWidget():
             self.create_annot_duration(visi)
 
         else:
-            self.path_list = []
+            self.path = None
 
         #: (*int*) Index of the currently selected label, with respect to the
         #: list :attr:`.label_list`
@@ -252,30 +238,30 @@ class AnnotEventWidget():
         """
 
         # create group box
-        grid, _ = pyqtoverlayer.add_group_box(
+        grid, _ = pyqt_overlayer.add_group_box(
             lay, widget_position, title="Events annotation"
         )
 
         # create widget with radio buttons (annotation labels)
         _, _, self.button_group_radio_label = \
-            pyqtoverlayer.add_widget_button_group(
+            pyqt_overlayer.add_widget_button_group(
                 grid, (0, 0, 1, 2), self.label_list,
                 color_list=self.color_list,
                 box_title="Current label selection", nb_table=nb_table
             )
 
-        # get number of annotations already stored (default first label)
-        if isfile(self.path_list[0]):
-            lines = get_txt_lines(self.path_list[0])
-            nb_annot = len(lines)
+        # get number of annotations already stored
+        if isfile(self.path):
+            nb_annot = len(get_txt_lines(self.path))
+
         else:
             nb_annot = 0
 
         # create push buttons with a text next to it
         button_text_list = ["Start", "Stop", "Add", "Delete last", "Display"]
         push_text_list = [
-            "YYYY-MM-DD hh:mm:ss.sss",
-            "YYYY-MM-DD hh:mm:ss.sss",
+            self.empty_annotation,
+            self.empty_annotation,
             "Nb: %d" % nb_annot,
             "",
             "On"
@@ -285,7 +271,7 @@ class AnnotEventWidget():
             button_text_list, push_text_list
         )):
             # add push button
-            push_button = pyqtoverlayer.add_push_button(
+            push_button = pyqt_overlayer.add_push_button(
                 grid, (1 + ite_button, 0), text,
                 flag_enable_key_interaction=False
             )
@@ -302,7 +288,7 @@ class AnnotEventWidget():
 
         # create widget with radio buttons (display options)
         _, _, self.button_group_radio_disp = \
-            pyqtoverlayer.add_widget_button_group(
+            pyqt_overlayer.add_widget_button_group(
                 grid, (2 + ite_button, 0, 1, 2),
                 ["Current label", "All labels", "Custom (below)"],
                 box_title="Display mode"
@@ -310,7 +296,7 @@ class AnnotEventWidget():
 
         # create check boxes with labels
         _, _, self.button_group_check_custom = \
-            pyqtoverlayer.add_widget_button_group(
+            pyqt_overlayer.add_widget_button_group(
                 grid, (3 + ite_button, 0, 1, 2), self.label_list,
                 color_list=self.color_list, box_title="Custom display",
                 button_type="check_box", nb_table=nb_table
@@ -326,27 +312,18 @@ class AnnotEventWidget():
     # *********************************************************************** #
 
 
-    def get_path_list(self, label):
+    def get_path(self, label):
         """
-        Gets the path of the annotation files corresponding to the input label
+        Gets path to the annotation file corresponding to the input label
 
         :param label: events annotation label
         :type label: str
 
-        :returns: paths of the annotation files, each element corresponds to an
-            annotation type (see :attr:`.annot_type_list`)
-        :rtype: list
+        :returns: path
+        :rtype: str
         """
 
-        path_list = []
-        for annot_type in self.annot_type_list:
-            path_list.append(
-                '%s/%s_%s-%s.txt' % (
-                    self.annot_dir, self.file_name_base, label, annot_type
-                )
-            )
-
-        return path_list
+        return '%s/%s_%s.txt' % (self.annot_dir, self.file_name_base, label)
 
 
     def create_annot_duration(self, visi):
@@ -357,21 +334,16 @@ class AnnotEventWidget():
         :param visi: associated instance of :class:`.ViSiAnnoT`
         """
 
-        # get path of annotation files
-        output_path_0 = "%s/%s_%s-datetime.txt" % (
-            self.annot_dir, self.file_name_base, self.protected_label
-        )
-
-        output_path_1 = "%s/%s_%s-frame.txt" % (
+        # get path to annotation file
+        output_path = "%s/%s_%s.txt" % (
             self.annot_dir, self.file_name_base, self.protected_label
         )
 
         # check if annotation file does not exist
-        if not isfile(output_path_0):
+        if not isfile(output_path):
             # check if long recording in ViSiAnnoT
             if visi.flag_long_rec:
-                # annotation type: datetime
-                with open(output_path_0, 'w') as f:
+                with open(output_path, 'w') as f:
                     # loop on beginning datetime and duration of reference
                     # modality files in the long recording
                     for beg_datetime, duration in zip(
@@ -384,56 +356,34 @@ class AnnotEventWidget():
                         )
 
                         # convert datetime to string
-                        beg_string = \
-                            datetimeconverter.convert_datetime_to_string(
-                                beg_datetime
-                            )
+                        beg_string = beg_datetime.strftime(
+                            self.timestamp_format
+                        )
 
-                        end_string = \
-                            datetimeconverter.convert_datetime_to_string(
-                                end_datetime
-                            )
+                        end_string = end_datetime.strftime(
+                            self.timestamp_format
+                        )
 
                         # write annotation file
                         f.write("%s - %s\n" % (beg_string, end_string))
 
-                # annotation type: frame
-                with open(output_path_1, 'w') as f:
-                    # loop on duration of reference modality files in the long
-                    # recording
-                    for ite_file, duration in enumerate(
-                        visi.ref_duration_list
-                    ):
-                        # write annotation file
-                        f.write("%d_0 - %d_%d\n" % (
-                            ite_file, ite_file, int(duration * visi.fps)
-                        ))
-
             # not a long recording
             else:
-                # annotation type: datetime
-                with open(output_path_0, 'w') as f:
+                with open(output_path, 'w') as f:
                     # get end datetime
                     end_datetime = visi.beginning_datetime + timedelta(
                         seconds=visi.nframes / visi.fps
                     )
 
                     # convert datetime to string
-                    beg_string = datetimeconverter.convert_datetime_to_string(
-                        visi.beginning_datetime
+                    beg_string = visi.beginning_datetime.strftime(
+                        self.timestamp_format
                     )
 
-                    end_string = datetimeconverter.convert_datetime_to_string(
-                        end_datetime
-                    )
+                    end_string = end_datetime.strftime(self.timestamp_format)
 
                     # write annotation file
                     f.write("%s - %s\n" % (beg_string, end_string))
-
-                # annotation type: frame
-                with open(output_path_1, 'w') as f:
-                    # write annotation file
-                    f.write("0_0 - 0_%d\n" % visi.nframes)
 
 
     def call_radio(self, ev, visi):
@@ -454,14 +404,14 @@ class AnnotEventWidget():
 
     def change_label(self, visi, new_label):
         """
-        Changes label and loads corresponding annotation files
+        Changes label and loads corresponding annotation file
 
         It sets the value of the following attributes:
 
         - :attr:`.current_label_id` with the index of the new label in
           :attr:`.label_list`
-        - :attr:`.path_list` with the new list of annotation file paths (by
-          calling :meth:`.get_path_list`)
+        - :attr:`.path` with the new annotation file path (by
+          calling :meth:`.get_path`)
 
         It also manages the display of the annotations.
 
@@ -474,12 +424,11 @@ class AnnotEventWidget():
         self.current_label_id = self.label_list.index(new_label)
 
         # get the new annotation file name
-        self.path_list = self.get_path_list(new_label)
+        self.path = self.get_path(new_label)
 
         # get number of annotation already stored
-        if isfile(self.path_list[0]):
-            lines = get_txt_lines(self.path_list[0])
-            nb_annot = len(lines)
+        if isfile(self.path):
+            nb_annot = len(get_txt_lines(self.path))
 
         else:
             nb_annot = 0
@@ -487,27 +436,22 @@ class AnnotEventWidget():
         # update label with the number of annotations
         self.push_text_list[2].setText("Nb: %d" % nb_annot)
 
-        # update label with the start and end time
-        non_zero_array = np.count_nonzero(
-            self.annot_array[self.current_label_id], axis=1
-        )
+        # update label with the start timestamp
+        if self.annot_array[self.current_label_id, 0] == 0:
+            self.push_text_list[0].setText(self.empty_annotation)
 
-        if non_zero_array[0] < 2:
-            self.push_text_list[0].setText(
-                "YYYY-MM-DD hh:mm:ss.sss"
-            )
         else:
             self.push_text_list[0].setText(
-                self.annotevent_array[self.current_label_id, 0, 0]
+                self.annot_array[self.current_label_id, 0]
             )
 
-        if non_zero_array[1] < 2:
-            self.push_text_list[1].setText(
-                "YYYY-MM-DD hh:mm:ss.sss"
-            )
+        # update label with end timestamp
+        if self.annot_array[self.current_label_id, 1] == 0:
+            self.push_text_list[1].setText(self.empty_annotation)
+
         else:
             self.push_text_list[1].setText(
-                self.annot_array[self.current_label_id, 1, 0]
+                self.annot_array[self.current_label_id, 1]
             )
 
         # plot annotations
@@ -533,35 +477,37 @@ class AnnotEventWidget():
         annot_id = -1
 
         # check if annotation file exists
-        if isfile(self.path_list[0]):
+        if isfile(self.path):
             # convert mouse position to datetime
             position_date_time = \
-                datetimeconverter.convert_frame_to_absolute_datetime(
+                datetime_converter.convert_frame_to_absolute_datetime(
                     position, visi.fps, visi.beginning_datetime
                 )
 
             # get annotations for current label
-            lines = get_txt_lines(self.path_list[0])
+            lines = get_txt_lines(self.path)
 
             # loop on annotations
             for ite_annot, line in enumerate(lines):
                 # get annotation
                 line = line.replace("\n", "")
 
-                start_date_time = datetimeconverter.convert_string_to_datetime(
-                    line.split(" - ")[0], "format_T", time_zone=visi.time_zone
+                start_datetime = datetime_converter.convert_string_to_datetime(
+                    line.split(" - ")[0], self.timestamp_format,
+                    time_zone=visi.time_zone
                 )
 
-                end_date_time = datetimeconverter.convert_string_to_datetime(
-                    line.split(" - ")[1], "format_T", time_zone=visi.time_zone
+                end_datetime = datetime_converter.convert_string_to_datetime(
+                    line.split(" - ")[1], self.timestamp_format,
+                    time_zone=visi.time_zone
                 )
 
                 diff_start = (
-                    position_date_time - start_date_time
+                    position_date_time - start_datetime
                 ).total_seconds()
 
                 diff_end = (
-                    end_date_time - position_date_time
+                    end_datetime - position_date_time
                 ).total_seconds()
 
                 # check if mouse position is in the annotation interval
@@ -610,7 +556,7 @@ class AnnotEventWidget():
         # delete last annotation
         elif button_id == 3:
             # check if annotation file exists and annotation file is not empty
-            if isfile(self.path_list[0]) and \
+            if isfile(self.path) and \
                     int(self.push_text_list[2].text().split(': ')[1]) > 0:
                 self.delete(visi, -1)
 
@@ -644,19 +590,16 @@ class AnnotEventWidget():
 
         if (annot_position == 0 or annot_position == 1) and \
                 len(self.label_list) > 0:
-            # set timestamp in datetime string format
-            self.annot_array[self.current_label_id, annot_position, 0] = \
-                datetimeconverter.convert_frame_to_absolute_datetime_string(
-                    frame_id, visi.fps, visi.beginning_datetime
+            # set timestamp
+            self.annot_array[self.current_label_id, annot_position] = \
+                datetime_converter.convert_frame_to_absolute_datetime_string(
+                    frame_id, visi.fps, visi.beginning_datetime,
+                    self.timestamp_format
             )
-
-            # set timestamp in frame format
-            self.annot_array[self.current_label_id, annot_position, 1] = \
-                '%d_%d' % (visi.ite_file, frame_id)
 
             # display the beginning time of the annotated interval
             self.push_text_list[annot_position].setText(
-                self.annot_array[self.current_label_id, annot_position, 0]
+                self.annot_array[self.current_label_id, annot_position]
             )
 
 
@@ -669,19 +612,19 @@ class AnnotEventWidget():
         """
 
         # reset the beginning and ending times of the annotated interval
-        self.annot_array[self.current_label_id] = np.zeros((2, 2))
+        self.annot_array[self.current_label_id] = np.zeros((2,))
 
         # reset the displayed beginning and ending times of the annotated
         # interval
-        self.push_text_list[0].setText("YYYY-MM-DD hh:mm:ss.sss")
-        self.push_text_list[1].setText("YYYY-MM-DD hh:mm:ss.sss")
+        self.push_text_list[0].setText(self.empty_annotation)
+        self.push_text_list[1].setText(self.empty_annotation)
 
 
     def add(self, visi):
         """
         Adds an annotation to the current label
 
-        It writes in the annotation files (:attr:`.path_list`).
+        It sets the attribute :attr:`.path`.
 
         If the annotation start timestamp or end timestamp is not defined, then
         nothing happens.
@@ -691,20 +634,20 @@ class AnnotEventWidget():
 
         # check if start timestamp or end timestamp of the annotated interval
         # is empty
-        if np.count_nonzero(self.annot_array[self.current_label_id]) < 4:
+        if np.count_nonzero(self.annot_array[self.current_label_id]) < 2:
             print("Empty annotation !!! Cannot write file.")
 
         # otherwise all good
         else:
             # convert timestamps to datetime
-            annot_datetime_0 = datetimeconverter.convert_string_to_datetime(
-                self.annot_array[self.current_label_id, 0, 0],
-                "format_T", time_zone=visi.time_zone
+            annot_datetime_0 = datetime_converter.convert_string_to_datetime(
+                self.annot_array[self.current_label_id, 0],
+                self.timestamp_format, time_zone=visi.time_zone
             )
 
-            annot_datetime_1 = datetimeconverter.convert_string_to_datetime(
-                self.annot_array[self.current_label_id, 1, 0],
-                "format_T", time_zone=visi.time_zone
+            annot_datetime_1 = datetime_converter.convert_string_to_datetime(
+                self.annot_array[self.current_label_id, 1],
+                self.timestamp_format, time_zone=visi.time_zone
             )
 
             # check if annotation must be reversed
@@ -718,27 +661,19 @@ class AnnotEventWidget():
             # check if annotations overlap disabled
             if not self.flag_annot_overlap:
                 # check if annotation overlaps with previous annotations
-                if isfile(self.path_list[0]):
+                if isfile(self.path):
                     flag_ok = self.check_overlap(
-                        self.path_list[0], annot_datetime_0, annot_datetime_1,
+                        self.path, annot_datetime_0, annot_datetime_1,
                         time_zone=visi.time_zone
                     )
 
             # check if annotation must be saved
             if flag_ok:
-                # append the annotated interval to the annotation file
-                for ite_annot_type, annot_path in enumerate(self.path_list):
-                    with open(annot_path, 'a') as file:
-                        file.write(
-                            "%s - %s\n" % (
-                                self.annot_array[
-                                    self.current_label_id, 0, ite_annot_type
-                                ],
-                                self.annot_array[
-                                    self.current_label_id, 1, ite_annot_type
-                                ]
-                            )
-                        )
+                with open(self.path, 'a') as file:
+                    file.write("%s - %s\n" % (
+                        self.annot_array[self.current_label_id, 0],
+                        self.annot_array[self.current_label_id, 1]
+                    ))
 
                 # update the number of annotations
                 nb_annot = int(
@@ -752,8 +687,8 @@ class AnnotEventWidget():
                         self.current_label_id in self.region_dict.keys():
                     region_list = self.add_region(
                         visi,
-                        self.annot_array[self.current_label_id, 0, 0],
-                        self.annot_array[self.current_label_id, 1, 0],
+                        self.annot_array[self.current_label_id, 0],
+                        self.annot_array[self.current_label_id, 1],
                         color=self.color_list[self.current_label_id]
                     )
 
@@ -770,20 +705,21 @@ class AnnotEventWidget():
             self.reset_timestamp()
 
 
-    @staticmethod
     def check_overlap(
-        annot_path, annot_datetime_0, annot_datetime_1, **kwargs
+        self, annot_path, annot_datetime_0, annot_datetime_1, **kwargs
     ):
         # get existing annotations
-        annot_array_total = read_annotation(annot_path).flatten()
+        annot_array_total = np.loadtxt(
+            annot_path, dtype=str, delimiter=" - ", ndmin=2
+        ).flatten()
 
         # loop on current annotation boundaries
         diff_array = np.empty((0, len(annot_array_total)))
         for annot_bound in [annot_datetime_0, annot_datetime_1]:
             # compute difference with boundaries of existing annotations
             diff_array_tmp = np.array([(
-                datetimeconverter.convert_string_to_datetime(
-                    d, "format_T", **kwargs) - annot_bound
+                datetime_converter.convert_string_to_datetime(
+                    d, self.timestamp_format, **kwargs) - annot_bound
             ).total_seconds() for d in annot_array_total])
 
             # binarize difference array
@@ -799,28 +735,6 @@ class AnnotEventWidget():
             return False
 
 
-    @staticmethod
-    def delete_line_in_file(path, line_id):
-        """
-        Class method for deleting a line in a txt file
-
-        :param path: path to the text file
-        :type path: str
-        :param line_id: number of the line to delete (zero-indexed)
-        :type line_id: int
-        """
-
-        # read annotation file lines
-        lines = get_txt_lines(path)
-
-        # remove specified line
-        del lines[line_id]
-
-        # rewrite annotation file
-        with open(path, 'w') as file:
-            file.writelines(lines)
-
-
     def delete(self, visi, annot_id):
         """
         Deletes a specific annotation for the current label
@@ -830,9 +744,15 @@ class AnnotEventWidget():
         :type annot_id: int
         """
 
-        # delete annotation in the txt file
-        for annot_path in self.path_list:
-            AnnotEventWidget.delete_line_in_file(annot_path, annot_id)
+        # read annotation file lines
+        lines = get_txt_lines(self.path)
+
+        # remove line of the annotation
+        del lines[annot_id]
+
+        # rewrite annotation file
+        with open(self.path, 'w') as file:
+            file.writelines(lines)
 
         # update number of annotations
         nb_annot = max(
@@ -954,7 +874,7 @@ class AnnotEventWidget():
                 if label_id not in self.region_dict.keys():
                     # get annotation path
                     label = self.label_list[label_id]
-                    annot_path = self.get_path_list(label)[0]
+                    annot_path = self.get_path(label)
 
                     # initialize list of region items for the label
                     region_annotation_list = []
@@ -1067,13 +987,13 @@ class AnnotEventWidget():
         """
 
         # convert bounds to frame numbers
-        frame_1 = datetimeconverter.convert_absolute_datetime_string_to_frame(
-            bound_1, visi.fps, visi.beginning_datetime,
+        frame_1 = datetime_converter.convert_absolute_datetime_string_to_frame(
+            visi.fps, visi.beginning_datetime, bound_1, self.timestamp_format,
             time_zone=visi.time_zone
         )
 
-        frame_2 = datetimeconverter.convert_absolute_datetime_string_to_frame(
-            bound_2, visi.fps, visi.beginning_datetime,
+        frame_2 = datetime_converter.convert_absolute_datetime_string_to_frame(
+            visi.fps, visi.beginning_datetime, bound_2, self.timestamp_format,
             time_zone=visi.time_zone
         )
 
@@ -1148,18 +1068,18 @@ class AnnotEventWidget():
                 pos_y_list = visi.get_mouse_y_position(ev)
 
                 # get date-time string annotation
-                annot = get_txt_lines(self.path_list[0])[annot_id]
+                annot = get_txt_lines(self.path)[annot_id]
 
                 # get date-time start/stop of the annotation
                 start, stop = annot.replace("\n", "").split(" - ")
 
                 # convert date-time string to datetime
-                start = datetimeconverter.convert_string_to_datetime(
-                    start, "format_T", time_zone=visi.time_zone
+                start = datetime_converter.convert_string_to_datetime(
+                    start, self.timestamp_format, time_zone=visi.time_zone
                 )
 
-                stop = datetimeconverter.convert_string_to_datetime(
-                    stop, "format_T", time_zone=visi.time_zone
+                stop = datetime_converter.convert_string_to_datetime(
+                    stop, self.timestamp_format, time_zone=visi.time_zone
                 )
 
                 # compute annotation duration

@@ -563,15 +563,9 @@ Storage of events annotation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 In the constructor of :class:`.ViSiAnnoT`, the keyword argument ``annot_dir`` specifies the directory where to store annotation files. By default it is the directory "*Annotations*", located at the current working directory from where **ViSiAnnoT** is launched.
 
-For each label, two text files are created with the intervals of the annotated events. They both have the same content but formatted in a different way: ``datetime`` and ``frame``. The name of the annotation file is respectively ``BASENAME_LABEL-datetime`` and ``BASENAME_LABEL-frame``, where ``BASENAME`` is the basename of the annotation directory and ``LABEL`` is the label.
+For each label, a text file is created with the intervals of the annotated events. The name of the annotation file is ``BASENAME_LABEL``, where ``BASENAME`` is the basename of the annotation directory and ``LABEL`` is the label.
 
-Each line in an annotation file corresponds to an annotated event: ``TS1 - TS2``, where ``TS1`` (resp. ``TS2``) is the start (resp. stop) timestamp of the annotated event.
-
-The timestamp is formatted as follows in the ``datetime`` file: ``%Y-%m-%dT%H:%M:%S.%sss``, where ``%Y`` is the year in 4 digits, ``%m`` is the month in 2 digits, ``%d`` is the day in 2 digits, ``%H`` is the hour, ``%M`` is the minute, ``%S`` is the second and ``%sss`` is the millisecond.
-
-The timestamp is formatted as follows in the ``frame`` format: ``fileID_sampleID``, where ``fileID`` is the index of the reference file in the long recording (zero-indexed, always ``0`` if **ViSiAnnoT** not launched for a long recording) and ``sampleID`` is the sample index in the reference file. In case of long recording, the reference file corresponds is the file of the first camera if there is any video, otherwise it is the file of the first signal. The sample index is expressed with the video frequency if there is any video, otherwise the frequency of the first signal.
-
-For a given label, the annotation files are located at ``"Annotations/%s_annotations/%s_label-datetime.txt"`` and ``"Annotations/%s_annotations/%s_label-frame.txt"``, where ``%s`` is the name of the (first) file of the first modality (see above).
+Each line in an annotation file corresponds to an annotated event: ``TS1 - TS2``, where ``TS1`` (resp. ``TS2``) is the start (resp. stop) timestamp of the annotated event. The timestamp is formatted as follows: ``%Y-%m-%dT%H:%M:%S.%sss``, where ``%Y`` is the year in 4 digits, ``%m`` is the month in 2 digits, ``%d`` is the day in 2 digits, ``%H`` is the hour, ``%M`` is the minute, ``%S`` is the second and ``%sss`` is the millisecond.
 
 
 .. _image-extraction:

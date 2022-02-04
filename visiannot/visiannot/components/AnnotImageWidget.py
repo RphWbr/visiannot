@@ -12,8 +12,8 @@ Module defining :class:`.AnnotImageWidget`
 
 from os.path import isdir
 from os import mkdir, makedirs
-from ...tools.pyqtoverlayer import add_widget_button_group, add_push_button
-from ...tools.videoloader import transform_image
+from ...tools.pyqt_overlayer import add_widget_button_group, add_push_button
+from ...tools.video_loader import transform_image
 from cv2 import imwrite
 from math import ceil
 
@@ -83,7 +83,7 @@ class AnnotImageWidget():
             nb_table=nb_table
         )
 
-        #: (:class:`.pyqtoverlayer.PushButton`) Push
+        #: (:class:`.pyqt_overlayer.PushButton`) Push
         #: button for saving image extraction
         self.push_button = add_push_button(
             grid, pos_push_button, "Save", flag_enable_key_interaction=False

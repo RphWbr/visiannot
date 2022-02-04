@@ -14,8 +14,8 @@ from os.path import splitext, basename
 import pyqtgraph as pg
 import numpy as np
 from time import sleep
-from ...tools.videoloader import transform_image
-from ...tools.pyqtoverlayer import add_widget_to_layout
+from ...tools.video_loader import transform_image
+from ...tools.pyqt_overlayer import add_widget_to_layout
 
 
 class VideoWidget(pg.PlotWidget):

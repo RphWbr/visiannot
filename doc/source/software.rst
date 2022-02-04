@@ -14,13 +14,12 @@ The tree view of source files is reported below::
           |__ __init__.py
           |__ update.py
       |__ visiannot/tools
-          |__ annotations.py
-          |__ audio.py
-          |__ data.py
-          |__ datetimeconverter.py
-          |__ image.py
-          |__ pyqtoverlayer.py
-          |__ pyqtgraphoverlayer.py
+          |__ audio_loader.py
+          |__ data_loader.py
+          |__ datetime_converter.py
+          |__ pyqt_overlayer.py
+          |__ pyqtgraph_overlayer.py
+          |__ video_loader.py
           |__ __init__.py
       |__ visiannot/visiannot
           |__ visiannot/visiannot/components
@@ -66,11 +65,11 @@ The tree view of source files is reported below::
           |__ install.rst
           |__ software.rst
           |__ further.rst
-          |__ userguide-pyqtgraphoverlayer.rst
+          |__ userguide-pyqtgraph_overlayer.rst
           |__ intro.rst
           |__ license.rst
           |__ userguide-configuration.rst
-          |__ userguide-pyqtoverlayer.rst
+          |__ userguide-pyqt_overlayer.rst
           |__ userguide-visiannot.rst
           |__ customization.rst
           |__ summaryGroups.py
@@ -93,19 +92,12 @@ The package **visiannot** is structured as follows:
 
 * The sub-package **visiannot.tools** contains the following modules:
 
-  * :mod:`.annotations`: functions for reading annotation files,
-
-  * :mod:`.audio`: functions for loading audio files,
-
-  * :mod:`.data`: functions for loading data in format txt, h5 or mat as well as doing some basic processing,
-
-  * :mod:`.datetimeconverter`: functions for converting and formatting date/times,
-
-  * :mod:`.image`: functions for loading images and video data,
-
-  * :mod:`.pyqtoverlayer`: **PyQt5** sub-classes and functions that ease GUI creation,
-
-  * :mod:`.pyqtgraphoverlayer`: **Pyqtgraph** sub-classes and functions that ease creation of scientific graphics,
+  * :mod:`.audio_loader`: functions for loading audio files,
+  * :mod:`.data_loader`: functions for loading data in format txt, h5 or mat as well as doing some basic processing,
+  * :mod:`.datetime_converter`: functions for converting and formatting date/times,
+  * :mod:`.pyqt_overlayer`: **PyQt5** sub-classes and functions that ease GUI creation,
+  * :mod:`.pyqtgraph_overlayer`: **Pyqtgraph** sub-classes and functions that ease creation of scientific graphics,
+  * :mod:`.video_loader`: functions for loading images and video data,
 
 * The sub-package **visiannot.visiannot** contains the classes defining the GUI for multimodal data visualization and annotation, as well as the sub-package **visiannot.components** that contains the classes defining the GUI components.
 

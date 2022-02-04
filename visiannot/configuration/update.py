@@ -13,7 +13,7 @@ launching GUI
 
 
 from . import ConfigurationWindow
-from ..tools.pyqtoverlayer import get_directory_dialog
+from ..tools.pyqt_overlayer import get_directory_dialog
 from os.path import basename
 
 

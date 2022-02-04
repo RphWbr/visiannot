@@ -11,10 +11,10 @@ Module defining classes for creating pop-up windows in help menu bar
 """
 
 
-from ...tools import pyqtoverlayer
-from ...tools import pyqtgraphoverlayer
-from ...tools.videoloader import read_image
-from ...tools.dataloader import get_working_directory
+from ...tools import pyqt_overlayer
+from ...tools import pyqtgraph_overlayer
+from ...tools.video_loader import read_image
+from ...tools.data_loader import get_working_directory
 from PyQt5.QtWidgets import QLabel, QWidget, QGridLayout
 from PyQt5.QtCore import Qt
 from importlib import import_module
@@ -74,7 +74,7 @@ class WindowPopUp(QWidget):
             label.setAlignment(alignment)
 
         # add label to pop-up window layout
-        pyqtoverlayer.add_widget_to_layout(self.lay, label, pos)
+        pyqt_overlayer.add_widget_to_layout(self.lay, label, pos)
 
         # check if label to be added to scroll area
         if scroll_lay is not None:
@@ -91,7 +91,7 @@ class WindowAbout(WindowPopUp):
         WindowPopUp.__init__(self, "About ViSiAnnoT", 550, 300)
 
         # create scroll area
-        scroll_lay, _ = pyqtoverlayer.add_scroll_area(self.lay, (0, 0))
+        scroll_lay, _ = pyqt_overlayer.add_scroll_area(self.lay, (0, 0))
 
         # title label
         text_title = "<b style='font-size:35px;'><u>ViSiAnnoT</u></b>"
@@ -114,7 +114,7 @@ class WindowAbout(WindowPopUp):
         logo_im = read_image('%s/Images/DIGI-NEWB.jpg' % dir_path)
 
         # add logo to layout
-        logo_plot = pyqtgraphoverlayer.create_widget_logo(
+        logo_plot = pyqtgraph_overlayer.create_widget_logo(
             self.lay, (2, 0), logo_im
         )
 
@@ -150,7 +150,7 @@ class WindowLicense(WindowPopUp):
         WindowPopUp.__init__(self, "ViSiAnnoT license", 600, 500)
 
         # create scroll area
-        scroll_lay, _ = pyqtoverlayer.add_scroll_area(self.lay, (0, 0))
+        scroll_lay, _ = pyqt_overlayer.add_scroll_area(self.lay, (0, 0))
 
         # license label
         license_text = """

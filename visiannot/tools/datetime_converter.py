@@ -30,7 +30,7 @@ def get_datetime_from_path(
         according to the delimiter
     :type datetime_pos: str
     :param datetime_fmt: format of the beginning datetime in the file name
-        (either ``"posix"`` or a format compliant with ``datetime.strptime()``
+        (either ``"posix"`` or a format compliant with ``datetime.strptime()``,
         see
         https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes)
     :type datetime_fmt: str
@@ -130,37 +130,6 @@ def convert_time_to_string(hour, minute, sec, msec=0):
     return '{:>02}:{:>02}:{:>02}.{:>03}'.format(hour, minute, sec, msec)
 
 
-def convert_datetime_to_string(date_time, fmt=0):
-    """
-    Converts datetime to string "yyyy-mm-ddTHH:MM:SS.SSS" or
-    "yyyy-mm-ddTHH-MM-SS"
-
-    :param date_time: datetime to convert
-    :type date_time: datetime.datetime
-    :param fmt: output format, ``0`` => "HH:MM:SS.SSS" or ``1`` =>
-        "HH-MM-SS" (no milliseconds)
-    :type fmt: int
-
-    :returns: date-time string
-    :rtype: str
-    """
-
-    date_string = '{:>04}-{:>02}-{:>02}'.format(
-        date_time.year, date_time.month, date_time.day
-    )
-
-    time_string = convert_time_to_string(
-        date_time.hour, date_time.minute, date_time.second,
-        int(date_time.microsecond / 1000)
-    )
-
-    date_time_string = "%sT%s" % (date_string, time_string)
-    if fmt == 1:
-        date_time_string = date_time_string.replace(":", "-")[:19]
-
-    return date_time_string
-
-
 def convert_frame_to_string(frame_nb, fps):
     """
     Converts frame number to string "HH:MM:SS.sss"
@@ -184,9 +153,9 @@ def convert_string_to_datetime(datetime_str, fmt, time_zone=None):
 
     :param content: date-time string
     :type content: str
-    :param fmt: date-time string format, might be ``posix``, ``format_T``
-        (``%Y-%m-%dT%H:%M:%S.sss``, where ``sss`` is millisecond),
-        or any format supported by ``datetime.strptime``
+    :param fmt: date-time string format, might be ``posix`` or any format
+        supported by ``datetime.strptime`` (see
+        https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior)
     :type fmt: str
     :param time_zone: timezone compliant with package pytz
     :type time_zone: str
@@ -198,12 +167,6 @@ def convert_string_to_datetime(datetime_str, fmt, time_zone=None):
     # convert string to datetime
     if fmt == "posix":
         date_time = datetime.fromtimestamp(int(datetime_str))
-
-    elif fmt == "format_T":
-        date_time = datetime.strptime(datetime_str[:19], "%Y-%m-%dT%H:%M:%S")
-        date_time = date_time.replace(
-            microsecond=int(datetime_str[20:]) * 1000
-        )
 
     else:
         date_time = datetime.strptime(datetime_str, fmt)
@@ -295,7 +258,7 @@ def convert_time_to_frame(fps, hour=0, minute=0, sec=0, msec=0):
 
 
 def convert_absolute_datetime_string_to_frame(
-    content, fps, beginning_datetime, **kwargs
+    fps, beginning_datetime, *args, **kwargs
 ):
     """
     Converts absolute date-time string to frame number
@@ -304,14 +267,12 @@ def convert_absolute_datetime_string_to_frame(
     convert, so that the converted frame number is relative to the input
     beginning datetime.
 
-    :param content: absolute datetime string in format
-        ``"%Y-%m-%dT%H:%M:%S.sss"``, where ``sss`` is millisecond
-    :type content: str
     :param fps: frequency related to the converted frame number
     :type fps: int or float
     :param beginning_datetime: beginning datetime which is the reference for
         the converted frame number
     :type beginning_datetime: datetime.datetime
+    :param args: positional arguments of :func:`.convert_string_to_datetime`
     :param kwargs: keyword argument of
         :func:`.convert_string_to_datetime`
 
@@ -319,7 +280,7 @@ def convert_absolute_datetime_string_to_frame(
     :rtype: int
     """
 
-    date_time = convert_string_to_datetime(content, "format_T", **kwargs)
+    date_time = convert_string_to_datetime(*args, **kwargs)
     frame_id = convert_absolute_datetime_to_frame(
         date_time, fps, beginning_datetime
     )
@@ -436,7 +397,7 @@ def convert_msec_to_absolute_time_string(msec, beginning_datetime):
 
 
 def convert_frame_to_absolute_datetime_string(
-    frame_nb, fps, beginning_datetime, **kwargs
+    frame_nb, fps, beginning_datetime, fmt
 ):
     """
     Converts frame number to absolute datetime string
@@ -450,7 +411,9 @@ def convert_frame_to_absolute_datetime_string(
     :type fps: int or float
     :param beginning_datetime: reference datetime to get absolute datetime
     :type beginning_datetime: datetime.datetime
-    :param kwargs: keyword arguments of :func:`.convert_datetime_to_string`
+    :param fmt: format of the datetime string, see
+        https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
+    :type fmt: str
 
     :returns: absolute datetime
     :rtype: str
@@ -460,4 +423,4 @@ def convert_frame_to_absolute_datetime_string(
         frame_nb, fps, beginning_datetime
     )
 
-    return convert_datetime_to_string(date_time, **kwargs)
+    return date_time.strftime(fmt)
