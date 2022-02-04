@@ -894,6 +894,9 @@ class ConfigurationWindow():
             if config_type in config_dict.keys():
                 self.meta_dict[config_type].dict = config_dict[config_type]
 
+            else:
+                self.meta_dict[config_type].dict = {}
+
         # display configuration
         self.reset_display()
 
