@@ -69,7 +69,7 @@ def get_datetime_from_path(
     return date_time
 
 
-def convert_seconds_to_time(time):
+def convert_seconds_to_time(time_sec):
     """
     Converts time in seconds to time as hour/minute/second/msec
 
@@ -83,10 +83,10 @@ def convert_seconds_to_time(time):
         - **millisecond** (*int*)
     """
 
-    hour = int(time / 3600)
-    minute = int(time / 60) - 60 * hour
-    sec = int(time - 60 * (minute + 60 * hour))
-    msec = int(1000 * (time - int(time)))
+    hour = int(time_sec / 3600)
+    minute = int(time_sec / 60) - 60 * hour
+    sec = int(time_sec - 60 * (minute + 60 * hour))
+    msec = int(1000 * (time_sec - int(time_sec)))
 
     return hour, minute, sec, msec
 
