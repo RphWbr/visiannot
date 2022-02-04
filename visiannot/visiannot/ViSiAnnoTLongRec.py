@@ -716,6 +716,9 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             # get list of data info (paths and beginning datetimes)
             data_info_list = self.interval_list_dict[signal_id]
 
+            # update signal ID to specify interval data
+            signal_id = "interval-%s" % signal_id
+
         else:
             # get list of interval configurations
             config_list = self.signal_config_dict[signal_id]
@@ -752,18 +755,23 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 )
             
             # create temporary synchronization files    
-            synchro_path_list = self.create_synchronization_files(
+            synchro_path_list = ViSiAnnoTLongRec.create_synchronization_files(
                 path_list, signal_id, key, self.ref_beg_datetime_list,
                 self.ref_duration_list, beginning_datetime_list,
                 ending_datetime_list, self.tmp_name, self.tmp_delimiter
             )
 
-            # update list of data paths
+            # check if interval data
             if flag_interval:
+                # get original signal ID
+                signal_id = signal_id.split('-')[1]
+
+                # update list of data paths
                 self.interval_list_dict[signal_id][ite_sig][0] = \
                     synchro_path_list
             
             else:
+                # update list of data paths
                 self.signal_list_dict[signal_id][ite_sig][0] = \
                     synchro_path_list
 
@@ -982,7 +990,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                     self.interval_config_dict[signal_id]
                 ):
                     if self.ite_file < len(path_list):
-                        self.interval_list_dict[signal_id].append(
+                        interval_dict[signal_id].append(
                             [path_list[self.ite_file]] + config
                         )
 
