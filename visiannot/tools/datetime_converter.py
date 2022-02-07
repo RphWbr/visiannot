@@ -112,7 +112,7 @@ def convert_frame_to_time(frame_nb, fps):
 
 def convert_time_to_string(hour, minute, sec, msec=0):
     """
-    Converts time as hour/minute/second/msec to string "HH:MM:SS.sss"
+    Converts time as hour/minute/second/microsecond to string "HH:MM:SS.ssssss"
 
     :param hour:
     :type hour: int
@@ -120,26 +120,26 @@ def convert_time_to_string(hour, minute, sec, msec=0):
     :type minute: int
     :param sec:
     :type sec: int
-    :param msec:
+    :param msec: microsecond
     :type msec: int
 
-    :returns: time with format "HH:MM:SS.sss"
+    :returns: time string
     :rtype: str
     """
 
-    return '{:>02}:{:>02}:{:>02}.{:>03}'.format(hour, minute, sec, msec)
+    return '{:>02}:{:>02}:{:>02}.{:>06}'.format(hour, minute, sec, msec)
 
 
 def convert_frame_to_string(frame_nb, fps):
     """
-    Converts frame number to string "HH:MM:SS.sss"
+    Converts frame number to string "HH:MM:SS.ssssss"
 
     :param frame_nb: frame number to convert
     :type frame_nb: int
     :param fps: frequency related to the frame number
     :type fps: int or float
 
-    :returns: time with format "HH:MM:SS.sss"
+    :returns: time string
     :rtype: str
     """
 
