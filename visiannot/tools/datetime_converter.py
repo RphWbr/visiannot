@@ -71,7 +71,7 @@ def get_datetime_from_path(
 
 def convert_seconds_to_time(time_sec):
     """
-    Converts time in seconds to time as hour/minute/second/msec
+    Converts time in seconds to time as hour/minute/second/microsecond
 
     :param time: time in seconds
     :type time: int or float
@@ -80,31 +80,27 @@ def convert_seconds_to_time(time_sec):
         - **hour** (*int*)
         - **minute** (*int*)
         - **second** (*int*)
-        - **millisecond** (*int*)
+        - **microsecond** (*int*)
     """
 
     hour = int(time_sec / 3600)
     minute = int(time_sec / 60) - 60 * hour
     sec = int(time_sec - 60 * (minute + 60 * hour))
-    msec = int(1000 * (time_sec - int(time_sec)))
+    msec = int(1000000 * (time_sec - int(time_sec)))
 
     return hour, minute, sec, msec
 
 
 def convert_frame_to_time(frame_nb, fps):
     """
-    Converts frame number to time as hour/minute/second/msec
+    Converts frame number to time as hour/minute/second/microsecond
 
     :param frame_nb: frame number
     :type frame_nb: int
     :param fps: frequency related to the frame number
     :type fps: int or float
-
-    :returns:
-        - **hour** (*int*)
-        - **minute** (*int*)
-        - **second** (*int*)
-        - **millisecond** (*int*)
+ 
+    :returns: see output of :func:`.convert_seconds_to_time`
     """
 
     return convert_seconds_to_time(float(frame_nb) / fps)
