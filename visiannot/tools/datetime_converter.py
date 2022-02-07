@@ -342,34 +342,6 @@ def convert_frame_to_absolute_datetime(frame_nb, fps, beginning_datetime):
     return date_time
 
 
-def convert_frame_to_absolute_time_string(frame_nb, fps, beginning_datetime, **kwargs):
-    """
-    Converts frame number to absolute time string (date not provided)
-
-    The input beginning datetime is added to the frame number,
-    so that the converted time string is absolute.
-
-    :param frame_nb: frame number to convert
-    :type frame_nb: int
-    :param fps: frequency related to the frame number
-    :type fps: int or float
-    :param beginning_datetime: reference datetime to get absolute datetime
-    :type beginning_datetime: datetime.datetime
-
-    :returns: absolute time string (date not provided)
-    :rtype: str
-    """
-
-    date_time = convert_frame_to_absolute_datetime(
-        frame_nb, fps, beginning_datetime
-    )
-
-    return convert_time_to_string(
-        date_time.hour, date_time.minute, date_time.second,
-        int(date_time.microsecond), **kwargs
-    )
-
-
 def convert_msec_to_absolute_time_string(
     msec, beginning_datetime, fmt="%H:%M:%S"
 ):
