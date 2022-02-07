@@ -311,7 +311,7 @@ def convert_absolute_datetime_to_frame(date_time, fps, beginning_datetime):
     seconds = (date_time - beginning_datetime).total_seconds()
 
     sec = int(seconds)
-    msec = int(1000 * (seconds - sec))
+    msec = int(1000000 * (seconds - sec))
 
     return convert_time_to_frame(fps, sec=sec, msec=msec)
 
@@ -336,7 +336,7 @@ def convert_frame_to_absolute_datetime(frame_nb, fps, beginning_datetime):
 
     hour, minute, sec, msec = convert_frame_to_time(frame_nb, fps)
     date_time = beginning_datetime + timedelta(
-        hours=hour, minutes=minute, seconds=sec, milliseconds=msec
+        hours=hour, minutes=minute, seconds=sec, microseconds=msec
     )
 
     return date_time
