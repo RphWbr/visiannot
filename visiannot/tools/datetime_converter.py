@@ -12,7 +12,7 @@ Module with functions for date-time management
 
 
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 from pytz import timezone
 
 
@@ -110,9 +110,9 @@ def convert_frame_to_time(frame_nb, fps):
     return convert_seconds_to_time(float(frame_nb) / fps)
 
 
-def convert_time_to_string(hour, minute, sec, msec=0):
+def convert_time_to_string(hour, minute, sec, msec=0, fmt="%H:%M:%S"):
     """
-    Converts time as hour/minute/second/microsecond to string "HH:MM:SS.ssssss"
+    Converts time as hour/minute/second/microsecond to time string
 
     :param hour:
     :type hour: int
@@ -127,24 +127,28 @@ def convert_time_to_string(hour, minute, sec, msec=0):
     :rtype: str
     """
 
-    return '{:>02}:{:>02}:{:>02}.{:>06}'.format(hour, minute, sec, msec)
+    return time(hour, minute, sec, msec).strftime(fmt)
 
 
-def convert_frame_to_string(frame_nb, fps):
+def convert_frame_to_string(frame_nb, fps, **kwargs):
     """
-    Converts frame number to string "HH:MM:SS.ssssss"
+    Converts frame number to time string
 
     :param frame_nb: frame number to convert
     :type frame_nb: int
     :param fps: frequency related to the frame number
     :type fps: int or float
+    :param kwargs: keyword arguments of :func:`.convert_time_to_string`
+        (``msec`` is ignored)
 
     :returns: time string
     :rtype: str
     """
 
     hour, minute, sec, msec = convert_frame_to_time(frame_nb, fps)
-    return convert_time_to_string(hour, minute, sec, msec)
+    kwargs["msec"] = msec
+
+    return convert_time_to_string(hour, minute, sec, **kwargs)
 
 
 def convert_string_to_datetime(datetime_str, fmt, time_zone=None):
@@ -342,10 +346,9 @@ def convert_frame_to_absolute_datetime(frame_nb, fps, beginning_datetime):
     return date_time
 
 
-def convert_frame_to_absolute_time_string(frame_nb, fps, beginning_datetime):
+def convert_frame_to_absolute_time_string(frame_nb, fps, beginning_datetime, **kwargs):
     """
-    Converts frame number to absolute time string "HH:MM:SS.sss" (date not
-    provided)
+    Converts frame number to absolute time string (date not provided)
 
     The input beginning datetime is added to the frame number,
     so that the converted time string is absolute.
@@ -357,7 +360,7 @@ def convert_frame_to_absolute_time_string(frame_nb, fps, beginning_datetime):
     :param beginning_datetime: reference datetime to get absolute datetime
     :type beginning_datetime: datetime.datetime
 
-    :returns: absolute time "HH:MM:SS.sss" (date not provided)
+    :returns: absolute time string (date not provided)
     :rtype: str
     """
 
@@ -367,11 +370,13 @@ def convert_frame_to_absolute_time_string(frame_nb, fps, beginning_datetime):
 
     return convert_time_to_string(
         date_time.hour, date_time.minute, date_time.second,
-        int(date_time.microsecond / 1000)
+        int(date_time.microsecond), **kwargs
     )
 
 
-def convert_msec_to_absolute_time_string(msec, beginning_datetime):
+def convert_msec_to_absolute_time_string(
+    msec, beginning_datetime, fmt="%H:%M:%S"
+):
     """
     Converts milliseconds to absolute time string "HH:MM:SS.sss"
     (date not provided)
@@ -390,10 +395,7 @@ def convert_msec_to_absolute_time_string(msec, beginning_datetime):
 
     date_time = beginning_datetime + timedelta(milliseconds=msec)
 
-    return convert_time_to_string(
-        date_time.hour, date_time.minute, date_time.second,
-        int(date_time.microsecond / 1000)
-    )
+    return date_time.strftime(fmt)
 
 
 def convert_frame_to_absolute_datetime_string(
