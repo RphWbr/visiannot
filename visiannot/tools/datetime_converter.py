@@ -14,6 +14,7 @@ Module with functions for date-time management
 import os
 from datetime import datetime, timedelta, time
 from pytz import timezone
+from decimal import Decimal
 from . import TIME_FMT
 
 
@@ -86,7 +87,7 @@ def convert_seconds_to_time(time_sec):
     hour = int(time_sec / 3600)
     minute = int(time_sec / 60) - 60 * hour
     sec = int(time_sec - 60 * (minute + 60 * hour))
-    msec = int(1000000 * (time_sec - int(time_sec)))
+    msec = int(1000000 * (Decimal(str(time_sec)) - int(time_sec)))
 
     return hour, minute, sec, msec
 
