@@ -330,7 +330,7 @@ def set_temporal_ticks(
         # define temporal labels
         temporal_labels = [
             convert_timedelta_to_absolute_datetime_string(
-                ref_datetime, milliseconds=msec, fmt=fmt
+                ref_datetime, {"milliseconds": msec}, fmt=fmt
             )
             for msec in temporal_range
         ]
