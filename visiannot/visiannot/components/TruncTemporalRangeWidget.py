@@ -11,7 +11,7 @@ Module defining :class:`.TimeEditWidget`
 """
 
 from ...tools.datetime_converter import convert_time_to_frame, \
-    convert_frame_to_absolute_time_string
+    convert_frame_to_absolute_datetime_string
 from ...tools.pyqt_overlayer import add_combo_box
 
 
@@ -114,18 +114,18 @@ class TruncTemporalRangeWidget():
 
         trunc_list = ['']
         for ite_trunc in range(self.nb_trunc):
-            string_1 = convert_frame_to_absolute_time_string(
+            string_1 = convert_frame_to_absolute_datetime_string(
                 ite_trunc * self.nframes_trunc, visi.fps,
                 visi.beginning_datetime
             )
 
             if (ite_trunc + 1) == self.nb_trunc:
-                string_2 = convert_frame_to_absolute_time_string(
+                string_2 = convert_frame_to_absolute_datetime_string(
                     visi.nframes, visi.fps, visi.beginning_datetime
                 )
 
             else:
-                string_2 = convert_frame_to_absolute_time_string(
+                string_2 = convert_frame_to_absolute_datetime_string(
                     (ite_trunc + 1) * self.nframes_trunc, visi.fps,
                     visi.beginning_datetime
                 )

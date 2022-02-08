@@ -17,7 +17,7 @@ import pyqtgraph as pg
 from PyQt5.QtGui import QFont
 from .pyqt_overlayer import create_window, add_widget_to_layout, initialize_gui
 import numpy as np
-from .datetime_converter import convert_frame_to_absolute_time_string, \
+from .datetime_converter import convert_frame_to_absolute_datetime_string, \
     convert_timedelta_to_absolute_datetime_string
 from . import TIME_FMT
 
@@ -320,7 +320,7 @@ def set_temporal_ticks(
 
         # define temporal labels
         temporal_labels = [
-            convert_frame_to_absolute_time_string(
+            convert_frame_to_absolute_datetime_string(
                 frame_id, freq, ref_datetime, fmt=fmt
             )
             for frame_id in temporal_range
