@@ -182,62 +182,6 @@ def convert_string_to_datetime(datetime_str, fmt, time_zone=None):
     return date_time
 
 
-def convert_string_colon_to_frame(time_string, fps):
-    """
-    Converts time string to frame number
-
-    :param time_string: time in format "HH:MM:SS", "MM:SS" or "SS"
-        (there can be milliseconds appended ".sss")
-    :type time_string: str
-    :param fps: frequency related to the converted frame number
-    :type fps: int or float
-
-    :returns: frame number
-    :rtype: int
-    """
-
-    time_string = time_string.split(':')
-
-    if len(time_string) == 3:
-        hour = int(time_string[0])
-        minute = int(time_string[1])
-
-        sec_split = time_string[2].split('.')
-        if len(sec_split) == 1:
-            sec = int(time_string[2])
-            msec = 0
-        else:
-            sec = sec_split[0]
-            msec = sec_split[1]
-
-    elif len(time_string) == 2:
-        hour = 0
-        minute = int(time_string[0])
-
-        sec_split = time_string[1].split('.')
-        if len(sec_split) == 1:
-            sec = int(time_string[1])
-            msec = 0
-        else:
-            sec = sec_split[0]
-            msec = sec_split[1]
-
-    elif len(time_string) == 1:
-        hour, minute = 0, 0
-
-        sec_split = time_string[0].split('.')
-        if len(sec_split) == 1:
-            sec = int(time_string[0])
-            msec = 0
-        else:
-            sec = sec_split[0]
-            msec = sec_split[1]
-    else:
-        hour, minute, sec, msec = 0, 0, 0, 0
-
-    return convert_time_to_frame(fps, hour, minute, sec, msec)
-
-
 def convert_time_to_frame(fps, hour=0, minute=0, sec=0, msec=0):
     """
     Converts time as hour/minute/second/millisecond to frame number
