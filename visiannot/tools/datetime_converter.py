@@ -17,7 +17,7 @@ from pytz import timezone
 
 
 def get_datetime_from_path(
-    path, datetime_del, datetime_pos, datetime_fmt, **kwargs
+    path, datetime_del, datetime_pos, fmt, **kwargs
 ):
     """
     Gets datetime contained in a file name
@@ -29,16 +29,15 @@ def get_datetime_from_path(
     :param datetime_pos: position of the beginning datetime in the file name,
         according to the delimiter
     :type datetime_pos: str
-    :param datetime_fmt: format of the beginning datetime in the file name
+    :param fmt: format of the beginning datetime in the file name
         (either ``"posix"`` or a format compliant with ``datetime.strptime()``,
         see
         https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes)
-    :type datetime_fmt: str
+    :type fmt: str
     :param kwargs: keyword arguments of :func:`.convert_string_to_datetime`
 
     If datetime is not in the file name, then set to ``None`` one of the
-    following positional argument: ``datetime_del``, ``datetime_pos``,
-    ``datetime_fmt``.
+    following positional argument: ``datetime_del``, ``datetime_pos``, ``fmt``.
 
     If datetime is not found in the path, by default the function returns
     ``datetime(2000, 1, 1, 0, 0, 0)``.
@@ -50,7 +49,7 @@ def get_datetime_from_path(
     date_time = datetime(2000, 1, 1, 0, 0, 0)
 
     if datetime_del is not None and datetime_pos is not None \
-            and datetime_fmt is not None:
+            and fmt is not None:
         # get file basename
         basename = os.path.splitext(os.path.basename(path))[0]
 
@@ -63,7 +62,7 @@ def get_datetime_from_path(
             datetime_str = basename.split(datetime_del)[datetime_pos]
 
             date_time = convert_string_to_datetime(
-                datetime_str, datetime_fmt, **kwargs
+                datetime_str, fmt, **kwargs
             )
 
     return date_time
