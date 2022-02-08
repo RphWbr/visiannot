@@ -69,7 +69,8 @@ class ViSiAnnoT():
         font_size=12,
         font_size_title=16,
         font_color=(0, 0, 0),
-        progress_fmt="%Y-%m-%dT%H:%M:%S.%s",
+        current_fmt="%Y-%m-%dT%H:%M:%S.%s",
+        range_fmt="%H:%M:%S.%s",
         ticks_fmt="%H:%M:%S.%s",
         ticks_color=(93, 91, 89),
         ticks_size=12,
@@ -290,13 +291,16 @@ class ViSiAnnoT():
         :type font_size_title: int
         :param font_color: font color of the text in the GUI, RGB
         :type font_color: tuple
-        :param progress_fmt: datetime string format of the current temporal
-            position in progress bar, see
-            https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
-        :type progress_fmt: str
-        :param ticks_fmt: datetime string format of X axis ticks text,
-            see
-            https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
+        :param current_fmt: datetime string format of the current temporal
+            position in progress bar, see keyword argument ``fmt`` of
+            :func:`.convert_datetime_to_string`
+        :type current_fmt: str
+        :param range_fmt: datetime string format of the temporal range
+            duration in progress bar, see keyword argument ``fmt`` of
+            :func:`.convert_datetime_to_string`
+        :type range_fmt: str
+        :param ticks_fmt: datetime string format of X axis ticks text, see
+            keyword argument ``fmt`` of :func:`.convert_datetime_to_string`
         :type ticks_fmt: str
         :param ticks_color: color of the ticks in the signal plots, RGB or HEX
             string
@@ -322,16 +326,12 @@ class ViSiAnnoT():
         # *********************** miscellaneous ***************************** #
         # ******************************************************************* #
 
-        #: (*str*) Datetime string format of the current temporal position in
-        #: progress bar
-        self.progress_fmt = progress_fmt
+        #: (*str*) Datetime string format of the text of X axis ticks
+        self.ticks_fmt = ticks_fmt
 
         #: (*int*) Number of temporal ticks on the X axis of the
         #: signals plots
         self.nb_ticks = nb_ticks
-
-        #: (*str*) Datetime string format of the text of X axis ticks
-        self.ticks_fmt = ticks_fmt
 
         #: (*str*) Time zone (as in package pytz)
         self.time_zone = time_zone
@@ -667,7 +667,9 @@ class ViSiAnnoT():
             self.wid_progress = ProgressWidget(
                 self, poswid_dict['progress'], title_style=font_default_title,
                 ticks_color=ticks_color, ticks_size=ticks_size,
-                ticks_offset=ticks_offset, nb_ticks=self.nb_ticks
+                ticks_offset=ticks_offset, nb_ticks=self.nb_ticks,
+                current_fmt=current_fmt, range_fmt=range_fmt,
+                ticks_fmt=self.ticks_fmt
             )
 
         else:

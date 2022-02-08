@@ -28,7 +28,8 @@ class ProgressWidget(pg.PlotWidget):
         line_style={'color': (0, 0, 0), 'width': 2},
         title='', title_style={'color': '#000', 'size': '9pt'},
         ticks_color="#000", ticks_size=9, ticks_offset=0,
-        maximum_height=80, nb_ticks=5, fmt="%Y-%m-%dT%H:%M:%S.%s"
+        maximum_height=80, nb_ticks=5, current_fmt="%Y-%m-%dT%H:%M:%S.%s",
+        range_fmt="%H:%M:%S.%s", ticks_fmt="%H:%M:%S.%s"
     ):
         """
         Widget with the progression bar for video/signal navigation in a
@@ -67,10 +68,17 @@ class ProgressWidget(pg.PlotWidget):
         :type maximum_height: int
         :param nb_ticks: number of ticks on the progress bar axis
         :type nb_ticks: int
-        :param progress_fmt: datetime string format of the current temporal
+        :param current_fmt: datetime string format of the current temporal
             position in progress bar, see
             https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
-        :type progress_fmt: str
+        :type current_fmt: str
+        :param range_fmt: datetime string format of the temporal range
+            duration in progress bar, see keyword argument ``fmt`` of
+            :func:`.convert_datetime_to_string`
+        :type range_fmt: str
+        :param ticks_fmt: datetime string format of X axis ticks text, see
+            keyword argument ``fmt`` of :func:`.convert_datetime_to_string`
+        :type ticks_fmt: str
         """
 
         # PlotWidget initialization
@@ -82,7 +90,14 @@ class ProgressWidget(pg.PlotWidget):
 
         #: (*str*) Datetime string format of the current temporal position in
         #: progress bar
-        self.fmt = fmt
+        self.current_fmt = current_fmt
+
+        #: (*str*) Datetime string format of the temporal range duration in
+        #: progress bar
+        self.range_fmt = range_fmt
+
+        #: (*str*) Datetime string format of the text of X axis ticks
+        self.ticks_fmt = ticks_fmt
 
         #: (*int*) Number of ticks on the progress bar axis
         self.nb_ticks = nb_ticks
@@ -135,7 +150,7 @@ class ProgressWidget(pg.PlotWidget):
         # set temporal ticks and X axis range
         set_temporal_ticks(
             self, self.nb_ticks, (0, self.nframes, visi.fps),
-            visi.beginning_datetime
+            visi.beginning_datetime, fmt=self.ticks_fmt
         )
 
         # create title
@@ -259,7 +274,8 @@ class ProgressWidget(pg.PlotWidget):
         """
 
         current_range_string = convert_frame_to_string(
-            self.last_line.value() - self.first_line.value(), fps
+            self.last_line.value() - self.first_line.value(), fps,
+            fmt=self.range_fmt
         )
 
         temporal_position = int(
@@ -267,7 +283,7 @@ class ProgressWidget(pg.PlotWidget):
         )
 
         frame_id_string = convert_frame_to_absolute_datetime_string(
-            temporal_position, fps, beginning_datetime, fmt=self.fmt
+            temporal_position, fps, beginning_datetime, fmt=self.current_fmt
         )
 
         self.setTitle(
@@ -318,7 +334,8 @@ class ProgressWidget(pg.PlotWidget):
 
         # set X axis ticks style
         set_temporal_ticks(
-            self, self.nb_ticks, (0, self.nframes, fps), beginning_datetime
+            self, self.nb_ticks, (0, self.nframes, fps), beginning_datetime,
+            fmt=self.ticks_fmt
         )
 
         self.setBoundaries(first_frame, last_frame)
