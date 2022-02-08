@@ -351,6 +351,9 @@ class ConfigurationWindow():
             "flag_annot_overlap": False,
             "annot_dir": "Annotations",
             "from_cursor_list": [],
+            "current_fmt": "%Y-%m-%dT%H:%M:%S.%s",
+            "range_fmt": "%H:%M:%S.%s",
+            "ticks_fmt": "%H:%M:%S.%s",
             "ticks_size": 12,
             "ticks_color": (93, 91, 89),
             "ticks_offset": 5,
@@ -385,6 +388,15 @@ class ConfigurationWindow():
         #: - ``"annot_dir"``: (*str*) directory of the annotations
         #: - ``"from_cursor_list"``: (*list*) each element is a list of
         #:   length 2 *(minute, second)*
+        #: - ``"current_fmt"``: (*str*) datetime string format of the current
+        #:   temporal position in progress bar, see keyword argument ``fmt`` of
+        #:   :func:`.convert_datetime_to_string`
+        #: - ``"range_fmt"``: (*str*) datetime string format of the temporal
+        #:   range duration in progress bar, see keyword argument ``fmt`` of
+        #:   :func:`.convert_datetime_to_string`
+        #: - ``"ticks_fmt"``: (*str*) datetime string format of X axis ticks
+        #:   text, see keyword argument ``fmt`` of
+        #:   :func:`.convert_datetime_to_string`
         #: - ``"ticks_size"``: (*int*) size of the ticks text in signal
         #:   plots
         #: - ``"ticks_color"``: (*list*) RGB color of ticks
@@ -490,7 +502,22 @@ class ConfigurationWindow():
                 {"minimum": 0, "maximum": 59}
             ),
             ("Zoom factor", "zoom_factor", "spin", 1, {"minimum": 1}),
-            ("Temporal ticks nb", "nb_ticks", "spin", 1, {"minimum": 1}),
+            (
+                "Datetime string format of the current temporal position in "
+                "progress widget", "current_fmt", "edit", 1, {}
+            ),
+            (
+                "Datetime string format of the temporal range duration in "
+                "progress widget", "range_fmt", "edit", 1, {}
+            ),
+            (
+                "Datetime string format of temporal ticks text", "ticks_fmt",
+                "edit", 1, {}
+            ),
+            (
+                "Number of Temporal ticks", "nb_ticks", "spin", 1,
+                {"minimum": 1}
+            ),
             (
                 "Ticks color", "ticks_color", "spin", 3,
                 {"minimum": 0, "maximum": 255}
