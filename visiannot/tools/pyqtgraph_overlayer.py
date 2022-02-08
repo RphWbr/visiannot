@@ -19,7 +19,6 @@ from .pyqt_overlayer import create_window, add_widget_to_layout, initialize_gui
 import numpy as np
 from .datetime_converter import convert_frame_to_absolute_datetime_string, \
     convert_timedelta_to_absolute_datetime_string
-from . import TIME_FMT
 
 
 def set_background_color(color=(255, 255, 255)):
@@ -274,7 +273,7 @@ def set_ticks_text_style(axis_item, color="#000", size=9, offset=0):
 
 
 def set_temporal_ticks(
-    widget, nb_ticks, temporal_info, ref_datetime, fmt=TIME_FMT
+    widget, nb_ticks, temporal_info, ref_datetime, **kwargs
 ):
     """
     Sets the ticks of the X axis of a widget in datetime format and the X axis
@@ -300,8 +299,7 @@ def set_temporal_ticks(
         first value of the temporal range is ``0``, then the tick value is
         ``ref_datetime``)
     :type ref_datetime: datetime.datetime
-    :param fmt: format of the datetime string for the ticks text, see
-        https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
+    :param kwargs: keyword arguments of :func:`.convert_datetime_to_string`
     :type fmt: str
     """
 
@@ -321,7 +319,7 @@ def set_temporal_ticks(
         # define temporal labels
         temporal_labels = [
             convert_frame_to_absolute_datetime_string(
-                frame_id, freq, ref_datetime, fmt=fmt
+                frame_id, freq, ref_datetime, **kwargs
             )
             for frame_id in temporal_range
         ]
@@ -330,7 +328,7 @@ def set_temporal_ticks(
         # define temporal labels
         temporal_labels = [
             convert_timedelta_to_absolute_datetime_string(
-                ref_datetime, {"milliseconds": msec}, fmt=fmt
+                ref_datetime, {"milliseconds": msec}, **kwargs
             )
             for msec in temporal_range
         ]
