@@ -121,6 +121,10 @@ def convert_time_to_string(hour, minute, sec, msec=0, fmt=TIME_FMT):
     :type sec: int
     :param msec: microsecond
     :type msec: int
+    :param fmt: format of the output time string, compliant with
+        ``datetime.strftime()``, see
+        https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes)
+    :type fmt: str
 
     :returns: time string
     :rtype: str
@@ -160,7 +164,7 @@ def convert_string_to_datetime(datetime_str, fmt, time_zone=None):
         supported by ``datetime.strptime`` (see
         https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior)
     :type fmt: str
-    :param time_zone: timezone compliant with package pytz
+    :param time_zone: timezone compliant with package **pytz**
     :type time_zone: str
 
     :returns: datetime
@@ -303,6 +307,9 @@ def convert_msec_to_absolute_time_string(
     :type msec: int
     :param beginning_datetime: reference datetime to get absolute datetime
     :type beginning_datetime: datetime.datetime
+    :param fmt: format of the datetime string, see
+        https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
+    :type fmt: str
 
     :returns: absolute time "HH:MM:SS.sss" (date not provided)
     :rtype: str
