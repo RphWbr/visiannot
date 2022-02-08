@@ -188,7 +188,7 @@ def convert_string_to_datetime(datetime_str, fmt, time_zone=None):
 
 def convert_time_to_frame(fps, hour=0, minute=0, sec=0, msec=0):
     """
-    Converts time as hour/minute/second/millisecond to frame number
+    Converts time as hour/minute/second/microsecond to frame number
 
     :param fps: frequency related to the converted frame number
     :type fps: int or float
@@ -198,14 +198,14 @@ def convert_time_to_frame(fps, hour=0, minute=0, sec=0, msec=0):
     :type minute: int
     :param sec:
     :type sec: int
-    :param msec:
+    :param msec: microsecond
     :type msec: int
 
     :returns: frame number
     :rtype: int
     """
 
-    return int(fps * (3600 * hour + 60 * minute + sec + msec / 1000))
+    return int(fps * (3600 * hour + 60 * minute + sec + msec / 1000000))
 
 
 def convert_absolute_datetime_string_to_frame(
