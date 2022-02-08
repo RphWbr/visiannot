@@ -28,7 +28,7 @@ class ProgressWidget(pg.PlotWidget):
         line_style={'color': (0, 0, 0), 'width': 2},
         title='', title_style={'color': '#000', 'size': '9pt'},
         ticks_color="#000", ticks_size=9, ticks_offset=0,
-        maximum_height=80, nb_ticks=5
+        maximum_height=80, nb_ticks=5, fmt="%Y-%m-%dT%H:%M:%S.%f"
     ):
         """
         Widget with the progression bar for video/signal navigation in a
@@ -67,6 +67,10 @@ class ProgressWidget(pg.PlotWidget):
         :type maximum_height: int
         :param nb_ticks: number of ticks on the progress bar axis
         :type nb_ticks: int
+        :param progress_fmt: datetime string format of the current temporal
+            position in progress bar, see
+            https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
+        :type progress_fmt: str
         """
 
         # PlotWidget initialization
@@ -75,6 +79,10 @@ class ProgressWidget(pg.PlotWidget):
         #: (*int*) Number of frames on the progress bar (defined by the
         #: associated instance of :class:`.ViSiAnnoT`)
         self.nframes = visi.nframes
+
+        #: (*str*) Datetime string format of the current temporal position in
+        #: progress bar
+        self.fmt = fmt
 
         #: (*int*) Number of ticks on the progress bar axis
         self.nb_ticks = nb_ticks
@@ -259,7 +267,7 @@ class ProgressWidget(pg.PlotWidget):
         )
 
         frame_id_string = convert_frame_to_absolute_datetime_string(
-            temporal_position, fps, beginning_datetime, "%Y-%m-%dT%H:%M:%S.%f"
+            temporal_position, fps, beginning_datetime, fmt=self.fmt
         )
 
         self.setTitle(

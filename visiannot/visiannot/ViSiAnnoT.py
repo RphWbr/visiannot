@@ -69,6 +69,7 @@ class ViSiAnnoT():
         font_size=12,
         font_size_title=16,
         font_color=(0, 0, 0),
+        progress_fmt="%Y-%m-%dT%H:%M:%S.%f",
         ticks_fmt="%H:%M:%S.%f",
         ticks_color=(93, 91, 89),
         ticks_size=12,
@@ -289,7 +290,13 @@ class ViSiAnnoT():
         :type font_size_title: int
         :param font_color: font color of the text in the GUI, RGB
         :type font_color: tuple
-        :param ticks_fmt: datetime string format of the text of X axis ticks
+        :param progress_fmt: datetime string format of the current temporal
+            position in progress bar, see
+            https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
+        :type progress_fmt: str
+        :param ticks_fmt: datetime string format of X axis ticks text,
+            see
+            https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
         :type ticks_fmt: str
         :param ticks_color: color of the ticks in the signal plots, RGB or HEX
             string
@@ -314,6 +321,10 @@ class ViSiAnnoT():
         # ******************************************************************* #
         # *********************** miscellaneous ***************************** #
         # ******************************************************************* #
+
+        #: (*str*) Datetime string format of the current temporal position in
+        #: progress bar
+        self.progress_fmt = progress_fmt
 
         #: (*int*) Number of temporal ticks on the X axis of the
         #: signals plots
