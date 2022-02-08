@@ -657,9 +657,17 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             # get duration of of video files for first camera
             # (parallelization to improve performance)
             self.ref_duration_list = []
-            with ProcessPoolExecutor() as executor:
-                for r in executor.map(get_duration_video, path_list):
-                    self.ref_duration_list.append(r)
+
+            # check number of videos
+            if len(path_list) > 10:
+                # parallelize
+                with ProcessPoolExecutor() as executor:
+                    for r in executor.map(get_duration_video, path_list):
+                        self.ref_duration_list.append(r)
+
+            else:
+                for path in path_list:
+                    self.ref_duration_list.append(get_duration_video(path))
 
         # no video => first signal is the reference modality for
         # synchronization
