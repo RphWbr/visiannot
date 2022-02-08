@@ -159,7 +159,7 @@ def convert_string_to_datetime(datetime_str, fmt, time_zone=None):
     :type content: str
     :param fmt: date-time string format, might be ``posix`` or any format
         supported by ``datetime.strptime`` (see
-        https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior)
+        https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes)
     :type fmt: str
     :param time_zone: timezone compliant with package **pytz**
     :type time_zone: str
@@ -302,7 +302,7 @@ def convert_timedelta_to_absolute_datetime_string(
     :param beginning_datetime: reference datetime to get absolute datetime
     :type beginning_datetime: datetime.datetime
     :param fmt: format of the datetime string, see
-        https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
+        https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
     :type fmt: str
     :param kwargs: keyword arguments of **datetime.timedelta**, see
         https://docs.python.org/3/library/datetime.html#timedelta-objects
@@ -332,7 +332,7 @@ def convert_frame_to_absolute_datetime_string(
     :param beginning_datetime: reference datetime to get absolute datetime
     :type beginning_datetime: datetime.datetime
     :param fmt: format of the datetime string, see
-        https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
+        https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
     :type fmt: str
 
     :returns: absolute datetime
