@@ -69,6 +69,7 @@ class ViSiAnnoT():
         font_size=12,
         font_size_title=16,
         font_color=(0, 0, 0),
+        ticks_fmt="%H:%M:%S.%f",
         ticks_color=(93, 91, 89),
         ticks_size=12,
         ticks_offset=5,
@@ -288,6 +289,8 @@ class ViSiAnnoT():
         :type font_size_title: int
         :param font_color: font color of the text in the GUI, RGB
         :type font_color: tuple
+        :param ticks_fmt: datetime string format of the text of X axis ticks
+        :type ticks_fmt: str
         :param ticks_color: color of the ticks in the signal plots, RGB or HEX
             string
         :type ticks_color: tuple or str
@@ -315,6 +318,9 @@ class ViSiAnnoT():
         #: (*int*) Number of temporal ticks on the X axis of the
         #: signals plots
         self.nb_ticks = nb_ticks
+
+        #: (*str*) Datetime string format of the text of X axis ticks
+        self.ticks_fmt = ticks_fmt
 
         #: (*str*) Time zone (as in package pytz)
         self.time_zone = time_zone
@@ -960,7 +966,7 @@ class ViSiAnnoT():
             # set temporal ticks and X axis range
             pyqtgraph_overlayer.set_temporal_ticks(
                 wid, self.nb_ticks, (first_frame_ms, last_frame_ms),
-                self.beginning_datetime
+                self.beginning_datetime, fmt=self.ticks_fmt
             )
 
             # add widget to scroll area
@@ -1283,7 +1289,7 @@ class ViSiAnnoT():
             # X axis ticks
             pyqtgraph_overlayer.set_temporal_ticks(
                 wid, self.nb_ticks, (first_frame_ms, last_frame_ms),
-                self.beginning_datetime
+                self.beginning_datetime, fmt=self.ticks_fmt
             )
 
 
