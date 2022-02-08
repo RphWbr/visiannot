@@ -18,26 +18,24 @@ Here is an example::
 	from visiannot.visiannot import ViSiAnnoT
 
 	# video paths
-	path_video_1 = "data/2017-12-19T11-33-46_color.mp4"
-	path_video_2 = "data/2017-12-19T11-33-46_BW1.mp4"
-	path_video_3 = "data/2017-12-19T11-33-46_BW2.mp4"
+	path_video_1 = "data/Pat01_2021-03-02T09-33-56_BW1.mp4"
+	path_video_2 = "data/Pat01_2021-03-02T09-33-56_BW2.mp4"
 
 	# video configuration
 	video_dict = {}
-	video_dict["color"] = (path_video_1, '_', 0, "%Y-%m-%dT%H-%M-%S")
-	video_dict["BW1"] = (path_video_2, '_', 0, "%Y-%m-%dT%H-%M-%S")
-	video_dict["BW2"] = (path_video_3, '_', 0, "%Y-%m-%dT%H-%M-%S")
+	video_dict["BW1"] = [path_video_1, '_', 1, "%Y-%m-%dT%H-%M-%S"]
+	video_dict["BW2"] = [path_video_2, '_', 1, "%Y-%m-%dT%H-%M-%S"]
 
 	# create ViSiAnnoT window
 	win_visiannot = ViSiAnnoT(video_dict, {})
 
 
-From the sub-package **visiannot** we import the class :class:`.ViSiAnnoT`. We have a set of 3 synchronized videos (one in color and two in black & white), located in the folder *data*. The configuration dictionary ``video_dict`` specifies to :class:`.ViSiAnnoT` where to find the videos and how to get the beginning datetime in the video file name. Each item corresponds to one camera, the key is the camera ID and the value is a list/tuple of 4 elements:
+From the sub-package **visiannot** we import the class :class:`.ViSiAnnoT`. We have a set of 2 synchronized videos, located in the folder *data*. The configuration dictionary ``video_dict`` specifies to :class:`.ViSiAnnoT` where to find the videos and how to get the beginning datetime in the video file name. Each item corresponds to one camera, the key is the camera ID and the value is a list/tuple of 4 elements:
 
 * Path to the video file,
 * Delimiter to get the beginning datetime in the video file name,
 * Position of the beginning datetime in the video file name, according to the delimiter,
-* Format of the beginning datetime in the video file name (``"posix"`` or format compliant with ``datetime``, see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes).
+* Format of the beginning datetime in the video file name (see keyword argument ``fmt`` of :func:`.convert_datetime_to_string`).
 
 The instance of :class:`.ViSiAnnoT` must be stored in a variable in order to have the window displayed.
 
@@ -84,9 +82,8 @@ Here is an example::
 	from visiannot.visiannot import ViSiAnnoT
 
 	# signal paths
-	path_ecg = "data/20170423T002840_ecg.txt"
-	path_resp = "data/20170423T002840_resp.txt"
-	path_tqrs = "data/20170423T002840_tqrs.mat"
+	path_physio = "data/Pat01_2021-03-02T09-33-56_physio.h5"
+	path_tqrs = "data/Pat01_2021-03-02T09-33-56_tqrs.txt"
 
 	# define plot style
 	plot_style_tqrs = {
@@ -102,12 +99,12 @@ Here is an example::
 	signal_dict = {}
 
 	signal_dict["ECG"] = [
-	    [path_ecg, '_', 0, "%Y%m%dT%H%M%S", "ecg", 500, None],
-	    [path_tqrs, '_', 0, "%Y%m%dT%H%M%S", "tqrs", 0, plot_style_tqrs]
+	    [path_physio, '_', 1, "%Y-%m-%dT%H-%M-%S", "ecg", 500, None],
+	    [path_tqrs, '_', 1, "%Y-%m-%dT%H-%M-%S", "tqrs", 0, plot_style_tqrs]
 	]
 
 	signal_dict["Respiration"] = [
-	    [path_resp, '_', 0, "%Y%m%dT%H%M%S", '', 62.5, plot_style_resp]
+	    [path_physio, '_', 1, "%Y-%m-%dT%H-%M-%S", "resp", "resp/freq", plot_style_resp]
 	]
 
 	# create ViSiAnnoT window
@@ -121,7 +118,7 @@ From the sub-package **visiannot** we import the class :class:`.ViSiAnnoT`. We h
 * Path to the signal file,
 * Delimiter to get the beginning datetime in the signal file name,
 * Position of the beginning datetime in the signal file name, according to the delimiter,
-* Format of the beginning datetime in the signal file name (``"posix"`` or format compliant with ``datetime``, see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes),
+* Format of the beginning datetime in the signal file name (see keyword argument ``fmt`` of :func:`.convert_datetime_to_string`),
 * Key to access the data in the file (in case of .h5 or .mat, set it to ``''`` otherwise), also used a legend,
 * Signal frequency (may also be a string with path to the frequency attribute in case of h5 file), set it to ``0`` in case of non-regularly sampled signal,
 * Dictionary with plot style, set to ``None`` for default plot style.
@@ -144,7 +141,7 @@ Regarding the visualization of an audio signal, the configuration is slightly di
 	from visiannot.visiannot import ViSiAnnoT
 
 	# audio path
-	path_audio = "data/Zef.wav"
+	path_audio = "data/Pat01_audio.wav"
 
 	# signal configuration
 	signal_dict = {}
@@ -164,7 +161,7 @@ In order to specify the channel to display in each plot, we use the key to acces
 
 The signal frequency is automatically retrieved from the wav file, so in the configuration list it can be set to anything (in this example ``0``).
 
-The beginning datetime is not contained in the audio file name, so one of the three related variables is set to ``None`` and a default datetime is defined (2000/01/01 at 00:00:00).
+The beginning datetime is not contained in the audio file name, so one of the three related variables is set to ``None`` and a default beginning datetime is defined (2000/01/01 00:00:00).
 
 :numref:`fig-example-audio` shows a screenshot of the resulting window.
 
@@ -179,7 +176,7 @@ Zoom tools
 ----------
 The default zoom of **Pyqtgraph** is available for the Y axis of the signal plots and is overwritten for the X axis so that all the signal widgets are linked. Thus the zoom tools described here only affects the temporal axis.
 
-Based on :numref:`fig-example-signal`, :numref:`fig-example-signal-zoom` illustrates the temporal zoom. We call "temporal range" the period of the signals that is displayed and "temporal range duration" its duration. In the progress bar, the black lines delimit the temporal range. We can see that the temporal range duration in :numref:`fig-example-signal` is 00h30min00s and becomes 00h00min21s after zoom in :numref:`fig-example-signal-zoom`. The black lines of the progress bar have also moved to show what part of the signals is displayed.
+Based on :numref:`fig-example-signal`, :numref:`fig-example-signal-zoom` illustrates the temporal zoom. We call "temporal range" the period of the signals that is displayed and "temporal range duration" its duration. In the progress bar, the black lines delimit the temporal range. We can see that the temporal range duration in :numref:`fig-example-signal` is 30min00s and becomes 00min30s after zoom in :numref:`fig-example-signal-zoom`. The black lines of the progress bar have also moved to show what part of the signals is displayed.
 
 .. _fig-example-signal-zoom:
 
@@ -188,8 +185,6 @@ Based on :numref:`fig-example-signal`, :numref:`fig-example-signal-zoom` illustr
   Screenshot of ViSiAnnoT used as a signal viewer after zoom
 
 The user can zoom in/out around the temporal cursor by using the two buttons looking like magnifying glass. It is also possible to directly zoom out in order to visualize the full signals by using the button looking like an eye. The buttons can be seen in the top left corner of the window.
-
-The temporal range can be defined with the combo list "Temporal range duration". The user can select the duration of the new temporal range which starts at the current position of the temporal cursor.
 
 
 .. _yrange:
@@ -204,12 +199,12 @@ Here is an example::
 
 	from visiannot.visiannot import ViSiAnnoT
 
-	# signal paths
-	path_ecg = "data/20170423T002840_ecg.txt"
+	# signal path
+	path_physio = "data/Pat01_2021-03-02T09-33-56_physio.h5"
 
 	# signal configuration
 	signal_dict = {}
-	signal_dict["ECG"] = [[path_ecg, '_', 0, "%Y%m%dT%H%M%S", "ecg", 500, None]]
+	signal_dict["ECG"] = [[path_physio, '_', 1, "%Y-%m-%dT%H-%M-%S", "ecg", 500, None]]
 
 	# YRange configuration
 	y_range_dict = {}
@@ -229,34 +224,7 @@ Threshold values can be drawn as horizontal lines on a signal plot. It may be us
 
 This is done with the dictionary ``threshold_dict`` which is passed to :class:`.ViSiAnnoT` as a keyword argument. The key of the dictionary must correspond to a key of ``signal_dict``, it specifies the signal widget where to draw the threshold. The value of the dictionary is a nested list of thresholds, each element is a list of length 2: threshold value and threshold color (RGBA).
 
-Here is an example::
-
-	from visiannot.visiannot import ViSiAnnoT
-
-	# signal paths
-	path_ecg = "data/20170423T002840_ecg.txt"
-	path_tqrs = "data/20170423T002840_tqrs.mat"
-
-	# signal configuration
-	signal_dict = {}
-	signal_dict["ECG"] = [[path_ecg, '_', 0, "%Y%m%dT%H%M%S", "ecg", 500, None]]
-	signal_dict["RR"] = [[path_tqrs, '_', 0, "%Y%m%dT%H%M%S", "rr", 0, None]]
-
-	# threshold configuration
-	threshold_dict = {}
-	threshold_dict["RR"] = [
-		[600, (51, 102, 0, 50)],
-		[750, (178, 34, 34, 50)]
-	]
-
-	# create ViSiAnnoT window
-	win_visiannot = ViSiAnnoT(
-		{}, signal_dict, flag_pause_status=True, layout_mode=2,
-		threshold_dict=threshold_dict
-	)
-
-
-In this example, two thresholds are defined on the ``"RR"`` widget. :numref:`fig-example-threshold` shows this particular plot.
+:numref:`fig-example-threshold` shows an example of a signal widget with thresholds.
 
 .. _fig-example-threshold:
 
@@ -276,7 +244,7 @@ This is done with the dictionary ``interval_dict`` which is passed to :class:`.V
 * Path to the interval file,
 * Delimiter to get the beginning datetime in the interval file name,
 * Position of the beginning datetime in the interval file name, according to the delimiter,
-* Format of the beginning datetime in the interval file name (``"posix"`` or format compliant with ``datetime``, see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes),
+* Format of the beginning datetime in the interval file name (see keyword argument ``fmt`` of :func:`.convert_datetime_to_string`),
 * Key to access the data in the file (in case of .h5 or .mat, set it to ``''`` otherwise),
 * Interval frequency (may also be a string with path to the frequency attribute in case of h5 file),
 * RGBA color.
@@ -291,39 +259,38 @@ Here is an example::
 	from visiannot.visiannot import ViSiAnnoT
 
 	# signal paths
-	path_ecg = "data/20170423T002840_ecg.txt"
-	path_tqrs = "data/20170423T002840_tqrs.mat"
-	path_interval = "data/20170423T002840_interval.txt"
-	path_intervalbis = "data/20170423T002840_intervalbis.txt"
+	path_physio = "data/Pat01_2021-03-02T09-33-56_physio.h5"
+	path_tqrs = "data/Pat01_2021-03-02T09-33-56_tqrs.txt"
+	path_interval_a = "data/Pat01_2021-03-02T09-33-56_intervalA.txt"
+	path_interval_b = "data/Pat01_2021-03-02T09-33-56_intervalB.txt"
 
 	# define plot style
 	plot_style_tqrs = {
-		'pen': None,
-		'symbol': '+',
-		'symbolPen': 'r',
-		'symbolSize': 10
+	    'pen': None,
+	    'symbol': '+',
+	    'symbolPen': 'r',
+	    'symbolSize': 10
 	}
 
 	# signal configuration
 	signal_dict = {}
 	signal_dict["ECG"] = [
-		[path_ecg, '_', 0, "%Y%m%dT%H%M%S", "ecg", 500, None],
-		[path_tqrs, '_', 0, "%Y%m%dT%H%M%S", "tqrs", 0, plot_style_tqrs]
+	    [path_physio, '_', 1, "%Y-%m-%dT%H-%M-%S", "ecg", 500, None],
+	    [path_tqrs, '_', 1, "%Y-%m-%dT%H-%M-%S", "tqrs", 0, plot_style_tqrs]
 	]
 
 	# interval configuration
 	interval_dict = {}
 	interval_dict["ECG"] = [
-		[path_interval, '_', 0, "%Y%m%dT%H%M%S", '', 500, (0, 255, 0, 50)],
-		[path_intervalbis, '_', 0, "%Y%m%dT%H%M%S", '', 500, (255, 200, 0, 50)]
+	    [path_interval_a, '_', 1, "%Y-%m-%dT%H-%M-%S", '', 500, (0, 255, 0, 50)],
+	    [path_interval_b, '_', 1, "%Y-%m-%dT%H-%M-%S", '', 500, (255, 200, 0, 50)]
 	]
 
 	# create ViSiAnnoT window
 	win_visiannot = ViSiAnnoT(
-		{}, signal_dict, flag_pause_status=True, layout_mode=2,
-		interval_dict=interval_dict
+	    {}, signal_dict, flag_pause_status=True, layout_mode=2,
+	    interval_dict=interval_dict
 	)
-
 
 In this example, two kinds of intervals are defined on the ``"ECG"`` widget. A specific color is assigned to each kind of temporal intervals. :numref:`fig-example-intervals` shows this particular plot.
 
@@ -342,22 +309,20 @@ Combined video and signal visualization
 
 Here is an example::
 
-	from visiannot.VISIANNOT import ViSiAnnoT
+	from visiannot.visiannot import ViSiAnnoT
 
 	# video paths
-	path_video_1 = "data/2017-12-19T11-33-46_color.mp4"
-	path_video_2 = "data/2017-12-19T11-33-46_BW1.mp4"
-	path_video_3 = "data/2017-12-19T11-33-46_BW2.mp4"
+	path_video_1 = "data/Pat01_2021-03-02T09-33-56_BW1.mp4"
+	path_video_2 = "data/Pat01_2021-03-02T09-33-56_BW2.mp4"
 
 	# video configuration
 	video_dict = {}
-	video_dict["color"] = (path_video_1, '_', 0, "%Y-%m-%dT%H-%M-%S")
-	video_dict["BW1"] = (path_video_2, '_', 0, "%Y-%m-%dT%H-%M-%S")
-	video_dict["BW2"] = (path_video_3, '_', 0, "%Y-%m-%dT%H-%M-%S")
+	video_dict["BW1"] = [path_video_1, '_', 1, "%Y-%m-%dT%H-%M-%S"]
+	video_dict["BW2"] = [path_video_2, '_', 1, "%Y-%m-%dT%H-%M-%S"]
 
 	# signal paths
-	path_ecg = "data/20170423T002840_ecg.txt"
-	path_tqrs = "data/20170423T002840_tqrs.mat"
+	path_physio = "data/Pat01_2021-03-02T09-33-56_physio.h5"
+	path_tqrs = "data/Pat01_2021-03-02T09-33-56_tqrs.txt"
 
 	# define plot style
 	plot_style_tqrs = {
@@ -371,8 +336,8 @@ Here is an example::
 	signal_dict = {}
 
 	signal_dict["ECG"] = [
-	    [path_ecg, '_', 0, "%Y%m%dT%H%M%S", "ecg", 500, None],
-	    [path_tqrs, '_', 0, "%Y%m%dT%H%M%S", "tqrs", 0, plot_style_tqrs]
+	    [path_physio, '_', 1, "%Y-%m-%dT%H-%M-%S", "ecg", 500, None],
+	    [path_tqrs, '_', 1, "%Y-%m-%dT%H-%M-%S", "tqrs", 0, plot_style_tqrs]
 	]
 
 	# create ViSiAnnoT window
@@ -429,7 +394,7 @@ Regarding ``video_dict``, each item corresponds to one camera. The key is the ca
 * Pattern to find the video files,
 * Delimiter to get the beginning datetime in the video file name,
 * Position of the beginning datetime in the video file name, according to the delimiter,
-* Format of the beginning datetime in the video file name (``"posix"`` or format compliant with ``datetime``, see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes).
+* Format of the beginning datetime in the video file name (see keyword argument ``fmt`` of :func:`.convert_datetime_to_string`).
 
 Regarding ``signal_dict``, each item corresponds to one signal widget. The key is the widget ID. The value is a nested configuration list where each element corresponds to one signal to plot and is a list of 8 elements:
 
@@ -437,7 +402,7 @@ Regarding ``signal_dict``, each item corresponds to one signal widget. The key i
 * Pattern to find the signal files,
 * Delimiter to get the beginning datetime in the signal file name,
 * Position of the beginning datetime in the signal file name, according to the delimiter,
-* Format of the beginning datetime in the signal file name (``"posix"`` or format compliant with ``datetime``, see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes),
+* Format of the beginning datetime in the signal file name (see keyword argument ``fmt`` of :func:`.convert_datetime_to_string`),
 * Key to access the data in the file (in case of .h5 or .mat, set it to ``''`` otherwise), also used a legend,
 * Signal frequency (may also be a string with path to the frequency attribute in case of h5 file), set it to ``0`` in case of non-regularly sampled signal,
 * Dictionary with plot style.
@@ -468,36 +433,23 @@ Here is an example::
 
 	from visiannot.visiannot import ViSiAnnoTLongRec
 
-	# video directory
-	dir_video = "data"
+	# data directory
+	data_dir = "data"
 
 	# video configuration
 	video_dict = {}
-	video_dict["BW1"] = [dir_video, "*BW1*.mp4", '_', 0, "%Y-%m-%dT%H-%M-%S"]
-	video_dict["BW2"] = [dir_video, "*BW2*.mp4", '_', 0, "%Y-%m-%dT%H-%M-%S"]
-
-	# signal directory
-	dir_sig = "data"
+	video_dict["BW1"] = [data_dir, "*BW1*.mp4", '_', 1, "%Y-%m-%dT%H-%M-%S"]
+	video_dict["BW2"] = [data_dir, "*BW2*.mp4", '_', 1, "%Y-%m-%dT%H-%M-%S"]
 
 	# signal configuration
 	signal_dict = {}
+	signal_dict["ECG"] = [[data_dir, "physio_*.h5", '_', 1, "%Y-%m-%dT%H-%M-%S", "ecg", 500, None]]
+	signal_dict["Respiration"] = [[data_dir, "physio_*.h5", '_', 1, "%Y-%m-%dT%H-%M-%S", "resp", "resp/freq", None]]
 
-	signal_dict["ECG"] = [
-	    [dir_sig, "data_15*.h5", '_', 1, "posix", "ecg/value", 500, None]
-	]
-
-	signal_dict["Respiration"] = [
-	    [
-	        dir_sig, "data_15*.h5", '_', 1, "posix", "resp/value", 62.5,
-	        {'pen': {'color': 'm', 'width': 1}}
-	    ]
-	]
 
 	# create ViSiAnnoT window
 	win_visiannot = ViSiAnnoTLongRec(
-	    video_dict, signal_dict,
-	    flag_pause_status=True,
-	    flag_synchro=False
+	    video_dict, signal_dict, flag_pause_status=True, flag_synchro=False
 	)
 
 
@@ -565,7 +517,7 @@ In the constructor of :class:`.ViSiAnnoT`, the keyword argument ``annot_dir`` sp
 
 For each label, a text file is created with the intervals of the annotated events. The name of the annotation file is ``BASENAME_LABEL``, where ``BASENAME`` is the basename of the annotation directory and ``LABEL`` is the label.
 
-Each line in an annotation file corresponds to an annotated event: ``TS1 - TS2``, where ``TS1`` (resp. ``TS2``) is the start (resp. stop) timestamp of the annotated event. The timestamp is formatted as follows: ``%Y-%m-%dT%H:%M:%S.%sss``, where ``%Y`` is the year in 4 digits, ``%m`` is the month in 2 digits, ``%d`` is the day in 2 digits, ``%H`` is the hour, ``%M`` is the minute, ``%S`` is the second and ``%sss`` is the millisecond.
+Each line in an annotation file corresponds to an annotated event: ``TS1 - TS2``, where ``TS1`` (resp. ``TS2``) is the start (resp. stop) timestamp of the annotated event. The timestamp is formatted as follows: ``%Y-%m-%dT%H:%M:%S.%f``, where ``%Y`` is the year in 4 digits, ``%m`` is the month in 2 digits, ``%d`` is the day in 2 digits, ``%H`` is the hour, ``%M`` is the minute, ``%S`` is the second and ``%f`` is the microsecond.
 
 
 .. _image-extraction:
@@ -599,32 +551,20 @@ Here is an example of combined video and signal visualization in the context of 
 
 	from visiannot.visiannot import ViSiAnnoTLongRec
 
-	# video directory
-	dir_video = "data"
+	# data directory
+	data_dir = "data"
 
 	# video configuration
 	video_dict = {}
-	video_dict["BW1"] = [dir_video, "*BW1*.mp4", '_', 0, "%Y-%m-%dT%H-%M-%S"]
-	video_dict["BW2"] = [dir_video, "*BW2*.mp4", '_', 0, "%Y-%m-%dT%H-%M-%S"]
-
-	# signal directory
-	dir_sig = "data"
+	video_dict["BW1"] = [data_dir, "*BW1*.mp4", '_', 1, "%Y-%m-%dT%H-%M-%S"]
+	video_dict["BW2"] = [data_dir, "*BW2*.mp4", '_', 1, "%Y-%m-%dT%H-%M-%S"]
 
 	# signal configuration
 	signal_dict = {}
+	signal_dict["ECG"] = [[data_dir, "physio_*.h5", '_', 1, "%Y-%m-%dT%H-%M-%S", "ecg", 500, None]]
+	signal_dict["Respiration"] = [[data_dir, "physio_*.h5", '_', 1, "%Y-%m-%dT%H-%M-%S", "resp", "resp/freq", None]]
 
-	signal_dict["ECG"] = [
-	    [dir_sig, "data_15*.h5", '_', 1, "posix", "ecg/value", 500, None]
-	]
-
-	signal_dict["Respiration"] = [
-	    [
-	        dir_sig, "data_15*.h5", '_', 1, "posix", "resp/value", 62.5,
-	        {'pen': {'color': 'm', 'width': 1}}
-	    ]
-	]
-
-	# events annotation dictionary
+	# event annotation dictionary
 	annotevent_dict = {}
 	annotevent_dict["Label-1"] = [200, 105, 0, 50]
 	annotevent_dict["Label-2"] = [105, 205, 0, 50]
@@ -632,16 +572,15 @@ Here is an example of combined video and signal visualization in the context of 
 	# image annotation dictionary
 	annotimage_list = ["Label-A", "Label-B"]
 
-
 	# create ViSiAnnoT window
 	win_visiannot = ViSiAnnoTLongRec(
 	    video_dict, signal_dict,
+	    flag_pause_status=True,
+	    flag_synchro=False,
 	    annotevent_dict=annotevent_dict,
 	    annotimage_list=annotimage_list,
-	    flag_pause_status=True,
 	    trunc_duration=(5, 0),
 	    from_cursor_list=[(0, 30), (1, 0), (2, 0)],
-	    flag_synchro=False,
 	    layout_mode=1
 	)
 
