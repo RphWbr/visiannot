@@ -50,6 +50,45 @@ def convert_datetime_to_string(date_time, fmt=TIME_FMT):
     return datetime_str
 
 
+def convert_string_to_datetime(datetime_str, fmt, time_zone=None):
+    """
+    Converts datetime string to datetime
+
+    :param content: date-time string
+    :type content: str
+    :param fmt: date-time string format, might be ``posix`` or any format
+        supported by **datetime** (see
+        https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes),
+        it is also possible to use the code ``%s`` for milliseconds (in
+        this case, it must be the last code of the format)
+    :type fmt: str
+    :param time_zone: timezone compliant with package **pytz**
+    :type time_zone: str
+
+    :returns: datetime
+    :rtype: datetime.datetime
+    """
+
+    # convert string to datetime
+    if fmt == "posix":
+        date_time = datetime.fromtimestamp(int(datetime_str))
+
+    elif "%s" in fmt:
+        fmt = fmt.replace("%s", "%f")
+        datetime_str += "000"
+        date_time = datetime.strptime(datetime_str, fmt)
+
+    else:
+        date_time = datetime.strptime(datetime_str, fmt)
+
+    # timezone
+    if time_zone is not None:
+        pst = timezone(time_zone)
+        date_time = pst.localize(date_time)
+
+    return date_time
+
+
 def get_datetime_from_path(
     path, datetime_del, datetime_pos, fmt, **kwargs
 ):
@@ -185,38 +224,6 @@ def convert_frame_to_string(frame_nb, fps, **kwargs):
     kwargs["msec"] = msec
 
     return convert_time_to_string(hour, minute, sec, **kwargs)
-
-
-def convert_string_to_datetime(datetime_str, fmt, time_zone=None):
-    """
-    Converts datetime string to datetime
-
-    :param content: date-time string
-    :type content: str
-    :param fmt: date-time string format, might be ``posix`` or any format
-        supported by ``datetime.strptime`` (see
-        https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes)
-    :type fmt: str
-    :param time_zone: timezone compliant with package **pytz**
-    :type time_zone: str
-
-    :returns: datetime
-    :rtype: datetime.datetime
-    """
-
-    # convert string to datetime
-    if fmt == "posix":
-        date_time = datetime.fromtimestamp(int(datetime_str))
-
-    else:
-        date_time = datetime.strptime(datetime_str, fmt)
-
-    # timezone
-    if time_zone is not None:
-        pst = timezone(time_zone)
-        date_time = pst.localize(date_time)
-
-    return date_time
 
 
 def convert_time_to_frame(fps, hour=0, minute=0, sec=0, msec=0):
