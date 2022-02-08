@@ -293,29 +293,28 @@ def convert_frame_to_absolute_datetime(frame_nb, fps, beginning_datetime):
     return date_time
 
 
-def convert_msec_to_absolute_time_string(
-    msec, beginning_datetime, fmt=TIME_FMT
+def convert_timedelta_to_absolute_datetime_string(
+    beginning_datetime, fmt=TIME_FMT, **kwargs
 ):
     """
-    Converts milliseconds to absolute time string "HH:MM:SS.sss"
-    (date not provided)
+    Converts a time delta to absolute datetime string
 
-    The input beginning datetime is added to the input milliseconds,
-    so that the converted time string is absolute.
+    The time delta is added to the beginning datetime, so that the output
+    datetime string is absolute.
 
-    :param msec: milliseconds to convert
-    :type msec: int
     :param beginning_datetime: reference datetime to get absolute datetime
     :type beginning_datetime: datetime.datetime
     :param fmt: format of the datetime string, see
         https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
     :type fmt: str
+    :param kwargs: keyword arguments of **datetime.timedelta**, see
+        https://docs.python.org/3/library/datetime.html#timedelta-objects
 
-    :returns: absolute time "HH:MM:SS.sss" (date not provided)
+    :returns: absolute datetime
     :rtype: str
     """
 
-    date_time = beginning_datetime + timedelta(milliseconds=msec)
+    date_time = beginning_datetime + timedelta(**kwargs)
 
     return date_time.strftime(fmt)
 
