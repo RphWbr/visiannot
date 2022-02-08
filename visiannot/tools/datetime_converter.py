@@ -28,9 +28,9 @@ def convert_datetime_to_string(date_time, fmt=TIME_FMT):
     :type date_time: datetime.datetime or datetime.time
     :param fmt: output string format, might be ``posix`` or any format
         supported by **datetime** (see
-            https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes),
-            it is also possible to use the code ``%s`` for milliseconds (in
-            this case, it must be the last code of the format)
+        https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes),
+        it is also possible to use the code ``%s`` for milliseconds (in this
+        case, it must be the last code of the format)
     :type fmt: str
 
     :returns: formatted datetime string
