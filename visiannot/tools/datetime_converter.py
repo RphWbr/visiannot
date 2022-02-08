@@ -14,10 +14,7 @@ Module with functions for date-time management
 import os
 from datetime import datetime, timedelta, time
 from pytz import timezone
-
-
-#: (*str*) Default time string format
-TIME_FMT = "%H:%M:%S"
+from . import TIME_FMT
 
 
 def get_datetime_from_path(
