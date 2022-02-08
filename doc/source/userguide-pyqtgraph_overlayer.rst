@@ -1,8 +1,8 @@
 .. _pyqtgraph_overlayer:
 
-==============================
+===============================
 User guide: pyqtgraph_overlayer
-==============================
+===============================
 
 See :ref:`sec-pyqt_overlayer` for details about window creation.
 
