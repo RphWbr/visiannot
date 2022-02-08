@@ -28,7 +28,7 @@ class ProgressWidget(pg.PlotWidget):
         line_style={'color': (0, 0, 0), 'width': 2},
         title='', title_style={'color': '#000', 'size': '9pt'},
         ticks_color="#000", ticks_size=9, ticks_offset=0,
-        maximum_height=80, nb_ticks=5, fmt="%Y-%m-%dT%H:%M:%S.%f"
+        maximum_height=80, nb_ticks=5, fmt="%Y-%m-%dT%H:%M:%S.%s"
     ):
         """
         Widget with the progression bar for video/signal navigation in a
