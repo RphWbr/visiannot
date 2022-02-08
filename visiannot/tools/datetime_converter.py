@@ -16,6 +16,10 @@ from datetime import datetime, timedelta, time
 from pytz import timezone
 
 
+#: (*str*) Default time string format
+TIME_FMT = "%H:%M:%S"
+
+
 def get_datetime_from_path(
     path, datetime_del, datetime_pos, fmt, **kwargs
 ):
@@ -105,7 +109,7 @@ def convert_frame_to_time(frame_nb, fps):
     return convert_seconds_to_time(float(frame_nb) / fps)
 
 
-def convert_time_to_string(hour, minute, sec, msec=0, fmt="%H:%M:%S"):
+def convert_time_to_string(hour, minute, sec, msec=0, fmt=TIME_FMT):
     """
     Converts time as hour/minute/second/microsecond to time string
 
@@ -342,7 +346,7 @@ def convert_frame_to_absolute_datetime(frame_nb, fps, beginning_datetime):
 
 
 def convert_msec_to_absolute_time_string(
-    msec, beginning_datetime, fmt="%H:%M:%S"
+    msec, beginning_datetime, fmt=TIME_FMT
 ):
     """
     Converts milliseconds to absolute time string "HH:MM:SS.sss"
@@ -366,7 +370,7 @@ def convert_msec_to_absolute_time_string(
 
 
 def convert_frame_to_absolute_datetime_string(
-    frame_nb, fps, beginning_datetime, fmt
+    frame_nb, fps, beginning_datetime, fmt=TIME_FMT
 ):
     """
     Converts frame number to absolute datetime string
