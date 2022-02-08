@@ -166,7 +166,7 @@ class Signal():
         # check if data size is divisible by downsampling factor
         if (data.shape[0] / factor).is_integer():
             # downsample
-            new_data = Signal.downSample(data, factor)
+            new_data = Signal.downsample(data, factor)
         else:
             # fill data with nan
             fill_nb = round(
