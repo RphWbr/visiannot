@@ -15,7 +15,9 @@ import os
 from datetime import datetime, timedelta, time
 from pytz import timezone
 from decimal import Decimal
-from . import TIME_FMT
+
+#: (*str*) Default time string format
+TIME_FMT = "%H:%M:%S"
 
 
 def convert_datetime_to_string(date_time, fmt=TIME_FMT):

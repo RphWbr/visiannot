@@ -9,6 +9,3 @@ __path__ = [pkg_dir]
 __all__ = []
 for _, module_name, _ in iter_modules(__path__):
     __all__.append(module_name)
-
-#: (*str*) Default time string format
-TIME_FMT = "%H:%M:%S"
