@@ -18,7 +18,8 @@ from PyQt5.QtGui import QFont
 from .pyqt_overlayer import create_window, add_widget_to_layout, initialize_gui
 import numpy as np
 from .datetime_converter import convert_frame_to_absolute_time_string, \
-    convert_msec_to_absolute_time_string
+    convert_timedelta_to_absolute_datetime_string
+from . import TIME_FMT
 
 
 def set_background_color(color=(255, 255, 255)):
@@ -272,17 +273,17 @@ def set_ticks_text_style(axis_item, color="#000", size=9, offset=0):
     axis_item.setStyle(tickTextOffset=offset)
 
 
-def set_temporal_ticks(widget, nb_ticks, temporal_info, ref_datetime):
+def set_temporal_ticks(
+    widget, nb_ticks, temporal_info, ref_datetime, fmt=TIME_FMT
+):
     """
     Sets the ticks of the X axis of a widget in datetime format and the X axis
     range according to a temporal range
 
-    We assume that the unit of the X axis is in milliseconds.
-
-    It creates temporal labels for ticks in the format HH:MM:SS.SSS. The first
-    (resp. last) tick is defined by the first (resp. last) value of the
-    temporal range, which might be expressed in milliseconds or in number of
-    frames.
+    It creates temporal labels for ticks in the format specified by ``fmt``.
+    The first (resp. last) tick is defined by the first (resp. last) value of
+    the temporal range, which might be expressed in milliseconds or in number
+    of frames.
 
     :param widget: widget where to set X axis ticks and X axis range,
         it may be any sub-class of **pyqtgraph.PlotWidget**
@@ -299,6 +300,9 @@ def set_temporal_ticks(widget, nb_ticks, temporal_info, ref_datetime):
         first value of the temporal range is ``0``, then the tick value is
         ``ref_datetime``)
     :type ref_datetime: datetime.datetime
+    :param fmt: format of the datetime string for the ticks text, see
+        https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
+    :type fmt: str
     """
 
     start = temporal_info[0]
@@ -316,14 +320,18 @@ def set_temporal_ticks(widget, nb_ticks, temporal_info, ref_datetime):
 
         # define temporal labels
         temporal_labels = [
-            convert_frame_to_absolute_time_string(frame_id, freq, ref_datetime)
+            convert_frame_to_absolute_time_string(
+                frame_id, freq, ref_datetime, fmt=fmt
+            )
             for frame_id in temporal_range
         ]
 
     else:
         # define temporal labels
         temporal_labels = [
-            convert_msec_to_absolute_time_string(msec, ref_datetime)
+            convert_timedelta_to_absolute_datetime_string(
+                ref_datetime, milliseconds=msec, fmt=fmt
+            )
             for msec in temporal_range
         ]
 
@@ -738,7 +746,9 @@ def create_widget_color_bar(
     lut_img = np.tile(lut_img, (img_width, 1, 1))
 
     # create legend widget
-    wid_bar, bar_img_item = create_widget_image(lay, widget_position, im=lut_img)
+    wid_bar, bar_img_item = create_widget_image(
+        lay, widget_position, im=lut_img
+    )
     wid_bar.invertY(False)
     wid_bar.setMaximumWidth(widget_width)
     wid_bar.showAxis("right")
