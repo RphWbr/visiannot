@@ -1968,28 +1968,26 @@ class ViSiAnnoT():
                             path_interval, freq_interval
                         )
 
-                        # check if file exists
-                        if os.path.isfile(path_interval):
-                            # asynchronous signal
-                            if self.flag_long_rec and not self.flag_synchro:
-                                # load intervals data
-                                interval, _ = self.get_data_sig_tmp(
-                                    path_interval, signal_id, key_interval,
-                                    freq_interval, self.tmp_delimiter,
-                                    flag_interval=True
-                                )
-
-                            # synchro OK
-                            else:
-                                # load intervals data
-                                interval = data_loader.get_data_interval(
-                                    path_interval, key_interval
-                                )
-
-                            # update dictionary value
-                            self.interval_dict[signal_id].append(
-                                [interval, freq_interval, color_interval]
+                        # asynchronous signal
+                        if self.flag_long_rec and not self.flag_synchro:
+                            # load intervals data
+                            interval, _ = self.get_data_sig_tmp(
+                                path_interval, signal_id, key_interval,
+                                freq_interval, self.tmp_delimiter,
+                                flag_interval=True
                             )
+
+                        # synchro OK
+                        else:
+                            # load intervals data
+                            interval = data_loader.get_data_interval(
+                                path_interval, key_interval
+                            )
+
+                        # update dictionary value
+                        self.interval_dict[signal_id].append(
+                            [interval, freq_interval, color_interval]
+                        )
 
                 # ********************** load data ************************** #
                 # asynchronous signal

@@ -165,16 +165,12 @@ def get_data_interval(path, key=""):
     :rtype: numpy array
     """
 
-    if isfile(path):
-        data_array = np.squeeze(get_data_generic(path, key=key, ndmin=2))
+    data_array = np.squeeze(get_data_generic(path, key=key, ndmin=2))
 
-        if data_array.ndim == 1:
-            data_array = convert_time_series_to_intervals(data_array, 1)
+    if data_array.ndim == 1:
+        data_array = convert_time_series_to_intervals(data_array, 1)
 
-        elif data_array.shape[0] == 0:
-            data_array = np.empty((0, 2))
-
-    else:
+    elif data_array.shape[0] == 0:
         data_array = np.empty((0, 2))
 
     return data_array
