@@ -831,20 +831,21 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                     beginning_datetime + timedelta(seconds=duration)
                 )
             
-            # create temporary synchronization files    
+            # create temporary synchronization files
             synchro_path_list = ViSiAnnoTLongRec.create_synchronization_files(
-                path_list, signal_id, key, self.ref_beg_datetime_list,
-                self.ref_duration_list, beginning_datetime_list,
-                ending_datetime_list, self.tmp_name, self.tmp_delimiter
+                path_list, "%s-%s" % (signal_id, ite_sig),
+                self.ref_beg_datetime_list, self.ref_duration_list,
+                beginning_datetime_list, ending_datetime_list, self.tmp_name,
+                self.tmp_delimiter
             )
 
             # check if interval data
             if flag_interval:
                 # get original signal ID
-                signal_id = signal_id.split('-')[1]
+                signal_id_orig = signal_id.split('-')[1]
 
                 # update list of data paths
-                self.interval_list_dict[signal_id][ite_sig][0] = \
+                self.interval_list_dict[signal_id_orig][ite_sig][0] = \
                     synchro_path_list
             
             else:
@@ -879,7 +880,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
     @staticmethod
     def create_synchronization_files(
-        data_path_list, signal_id, key_data, ref_beginning_datetime_list,
+        data_path_list, signal_id, ref_beginning_datetime_list,
         ref_duration_list, data_beginning_datetime_list,
         data_ending_datetime_list, output_dir, delimiter
     ):
@@ -911,12 +912,9 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
         :param data_path_list: paths to the data files to synchronize
         :type data_path_list: list
-        :param signal_id: signal type, used for the name of the synchronization
-            files
+        :param signal_id: signal identifier, used for the name of the
+            synchronization files
         :type signal_id: str
-        :param key_data: key to access data (in case of .h5 or .mat files),
-            used for the name of the synchronization files
-        :type key_data: str
         :param ref_beginning_datetime_list: instances of datetime.datetime with
             the beginning datetime of each reference file
         :type ref_beginning_datetime_list: list
@@ -988,8 +986,8 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                     ))
 
             # get synchronization file name
-            tmp_path = "%s/%s_%s_%s_%s.txt" % (
-                output_dir, output_dir, signal_id, key_data.replace('/', '-'),
+            tmp_path = "%s/%s_%s_%s.txt" % (
+                output_dir, output_dir, signal_id,
                 ref_datetime.strftime("%Y-%m-%dT%H-%M-%S")
             )
 

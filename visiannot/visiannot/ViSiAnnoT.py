@@ -1977,6 +1977,10 @@ class ViSiAnnoT():
                                 flag_interval=True
                             )
 
+                            # check if empty
+                            if interval is None:
+                                interval = np.empty((0,))
+
                         # synchro OK
                         else:
                             # check if fake hole file
