@@ -165,10 +165,17 @@ def get_data_interval(path, key=""):
     :rtype: numpy array
     """
 
-    data_array = np.squeeze(get_data_generic(path, key=key, ndmin=2))
+    data_array = get_data_generic(path, key=key)
 
+    # check if intervals as time series
     if data_array.ndim == 1:
-        data_array = convert_time_series_to_intervals(data_array, 1)
+        # if only 2 samples, then it is considered as a single interval =>
+        # shape (1, 2)
+        if len(data_array) == 2:
+            data_array = data_array[None, :]
+
+        else:
+            data_array = convert_time_series_to_intervals(data_array, 1)
 
     elif data_array.shape[0] == 0:
         data_array = np.empty((0, 2))
