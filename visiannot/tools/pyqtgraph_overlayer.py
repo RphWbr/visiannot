@@ -424,10 +424,7 @@ def add_plot_to_widget(
     return plot
 
 
-def basic_plot(
-    data, opts_win_dict={}, opts_wid_dict={},
-    plot_style={'pen': {'color': 'b', 'width': 1}}
-):
+def basic_plot(data, opts_win_dict={}, opts_wid_dict={}, **kwargs):
     """
     Creates a window with a 2D plot
 
@@ -451,9 +448,7 @@ def basic_plot(
     :param opts_wid_dict: keyword arguments of the function
         :func:`.create_widget`
     :type opts_wid_dict: dict
-    :param plot_style: plot style, keys are keyword arguments of the
-        constructor of pyqtgraph.PlotDataItem, see link above
-    :type plot_style: dict
+    :param kwargs: keyword arguments of :func:`.add_plot_to_widget`
 
     :returns:
         - **win** (*QWidgets.QWidget*) -- window container
@@ -470,7 +465,7 @@ def basic_plot(
 
     widget = create_widget(lay, (0, 0), **opts_wid_dict)
 
-    plot = add_plot_to_widget(widget, data, plot_style=plot_style)
+    plot = add_plot_to_widget(widget, data, **kwargs)
 
     return win, lay, widget, plot
 
