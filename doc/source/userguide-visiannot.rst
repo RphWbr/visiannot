@@ -4,7 +4,9 @@
 User guide: ViSiAnnoT
 =====================
 
-**ViSiAnnoT** has been designed to be as easy to use as possible, while being highly configurable so that it could meet a variety of needs. In this section, we introduce the different features of **ViSiAnnoT** and we illustrate them with examples.
+**ViSiAnnoT** has been designed to be as easy to use as possible, while being highly configurable so that it could meet a variety of needs. In this section, we introduce its features and we illustrate them with examples in the context of clinical research on preterm newborns.
+
+The dataset that is used is not publicly available, but equivalent scripts are provided in `this repository <https://github.com/RphWbr/visiannot-example>`_, along with an example dataset.
 
 
 .. _video:
@@ -428,6 +430,8 @@ In the case where the different modalities are not synchronized with each other,
 We assume that the beginning datetime of each file is contained in its name.
 
 The reference modality for synchronization is the video if there is any, otherwise it is the first signal to plot. Then, when loading a file of the reference modality, **ViSiAnnoT** loads the parts of the other signals that are covered by the reference file.
+
+**NB: if there are several cameras to display, they must be synchronized with each other, the synchronization process is applied only on signals.**
 
 Here is an example::
 
