@@ -377,12 +377,13 @@ class ViSiAnnoT():
         #: always equal to 0.
         self.ite_file = 0
 
-        #: (*int*) Number of files for reference modality in case of long
-        #: recording
-        #:
-        #: If :attr:`.flag_long_rec` is ``False``, then :attr:`.nb_files` is
-        #: set to 1.
-        self.nb_files = 1
+        if not self.flag_long_rec:
+            #: (*int*) Number of files for reference modality in case of long
+            #: recording
+            #:
+            #: If :attr:`.flag_long_rec` is ``False``, then :attr:`.nb_files` is
+            #: set to 1.
+            self.nb_files = 1
 
 
         # ******************************************************************* #

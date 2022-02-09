@@ -181,9 +181,13 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             # check for "holes" in videos
             self.check_video_holes()
 
-        ###########################
-        # get reference frequency #
-        ###########################
+        ###############################################
+        # get reference frequency and number of files #
+        ###############################################
+
+        #: (*int*) Number of files for reference modality in case of long
+        #: recording
+        self.nb_files = None
 
         # check if any video
         if any(video_dict):
@@ -197,6 +201,9 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 )
 
                 ite_vid += 1
+
+            # get number of files for reference modality in the recording
+            self.nb_files = len(path_list)
 
         # no video
         else:
@@ -222,6 +229,9 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
             # store frequency as the reference frequency
             self.fps = self.get_data_frequency(data_list_tmp[0], freq)
+
+            # get number of files for reference modality in the recording
+            self.nb_files = len(data_list_tmp)
 
 
         # ******************************************************************* #
@@ -370,9 +380,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             interval_dict=interval_dict_current, poswid_dict=poswid_dict,
             flag_long_rec=True, layout_mode=layout_mode, **kwargs
         )
-
-        # udpate number of files for reference modality in the recording
-        self.nb_files = len(self.ref_beg_datetime_list)
 
 
         # ******************* previous/next recording *********************** #
