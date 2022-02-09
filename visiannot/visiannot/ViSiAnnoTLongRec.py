@@ -179,7 +179,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         # check if more than one camera
         if len(video_dict) > 1:
             # check for holes in video files
-            self.check_video_holes()
+            self.check_holes_video()
 
         ###########################
         # get reference frequency #
@@ -297,7 +297,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
         else:
             # check for holes in signal data files
-            self.check_signal_holes()
+            self.check_holes_signal_interval()
 
 
         # ******************************************************************* #
@@ -583,7 +583,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 data_list_dict[mod][1].insert(i, timestamp_first)
                 
 
-    def check_video_holes(self):
+    def check_holes_video(self):
         """
         Checks if there are holes in the list of video files when comparing
         the different cameras
@@ -595,7 +595,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         ViSiAnnoTLongRec.check_holes(self.video_list_dict)
 
 
-    def check_signal_holes(self):
+    def check_holes_signal_interval(self):
         """
         Checks if there are holes in the list of signal files when comparing
         the different cameras and signals
