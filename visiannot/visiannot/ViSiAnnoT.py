@@ -1983,10 +1983,11 @@ class ViSiAnnoT():
                             if path_interval == '':
                                 interval = np.empty((0,))
 
-                            # load intervals data
-                            interval = data_loader.get_data_interval(
-                                path_interval, key_interval
-                            )
+                            else:
+                                # load intervals data
+                                interval = data_loader.get_data_interval(
+                                    path_interval, key_interval
+                                )
 
                         # update dictionary value
                         self.interval_dict[signal_id].append(

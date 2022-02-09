@@ -611,13 +611,14 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
         for sig_id, data_list_list in self.signal_list_dict.items():
             for ite_sig, data_list in enumerate(data_list_list):
-                data_list_dict["%s--%d" % (sig_id, ite_sig)] = data_list
+                tmp_sig_id = "%s--%d" % (sig_id, ite_sig)
+                data_list_dict[tmp_sig_id] = data_list
 
-            if sig_id in self.interval_list_dict.items():
+            if sig_id in self.interval_list_dict.keys():
                 for ite_inter, data_list \
                         in enumerate(self.interval_list_dict[sig_id]):
-                    data_list_dict["interval--%s--%d" % (sig_id, ite_sig)] = \
-                        data_list
+                    tmp_inter_id = "interval--%s--%d" % (sig_id, ite_inter)
+                    data_list_dict[tmp_inter_id] = data_list
 
         ViSiAnnoTLongRec.check_holes(data_list_dict)
 
@@ -632,14 +633,17 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             if sig_id_split[0] == "interval":
                 sig_id = sig_id_split[1]
                 ite_sig = sig_id_split[2]
+                ite_sig = int(ite_sig)
+                self.interval_list_dict[sig_id][ite_sig] = \
+                    data_list_dict[sig_id_full]
 
             else:
                 sig_id = sig_id_split[0]
                 ite_sig = sig_id_split[1]
+                ite_sig = int(ite_sig)
+                self.signal_list_dict[sig_id][ite_sig] = \
+                    data_list_dict[sig_id_full]
 
-            ite_sig = int(ite_sig)
-            self.signal_list_dict[sig_id][ite_sig] = \
-                data_list_dict[sig_id_full]
 
 
     def set_signal_interval_list(self, signal_dict, interval_dict, **kwargs):
