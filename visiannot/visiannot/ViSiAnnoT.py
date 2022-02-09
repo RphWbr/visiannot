@@ -1979,6 +1979,10 @@ class ViSiAnnoT():
 
                         # synchro OK
                         else:
+                            # check if fake hole file
+                            if path_interval == '':
+                                interval = np.empty((0,))
+
                             # load intervals data
                             interval = data_loader.get_data_interval(
                                 path_interval, key_interval
@@ -2000,21 +2004,28 @@ class ViSiAnnoT():
 
                 # synchronous signals
                 else:
-                    # get frequency
-                    freq_data = self.get_data_frequency(path_data, freq_data)
+                    # check if fake hole file
+                    if path_data == '':
+                        freq_data = 1
+                        data = None
 
-                    # keyword arguments for data_loader.get_data_generic
-                    kwargs = {}
-
-                    if os.path.splitext(path_data)[1] == ".wav":
-                        kwargs["channel_id"] = convert_key_to_channel_id(
-                            key_data
+                    else:
+                        # get frequency
+                        freq_data = self.get_data_frequency(
+                            path_data, freq_data
                         )
 
-                    # load data
-                    data = data_loader.get_data_generic(
-                        path_data, key_data, **kwargs
-                    )
+                        # keyword arguments for data_loader.get_data_generic
+                        kwargs = {}
+                        if os.path.splitext(path_data)[1] == ".wav":
+                            kwargs["channel_id"] = convert_key_to_channel_id(
+                                key_data
+                            )
+
+                        # load data
+                        data = data_loader.get_data_generic(
+                            path_data, key_data, **kwargs
+                        )
 
 
                 # ********* convert data into an instance of Signal ********* #

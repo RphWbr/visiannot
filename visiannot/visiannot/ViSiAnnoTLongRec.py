@@ -178,7 +178,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
         # check if more than one camera
         if len(video_dict) > 1:
-            # check for "holes" in videos
+            # check for holes in video files
             self.check_video_holes()
 
         ###########################
@@ -294,6 +294,10 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             # synchronize signals and intervals w.r.t. reference modality and
             # create temporary synchronization files
             self.process_synchronization_all()
+
+        else:
+            # check for holes in signal data files
+            self.check_signal_holes()
 
 
         # ******************************************************************* #
@@ -514,6 +518,71 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             )
 
 
+    @staticmethod
+    def check_holes(data_list_dict):
+        """
+        Checks if there are holes in the list of data files when comparing
+        different modalities
+
+        It updates the positional argument ``data_list_dict`` by filling the
+        holes with a fake empty data file.
+
+        :param data_list_dict: each item corresponds to one modality - key is
+            the modality name - value is a list of length 2:
+
+            - list of paths to data files
+            - list of beginning datetimes of data files
+        :type data_list_dict: dict
+        """
+
+        # get maximum number of data files with regard to modalities
+        nb_files_max = max(
+            [len(v_list[0]) for v_list in data_list_dict.values()]
+        )
+
+        # get list of modalities
+        mod_list = list(data_list_dict.keys())
+
+        # loop on data files
+        for i in range(nb_files_max):
+            # initialize array of beginning datetime of current file for all
+            # modalities
+            timestamp_array = np.empty((0,))
+
+            # loop on modalities
+            for mod in mod_list:
+                # get beginning datetime
+                if i < len(data_list_dict[mod][1]):
+                    ts = data_list_dict[mod][1][i].timestamp()
+
+                else:
+                    ts = np.nan
+
+                timestamp_array = np.concatenate((timestamp_array, [ts]))
+
+            # get earliest timestamp
+            timestamp_first = np.nanmin(timestamp_array)
+
+            # compute timestamp difference with earliest timestamp for all
+            # modalities
+            diff_array = timestamp_array - timestamp_first
+
+            # get modalities with a hole (if delta below 1 second, then
+            # considered as OK)
+            mod_inds = np.concatenate((
+                np.where(diff_array > 1)[0], np.where(np.isnan(diff_array))[0]
+            ))
+
+            # loop on modalities with a hole
+            for mod_ind in mod_inds:
+                # get modality name
+                mod = mod_list[mod_ind]
+
+                # insert fake data file to fill the hole
+                data_list_dict[mod][0].insert(i, '')
+                data_list_dict[mod][1].insert(i, timestamp_first)
+                
+
     def check_video_holes(self):
         """
         Checks if there are holes in the list of video files when comparing
@@ -523,64 +592,54 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         with a fake empty video file.
         """
 
-        # get maximum number of video files with regard to camera
-        nb_vid_max = max(
-            [len(v_list[0]) for v_list in self.video_list_dict.values()]
-        )
+        ViSiAnnoTLongRec.check_holes(self.video_list_dict)
 
-        # get list of camera IDs
-        cam_id_list = list(self.video_list_dict.keys())
 
-        # get first camera ID
-        cam_id_0 = cam_id_list[0]
+    def check_signal_holes(self):
+        """
+        Checks if there are holes in the list of signal files when comparing
+        the different cameras and signals
 
-        # loop on video files
-        for ite_vid in range(nb_vid_max):
-            # loop on cameras (skipping first camera because of reference)
-            for cam_id in cam_id_list[1:]:
-                flag_missing_first = False
-                flag_missing_current = False
+        It updates the attributes :attr:`.video_list_dict` and
+        :attr:`.signal_list_dict` by filling the holes with a fake empty
+        video/signal file.
+        """
 
-                # check if above first camera range
-                if ite_vid >= len(self.video_list_dict[cam_id_0][0]):
-                    flag_missing_first = True
+        # concatenate dictionaries with list of data paths and timestamps
+        # for video and signal
+        data_list_dict = self.video_list_dict.copy()
 
-                elif ite_vid >= len(self.video_list_dict[cam_id][0]):
-                    flag_missing_current = True
+        for sig_id, data_list_list in self.signal_list_dict.items():
+            for ite_sig, data_list in enumerate(data_list_list):
+                data_list_dict["%s--%d" % (sig_id, ite_sig)] = data_list
 
-                else:
-                    # get delta in seconds between the current camera and
-                    # the first camera
-                    delta = (
-                        self.video_list_dict[cam_id][1][ite_vid] -
-                        self.video_list_dict[cam_id_0][1][ite_vid]
-                    ).total_seconds()
+            if sig_id in self.interval_list_dict.items():
+                for ite_inter, data_list \
+                        in enumerate(self.interval_list_dict[sig_id]):
+                    data_list_dict["interval--%s--%d" % (sig_id, ite_sig)] = \
+                        data_list
 
-                    # check if delta is more than 1 second
-                    if abs(delta) > 1:
-                        # check if missing file for current camera
-                        if delta > 0:
-                            flag_missing_current = True
+        ViSiAnnoTLongRec.check_holes(data_list_dict)
 
-                        # missing file for first camera
-                        else:
-                            flag_missing_first = True
+        # update video list dictionary
+        for cam_id in self.video_list_dict.keys():
+            self.video_list_dict[cam_id] = data_list_dict[cam_id]
+            del data_list_dict[cam_id]
 
-                # check if missing camera
-                if flag_missing_first or flag_missing_current:
-                    if flag_missing_current:
-                        cam_id_hole = cam_id
-                        cam_id_comp = cam_id_0
+        # update signal list dictionary
+        for sig_id_full in data_list_dict.keys():
+            sig_id_split = sig_id_full.split('--')
+            if sig_id_split[0] == "interval":
+                sig_id = sig_id_split[1]
+                ite_sig = sig_id_split[2]
 
-                    else:
-                        cam_id_hole = cam_id_0
-                        cam_id_comp = cam_id
+            else:
+                sig_id = sig_id_split[0]
+                ite_sig = sig_id_split[1]
 
-                    # insert fake video file to fill the hole
-                    self.video_list_dict[cam_id_hole][0].insert(ite_vid, '')
-                    self.video_list_dict[cam_id_hole][1].insert(
-                        ite_vid, self.video_list_dict[cam_id_comp][1][ite_vid]
-                    )
+            ite_sig = int(ite_sig)
+            self.signal_list_dict[sig_id][ite_sig] = \
+                data_list_dict[sig_id_full]
 
 
     def set_signal_interval_list(self, signal_dict, interval_dict, **kwargs):
