@@ -193,13 +193,10 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         if any(video_dict):
             # get fps
             ite_vid = 0
-            cam_id_0 = list(video_dict.keys())[0]
+            path_list = list(self.video_list_dict.values())[0][0]
             self.fps = 0
             while self.fps <= 0:
-                _, _, self.fps = get_data_video(
-                    self.video_list_dict[cam_id_0][0][ite_vid]
-                )
-
+                _, _, self.fps = get_data_video(path_list[ite_vid])
                 ite_vid += 1
 
             # get number of files for reference modality in the recording
@@ -657,9 +654,8 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         # synchronization
         if any(self.video_list_dict):
             # get list of paths and beginning datetime for first camera
-            cam_id_0 = list(self.video_list_dict.keys())[0]
-            path_list = self.video_list_dict[cam_id_0][0]
-            self.ref_beg_datetime_list = self.video_list_dict[cam_id_0][1]
+            path_list, self.ref_beg_datetime_list = \
+                list(self.video_list_dict.values())[0]
 
             # get duration of of video files for first camera
             # (parallelization to improve performance)
