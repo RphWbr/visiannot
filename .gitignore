@@ -1,24 +1,14 @@
-# byte-compiled / optimized / DLL files
+# byte-compiled, optimisation, build, ...
 **/__pycache__
-
-# executable generation
-exe_generation/build
-exe_generation/dist
+**/build
+**/dist
+**/*.egg-info
 
 # configuration files
 *.ini
-!Config_examples/*.ini
 
 # temporary directory for signal synchronization
 sig-tmp
-
-# distribution / packaging
-build
-dist
-**/*.egg-info
-
-# documentation sphinx
-doc/build
 
 # OS specific hidden files
 **/._*
