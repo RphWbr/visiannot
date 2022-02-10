@@ -15,7 +15,7 @@ import numpy as np
 import sys
 from os.path import isfile, split, abspath, dirname, realpath, splitext
 from scipy.io import loadmat
-from h5py import File
+from h5py import File, Dataset
 from .audio_loader import get_audio_wave_info, get_data_audio
 from os import SEEK_END, SEEK_CUR
 from warnings import catch_warnings, simplefilter
@@ -205,12 +205,7 @@ def get_data_interval_as_time_series(path, n_samples=0, key="", slicing=()):
     :param key: key to access the data in case of mat or h5 file, for txt file
         it is ignored
     :type key: str
-    :param slicing: indexes for slicing output data:
-
-        - ``()``: no slicing
-        - ``(start,)``: ``data[start:]``
-        - ``(start, stop)``: ``data[start:stop]``
-    :type slicing: tuple
+    :param kwargs: keyword arguments of :func:`.slice_dataset`
 
     :returns: numpy array of shape :math:`(n_{samples},)` with intervals as a
         time series of 0 and 1
@@ -230,11 +225,7 @@ def get_data_interval_as_time_series(path, n_samples=0, key="", slicing=()):
         print("Time series full of NaN because file not found: %s" % path)
         data_array = np.nan * np.ones((n_samples,))
 
-    if len(slicing) == 1:
-        data_array = data_array[slicing[0]:]
-
-    elif len(slicing) == 2:
-        data_array = data_array[slicing[0]:slicing[1]]
+    data_array = slice_dataset(data_array, **kwargs)
 
     return data_array
 
@@ -464,13 +455,7 @@ def get_data_txt(path, slicing=(), **kwargs):
 
     :param path: path to the data file
     :type path: str
-    :param slicing: indexes for slicing output data:
-
-        - ``()``: no slicing
-        - ``(start,)``: ``data[start:]``
-        - ``(start, stop)``: ``data[start:stop]``
-        - ``("row", ind)``: ``data[ind]``
-        - ``("col", ind)``: ``data[:, ind]`` (2D array only)
+    :param slicing: see keyword argument of :func:`.slice_dataset`
     :type slicing: tuple
     :param kwargs: keyword arguments of numpy.loadtxt
 
@@ -483,23 +468,12 @@ def get_data_txt(path, slicing=(), **kwargs):
         simplefilter("ignore")
         data = np.loadtxt(path, **kwargs)
 
-    if len(slicing) == 1:
-        data = data[slicing[0]:]
-
-    elif len(slicing) == 2:
-        if slicing[0] == "row":
-            data = data[slicing[1]]
-
-        elif slicing[0] == "col":
-            data = data[:, slicing[1]]
-
-        else:
-            data = data[slicing[0]:slicing[1]]
+    data = slice_dataset(data, slicing=slicing)
 
     return data
 
 
-def get_data_mat(path, key, slicing=()):
+def get_data_mat(path, key, **kwargs):
     """
     Loads data from a .mat file
 
@@ -507,14 +481,7 @@ def get_data_mat(path, key, slicing=()):
     :type path: str
     :param key: key to access the data
     :type key: str
-    :param slicing: indexes for slicing output data:
-
-        - ``()``: no slicing
-        - ``(start,)``: ``data[start:]``
-        - ``(start, stop)``: ``data[start:stop]``
-        - ``("row", ind)``: ``data[ind]``
-        - ``("col", ind)``: ``data[:, ind]`` (2D array only)
-    :type slicing: tuple
+    :param kwargs: keyword arguments of :func:`.slice_dataset`
 
     :returns: data
     :rtype: numpy array
@@ -523,22 +490,10 @@ def get_data_mat(path, key, slicing=()):
     # try opening with loadmat, otherwise with h5py
     try:
         data = loadmat(path)[key]
-
-        if len(slicing) == 1:
-            data = data[slicing[0]:]
-
-        elif len(slicing) == 2:
-            if slicing[0] == "row":
-                data = data[slicing[1]]
-
-            elif slicing[0] == "col":
-                data = data[:, slicing[1]]
-
-            else:
-                data = data[slicing[0]:slicing[1]]
+        data = slice_dataset(data, **kwargs)
 
     except Exception:
-        data = get_data_h5(path, key, slicing=slicing)
+        data = get_data_h5(path, key, **kwargs)
 
     return np.squeeze(data)
 
@@ -593,7 +548,7 @@ def get_attribute_generic(path, key):
     return attr
 
 
-def get_data_h5(path, key, slicing=()):
+def get_data_h5(path, key, **kwargs):
     """
     Reads a dataset in a .h5 file
 
@@ -601,6 +556,29 @@ def get_data_h5(path, key, slicing=()):
     :type path: str
     :param key: path to the H5 dataset to load
     :type key: str
+    :param kwargs: keyword arguments of :func:`.slice_dataset`
+
+    :returns: dataset or ``None`` if not found
+    :rtype: numpy array
+    """
+
+    with File(path, 'r') as f:
+        if key in f:
+            output = slice_dataset(f[key], **kwargs)
+
+        else:
+            output = None
+
+    return output
+
+
+def slice_dataset(dataset, slicing=()):
+    """
+    Slices a dataset
+
+    :param dataset: dataset to slice, might be a numpy array or a dataset in a
+        HDF5 file
+    :type dataset: numpy array or h5py.Dataset
     :param slicing: indexes for slicing output data:
 
         - ``()``: no slicing
@@ -610,29 +588,34 @@ def get_data_h5(path, key, slicing=()):
         - ``("col", ind)``: ``data[:, ind]`` (2D array only)
     :type slicing: tuple
 
-    :returns: dataset or ``None`` if not found
+    :returns: sliced dataset
     :rtype: numpy array
     """
 
-    with File(path, 'r') as f:
-        if key in f:
-            if len(slicing) == 1:
-                output = f[key][slicing[0]:]
 
-            elif len(slicing) == 2:
-                if slicing[0] == "row":
-                    output = f[key][slicing[1]]
-
-                elif slicing[0] == "col":
-                    output = f[key][:, slicing[1]]
-
-                else:
-                    output = f[key][slicing[0]:slicing[1]]
+            elif len(slicing) == 1:
+                slicing = (0, slicing[0], dataset.shape[1])
 
             else:
-                output = f[key][()]
+                slicing = (0, 0, dataset.shape[1])
+
+    if len(slicing) == 1:
+        output = dataset[slicing[0]:]
+
+    elif len(slicing) == 2:
+        if slicing[0] == "row":
+            output = dataset[slicing[1]]
+
+        elif slicing[0] == "col":
+            output = dataset[:, slicing[1]]
 
         else:
-            output = None
+            output = dataset[slicing[0]:slicing[1]]
+
+    elif isinstance(dataset, Dataset):
+        output = dataset[()]
+
+    else:
+        output = dataset
 
     return output
