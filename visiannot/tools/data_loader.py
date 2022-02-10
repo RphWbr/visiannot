@@ -586,12 +586,19 @@ def slice_dataset(dataset, slicing=()):
         - ``(start, stop)``: ``data[start:stop]``
         - ``("row", ind)``: ``data[ind]``
         - ``("col", ind)``: ``data[:, ind]`` (2D array only)
+        - ``(ind, start, stop)``: data[:, start:stop]
     :type slicing: tuple
 
     :returns: sliced dataset
     :rtype: numpy array
     """
 
+    # workaround in case of 1D dataset stored with shape (1, n) instead of (n,)
+    shape = dataset.shape
+    if len(shape) == 2 and shape[0] == 1 and shape[1] != 1:
+        if (len(slicing) == 0 or len(slicing) > 0 and slicing[0] != "col"):
+            if len(slicing) == 2:
+                slicing = (0, slicing[0], slicing[1])
 
             elif len(slicing) == 1:
                 slicing = (0, slicing[0], dataset.shape[1])
@@ -611,6 +618,9 @@ def slice_dataset(dataset, slicing=()):
 
         else:
             output = dataset[slicing[0]:slicing[1]]
+
+    elif len(slicing) == 3:
+        output = dataset[slicing[0], slicing[1]:slicing[2]]
 
     elif isinstance(dataset, Dataset):
         output = dataset[()]
