@@ -335,9 +335,13 @@ def get_nb_samples_generic(path, key='', **kwargs):
 
     _, ext = splitext(path)
 
-    if ext == ".mat" or ext == ".h5":
+    if ext == ".h5":
         with File(path, 'r') as f:
             nb_samples = f[key].shape[0]
+
+    elif ext == ".mat":
+        with File(path, 'r') as f:
+            nb_samples = f[key].shape[1]
 
     elif ext == ".txt":
         with open(path, 'r') as f:
