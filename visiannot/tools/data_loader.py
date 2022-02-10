@@ -341,7 +341,13 @@ def get_nb_samples_generic(path, key='', **kwargs):
 
     elif ext == ".mat":
         with File(path, 'r') as f:
-            nb_samples = f[key].shape[1]
+            shape = f[key].shape
+
+            if len(shape) == 2:
+                nb_samples = shape[1]
+
+            else:
+                nb_samples = shape[0]
 
     elif ext == ".txt":
         with open(path, 'r') as f:
