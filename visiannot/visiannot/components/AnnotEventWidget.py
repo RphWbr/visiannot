@@ -323,7 +323,9 @@ class AnnotEventWidget():
         :rtype: str
         """
 
-        return '%s/%s_%s.txt' % (self.annot_dir, self.file_name_base, label)
+        return '%s/%s_%s-datetime.txt' % (
+            self.annot_dir, self.file_name_base, label
+        )
 
 
     def create_annot_duration(self, visi):
