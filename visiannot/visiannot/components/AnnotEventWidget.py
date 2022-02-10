@@ -337,9 +337,7 @@ class AnnotEventWidget():
         """
 
         # get path to annotation file
-        output_path = "%s/%s_%s.txt" % (
-            self.annot_dir, self.file_name_base, self.protected_label
-        )
+        output_path = self.get_path(self.protected_label)
 
         # check if annotation file does not exist
         if not isfile(output_path):
