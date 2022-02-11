@@ -558,18 +558,33 @@ def get_data_h5(path, key, **kwargs):
     :type key: str
     :param kwargs: keyword arguments of :func:`.slice_dataset`
 
-    :returns: dataset or ``None`` if not found
+    :returns: dataset
     :rtype: numpy array
     """
 
     with File(path, 'r') as f:
-        if key in f:
-            output = slice_dataset(f[key], **kwargs)
+        # check if column index specified in key
+        if ' - ' in key:
+            key, col_ind = key.split(' - ')
+
+            # check if column index specified by name
+            if isinstance(col_ind, str):
+                # get columns description
+                col_desc = f[key].attrs["columns"].split(', ')
+
+                # get column index
+                col_ind = col_desc.index(col_ind)
 
         else:
-            output = None
+            col_ind = None
 
-    return output
+        dataset = slice_dataset(f[key], **kwargs)
+
+        # check if getting a specific column
+        if col_ind is not None:
+            dataset = dataset[:, [0, col_ind]]
+
+        return dataset
 
 
 def slice_dataset(dataset, slicing=()):
