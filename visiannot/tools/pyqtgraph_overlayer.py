@@ -240,7 +240,7 @@ def create_widget_logo(lay, widget_position, im, box_size=None):
     return widget
 
 
-def set_ticks_text_style(axis_item, color="#000", size=9, offset=0):
+def set_ticks_text_style(axis_item, color="#000", size=9, **kwargs):
     """
     Sets ticks text style of an axis item
 
@@ -253,8 +253,9 @@ def set_ticks_text_style(axis_item, color="#000", size=9, offset=0):
     :type color: str or tuple
     :param size: font size of the text in pt
     :type size: float or int
-    :param offset: text offset
-    :type offset: int
+    :param kwargs: keyword arguments of :meth:`setStyle` applied on
+        ``axis_item``, see
+        https://pyqtgraph.readthedocs.io/en/latest/graphicsItems/axisitem.html#pyqtgraph.AxisItem.setStyle
     """
 
     # set ticks color
@@ -269,7 +270,7 @@ def set_ticks_text_style(axis_item, color="#000", size=9, offset=0):
     axis_item.setTickFont(font)
 
     # set offset
-    axis_item.setStyle(tickTextOffset=offset)
+    axis_item.setStyle(**kwargs)
 
 
 def set_temporal_ticks(

@@ -144,7 +144,7 @@ class ProgressWidget(pg.PlotWidget):
         # set X axis ticks style
         set_ticks_text_style(
             self.getAxis('bottom'), color=ticks_color, size=ticks_size,
-            offset=ticks_offset
+            tickTextOffset=ticks_offset
         )
 
         # set temporal ticks and X axis range

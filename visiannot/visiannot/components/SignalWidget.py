@@ -153,12 +153,12 @@ class SignalWidget(pg.PlotWidget):
         # set axes font
         pyqtgraph_overlayer.set_ticks_text_style(
             self.getAxis('left'), color=ticks_color, size=ticks_size,
-            offset=ticks_offset
+            tickTextOffset=ticks_offset, autoExpandTextSpace=False
         )
 
         pyqtgraph_overlayer.set_ticks_text_style(
             self.getAxis('bottom'), color=ticks_color, size=ticks_size,
-            offset=ticks_offset
+            tickTextOffset=ticks_offset
         )
 
         # set Y axis label
