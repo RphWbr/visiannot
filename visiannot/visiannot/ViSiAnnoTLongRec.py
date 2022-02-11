@@ -14,7 +14,7 @@ Module defining :class:`.ViSiAnnoTLongRec`
 import numpy as np
 import os
 from glob import glob
-from datetime import timedelta
+from datetime import datetime, timedelta
 from ..tools import pyqt_overlayer
 from ..tools import datetime_converter
 from ..tools import data_loader
@@ -179,7 +179,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         # check if more than one camera
         if len(video_dict) > 1:
             # check for holes in video files
-            self.check_holes_video()
+            self.check_holes_video(time_zone=time_zone)
 
         ###########################
         # get reference frequency #
@@ -297,7 +297,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
         else:
             # check for holes in signal data files
-            self.check_holes_signal_interval()
+            self.check_holes_signal_interval(time_zone=time_zone)
 
 
         # ******************************************************************* #
@@ -519,7 +519,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
 
     @staticmethod
-    def check_holes(data_list_dict):
+    def check_holes(data_list_dict, **kwargs):
         """
         Checks if there are holes in the list of data files when comparing
         different modalities
@@ -533,6 +533,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             - list of paths to data files
             - list of beginning datetimes of data files
         :type data_list_dict: dict
+        :param kwargs: keyword arguments of :func:`.convert_string_to_datetime`
         """
 
         # get maximum number of data files with regard to modalities
@@ -563,6 +564,11 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             # get earliest timestamp
             timestamp_first = np.nanmin(timestamp_array)
 
+            # convert to datetime
+            datetime_first = datetime_converter.convert_string_to_datetime(
+                timestamp_first, "posix", **kwargs
+            )
+
             # compute timestamp difference with earliest timestamp for all
             # modalities
             diff_array = timestamp_array - timestamp_first
@@ -580,25 +586,29 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
                 # insert fake data file to fill the hole
                 data_list_dict[mod][0].insert(i, '')
-                data_list_dict[mod][1].insert(i, timestamp_first)
+                data_list_dict[mod][1].insert(i, datetime_first)
                 
 
-    def check_holes_video(self):
+    def check_holes_video(self, **kwargs):
         """
         Checks if there are holes in the list of video files when comparing
         the different cameras
 
         It updates the attribute :attr:`.video_list_dict` by filling the holes
         with a fake empty video file.
+
+        :param kwargs: keyword arguments of :meth:`.check_holes`
         """
 
-        ViSiAnnoTLongRec.check_holes(self.video_list_dict)
+        ViSiAnnoTLongRec.check_holes(self.video_list_dict, **kwargs)
 
 
-    def check_holes_signal_interval(self):
+    def check_holes_signal_interval(self, **kwargs):
         """
         Checks if there are holes in the list of signal files when comparing
         the different cameras and signals
+
+        :param kwargs: keyword arguments of :meth:`.check_holes`
 
         It updates the attributes :attr:`.video_list_dict` and
         :attr:`.signal_list_dict` by filling the holes with a fake empty
@@ -620,7 +630,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                     tmp_inter_id = "interval--%s--%d" % (sig_id, ite_inter)
                     data_list_dict[tmp_inter_id] = data_list
 
-        ViSiAnnoTLongRec.check_holes(data_list_dict)
+        ViSiAnnoTLongRec.check_holes(data_list_dict, **kwargs)
 
         # update video list dictionary
         for cam_id in self.video_list_dict.keys():
@@ -643,7 +653,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 ite_sig = int(ite_sig)
                 self.signal_list_dict[sig_id][ite_sig] = \
                     data_list_dict[sig_id_full]
-
 
 
     def set_signal_interval_list(self, signal_dict, interval_dict, **kwargs):
