@@ -183,7 +183,7 @@ def get_data_interval(path, key=""):
     return data_array
 
 
-def get_data_interval_as_time_series(path, n_samples=0, key="", slicing=()):
+def get_data_interval_as_time_series(path, n_samples=0, key="", **kwargs):
     """
     Loads file containing temporal intervals, output shape
     :math:`(n_{samples},)`
