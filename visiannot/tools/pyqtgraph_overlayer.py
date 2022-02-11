@@ -340,34 +340,6 @@ def set_temporal_ticks(
     axis.setTicks(ticks)
 
 
-def delete_nan_for_plot(data):
-    """
-    Deletes NaNs from an array so that they are ignored for plotting
-
-    :param data: array where to delete NaNs, shape :math:`(n,)` or
-        :math:`(n, 2)` (where first column contains timestamp, second column
-        contains data value), list and tuple are also supported
-    :type data: numpy array
-
-    :returns: array without NaNs, shape :math:`(m, 2)`, with :math:`m \leq n` ;
-        if the input array is 1D (shape :math:`(n,)`), then the first column of
-        the output array contains the index of each point in the input array
-    :rtype: numpy array
-    """
-
-    if isinstance(data, list) or isinstance(data, tuple):
-        data = np.array(data)
-
-    if data.ndim == 1:
-        data = np.vstack((
-            np.arange(data.shape[0]), data
-        )).T
-
-    data = np.delete(data, np.where(np.isnan(data[:, 1])), axis=0)
-
-    return data
-
-
 def add_plot_to_widget(
     widget, data, flag_clear=False, flag_nan_void=True,
     plot_style={'pen': {'color': 'b', 'width': 1}}
@@ -394,14 +366,10 @@ def add_plot_to_widget(
     :param flag_clear: specify if content currently displayed must be cleared
         before plotting the data
     :type flag_clear: bool
-    :param flag_nan_void: specify how to handle NaN values
-
-        - ``False``: default behaviour of pyqtgraph
-        - ``True``: there is no plotting where NaN
-
-        NB: when calling the method ``plot.setData(data_array)``, the behaviour
-        is back to default. If NaNs must be ignored, the function
-        :func:`.delete_nan_for_plot` must be called before.
+    :param flag_nan_void: specify if NaN values must be handled by
+        **pyqtgraph.PlotDataItem** by setting the keyword argument ``connect``
+        to ``"finite"``, see
+        https://pyqtgraph.readthedocs.io/en/latest/graphicsItems/plotdataitem.html#pyqtgraph.PlotDataItem.__init__
     :type flag_nan_void: bool
     :param plot_style: plot style, keys are keyword arguments of the
         constructor of pyqtgraph.PlotDataItem, see link above
@@ -416,7 +384,7 @@ def add_plot_to_widget(
         widget.clear()
 
     if flag_nan_void:
-        data = delete_nan_for_plot(data)
+        plot_style["connect"] = "finite"
 
     plot = pg.PlotDataItem(data, **plot_style)
     widget.addItem(plot)

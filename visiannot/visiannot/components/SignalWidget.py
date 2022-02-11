@@ -293,18 +293,13 @@ class SignalWidget(pg.PlotWidget):
                 first_frame_ms, last_frame_ms
             )
 
-            # delete NaNs
-            data_in_current_range = pyqtgraph_overlayer.delete_nan_for_plot(
-                data_in_current_range
-            )
-
             # check if empty signal in the temporal range
             if data_in_current_range.shape[0] == 0:
                 sig_plot.clear()
 
             else:
                 # signal plot
-                sig_plot.setData(data_in_current_range)
+                sig_plot.setData(data_in_current_range, connect="finite")
 
         # plot intervals regions
         self.clearIntervalsRegions()
