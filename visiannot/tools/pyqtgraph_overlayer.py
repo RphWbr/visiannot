@@ -595,11 +595,11 @@ def add_text_item_to_widget(
         ``from PyQt5.QtCore import Qt``
     :param opts_text_dict: keyword arguments of the constructor of
         ``pyqtgraph.TextItem``, see
-        https://pyqtgraph.readthedocs.io/en/latest/graphicsItems/textitem.html?highlight=textitem#pyqtgraph.TextItem
+        https://pyqtgraph.readthedocs.io/en/latest/graphicsItems/textitem.html#pyqtgraph.TextItem
     :type opts_text_dict: dict
     :param opts_arrow_dict: keyword arguments of the constructor of
         ``pyqtgraph.ArrowItem``, see
-        https://pyqtgraph.readthedocs.io/en/latest/graphicsItems/arrowitem.html?highlight=arrowitem#pyqtgraph.ArrowItem
+        https://pyqtgraph.readthedocs.io/en/latest/graphicsItems/arrowitem.html#pyqtgraph.ArrowItem
     :type opts_arrow_dict: dict
 
     Regarding ``anchor`` argument in ``TextItem``, ``(0, 0)`` => top left,
