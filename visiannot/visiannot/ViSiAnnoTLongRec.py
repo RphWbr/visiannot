@@ -713,6 +713,35 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
     # *********************************************************************** #
 
 
+    @staticmethod
+    def replace_holes(path_list_list):
+        """
+        Replaces holes in the list of data paths of first modality with another
+        modality
+
+        :param path_list_list: nested list, each element corresponds to one
+            modality and is the corresponding list of data paths, first element
+            is first modality
+        :type path_list_list: list
+
+        :returns: updated list of data paths of first modality
+        :rtype: list
+        """
+
+        # copy list so that the original one is not modified afterwards
+        path_list = list(path_list_list[0])
+
+        hole_inds = np.where(np.array(path_list) == '')[0]
+        for hole_ind in hole_inds:
+            for path_list_tmp in path_list_list[1:]:
+                path_tmp = path_list_tmp[hole_ind]
+                if path_tmp != '':
+                    path_list[hole_ind] = path_tmp
+                    break
+
+        return path_list
+
+
     def set_reference_modality_info(self):
         """
         Finds the beginning datetimes and the durations of the files of
@@ -728,9 +757,13 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         # check if any video => first camera is the reference modality for
         # synchronization
         if any(self.video_list_dict):
-            # get list of paths and beginning datetime for first camera
-            path_list, self.ref_beg_datetime_list = \
-                list(self.video_list_dict.values())[0]
+            # get list of beginning datetimes for first camera
+            self.ref_beg_datetime_list = \
+                list(self.video_list_dict.values())[0][1]
+
+            # get list of video paths for first camera
+            path_list_list = [pl for pl, _ in self.video_list_dict.values()]
+            path_list = ViSiAnnoTLongRec.replace_holes(path_list_list)
 
             # get duration of of video files for first camera
             # (parallelization to improve performance)
@@ -750,10 +783,13 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         # no video => first signal is the reference modality for
         # synchronization
         else:
-            # get list of paths and beginning datetime for first signal
+            # get list beginning datetimes for first signal
             sig_id_0 = list(self.signal_list_dict.keys())[0]
-            path_list = self.signal_list_dict[sig_id_0][0][0]
             self.ref_beg_datetime_list = self.signal_list_dict[sig_id_0][0][1]
+
+            # get list of data paths for first signal
+            path_list_list = [pl for pl, _ in self.video_list_dict.values()]
+            path_list = ViSiAnnoTLongRec.replace_holes(path_list_list)
 
             # get configuration of first signal
             key = self.signal_config_dict[sig_id_0][0][3]
