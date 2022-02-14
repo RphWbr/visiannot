@@ -176,11 +176,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         # get list of video paths and beginning datetimes for each camera
         self.set_video_list_dict(video_dict, time_zone=time_zone)
 
-        # check if more than one camera
-        if len(video_dict) > 1:
-            # check for holes in video files
-            self.check_holes_video(time_zone=time_zone)
-
         ###########################
         # get reference frequency #
         ###########################
@@ -285,13 +280,19 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 rmtree(self.tmp_name, ignore_errors=True)
                 os.mkdir(self.tmp_name)
 
+            # check if more than one camera
+            if len(video_dict) > 1:
+                # check for holes in video files (so that the reference
+                # modality is not corrupted with holes)
+                self.check_holes_video(time_zone=time_zone)
+
             # synchronize signals and intervals w.r.t. reference modality and
             # create temporary synchronization files
             self.process_synchronization_all()
 
         else:
-            # check for holes in signal data files
-            self.check_holes_signal_interval(time_zone=time_zone)
+            # check for holes in video, signal and interval files
+            self.check_holes_video_signal_interval(time_zone=time_zone)
 
 
         # ******************************************************************* #
@@ -602,7 +603,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         ViSiAnnoTLongRec.check_holes(self.video_list_dict, **kwargs)
 
 
-    def check_holes_signal_interval(self, **kwargs):
+    def check_holes_video_signal_interval(self, **kwargs):
         """
         Checks if there are holes in the list of signal files when comparing
         the different cameras and signals
