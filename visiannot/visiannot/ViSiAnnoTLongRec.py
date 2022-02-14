@@ -536,16 +536,14 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         :param kwargs: keyword arguments of :func:`.convert_string_to_datetime`
         """
 
-        # get maximum number of data files with regard to modalities
-        nb_files_max = max(
-            [len(v_list[0]) for v_list in data_list_dict.values()]
-        )
+        # initialize data file iteration index
+        i = 0
 
         # get list of modalities
         mod_list = list(data_list_dict.keys())
 
         # loop on data files
-        for i in range(nb_files_max):
+        while True:
             # initialize array of beginning datetime of current file for all
             # modalities
             timestamp_array = np.empty((0,))
@@ -560,6 +558,10 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                     ts = np.nan
 
                 timestamp_array = np.concatenate((timestamp_array, [ts]))
+
+            # check if no more data files to check
+            if np.sum(np.isnan(timestamp_array)) == timestamp_array.shape[0]:
+                break
 
             # get earliest timestamp
             timestamp_first = np.nanmin(timestamp_array)
@@ -587,6 +589,9 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 # insert fake data file to fill the hole
                 data_list_dict[mod][0].insert(i, '')
                 data_list_dict[mod][1].insert(i, datetime_first)
+
+            # iterate on data files
+            i += 1
                 
 
     def check_holes_video(self, **kwargs):
