@@ -572,12 +572,15 @@ def get_data_h5(path, key, **kwargs):
             key, col_ind = key.split(' - ')
 
             # check if column index specified by name
-            if isinstance(col_ind, str):
+            if isinstance(col_ind, str) and "columns" in f[key].attrs:
                 # get columns description
                 col_desc = f[key].attrs["columns"].split(', ')
 
                 # get column index
                 col_ind = col_desc.index(col_ind)
+
+            else:
+                col_ind = int(col_ind)
 
         else:
             col_ind = None
@@ -585,7 +588,7 @@ def get_data_h5(path, key, **kwargs):
         dataset = slice_dataset(f[key], **kwargs)
 
         # check if getting a specific column
-        if col_ind is not None:
+        if col_ind is not None and dataset.ndim > 1:
             dataset = dataset[:, [0, col_ind]]
 
         return dataset
