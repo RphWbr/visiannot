@@ -271,6 +271,10 @@ def get_data_duration(
     :rtype: int
     """
 
+    # clean key (in case a specific column is required when loading data)
+    if " - " in key:
+        key = key.split(" - ")[0]
+
     # check if interval data
     if flag_interval:
         # load intervals
