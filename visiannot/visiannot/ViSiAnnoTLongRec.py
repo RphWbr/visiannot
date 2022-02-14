@@ -195,9 +195,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 _, _, self.fps = get_data_video(path_list[ite_vid])
                 ite_vid += 1
 
-            # get number of files for reference modality in the recording
-            self.nb_files = len(path_list)
-
         # no video
         else:
             # get first signal configuration
@@ -222,9 +219,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
             # store frequency as the reference frequency
             self.fps = self.get_data_frequency(data_list_tmp[0], freq)
-
-            # get number of files for reference modality in the recording
-            self.nb_files = len(data_list_tmp)
 
 
         # ******************************************************************* #
