@@ -41,8 +41,7 @@ class SignalWidget(pg.PlotWidget):
     def __init__(
         self, visi, widget_position, parent=None, background='default',
         wid_height=150, cursor_style={'color': "F00", 'width': 1},
-        cursor_dragged_style={'color': "F0F", 'width': 2},
-        **kwargs
+        cursor_dragged_style={'color': "F0F", 'width': 2}, **kwargs
     ):
         """
         Subclass of **pyqtgraph.PlotWidget** so that he effect of "auto-range"
@@ -127,7 +126,7 @@ class SignalWidget(pg.PlotWidget):
     def setAxesStyle(
         self, y_range=[], left_label='',
         left_label_style={'color': '#000', 'font-size': '10pt'},
-        ticks_color="#000", ticks_size=9, ticks_offset=0
+        ticks_color="#000", ticks_size=9, ticks_offset=0, y_ticks_width=30
     ):
         """
         Sets style of left and bottom axes
@@ -148,12 +147,16 @@ class SignalWidget(pg.PlotWidget):
         :type ticks_size: float or int
         :param ticks_offset: ticks text offset
         :type ticks_offset: int
+        :param y_ticks_width: horizontal space in pixels for the text of Y axis
+            ticks
+        :type y_ticks_width: int
         """
 
         # set axes font
         pyqtgraph_overlayer.set_ticks_text_style(
             self.getAxis('left'), color=ticks_color, size=ticks_size,
-            tickTextOffset=ticks_offset, autoExpandTextSpace=False
+            tickTextOffset=ticks_offset, autoExpandTextSpace=False,
+            tickTextWidth=y_ticks_width
         )
 
         pyqtgraph_overlayer.set_ticks_text_style(

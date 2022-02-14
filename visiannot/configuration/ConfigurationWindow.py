@@ -357,6 +357,7 @@ class ConfigurationWindow():
             "ticks_size": 12,
             "ticks_color": (93, 91, 89),
             "ticks_offset": 5,
+            "y_ticks_width": 30,
             "font_name": "Times",
             "font_size": 12,
             "font_size_title": 16,
@@ -402,6 +403,8 @@ class ConfigurationWindow():
         #: - ``"ticks_color"``: (*list*) RGB color of ticks
         #: - ``"ticks_offset"``: (*int*) space in pixels between ticks and
         #:   associated values
+        #: - ``"y_ticks_width"``: (*int*) horizontal space in pixels for the
+        #:   of Y axis ticks in signal widgets
         #: - ``"font_name"``: (*str*) font of the text in ViSiAnnoT
         #: - ``"font_size"``: (*int*) font size in ViSiAnnoT
         #: - ``"font_size_title"``: (*int*) font size in ViSiAnnoT (title
@@ -523,7 +526,11 @@ class ConfigurationWindow():
                 {"minimum": 0, "maximum": 255}
             ),
             ("Ticks size", "ticks_size", "spin", 1, {"minimum": 1}),
-            ("Ticks offset", "ticks_offset", "spin", 1, {}),
+            ("Ticks offset", "ticks_offset", "spin", 1, {"minimum": 1}),
+            (
+                "Width (px) of ticks text of Y axis in signal widgets",
+                "y_ticks_width", "spin", 1, {"minimum": 1}
+            ),
             ("Font name", "font_name", "edit", 1, {}),
             ("Font size", "font_size", "spin", 1, {"minimum": 1}),
             (

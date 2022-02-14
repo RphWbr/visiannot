@@ -75,6 +75,7 @@ class ViSiAnnoT():
         ticks_color=(93, 91, 89),
         ticks_size=12,
         ticks_offset=5,
+        y_ticks_width=30,
         nb_table_annot=5,
         height_widget_signal=150
     ):
@@ -310,6 +311,9 @@ class ViSiAnnoT():
         :param ticks_offset: offset between the ticks and associated values in
             the signal plots
         :type ticks_offset: int
+        :param y_ticks_width: horizontal space in pixels for the text of Y axis
+            ticks in signal widgets
+        :type y_ticks_width: int
         :param nb_table_annot: maximum number of labels in a row in the
             widgets for events annotation and image annotation
         :type nb_table_annot: int
@@ -716,7 +720,7 @@ class ViSiAnnoT():
                 poswid_dict['progress'], y_range_dict=y_range_dict,
                 left_label_style=font_default_axis_label,
                 ticks_color=ticks_color, ticks_size=ticks_size, ticks_offset=2,
-                wid_height=height_widget_signal
+                y_ticks_width=y_ticks_width, wid_height=height_widget_signal
             )
 
 
