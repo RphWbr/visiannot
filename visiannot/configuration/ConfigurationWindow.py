@@ -308,11 +308,10 @@ class ConfigurationWindow():
             2,
             [
                 ("edit_float", 1, {}),
-                ("spin", 4, [
+                ("spin", 3, [
                     {"minimum": 0, "maximum": 255},
                     {"minimum": 0, "maximum": 255},
-                    {"minimum": 0, "maximum": 255},
-                    {"minimum": 0, "maximum": 100}
+                    {"minimum": 0, "maximum": 255}
                 ])
             ],
             [[0, (0, 0, 0, 50)]],

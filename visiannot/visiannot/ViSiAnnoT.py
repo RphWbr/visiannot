@@ -179,7 +179,7 @@ class ViSiAnnoT():
             elements:
 
             - (*int* or *float*) Threshold value on Y axis,
-            - (*tuple* or *list*) Plot color (RGB) or (RGBA).
+            - (*tuple* or *list*) Plot color (RGB).
         :type threshold_dict: dict
         :param interval_dict: interval configuration. Each item corresponds to
             a signal widget on which to plot intervals. The key must be the
