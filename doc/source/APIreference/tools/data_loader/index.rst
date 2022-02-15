@@ -33,6 +33,7 @@ Functions
    visiannot.tools.data_loader.get_nb_samples_generic
    visiannot.tools.data_loader.get_txt_lines
    visiannot.tools.data_loader.get_working_directory
+   visiannot.tools.data_loader.slice_dataset
 
 API
 ===
@@ -61,4 +62,5 @@ Functions
 .. autofunction:: visiannot.tools.data_loader.get_nb_samples_generic
 .. autofunction:: visiannot.tools.data_loader.get_txt_lines
 .. autofunction:: visiannot.tools.data_loader.get_working_directory
+.. autofunction:: visiannot.tools.data_loader.slice_dataset
 
