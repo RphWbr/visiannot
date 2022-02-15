@@ -36,6 +36,7 @@ setup(
         'pyqtgraph>=0.11.0',
         'pytz>=2019.3',
         'scipy>=1.5.3',
+        'tinytag>=1.7.0'
     ],
     python_requires='>=3.6, <4',
 
