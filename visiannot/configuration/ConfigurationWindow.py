@@ -343,7 +343,6 @@ class ConfigurationWindow():
             "flag_pause_status": True,
             "layout_mode": 0,
             "zoom_factor": 2,
-            "down_freq": 500,
             "max_points": 5000,
             "nb_ticks": 10,
             "trunc_duration": [0, 0],
@@ -378,7 +377,6 @@ class ConfigurationWindow():
         #:   paused at launching
         #: - ``"layout_mode"``: (*int*) either 0, 1 or 2
         #: - ``"zoom_factor"``: (*int*)
-        #: - ``"down_freq"``: (*float*)
         #: - ``"max_points"``: (*int*)
         #: - ``"nb_ticks"``: (*int*)
         #: - ``"trunc_duration"``: (*list*) length 2 *(minute, second)*
@@ -490,10 +488,6 @@ class ConfigurationWindow():
             (
                 "Max nb of points to display", "max_points", "spin", 1,
                 {"minimum": 1, "maximum": 100000}
-            ),
-            (
-                "Max signal frequency (above downsampling)", "down_freq",
-                "spin_double", 1, {"maximum": 100000}
             ),
             (
                 "Minimum height in pixels of the signal widgets",

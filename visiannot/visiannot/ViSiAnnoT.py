@@ -58,7 +58,6 @@ class ViSiAnnoT():
         nb_ticks=10,
         flag_annot_overlap=False,
         annot_dir="Annotations",
-        down_freq=500,
         flag_pause_status=False,
         max_points=5000,
         time_zone="Europe/Paris",
@@ -259,10 +258,6 @@ class ViSiAnnoT():
         :param annot_dir: directory where to save annotations, automatically
             created if it does not exist
         :type annot_dir: str
-        :param down_freq: maximum signal frequency to plot, if a signal has a
-            frequency strictly higher than ``down_freq``, then the signal is
-            downsampled to ``down_freq``
-        :type down_freq: int
         :param flag_pause_status: specify if the video is paused when launching
             :class:`.ViSiAnnoT`
         :type flag_pause_status: bool
@@ -339,9 +334,6 @@ class ViSiAnnoT():
 
         #: (*str*) Time zone (as in package pytz)
         self.time_zone = time_zone
-
-        #: (*int*) Maximum signal frequency to plot
-        self.down_freq = down_freq
 
         #: (*int*) Maximum number of points to plot for the signals
         self.max_points = max_points
@@ -1908,9 +1900,10 @@ class ViSiAnnoT():
                 self.fps = self.get_data_frequency(path, freq)
 
             # get beginning date-time
-            self.beginning_datetime = datetime_converter.get_datetime_from_path(
-                path, delimiter, pos, fmt, time_zone=self.time_zone
-            )
+            self.beginning_datetime = \
+                datetime_converter.get_datetime_from_path(
+                    path, delimiter, pos, fmt, time_zone=self.time_zone
+                )
 
             # get data path (in case not synchronized)
             if self.flag_long_rec and not self.flag_synchro:
@@ -2055,10 +2048,6 @@ class ViSiAnnoT():
                     data, freq_data, max_points=self.max_points,
                     plot_style=plot_style, legend_text=key_data
                 )
-
-                # downsample if necessary
-                if freq_data is not None and freq_data > self.down_freq:
-                    signal.downsample_signal(self.down_freq)
 
                 # append temporary signal list
                 sig_list_tmp.append(signal)
