@@ -250,7 +250,7 @@ Here is an example of a scatter plot with a text item associated to each point::
 
 	    # add text item
 	    pyqtgraph_overlayer.add_text_item_to_widget(
-	        wid, pos, opts_text_dict: {"text": text, "anchor": (0, 0)}
+	        wid, pos, opts_text_dict={"text": text, "anchor": (0, 0)}
 	    )
 
 	infinite_loop_gui(app)

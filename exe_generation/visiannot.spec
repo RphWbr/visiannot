@@ -5,7 +5,6 @@ block_cipher = None
 pkg_dir = '..'
 
 datas_list = [
-    ('%s/visiannot/visiannot/Images/*.jpg' % pkg_dir, 'Images'),
     ('%s/visiannot/visiannot/components/Images/*.jpg' % pkg_dir, 'Images')
 ]
 

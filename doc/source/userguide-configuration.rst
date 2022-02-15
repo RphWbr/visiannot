@@ -15,7 +15,6 @@ The configuration of **ViSiAnnoT** can be be split in seven parts: video, signal
 Several examples on how to configure :class:`.ViSiAnnoT` and :class:`.ViSiAnnoTLongRec` in a script are given in the chapter :ref:`userguide-visiannot`.
 
 
-
 Editing a configuration file
 ============================
 
@@ -28,8 +27,8 @@ Video
 See section :ref:`video` for details about video configuration. In a Python script, it is stored in a dictionary as in the following example::
 
     video_dict = {}
-    video_dict["BW1"] = ["dir/to/video", "*BW1*.mp4", '_', 0, "%Y-%m-%dT%H-%M-%S"]
-    video_dict["BW2"] = ["dir/to/video", "*BW2*.mp4", '_', 0, "%Y-%m-%dT%H-%M-%S"]
+    video_dict["BW1"] = ["dir/to/video", "*BW1*.mp4", '_', 1, "%Y-%m-%dT%H-%M-%S"]
+    video_dict["BW2"] = ["dir/to/video", "*BW2*.mp4", '_', 1, "%Y-%m-%dT%H-%M-%S"]
 
 In the configuration file, we create a section named "Video", composed of as much sub-sections as cameras. The name of the subsections is equivalent to the dictionary keys. Here is the equivalent video configuration::
 
@@ -38,13 +37,13 @@ In the configuration file, we create a section named "Video", composed of as muc
     k0 = "dir/to/video"
     k1 = "*BW1*.mp4"
     k2 = '_'
-    k3 = 0
+    k3 = 1
     k4 = "%Y-%m-%dT%H-%M-%S"
     [[BW2]]
     k0 = "dir/to/video"
     k1 = "*BW2*.mp4"
     k2 = '_'
-    k3 = 0
+    k3 = 1
     k4 = "%Y-%m-%dT%H-%M-%S"
 
 The keys ``k*`` are arbitrary. The only constraint is that they must be different inside the same (sub-)section.
@@ -52,14 +51,14 @@ The keys ``k*`` are arbitrary. The only constraint is that they must be differen
 Same configuration with a more compact writing::
 
     [Video]
-    BW1 = ["dir/to/video", "*BW1*.mp4", '_', 0, "%Y-%m-%dT%H-%M-%S"]
-    BW2 = ["dir/to/video", "*BW2*.mp4", '_', 0, "%Y-%m-%dT%H-%M-%S"]
+    BW1 = ["dir/to/video", "*BW1*.mp4", '_', 1, "%Y-%m-%dT%H-%M-%S"]
+    BW2 = ["dir/to/video", "*BW2*.mp4", '_', 1, "%Y-%m-%dT%H-%M-%S"]
 
 The brackets may be omitted::
 
     [Video]
-    BW1 = "dir/to/video", "*BW1*.mp4", '_', 0, "%Y-%m-%dT%H-%M-%S"
-    BW2 = "dir/to/video", "*BW2*.mp4", '_', 0, "%Y-%m-%dT%H-%M-%S"
+    BW1 = "dir/to/video", "*BW1*.mp4", '_', 1, "%Y-%m-%dT%H-%M-%S"
+    BW2 = "dir/to/video", "*BW2*.mp4", '_', 1, "%Y-%m-%dT%H-%M-%S"
 
 The drawback of the compact writing is that it loses clarity for long lists as it is not allowed to span several lines for a single key (e.g. BW1).
 
@@ -72,18 +71,12 @@ See section :ref:`signal` for details about signal configuration. In a Python sc
     signal_dict = {}
 
     signal_dict["ECG"] = [
-        ["dir/to/sig", "data_*.h5", '_', 1, 'posix', "ecg", 500, None],
-        [
-            "dir/to/sig", "tqrs_*.h5", '_', 0, '%Y%m%dT%H%M%S', "tqrs", 0,
-            {'pen': None, "symbol": '+', "symbolPen": 'r', "symbolSize": 10}
-        ]
+        ['dir/to/sig', "physio_*.h5", '_', 1, "%Y-%m-%dT%H-%M-%S", "ecg", 500, None],
+        ['dir/to/sig', "physio_*.h5", '_', 1, "%Y-%m-%dT%H-%M-%S", "beat - TQRS", 0, {'pen': None, 'symbol': '+', 'symbolPen': 'r', 'symbolSize': 10}]
     ]
 
     signal_dict["Respiration"] = [
-        [
-            "dir/to/sig", "data_*.h5", '_', 1, 'posix', "resp", 62.5,
-            {'pen': {'color': 'm', 'width': 1}}
-        ]
+        ['dir/to/sig', "physio_*.h5", '_', 1, "%Y-%m-%dT%H-%M-%S", "resp", "resp/freq", {'pen': {'color': 'm', 'width': 1}}]
     ]
 
 There are two signal widgets ("ECG" and "Repsiration"), with two signals in the first one and one signal in the second one. In the configuration file, we create a section named "Signal", composed of as much sub-sections as signal widgets. Each sub-section is composed of as much sub-sub-sections as signals in the corresponding signal widget. Here is the equivalent signal configuration::
@@ -93,19 +86,19 @@ There are two signal widgets ("ECG" and "Repsiration"), with two signals in the 
     [[ECG]]
     [[[k0]]]
     k0 = 'dir/to/sig'
-    k1 = 'data_*.h5'
+    k1 = 'physio_*.h5'
     k2 = '_'
     k3 = 1
-    k4 = 'posix'
+    k4 = '%Y-%m-%dT%H-%M-%S'
     k5 = 'ecg'
     k6 = 500
     k7 = None
     [[[k1]]]
     k0 = 'dir/to/sig'
-    k1 = 'tqrs_*.h5'
+    k1 = 'physio_*.h5'
     k2 = '_'
-    k3 = 0
-    k4 = '%Y%m%dT%H%M%S'
+    k3 = 1
+    k4 = '%Y-%m-%dT%H-%M-%S'
     k5 = 'tqrs'
     k6 = 0
     [[[[k7]]]]
@@ -117,12 +110,12 @@ There are two signal widgets ("ECG" and "Repsiration"), with two signals in the 
     [[Respiration]]
     [[[k0]]]
     k0 = 'dir/to/sig'
-    k1 = 'data_*.h5'
+    k1 = 'physio_*.h5'
     k2 = '_'
     k3 = 1
-    k4 = 'posix'
+    k4 = '%Y-%m-%dT%H-%M-%S'
     k5 = 'resp'
-    k6 = 62.5
+    k6 = 'resp/freq'
     [[[[k7]]]]
     [[[[[pen]]]]]
     color = 'm'
@@ -131,8 +124,8 @@ There are two signal widgets ("ECG" and "Repsiration"), with two signals in the 
 Same configuration with a more compact writing::
 
     [Signal]
-    ECG = [['dir/to/sig', 'data_*.h5', '_', 1, 'posix', 'ecg', '500', None], ['dir/to/sig', 'tqrs_*.h5', '_', 0, '%Y%m%dT%H%M%S', 'tqrs', 0, {'pen': None, 'symbol': '+', 'symbolPen': 'r', 'symbolSize': 10}]]
-    Respiration = [['dir/to/sig', 'data_*.h5', '_', 1, 'posix', 'resp', 62.5, {'pen': {'color': 'm', 'width': 1}}]]
+    ECG = [['dir/to/sig', 'physio_*.h5', '_', 1, '%Y-%m-%dT%H-%M-%S', 'ecg', '500', None], ['dir/to/sig', 'physio_*.h5', '_', 1, '%Y-%m-%dT%H-%M-%S', 'tqrs', 0, {'pen': None, 'symbol': '+', 'symbolPen': 'r', 'symbolSize': 10}]]
+    Respiration = [['dir/to/sig', 'physio_*.h5', '_', 1, '%Y-%m-%dT%H-%M-%S', 'resp', 'resp/freq', {'pen': {'color': 'm', 'width': 1}}]]
 
 
 YRange
@@ -193,7 +186,7 @@ Intervals must be plotted only the signal widget "ECG" with two interval types. 
     [Interval]
     [[ECG]]
     [[[k0]]]
-    k0 = "path/to/interval.txt"
+    k0 = "dir/to/interval"
     k1 = "I0_*.txt"
     k2 = '_'
     k3 = 0
@@ -202,7 +195,7 @@ Intervals must be plotted only the signal widget "ECG" with two interval types. 
     k6 = 500
     k7 = [0, 255, 0, 50]
     [[[k1]]]
-    k0 = "path/to/intervalbis.txt"
+    k0 = "dir/to/interval"
     k1 = "I1_*.txt"
     k2 = '_'
     k3 = 0
@@ -272,29 +265,33 @@ In a Python script, the general configuration is specified with the keyword argu
     [General]
     flag_synchro = False
     flag_pause_status = True
-    layout_mode = 3
+    layout_mode = 2
     zoom_factor = 2
-    down_freq = 500.0
     max_points = 5000
     nb_ticks = 10
-    ticks_size = 8
-    font_size = 8
-    font_size_title = 8
-    nb_table_annot = 10
+    trunc_duration = [0, 0]
     time_zone = 'Europe/Paris'
-    flag_annot_overlap = False
     annot_dir = 'Annotations'
+    from_cursor_list = [[0, 20], [0, 40], [1, 0]]
+    ticks_size = 12
+    ticks_color = [93, 91, 89]
     ticks_offset = 5
     font_name = 'Times'
-    trunc_duration = [0, 0]
-    from_cursor_list = [[0, 30], [1, 0]]
-    ticks_color = [93, 91, 89]
+    font_size = 12
+    font_size_title = 16
     font_color = [0, 0, 0]
+    nb_table_annot = 3
     bg_color = [244, 244, 244]
     bg_color_plot = [255, 255, 255]
     height_widget_signal = 150
+    flag_annot_overlap = False
+    current_fmt = '%Y-%m-%dT%H:%M:%S.%s'
+    range_fmt = '%H:%M:%S.%s'
+    ticks_fmt = '%H:%M:%S.%s'
+    y_ticks_width = 30
 
-If a key is not specified in the configuration file, then the keyword argument takes the default value.
+
+If a key is not specified in the configuration file, then the keyword argument takes the default value of :class:`.ViSiAnnoT` constructor.
 
 .. _config-gui:
 
@@ -339,7 +336,7 @@ The user must click on the push button "Add" in order to create a new signal con
 * Delimiter to get the beginning datetime in the signal file name,
 * Position of the beginning datetime in the signal file name, according to the delimiter,
 * Format of the beginning datetime in the signal file name (``"posix"`` or format compliant with ``datetime``, see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes),
-* Key to access the data in the file (in case of .h5 or .mat, set it to ``''`` otherwise), also used a legend,
+* Key to access the data in the file (in case of .h5 or .mat, set it to ``''`` otherwise), also used a legend - in case of 2D data with several value columns, then the column index must be specified, e.g. ``"key - 1"`` or ``"key - colName"`` if there is an attribute at ``key`` named ``columns`` with columns name being comma-separated (first column is always the timestamps),
 * Signal frequency (may also be a string with path to the frequency attribute in case of h5 file), set it to ``0`` in case of non-regularly sampled signal,
 * Dictionary with plot style.
 
@@ -407,7 +404,7 @@ Once an interval configuration is added, there are 8 fields to fill in:
 
 .. _fig-config-intervals:
 
-.. figure:: images/configuration_intervals.png
+.. figure:: images/configuration_interval.png
 
   Example of intervals configuration
 
@@ -466,8 +463,6 @@ The "Time zone" line edit specifies the time zone that is used for date-time com
 
 The "Max nb of points to display" spin box specifies the maximum number of signal samples that are plotted. For a given temporal range, if the number of signal samples contained in this range is above the maximum number, then we simply skip samples so that we reach the maximum number.
 
-The "Max signal frequency" spin box specifies the maximum signal frequency allowed. If the frequency is above, then the signal is downsampled to the specified maximum frequency.
-
 The "Minimum height in pixels of the signal widgets" spin box specifies the vertical size of the signal widgets in the scroll area in case it exceeds the size of the window.
 
 The "Trunc duration" spin boxes specifies the truncation duration (see section :ref:`sec-fast-nav`).
@@ -500,3 +495,72 @@ The "Annotations directory" line edit specifies the directory where to save the 
 
 The "from cursor durations" spin boxes table specifies the list of temporal range durations for defining a new temporal range beginning at the current temporal cursor (see section :ref:`sec-fast-nav`).
 
+.. _customization:
+
+Customization
+=============
+
+It is possible to call a function to automatically update the configuration before launching the GUIs::
+
+    $ python3 -m visiannot -c path/to/config.ini -n -u visiannot.configuration.update.update_data_and_annotations_directory
+
+The option ``-c`` specifies the path to the configuration file to load. The option ``-n`` disables configuration GUI. With the option ``-u``, we give the path to a function in **visiannot** package that updates the loaded configuration dictionary. The update function may be in a module that is not in a package (``moduleName.functionName``). It must have one positional argument (path to the configuration file) and must return the updated configuration dictionary.
+
+Let's give an example to illustrate the effect of the configuration update function. We have a dataset organized as follows::
+
+    |__ DATA
+        |__ Subject01
+            |__ Subject01_2021-01-01T00-00-00
+                |__ Subject01_vid_2021-01-01T00-00-00.mp4
+                |__ Subject01_vid_2021-01-01T00-30-00.mp4
+                |__ Subject01_sig_2021-01-01T00-00-30.h5
+                |__ Subject01_sig_2021-01-01T00-30-30.h5
+            |__ Subject01_2021-02-01T00-00-00
+                |__ Subject01_vid_2021-02-01T00-00-00.mp4
+                |__ Subject01_vid_2021-02-01T00-30-00.mp4
+                |__ Subject01_sig_2021-02-01T00-00-30.h5
+                |__ Subject01_sig_2021-02-01T00-30-30.h5
+        |__ Subject02
+            |__ Subject02_2021-01-03T01-00-00
+                |__ Subject02_vid_2021-01-03T01-00-00.mp4
+                |__ Subject02_vid_2021-01-03T01-30-00.mp4
+                |__ Subject02_sig_2021-01-03T01-00-30.h5
+                |__ Subject02_sig_2021-01-03T01-30-30.h5
+            |__ Subject02_2021-02-03T01-00-00
+                |__ Subject02_vid_2021-02-03T01-00-00.mp4
+                |__ Subject02_vid_2021-02-03T01-30-00.mp4
+                |__ Subject02_sig_2021-02-03T01-00-30.h5
+                |__ Subject02_sig_2021-02-03T01-30-30.h5
+
+There is a folder for each subject, with a sub-folder for each recording. A recording is made up of two video files and two signal files that are not synchronized.
+
+We want the annotations to be stored as follows (two labels, "Label1" and "Label2")::
+
+    |__ Annnotations
+        |__ Subject01
+            |__ Subject01_2021-01-01T00-00-00
+                |__ Subject01_2021-01-01T00-00-00_Label1-datetime.txt
+                |__ Subject01_2021-01-01T00-00-00_Label2-datetime.txt
+        |__ Subject02
+            |__ Subject02_2021-01-03T01-00-00
+                |__ Subject02_2021-01-03T01-00-00_Label1-datetime.txt
+                |__ Subject02_2021-01-03T01-00-00_Label2-datetime.txt
+
+When we change subject and/or recording, we need to update the following fields in the configuration file (see :ref:`configuration`):
+
+* First field of each video configuration (directory where to find video files),
+* First field of each signal configuration (directory where to find signal files),
+* Field ``annot_dir`` in the section ``General``.
+
+Thanks to the option ``-u``, it is possible to automate this process of configuration update. When running the command above, the function :func:`.update_data_and_annotations_directory` is called before launching the GUIs. It runs the following steps:
+
+* Load the configuration file as a dictionary,
+* Open a dialog window for selecting a recording folder (e.g. "*DATA/Subject02/Subject02_2021-01-03T01-00-00*"),
+* Update first field of each video configuration in the configuration dictionary with the selected directory,
+* Update first field of each signal configuration in the configuration dictionary with the selected directory,
+* Get the annotation directory defined as ``annotDirBase/patID/recName``, where ``annotDirBase`` is the initial value of the annotation directory in the configuration file, ``recName`` is the basename of the selected directory (e.g. "Subject02_2021-01-03T01-00-00") and ``patID`` is the patient ID (e.g. "Subject02"),
+* Update the field ``annot_dir`` in the section ``General`` of the configuration dictionary with the new annotation directory.
+
+In order to have the dialog window to open at particular location at launch, it is possible to add the key ``data_dir_base`` in the section ``General`` of the configuration file.
+
+**NB**: only the configuration dictionary is updated in the function, the configuration file remains unchanged, implying that it is not needed to reset the value of ``annot_dir`` in the configuration file after each launch.

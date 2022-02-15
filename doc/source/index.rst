@@ -19,7 +19,6 @@ Welcome to ViSiAnnoT's documentation!
    userguide-configuration
    userguide-pyqt_overlayer
    userguide-pyqtgraph_overlayer
-   customization
    exe
    software
    further

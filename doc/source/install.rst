@@ -39,6 +39,7 @@ The following packages are required and are automatically installed with ``pip``
 * `pyqtgraph <http://pyqtgraph.org/>`_ (video and signal plots)
 * `pytz <https://pypi.org/project/pytz/>`_ (date-time comparison with time zone)
 * `scipy <https://www.scipy.org/>`_ (loading .mat files)
+* `tinytag <https://pypi.org/project/tinytag/>`_ (getting video files duration)
 
 
 .. _run:

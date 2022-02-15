@@ -71,7 +71,6 @@ The tree view of source files is reported below::
           |__ userguide-configuration.rst
           |__ userguide-pyqt_overlayer.rst
           |__ userguide-visiannot.rst
-          |__ customization.rst
           |__ summaryGroups.py
           |__ cfg.py
           |__ support.rst
