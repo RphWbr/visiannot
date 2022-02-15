@@ -14,7 +14,7 @@ Module defining :class:`.ViSiAnnoTLongRec`
 import numpy as np
 import os
 from glob import glob
-from datetime import datetime, timedelta
+from datetime import timedelta
 from ..tools import pyqt_overlayer
 from ..tools import datetime_converter
 from ..tools import data_loader
