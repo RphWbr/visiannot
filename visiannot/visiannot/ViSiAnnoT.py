@@ -1063,7 +1063,7 @@ class ViSiAnnoT():
                 annot_path_list = os.listdir(self.annot_dir)
 
                 # get file name of events annotation of protected label
-                protected_name = "%s_%s.txt" % (
+                protected_name = "%s_%s-datetime.txt" % (
                     self.wid_annotevent.file_name_base,
                     self.wid_annotevent.protected_label
                 )
