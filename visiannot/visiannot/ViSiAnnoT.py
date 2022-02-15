@@ -155,7 +155,11 @@ class ViSiAnnoT():
             - (*int* or *float* or *str*) Signal frequency, set it to ``0`` if
               signal non regularly sampled, set it to ``-1`` if same frequency
               as :attr:`.ViSiAnnoT.fps`, it may be a string with the path to
-              the frequency attribute in a .h5 file,
+              the frequency attribute in a .h5 file - in case of 2D data with
+              several value columns, then the column index must be specified,
+              e.g. ``"key - 1"`` or ``"key - colName"`` if there is an
+              attribute at ``key`` named ``columns`` with columns name being
+              comma-separated (first column is always the timestamps),
             - (*dict*) Plot style, see
               https://pyqtgraph.readthedocs.io/en/latest/graphicsItems/plotdataitem.html
               for details, set it to ``None`` for default.
@@ -175,7 +179,7 @@ class ViSiAnnoT():
             elements:
 
             - (*int* or *float*) Threshold value on Y axis,
-            - (*tuple* or *list*) Plot color (RGBA).
+            - (*tuple* or *list*) Plot color (RGB) or (RGBA).
         :type threshold_dict: dict
         :param interval_dict: interval configuration. Each item corresponds to
             a signal widget on which to plot intervals. The key must be the
