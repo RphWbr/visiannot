@@ -68,6 +68,7 @@ The following packages are required and are automatically installed with ``pip``
 * [pyqtgraph](http://pyqtgraph.org/) (video and signal plots)
 * [pytz](https://pypi.org/project/pytz/) (used for date-time comparison)
 * [scipy](https://www.scipy.org/)
+* [tinytag](https://pypi.org/project/tinytag/)
 
 
 Run ViSiAnnoT
