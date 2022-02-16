@@ -15,7 +15,7 @@ from os.path import isdir, abspath
 from shutil import rmtree
 
 
-def writeSection(index_path, title, level=0, file_option='a'):
+def write_section(index_path, title, level=0, file_option='a'):
     title_length = len(title)
 
     if level == 0 or level == 1:
@@ -38,32 +38,32 @@ def writeSection(index_path, title, level=0, file_option='a'):
         f.write('\n\n')
 
 
-def writeTocTreeDirective(index_path):
+def write_toc_tree_directive(index_path):
     with open(index_path, 'a') as f:
         f.write(".. toctree::\n   :titlesonly:\n\n")
 
 
-def writeTocTreeIndex(index_path, index_link):
+def write_toc_tree_index(index_path, index_link):
     with open(index_path, 'a') as f:
         f.write('   ' + index_link + '/index\n')
 
 
-def writeAutosummaryDirective(index_path):
+def write_autosummary_directive(index_path):
     with open(index_path, 'a') as f:
         f.write(".. autosummary::\n")
 
 
-def writeAutoModuleDirective(index_path, module_full_name):
+def write_automodule_directive(index_path, module_full_name):
     with open(index_path, 'a') as f:
         f.write(".. automodule:: %s\n\n" % module_full_name)
 
 
-def writeAutoMember(index_path, member_full_name):
+def write_automember(index_path, member_full_name):
     with open(index_path, 'a') as f:
         f.write("   %s\n" % member_full_name)
 
 
-def writeAutofunctionDirective(index_path, module_full_name, func_list):
+def write_autofunction_directive(index_path, module_full_name, func_list):
     with open(index_path, 'a') as f:
         for func_name in func_list:
             f.write(
@@ -73,7 +73,7 @@ def writeAutofunctionDirective(index_path, module_full_name, func_list):
         f.write("\n")
 
 
-def writeAutodataDirective(index_path, module_full_name, data_list):
+def write_autodata_directive(index_path, module_full_name, data_list):
     with open(index_path, 'a') as f:
         for data_name in data_list:
             f.write(".. autodata:: %s.%s\n" % (module_full_name, data_name))
@@ -81,7 +81,7 @@ def writeAutodataDirective(index_path, module_full_name, data_list):
         f.write("\n")
 
 
-def writeAutoclassDirective(index_path, class_full_name):
+def write_autoclass_directive(index_path, class_full_name):
     with open(index_path, 'a') as f:
         f.write(".. autoclass:: %s\n" % class_full_name)
         f.write("   :members:\n")
@@ -91,21 +91,21 @@ def writeAutoclassDirective(index_path, class_full_name):
         f.write("\n")
 
 
-def writeModuleSummary(
+def write_module_summary(
     index_path, package_full_name, member_list, title
 ):
     # check if any member to summarize
     if len(member_list) > 0:
         # write sub-title for functions
-        writeSection(index_path, title, level=2)
+        write_section(index_path, title, level=2)
 
         # write autosummary directive
-        writeAutosummaryDirective(index_path)
+        write_autosummary_directive(index_path)
 
         # loop on members
         for member_name in member_list:
             # add member to summary
-            writeAutoMember(
+            write_automember(
                 index_path, "%s.%s" % (package_full_name, member_name)
             )
 
@@ -114,105 +114,105 @@ def writeModuleSummary(
             f.write('\n')
 
 
-def writeAPIData(index_path, module_full_name, data_list):
+def write_api_data(index_path, module_full_name, data_list):
     # check if any data to document
     if len(data_list) > 0:
         # write sub-title for data
-        writeSection(index_path, "Data", level=2)
+        write_section(index_path, "Data", level=2)
 
         # write directive for autodata
-        writeAutodataDirective(
+        write_autodata_directive(
             index_path, module_full_name, data_list
         )
 
 
-def writeAPIClasses(index_path, module_full_name, class_list):
+def write_api_classes(index_path, module_full_name, class_list):
     # loop on classes
     for class_name in class_list:
         # get full path to class
         class_full_name = "%s.%s" % (module_full_name, class_name)
 
         # write sub-title for class
-        writeSection(index_path, "Class %s" % class_name, level=2)
+        write_section(index_path, "Class %s" % class_name, level=2)
 
         # write directive for autoclass
-        writeAutoclassDirective(index_path, class_full_name)
+        write_autoclass_directive(index_path, class_full_name)
 
 
-def writeAPIFunctions(index_path, module_full_name, func_list):
+def write_api_functions(index_path, module_full_name, func_list):
     # check if any function to document
     if len(func_list) > 0:
         # write sub-title for functions
-        writeSection(index_path, "Functions", level=2)
+        write_section(index_path, "Functions", level=2)
 
         # write directive for autofunction
-        writeAutofunctionDirective(
+        write_autofunction_directive(
             index_path, module_full_name, func_list
         )
 
 
-def writeModuleIndex(index_path, module, module_full_name):
+def write_module_index(index_path, module, module_full_name):
     # get list of global variables in the module
-    data_list = getMembersDefinedInModule(module, '')
+    data_list = get_members_defined_in_module(module, '')
 
     # get list of classes in the module
-    class_list = getMembersDefinedInModule(module, isclass)
+    class_list = get_members_defined_in_module(module, isclass)
 
     # get list of functions in the module
-    func_list = getMembersDefinedInModule(module, isfunction)
+    func_list = get_members_defined_in_module(module, isfunction)
 
     # write title of summary section
-    writeSection(index_path, "Summary", level=1)
+    write_section(index_path, "Summary", level=1)
 
     # write automodule directive
-    writeAutoModuleDirective(index_path, module_full_name)
+    write_automodule_directive(index_path, module_full_name)
 
     # write summary of global variables
-    writeModuleSummary(
+    write_module_summary(
         index_path, module_full_name, data_list, "Data"
     )
 
     # write summary of classes
-    writeModuleSummary(
+    write_module_summary(
         index_path, module_full_name, class_list, "Classes"
     )
 
     # write summary of functions
-    writeModuleSummary(
+    write_module_summary(
         index_path, module_full_name, func_list, "Functions"
     )
 
     # write title of API section
-    writeSection(index_path, "API", level=1)
+    write_section(index_path, "API", level=1)
 
     # write documentation for functions
-    writeAPIData(index_path, module_full_name, data_list)
+    write_api_data(index_path, module_full_name, data_list)
 
     # write documentation of classes
-    writeAPIClasses(index_path, module_full_name, class_list)
+    write_api_classes(index_path, module_full_name, class_list)
 
     # write documentation for functions
-    writeAPIFunctions(index_path, module_full_name, func_list)
+    write_api_functions(index_path, module_full_name, func_list)
 
 
-def writePackageIndex(
+def write_package_index(
     index_path, package, package_full_name, out_dir
 ):
     # write directive for toc tree
-    writeTocTreeDirective(index_path)
+    write_toc_tree_directive(index_path)
 
     # loop on sub-packages
     for sub_package_name in package.__all__:
         # write a link to sub-package index in the toc tree
-        writeTocTreeIndex(index_path, sub_package_name)
+        write_toc_tree_index(index_path, sub_package_name)
 
         # recursive call
-        generateIndexFilesRecursive(
+        generate_index_files_recursive(
             ".%s" % sub_package_name, package_full_name, out_dir
         )
 
 
-def getMembersDefinedInModule(module, condition_function):
+def get_members_defined_in_module(module, condition_function):
     """
     condition_function may be any 'isXXX' function of the module inspect,
     ``None`` (get everything) or '' (get global variables)
@@ -243,7 +243,7 @@ def getMembersDefinedInModule(module, condition_function):
     return member_list
 
 
-def generateIndexFilesRecursive(
+def generate_index_files_recursive(
     package_name, package_root_name, out_dir
 ):
     # import package
@@ -264,20 +264,20 @@ def generateIndexFilesRecursive(
 
     # create index file
     index_path = "%s/index.rst" % out_dir
-    writeSection(index_path, package_full_name, file_option='w')
+    write_section(index_path, package_full_name, file_option='w')
 
     # check if package indeed
     if hasattr(package, "__all__"):
-        writePackageIndex(
+        write_package_index(
             index_path, package, package_full_name, out_dir
         )
 
     # module instead
     else:
-        writeModuleIndex(index_path, package, package_full_name)
+        write_module_index(index_path, package, package_full_name)
 
 
-def generateIndexFiles(
+def generate_index_files(
     package_name, doc_dir, package_dir=None, output_name="APIreference",
     chapter_title="API reference", flag_include_main=False
 ):
@@ -288,7 +288,7 @@ def generateIndexFiles(
 
     # append API reference to toctree directive in main index file of the
     # documentation
-    appendMainIndexFile("%s/index.rst" % doc_dir, output_name)
+    append_main_index_file("%s/index.rst" % doc_dir, output_name)
 
     # get output directory where to store the index files
     out_dir = "%s/%s" % (doc_dir, output_name)
@@ -302,13 +302,13 @@ def generateIndexFiles(
 
     # create index file
     index_path = "%s/index.rst" % out_dir
-    writeSection(index_path, chapter_title, file_option='w')
+    write_section(index_path, chapter_title, file_option='w')
 
     # import package
     package = import_module(package_name)
 
     # write directive for toc tree
-    writeTocTreeDirective(index_path)
+    write_toc_tree_directive(index_path)
 
     # loop on modules and sub-packages
     for sub_package_name in package.__all__:
@@ -317,15 +317,15 @@ def generateIndexFiles(
 
         else:
             # write a link to sub-package index in the toc tree
-            writeTocTreeIndex(index_path, sub_package_name)
+            write_toc_tree_index(index_path, sub_package_name)
 
             # create index files for sub-package
-            generateIndexFilesRecursive(
+            generate_index_files_recursive(
                 ".%s" % sub_package_name, package_name, out_dir
             )
 
 
-def appendMainIndexFile(main_index_path, api_ref_name):
+def append_main_index_file(main_index_path, api_ref_name):
     with open(main_index_path, 'r') as f:
         content_list = f.readlines()
         if "   %s/index\n" % api_ref_name not in content_list:
@@ -348,4 +348,4 @@ def appendMainIndexFile(main_index_path, api_ref_name):
 
 
 if __name__ == "__main__":
-    generateIndexFiles("visiannot", "source")
+    generate_index_files("visiannot", "source")

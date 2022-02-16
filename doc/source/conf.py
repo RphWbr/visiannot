@@ -27,7 +27,7 @@ from visiannot import __version__ as version
 from datetime import datetime
 
 
-from summaryGroups import setup
+from summary_groups import setup
 
 
 

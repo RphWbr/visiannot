@@ -71,13 +71,13 @@ The tree view of source files is reported below::
           |__ userguide-configuration.rst
           |__ userguide-pyqt_overlayer.rst
           |__ userguide-visiannot.rst
-          |__ summaryGroups.py
+          |__ summary_groups.py
           |__ cfg.py
           |__ support.rst
       |__ Makefile
       |__ README.txt
       |__ requirements.txt
-      |__ autoDocAPI.py
+      |__ auto_doc_api.py
   |__ README.md
   |__ LICENSE.txt
   |__ setup.py

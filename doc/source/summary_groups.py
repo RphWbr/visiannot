@@ -8,7 +8,7 @@ from importlib import import_module
 PACKAGE_NAME = "visiannot"
 
 
-def groupParser(module_path):
+def group_parser(module_path):
     # define role identifiers
     start_group_exp = "    # Group: "
     end_group_exp = "    # End group"
@@ -33,7 +33,10 @@ def groupParser(module_path):
     # get list of classes name
     class_name_list = []
     for ind in class_inds:
-        class_name = getline(module_path, ind + 1)[len(class_exp):].split('(')[0]
+        class_name = getline(
+            module_path, ind + 1
+        )[len(class_exp):].split('(')[0]
+
         class_name_list.append(class_name)
 
     # get index of lines where the groups start and end
@@ -83,7 +86,9 @@ def groupParser(module_path):
 
             # update group lists and dictionary
             group_inds_list.append((start_ind, end_ind))
-            group_name = getline(module_path, start_ind + 1)[len(start_group_exp):-1]
+            group_name = getline(
+                module_path, start_ind + 1
+            )[len(start_group_exp):-1]
             group_name_list.append(group_name)
             group_dict[class_name][group_name] = []
 
@@ -111,13 +116,16 @@ def groupParser(module_path):
         # get group containing the method and update group dictionary
         for group_inds, group_name in zip(group_inds_list, group_name_list):
             if ind >= group_inds[0] and ind <= group_inds[1]:
-                method_name = getline(module_path, ind + 1)[len(meth_exp):].split('(')[0]
+                method_name = getline(
+                    module_path, ind + 1
+                )[len(meth_exp):].split('(')[0]
+
                 group_dict[class_name][group_name].append(method_name)
 
     return group_dict
 
 
-def launchGroupParser(package_name):
+def launch_group_parser(package_name):
     # import package
     package = import_module(package_name)
 
@@ -130,19 +138,19 @@ def launchGroupParser(package_name):
         for member_name in package.__all__:
             # recursive call
             group_dict.update(
-                launchGroupParser("%s.%s" % (package_name, member_name))
+                launch_group_parser("%s.%s" % (package_name, member_name))
             )
 
     # module imported
     else:
         # parse module and update global variable
-        group_dict.update(groupParser(package.__file__))
+        group_dict.update(group_parser(package.__file__))
 
     return group_dict
 
 
 def example_grouper(app, what, name, obj, section, parent):
-    group_dict = launchGroupParser(PACKAGE_NAME)
+    group_dict = launch_group_parser(PACKAGE_NAME)
     for class_name, group_dict_sub in group_dict.items():
         for group_name, meth_list in group_dict_sub.items():
             if name in meth_list and class_name == parent.__name__:
