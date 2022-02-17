@@ -160,7 +160,7 @@ class CustomTemporalRangeWidget():
                         for beg_rec in visi.ref_beg_datetime_list]
                 )
 
-                new_ite_file = np.where(start_ref_diff_array >= 0)[0]
+                new_ite_file = np.where(start_ref_diff_array > 0)[0]
 
                 if new_ite_file.shape[0] == 0:
                     flag_coherence = False
