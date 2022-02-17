@@ -1129,24 +1129,20 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         return video_dict, signal_dict, interval_dict
 
 
-    def change_file_in_long_rec(
-        self, ite_file, new_frame_id, flag_previous_scroll=False
-    ):
+    def change_file_in_long_rec(self, ite_file, *args, **kwargs):
         """
         Changes file in the long recording
 
         It loads new data files by calling
         :meth:`.ViSiAnnoTLongRec.prepare_new_file`. Then it updates the
-        display.
+        display with :meth:`.ViSiAnnoTLongRec.update_plot_new_file`.
 
         :param ite_file: index of the new file in the long recording
         :type ite_file: int
-        :param new_frame_id: new current frame number (sampled at the
-            reference frequency :attr:`.ViSiAnnoT.fps`)
-        :type new_frame_id: int
-        :param flag_previous_scroll: specify if the new file is reach backward
-            by scrolling
-        :type flag_previous_scroll: bool
+        :param args: positional arguments of
+            :meth:`.ViSiAnnoTLongRec.update_plot_new_file`
+        :param kwargs: keyword arguments of
+            :meth:`.ViSiAnnoTLongRec.update_plot_new_file`
 
         :returns: specify if the file has been effectively changed
         :rtype: bool
@@ -1164,37 +1160,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         ok = self.prepare_new_file(ite_file)
 
         if ok:
-            # reset previous frame id
-            for wid_vid in self.wid_vid_dict.values():
-                wid_vid.previous_frame_id = None
-
-            # update frame id
-            self.update_frame_id(new_frame_id)
-
-            # new temporal range
-            current_range = self.last_frame - self.first_frame
-            if not flag_previous_scroll:
-                self.first_frame = 0
-                self.last_frame = min(current_range, self.nframes)
-            else:
-                self.first_frame = max(0, self.nframes - current_range)
-                self.last_frame = self.nframes
-
-            # update progress bar
-            self.wid_progress.updateFromViSiAnnoT(
-                self.nframes, self.first_frame, self.last_frame, self.fps,
-                self.beginning_datetime
-            )
-
-            # update signals plot
-            self.update_signal_plot()
-
-            # update annotation regions plot if necessary
-            if self.wid_annotevent is not None:
-                if self.wid_annotevent.push_text_list[3].text() == "On":
-                    self.wid_annotevent.clear_regions(self)
-                    self.wid_annotevent.description_dict = {}
-                    self.wid_annotevent.plot_regions(self)
+            self.update_plot_new_file(*args, **kwargs)
 
         if flag_reset_pause:
             self.flag_pause_status = False
@@ -1285,6 +1251,65 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
         else:
             return False
+
+
+    def update_plot_new_file(
+        self, new_frame_id, new_temporal_range=None, flag_previous_scroll=False
+    ):
+        """
+        Updates plots when changing file in long recording
+
+        :param new_frame_id: new current frame number (sampled at the
+            reference frequency :attr:`.ViSiAnnoT.fps`)
+        :type new_frame_id: int
+        :param new_temporal_range: new temporal range (first frame,
+            last frame), if last frame is above :attr:`ViSiAnnoT.nframes`, then
+            it is truncated - by default it starts at 0 (or at the end of the
+            file in case of backward scrolling) and keeps the same current
+            temporal range duration
+        :type new_temporal_range: tuple
+        :param flag_previous_scroll: specify if the new file is reach backward
+            by scrolling
+        :type flag_previous_scroll: bool
+        """
+
+        # reset previous frame id
+        for wid_vid in self.wid_vid_dict.values():
+            wid_vid.previous_frame_id = None
+
+        # update frame id
+        self.update_frame_id(new_frame_id)
+
+        # new temporal range
+        if new_temporal_range is not None:
+            self.first_frame, self.last_frame = new_temporal_range
+            self.last_frame = min(self.nframes, self.last_frame)
+
+        else:
+            current_range = self.last_frame - self.first_frame
+            if not flag_previous_scroll:
+                self.first_frame = 0
+                self.last_frame = min(current_range, self.nframes)
+
+            else:
+                self.first_frame = max(0, self.nframes - current_range)
+                self.last_frame = self.nframes
+
+        # update progress bar
+        self.wid_progress.updateFromViSiAnnoT(
+            self.nframes, self.first_frame, self.last_frame, self.fps,
+            self.beginning_datetime
+        )
+
+        # update signals plot
+        self.update_signal_plot()
+
+        # update annotation regions plot if necessary
+        if self.wid_annotevent is not None:
+            if self.wid_annotevent.push_text_list[3].text() == "On":
+                self.wid_annotevent.clear_regions(self)
+                self.wid_annotevent.description_dict = {}
+                self.wid_annotevent.plot_regions(self)
 
 
     # *********************************************************************** #

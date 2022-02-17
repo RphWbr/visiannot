@@ -197,22 +197,17 @@ class CustomTemporalRangeWidget():
             )
 
             if len(visi.wid_sig_list) > 0:
-                visi.first_frame = start_frame
-
-                visi.last_frame = min(
-                    visi.nframes,
-                    visi.first_frame + datetime_converter.convert_time_to_frame(
+                new_temporal_range = (
+                    start_frame,
+                    start_frame + datetime_converter.convert_time_to_frame(
                         visi.fps, duration_hour, duration_minute, duration_sec
                     )
                 )
 
-            # udpdate current frame
-            visi.update_frame_id(start_frame)
+            else:
+                new_temporal_range = None
 
-            # update signals plots
-            visi.update_signal_plot()
-
-            # update annotation regions plot
-            if visi.wid_annotevent is not None:
-                visi.wid_annotevent.clear_regions(visi)
-                visi.wid_annotevent.plot_regions(visi)
+            # udpdate plot
+            visi.update_plot_new_file(
+                start_frame, new_temporal_range=new_temporal_range
+            )
