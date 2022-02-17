@@ -29,7 +29,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'configobj>=5.0.6',
-        'opencv-python>=3.4.8.29',
+        'opencv-python>=3.4.8.29, <4.0.0.21',
         'h5py>=2.10.0',
         'numpy>=1.18.5',
         'PyQt5>=5.14.1',
