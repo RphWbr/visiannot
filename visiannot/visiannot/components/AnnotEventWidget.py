@@ -594,7 +594,7 @@ class AnnotEventWidget():
             self.annot_array[self.current_label_id, annot_position] = \
                 datetime_converter.convert_frame_to_absolute_datetime_string(
                     frame_id, visi.fps, visi.beginning_datetime,
-                    self.timestamp_format
+                    fmt=self.timestamp_format
             )
 
             # display the beginning time of the annotated interval
