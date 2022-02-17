@@ -150,7 +150,7 @@ class CustomTemporalRangeWidget():
         )
 
         # check temporal coherence
-        coherence = True
+        flag_coherence = True
         if start_frame < 0 or start_frame >= visi.nframes:
             # check long recordings
             if visi.flag_long_rec:
@@ -163,14 +163,14 @@ class CustomTemporalRangeWidget():
                 new_ite_file = np.where(start_ref_diff_array >= 0)[0]
 
                 if new_ite_file.shape[0] == 0:
-                    coherence = False
+                    flag_coherence = False
                     print(
                         "wrong input: start time is above the ending of the "
                         "recordings"
                     )
 
                 elif new_ite_file.shape[0] == start_ref_diff_array.shape[0]:
-                    coherence = False
+                    flag_coherence = False
                     print(
                         "wrong input: start time is below the beginning of "
                         "the recording"
@@ -179,7 +179,7 @@ class CustomTemporalRangeWidget():
                 else:
                     # change recording
                     new_ite_file = new_ite_file[0] - 1
-                    coherence = visi.prepare_new_file(new_ite_file)
+                    flag_coherence = visi.prepare_new_file(new_ite_file)
 
             else:
                 print(
@@ -187,14 +187,15 @@ class CustomTemporalRangeWidget():
                     "recordings or above the ending of the recording"
                 )
 
-                coherence = False
+                flag_coherence = False
 
         # go for it
-        if coherence:
+        if flag_coherence:
             # define new range
-            start_frame = datetime_converter.convert_absolute_datetime_to_frame(
-                start_date_time, visi.fps, visi.beginning_datetime
-            )
+            start_frame = \
+                datetime_converter.convert_absolute_datetime_to_frame(
+                    start_date_time, visi.fps, visi.beginning_datetime
+                )
 
             if len(visi.wid_sig_list) > 0:
                 new_temporal_range = (
