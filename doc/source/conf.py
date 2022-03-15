@@ -27,7 +27,7 @@ from visiannot import __version__ as version
 from datetime import datetime
 
 
-from summary_groups import setup
+from tools_doc_sphinx.summary_groups import setup
 
 
 
