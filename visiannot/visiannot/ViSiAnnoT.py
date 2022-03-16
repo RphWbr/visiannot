@@ -17,6 +17,7 @@ import numpy as np
 from threading import Thread
 import os
 from time import sleep
+from datetime import timedelta
 from shutil import rmtree
 from ..tools import pyqt_overlayer
 from ..tools import pyqtgraph_overlayer
@@ -1944,8 +1945,8 @@ class ViSiAnnoT():
                 )
 
                 # get configuration
-                path_data, _, _, _, key_data, freq_data, plot_style = \
-                    signal_config
+                path_data, delimiter, pos, fmt, key_data, freq_data, \
+                    plot_style = signal_config
 
                 # ******************** load intervals *********************** #
                 if signal_id in interval_dict.keys():
@@ -1961,7 +1962,8 @@ class ViSiAnnoT():
                         )
 
                         # get configuration
-                        path_interval, _, _, _, key_interval, freq_interval, \
+                        path_interval, delimiter_interval, pos_interval, \
+                            fmt_interval, key_interval, freq_interval, \
                             color_interval = interval_config
 
                         # get frequency
@@ -1973,8 +1975,9 @@ class ViSiAnnoT():
                         if self.flag_long_rec and not self.flag_synchro:
                             # load intervals data
                             interval, _ = self.get_data_sig_tmp(
-                                path_interval, signal_id, key_interval,
-                                freq_interval, self.tmp_delimiter,
+                                path_interval, delimiter_interval,
+                                pos_interval, fmt_interval, key_interval,
+                                freq_interval, signal_id, self.tmp_delimiter,
                                 flag_interval=True
                             )
 
@@ -2004,8 +2007,8 @@ class ViSiAnnoT():
                 if self.flag_long_rec and not self.flag_synchro:
                     # get data and frequency
                     data, freq_data = self.get_data_sig_tmp(
-                        path_data, signal_id, key_data, freq_data,
-                        self.tmp_delimiter
+                        path_data, delimiter, pos, fmt, key_data, freq_data,
+                        signal_id, self.tmp_delimiter
                     )
 
                 # synchronous signals
@@ -2105,26 +2108,33 @@ class ViSiAnnoT():
 
 
     def get_data_sig_tmp(
-        self, path, signal_id, key_data, freq_data, delimiter,
-        flag_interval=False
+        self, path, delimiter, pos, fmt, key_data, freq_data, signal_id,
+        tmp_delimiter, flag_interval=False
     ):
         """
         Gets signal data after synchronization with video
 
         :param path: path to the temporary synchronization file
         :type path: str
-        :param signal_id: signal type (key in the dictionary ``signal_dict``,
-            second positional argument of :class:`.ViSiAnnoT` constructor)
-        :type signal_id: str
+        :param delimiter: delimiter to get the signal file timestamp in the
+            file name
+        :type delimiter: str
+        :param pos: position of the signal file timestamp in the file name
+        :type pos: int
+        :param fmt: format of signal file timestamp found in the file name
+        :type fmt: str
         :param key_data: key to access the data (in case of .h5 or .mat file)
         :type key_data: str
         :param freq_data: signal frequency as found in the configuration file,
             in case this is a string, then the frequency is retrieved in the
             data file
         :type freq_data: float or str
-        :param delimiter: delimiter used to split the lines of the temporary
-            signal files
-        :type delimiter: str
+        :param signal_id: signal type (key in the dictionary ``signal_dict``,
+            second positional argument of :class:`.ViSiAnnoT` constructor)
+        :type signal_id: str
+        :param tmp_delimiter: delimiter used to split the lines of the
+            temporary signal files
+        :type tmp_delimiter: str
         :param flag_interval: specify if data to load is intervals
         :type flag_interval: bool
 
@@ -2141,16 +2151,25 @@ class ViSiAnnoT():
             freq_data = None
 
         else:
+            # get timestamp of temporary file (i.e. timestamp of reference
+            # modality)
+            ref_timestamp = datetime_converter.get_datetime_from_path(
+                path, '_', -1, "%Y-%m-%dT%H-%M-%S",
+                time_zone=self.time_zone
+            )
+
             # initialize data list
             data_list = []
-            duration_progress = 0
 
             # look for data file path in order to get frequency if stored in
             # file attribute
             if isinstance(freq_data, str):
                 freq_data_tmp = None
                 for line in lines:
-                    data_path, _ = ViSiAnnoT.get_file_sig_tmp(line, delimiter)
+                    data_path, _ = ViSiAnnoT.get_file_sig_tmp(
+                        line, tmp_delimiter
+                    )
+
                     if data_path != "None":
                         freq_data_tmp = self.get_data_frequency(
                             data_path, freq_data
@@ -2164,11 +2183,16 @@ class ViSiAnnoT():
             elif freq_data == -1:
                 freq_data = self.fps
 
+            # check if 1D data
+            if freq_data > 0:
+                # initialize timestamp of last sample of previous signal file
+                prev_sig_timestamp = ref_timestamp
+
             # loop on temporary file lines
             for ite_line, line in enumerate(lines):
                 # get data path and starting second
                 data_path, start_sec = ViSiAnnoT.get_file_sig_tmp(
-                    line, delimiter
+                    line, tmp_delimiter
                 )
 
                 # no data at the beginning
@@ -2181,12 +2205,23 @@ class ViSiAnnoT():
                         next_data = np.nan * np.ones(
                             (int(start_sec * freq_data),)
                         )
-                    
-                    duration_progress += start_sec
 
                 else:
+                    # get signal file timestamp
+                    sig_timestamp = \
+                        datetime_converter.get_datetime_from_path(
+                            data_path, delimiter, pos, fmt,
+                            time_zone=self.time_zone
+                        )
+
                     # check if 2D data (signal not regularly sampled)
                     if freq_data == 0:
+                        # get temporal offset between reference modality and
+                        # signal
+                        temporal_offset = (
+                            sig_timestamp - ref_timestamp
+                        ).total_seconds()
+
                         # get first column (samples timestamps)
                         next_data_ts = data_loader.get_data_generic(
                             data_path, key=key_data, slicing=("col", 0)
@@ -2213,9 +2248,6 @@ class ViSiAnnoT():
                             # get slicing index
                             start_ind = inds[0]
 
-                            # update temporal offset
-                            duration_progress = - start_sec
-
                     # truncate data at the end if necessary
                     if ite_line == len(lines) - 1:
                         # get duration of reference data file in seconds
@@ -2240,7 +2272,7 @@ class ViSiAnnoT():
                         # 2D data (not regularly sampled)
                         else:
                             temporal_limit = (
-                                ref_duration - duration_progress
+                                ref_duration - temporal_offset
                             ) * 1000
 
                             # get indexes of samples before temporal limit
@@ -2284,20 +2316,33 @@ class ViSiAnnoT():
                             data_path, **kwargs
                         )
 
-                    # get duration of truncated data
+                    # check if 1D data
                     if freq_data > 0:
-                        duration = next_data.shape[0] / freq_data
+                        # fill with NaN if not continuous with previous signal
+                        # file
+                        delta = (
+                            sig_timestamp - prev_sig_timestamp
+                        ).total_seconds()
+
+                        if delta > 0:
+                            next_data = np.concatenate((
+                                np.nan * np.ones((int(delta * freq_data),)),
+                                next_data
+                            ))
 
                     else:
-                        duration = (next_data[-1, 0] - next_data[0, 0]) / 1000
-
                         # temporal offset
-                        next_data[:, 0] += duration_progress * 1000
-
-                    duration_progress += duration
+                        next_data[:, 0] += temporal_offset * 1000
 
                 # concatenate data
                 data_list.append(next_data)
+
+                # check if 1D data
+                if freq_data > 0:
+                    # update timestamp of last sample
+                    prev_sig_timestamp += timedelta(
+                        seconds=next_data.shape[0] / freq_data
+                    )
 
             # get data as a numpy array
             data = np.concatenate(tuple(data_list))
