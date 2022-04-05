@@ -997,9 +997,17 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             if duration == 0:
                 inds_to_remove.append(ite_file)
 
-        for ind in inds_to_remove:
-            data_beginning_datetime_list.pop(ind)
-            data_ending_datetime_list.pop(ind)
+        data_beginning_datetime_list = list(np.delete(
+            np.array(data_beginning_datetime_list), inds_to_remove
+        ))
+
+        data_ending_datetime_list = list(np.delete(
+            np.array(data_ending_datetime_list), inds_to_remove
+        ))
+
+        data_path_list = list(np.delete(
+            np.array(data_path_list), inds_to_remove
+        ))
 
         # initialize list of synchronization files names
         synchro_path_list = []
