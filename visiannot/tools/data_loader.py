@@ -368,22 +368,23 @@ def get_last_sample_generic(path, key=''):
     :param key: key to access the data (in case of .mat or .h5)
     :type key: str
 
-    :returns: last sample
+    :returns: last sample, returns ``0`` if no data found
     :rtype: float or str
     """
 
     _, ext = splitext(path)
 
+    # default output value
+    last_sample = None
+
     if ext == ".mat" or ext == ".h5":
         with File(path, 'r') as f:
-            dataset = f[key]
+            if key in f.keys():
+                dataset = f[key]
 
-            # check if empty dataset
-            if dataset.shape[0] == 0:
-                last_sample = None
-
-            else:
-                last_sample = dataset[-1]
+                # check if dataset not empty
+                if dataset.shape[0] > 0:
+                    last_sample = dataset[-1]
 
     elif ext == ".txt":
         with open(path, 'rb') as f:
