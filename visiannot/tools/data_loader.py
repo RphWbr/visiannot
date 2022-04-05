@@ -397,9 +397,9 @@ def get_last_sample_generic(path, key=''):
             except OSError:
                 f.seek(0)
 
-            last_line = f.readline().decode()
+            last_sample = f.readline().decode()
 
-            if last_line == '':
+            if last_sample == '':
                 last_sample = None
 
     else:
