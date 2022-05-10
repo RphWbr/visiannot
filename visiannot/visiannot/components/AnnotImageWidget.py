@@ -111,12 +111,14 @@ class AnnotImageWidget():
 
         # loop on cameras
         for wid_vid in visi.wid_vid_dict.values():
-            # read image
-            im = transform_image(wid_vid.image)
+            # check if any video
+            if wid_vid.data_video is not None:
+                # read image
+                im = transform_image(wid_vid.image)
 
-            # save image
-            im_path = "%s/%s_%s.png" % (
-                output_dir, wid_vid.title, visi.frame_id
-            )
-            imwrite(im_path, im)
-            print("image saved: %s" % im_path)
+                # save image
+                im_path = "%s/%s_%s.png" % (
+                    output_dir, wid_vid.name, visi.frame_id
+                )
+                imwrite(im_path, im)
+                print("image saved: %s" % im_path)

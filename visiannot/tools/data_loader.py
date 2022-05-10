@@ -268,7 +268,7 @@ def get_data_duration(
     :param kwargs: keyword arguments of :func:`.get_nb_samples_generic`
 
     :returns: duration of the data file in seconds
-    :rtype: int
+    :rtype: float
     """
 
     # clean key (in case a specific column is required when loading data)
@@ -278,17 +278,10 @@ def get_data_duration(
     # check if interval data
     if flag_interval:
         # load intervals
-        data = get_data_interval(path, key=key)
+        data = get_data_interval_as_time_series(path, key=key)
 
-        if data.size > 0:
-            # get ending frame of last interval
-            last_frame = data[-1, -1]
-
-            # get duration in seconds
-            duration = last_frame / freq
-
-        else:
-            duration = 0
+        # get duration in seconds
+        duration = data.shape[0] / freq
 
     else:
         # check if signal not regularly sampled
@@ -609,46 +602,60 @@ def slice_dataset(dataset, slicing=()):
         - ``(start, stop)``: ``data[start:stop]``
         - ``("row", ind)``: ``data[ind]``
         - ``("col", ind)``: ``data[:, ind]`` (2D array only)
-        - ``(ind, start, stop)``: data[:, start:stop]
-    :type slicing: tuple
+        - ``(ind, start, stop)``: ``data[:, start:stop]``
+        - directly a list or numpy array of indexes on first dimension:
+          ``data[slicing]``
+    :type slicing: tuple or list or numpy array
 
     :returns: sliced dataset
     :rtype: numpy array
     """
 
-    # workaround in case of 1D dataset stored with shape (1, n) instead of (n,)
-    shape = dataset.shape
-    if len(shape) == 2 and shape[0] == 1 and shape[1] != 1:
-        if (len(slicing) == 0 or len(slicing) > 0 and slicing[0] != "col"):
-            if len(slicing) == 2:
-                slicing = (0, slicing[0], slicing[1])
+    if isinstance(slicing, tuple):
+        # workaround in case of 1D dataset stored with shape (1, n) instead of
+        # (n,)
+        shape = dataset.shape
+        if len(shape) == 2 and shape[0] == 1 and shape[1] != 1:
+            if (len(slicing) == 0 or len(slicing) > 0 and slicing[0] != "col"):
+                if len(slicing) == 2:
+                    slicing = (0, slicing[0], slicing[1])
 
-            elif len(slicing) == 1:
-                slicing = (0, slicing[0], dataset.shape[1])
+                elif len(slicing) == 1:
+                    slicing = (0, slicing[0], dataset.shape[1])
+
+                else:
+                    slicing = (0, 0, dataset.shape[1])
+
+        if len(slicing) == 1:
+            output = dataset[slicing[0]:]
+
+        elif len(slicing) == 2:
+            if slicing[0] == "row":
+                output = dataset[slicing[1]]
+
+            elif slicing[0] == "col":
+                output = dataset[:, slicing[1]]
 
             else:
-                slicing = (0, 0, dataset.shape[1])
+                output = dataset[slicing[0]:slicing[1]]
 
-    if len(slicing) == 1:
-        output = dataset[slicing[0]:]
+        elif len(slicing) == 3:
+            output = dataset[slicing[0], slicing[1]:slicing[2]]
 
-    elif len(slicing) == 2:
-        if slicing[0] == "row":
-            output = dataset[slicing[1]]
-
-        elif slicing[0] == "col":
-            output = dataset[:, slicing[1]]
+        elif isinstance(dataset, Dataset):
+            output = dataset[()]
 
         else:
-            output = dataset[slicing[0]:slicing[1]]
-
-    elif len(slicing) == 3:
-        output = dataset[slicing[0], slicing[1]:slicing[2]]
-
-    elif isinstance(dataset, Dataset):
-        output = dataset[()]
+            output = dataset
 
     else:
-        output = dataset
+        # workaround in case of 1D dataset stored with shape (1, n) instead of
+        # (n,)
+        shape = dataset.shape
+        if len(shape) == 2 and shape[0] == 1 and shape[1] != 1:
+            output = dataset[:, slicing]
+
+        else:
+            output = dataset[slicing]
 
     return output

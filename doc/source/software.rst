@@ -16,15 +16,14 @@ The tree view of source files is reported below::
       |__ visiannot/tools
           |__ audio_loader.py
           |__ data_loader.py
+          |__ __init__.py
           |__ datetime_converter.py
           |__ pyqt_overlayer.py
           |__ pyqtgraph_overlayer.py
           |__ video_loader.py
-          |__ __init__.py
       |__ visiannot/visiannot
           |__ visiannot/visiannot/components
               |__ visiannot/visiannot/components/Images
-                  |__ DIGI-NEWB.jpg
                   |__ next.jpg
                   |__ previous.jpg
                   |__ visibility.jpg
@@ -42,7 +41,6 @@ The tree view of source files is reported below::
               |__ LogoWidgets.py
               |__ ProgressWidget.py
               |__ SignalWidget.py
-              |__ TruncTemporalRangeWidget.py
               |__ VideoWidget.py
           |__ ViSiAnnoT.py
           |__ ViSiAnnoTLongRec.py
@@ -51,43 +49,53 @@ The tree view of source files is reported below::
           |__ __init__.py
       |__ __init__.py
       |__ __main__.py
-  |__ exe_generation
-      |__ convert_img_to_icon.py
-      |__ visiannot.spec
   |__ doc
       |__ doc/source
           |__ doc/source/images
-             |__ ...
+              ...
           |__ doc/source/APIreference
-       |__ ...
+              ...
+          |__ index.rst
           |__ conf.py
           |__ exe.rst
           |__ install.rst
           |__ software.rst
           |__ further.rst
-          |__ userguide-pyqtgraph_overlayer.rst
+          |__ pkg_name.py
           |__ intro.rst
           |__ license.rst
           |__ userguide-configuration.rst
-          |__ userguide-pyqt_overlayer.rst
           |__ userguide-visiannot.rst
-          |__ summary_groups.py
-          |__ cfg.py
+          |__ userguide-pyqt_overlayer.rst
+          |__ userguide-pyqtgraph_overlayer.rst
           |__ support.rst
       |__ Makefile
-      |__ README.txt
       |__ requirements.txt
-      |__ auto_doc_api.py
+  |__ exe_generation
+      |__ convert_img_to_icon.py
+      |__ visiannot.spec
   |__ README.md
-  |__ LICENSE.txt
   |__ setup.py
-  |__ .readthedocs.yaml
+  |__ LICENSE.txt
   |__ .gitignore
+  |__ .readthedocs.yaml
   |__ MANIFEST.in
+  |__ synchro.pptx
+  |__ class_diagram.pptx
 
-The package **visiannot** is structured as follows:
+The folder **exe_generation** contains the configuration file in order to generate an executable file (see :ref:`exe`).
 
-* The sub-package **visiannot.configuration** contains the classes for the GUI configuration tool,
+The files *setup.py* and *MANIFEST.in* are used to publish the package on **PyPI**.
+
+The file *.readthedocs.yaml* is useful for the documentation generation on **ReadTheDocs**.
+
+The PPTX files contain some figures of the documentation.
+
+Source code
+-----------
+The source code is in the folder **visiannot**. The package is structured as follows:
+
+* The sub-package **visiannot.configuration** contains the classes for the GUI configuration tool and the module :mod:`.update` for custom configuration (see :ref:`customization`).
 
 * The sub-package **visiannot.tools** contains the following modules:
 
@@ -100,13 +108,24 @@ The package **visiannot** is structured as follows:
 
 * The sub-package **visiannot.visiannot** contains the classes defining the GUI for multimodal data visualization and annotation, as well as the sub-package **visiannot.components** that contains the classes defining the GUI components.
 
-The folder **exe_generation** contains the configuration file in order to generate an executable file (see :ref:`exe`).
 
-The folder **doc** contains the files for generating local html documentation with `Sphinx <https://www.sphinx-doc.org/en/master/index.html>`_.
+Documentation
+-------------
+The documentation is in the folder **doc**. The subfolder **source** contains the RST files, the images and the API reference. The file ``requirements.txt`` lists all the required packages for **ReadTheDocs**.
 
-The files *setup.py* and *MANIFEST.in* are used to publish the package on **PyPI**.
+Before generating the documentation for the first time or after having updated the source code, the following commands must be launched at the root of the repository:
 
-The file *.readthedocs.yaml* is useful for the documentation generation on **ReadTheDocs**.
+* Generation of tree view of code source: ``python3 -m tools_doc_sphinx.tree_view_source_code .``
+
+  * It is not necessary to run this command if the files structure has not changed, a file ``tree_view.txt`` is created and its content must replace the tree view above.
+
+* Generation of API reference index files: ``python3 -m tools_doc_sphinx.auto_doc_api visiannot doc/source``
+
+The package `tools_doc_sphinx <https://pypi.org/project/tools-doc-sphinx>`_ must be installed to run these commands.
+
+In order to generate the HTML pages locally, the following command must be launched inside folder **doc**: ``make clean && make html``. It is required to install `Sphinx <https://www.sphinx-doc.org/en/master/usage/installation.html>`_.
+
+An additional extension is required: https://autodocsumm.readthedocs.io/en/latest/index.html.
 
 
 Class diagrams

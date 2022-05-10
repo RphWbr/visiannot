@@ -209,6 +209,6 @@ class CustomTemporalRangeWidget():
                 new_temporal_range = None
 
             # udpdate plot
-            visi.update_plot_new_file(
+            visi.update_plot_new_frame(
                 start_frame, new_temporal_range=new_temporal_range
             )

@@ -348,12 +348,15 @@ def add_widget_to_layout(lay, wid, wid_pos):
     """
 
     wpl = len(wid_pos)
+
     if wpl != 2 and wpl != 4 and not isinstance(wid_pos, tuple) and \
             not isinstance(wid_pos, list):
         raise ValueError('Widget postition incorrect: ' + str(wid_pos))
+
     else:
         if wpl == 2:
             lay.addWidget(wid, wid_pos[0], wid_pos[1])
+
         elif wpl == 4:
             lay.addWidget(wid, wid_pos[0], wid_pos[1], wid_pos[2], wid_pos[3])
 

@@ -268,8 +268,9 @@ class ProgressWidget(pg.PlotWidget):
         :param fps: reference frequency of the associated instance of
             :class:`.ViSiAnnoT`
         :type fps: float
-        :param beginning_datetime: beginning datetime of the reference modality
-            of the associated instance of :class:`.ViSiAnnoT`
+        :param beginning_datetime: beginning datetime of the current file in
+            the long recording  of the associated instance of
+            :class:`.ViSiAnnoT`
         :type beginning_datetime: datetime.datetime
         """
 
@@ -321,8 +322,9 @@ class ProgressWidget(pg.PlotWidget):
         :param fps: reference frequency of the associated instance of
             :class:`.ViSiAnnoT`
         :type fps: float
-        :param beginning_datetime: beginning datetime of the reference modality
-            of the associated instance of :class:`.ViSiAnnoT`
+        :param beginning_datetime: beginning datetime of the current file in
+            the long recording  of the associated instance of
+            :class:`.ViSiAnnoT`
         :type beginning_datetime: datetime.datetime
         """
 

@@ -15,6 +15,5 @@ visiannot.visiannot.components
    ProgressWidget/index
    Signal/index
    SignalWidget/index
-   TruncTemporalRangeWidget/index
    VideoWidget/index
    WindowsPopUp/index

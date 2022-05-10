@@ -3,6 +3,7 @@
 **/build
 **/dist
 **/*.egg-info
+tree_view.txt
 
 # configuration files
 *.ini

@@ -65,23 +65,6 @@ class AnnotEventWidget():
         #: :attr:`.annot_dir`.
         self.file_name_base = basename(self.annot_dir)
 
-        #: (*str*) Label automatically created for getting duration of video
-        #: files (or first signal if no video)
-        #:
-        #: It cannot be used for manual annotation, so it is ignored if
-        #: specified by the user in the keyword argument ``annotevent_dict`` of
-        #: :class:`.ViSiAnnoT` constructor.
-        self.protected_label = "DURATION"
-
-        # check if protected label in list of labels
-        if self.protected_label in label_dict.keys():
-            del label_dict[self.protected_label]
-            print(
-                "Label %s for events annotation is protected and cannot be\
-                used for manual annotation, so it is ignored" %
-                self.protected_label
-            )
-
         #: (*list*) Labels of the events annotation
         self.label_list = list(label_dict.keys())
 
@@ -124,10 +107,6 @@ class AnnotEventWidget():
             # create directory if necessary
             if not isdir(self.annot_dir):
                 makedirs(self.annot_dir)
-
-            # create annotation file with duration of video files
-            # (or first signal if no video)
-            self.create_annot_duration(visi)
 
         else:
             self.path = None
@@ -323,67 +302,9 @@ class AnnotEventWidget():
         :rtype: str
         """
 
-        return '%s/%s_%s-datetime.txt' % (
+        return '%s/%s_%s.txt' % (
             self.annot_dir, self.file_name_base, label
         )
-
-
-    def create_annot_duration(self, visi):
-        """
-        Creates annotation events files for the duration of each file of the
-        reference modality (only one file if not a long recording)
-
-        :param visi: associated instance of :class:`.ViSiAnnoT`
-        """
-
-        # get path to annotation file
-        output_path = self.get_path(self.protected_label)
-
-        # check if annotation file does not exist
-        if not isfile(output_path):
-            # check if long recording in ViSiAnnoT
-            if visi.flag_long_rec:
-                with open(output_path, 'w') as f:
-                    # loop on beginning datetime and duration of reference
-                    # modality files in the long recording
-                    for beg_datetime, duration in zip(
-                        visi.ref_beg_datetime_list,
-                        visi.ref_duration_list
-                    ):
-                        # get end datetime
-                        end_datetime = beg_datetime + timedelta(
-                            seconds=duration
-                        )
-
-                        # convert datetime to string
-                        beg_string = beg_datetime.strftime(
-                            self.timestamp_format
-                        )
-
-                        end_string = end_datetime.strftime(
-                            self.timestamp_format
-                        )
-
-                        # write annotation file
-                        f.write("%s - %s\n" % (beg_string, end_string))
-
-            # not a long recording
-            else:
-                with open(output_path, 'w') as f:
-                    # get end datetime
-                    end_datetime = visi.beginning_datetime + timedelta(
-                        seconds=visi.nframes / visi.fps
-                    )
-
-                    # convert datetime to string
-                    beg_string = visi.beginning_datetime.strftime(
-                        self.timestamp_format
-                    )
-
-                    end_string = end_datetime.strftime(self.timestamp_format)
-
-                    # write annotation file
-                    f.write("%s - %s\n" % (beg_string, end_string))
 
 
     def call_radio(self, ev, visi):

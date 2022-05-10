@@ -338,13 +338,12 @@ class ConfigurationWindow():
         #: (*dict*) Default general configuration, see :attr:`.general_dict`
         #: for details
         self.general_dict_default = {
-            "flag_synchro": False,
+            "temporal_range": [5, 0],
             "flag_pause_status": True,
             "layout_mode": 0,
             "zoom_factor": 2,
             "max_points": 5000,
             "nb_ticks": 10,
-            "trunc_duration": [0, 0],
             "time_zone": "Europe/Paris",
             "flag_annot_overlap": False,
             "annot_dir": "Annotations",
@@ -370,15 +369,15 @@ class ConfigurationWindow():
         #:
         #: The keys and values are:
         #:
-        #: - ``"flag_synchro"``: (*bool*) specify if the signals are
-        #:   synchronized with video
+        #: - ``"temporal_range"``: (*list*) duration of temporal range for
+        #:   splitting long recording into several files, 2 elements *(minutes,
+        #:   seconds)*
         #: - ``"flag_pause_status"``: (*bool*) specify if the video is
         #:   paused at launching
         #: - ``"layout_mode"``: (*int*) either 0, 1 or 2
         #: - ``"zoom_factor"``: (*int*)
         #: - ``"max_points"``: (*int*)
         #: - ``"nb_ticks"``: (*int*)
-        #: - ``"trunc_duration"``: (*list*) length 2 *(minute, second)*
         #: - ``"time_zone"``: (*str*) time zone (complying with pytz
         #:   package)
         #: - ``"flag_annot_overlap"``: (*bool*) specify if overlap of events
@@ -470,7 +469,10 @@ class ConfigurationWindow():
         # - number of widget elements
         # - dictionary with keyword arguments to pass to the widget constructor
         elt_list = [
-            ("Signals synchronized", "flag_synchro", "check_box", 1, {}),
+            (
+                "Duration of temporal range for splitting long recording",
+                "temporal_range", "spin", 2, {"minimum": 0, "maximum": 59}
+            ),
             (
                 "Video paused at launch", "flag_pause_status",
                 "check_box", 1, {}
@@ -480,8 +482,8 @@ class ConfigurationWindow():
                 "check_box", 1, {}
             ),
             (
-                "Layout mode (1, 2 or 3)", "layout_mode", "spin", 1,
-                {"minimum": 1, "maximum": 3}
+                "Layout mode", "layout_mode", "spin", 1,
+                {"minimum": 1, "maximum": 4}
             ),
             ("Time zone", "time_zone", "edit", 1, {}),
             (
@@ -492,10 +494,6 @@ class ConfigurationWindow():
                 "Minimum height in pixels of the signal widgets",
                 "height_widget_signal", "spin", 1,
                 {"minimum": 1, "maximum": 100000}
-            ),
-            (
-                "Trunc duration (min, sec)", "trunc_duration", "spin", 2,
-                {"minimum": 0, "maximum": 59}
             ),
             ("Zoom factor", "zoom_factor", "spin", 1, {"minimum": 1}),
             (

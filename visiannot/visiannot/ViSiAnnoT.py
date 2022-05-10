@@ -17,7 +17,6 @@ import numpy as np
 from threading import Thread
 import os
 from time import sleep
-from datetime import timedelta
 from shutil import rmtree
 from ..tools import pyqt_overlayer
 from ..tools import pyqtgraph_overlayer
@@ -31,7 +30,6 @@ from .components.MenuBar import MenuBar
 from .components.ProgressWidget import ProgressWidget
 from .components.VideoWidget import VideoWidget
 from .components.CustomTemporalRangeWidget import CustomTemporalRangeWidget
-from .components.TruncTemporalRangeWidget import TruncTemporalRangeWidget
 from .components.FromCursorTemporalRangeWidget import \
     FromCursorTemporalRangeWidget
 from .components.LogoWidgets import ZoomInWidget, ZoomOutWidget, FullVisiWidget
@@ -52,7 +50,6 @@ class ViSiAnnoT():
         y_range_dict={},
         poswid_dict={},
         layout_mode=1,
-        trunc_duration=(0, 0),
         flag_long_rec=False,
         from_cursor_list=[],
         zoom_factor=2,
@@ -212,13 +209,11 @@ class ViSiAnnoT():
             not specified in this dictionary have auto-range enabled for Y
             axis.
         :type y_range_dict: dict
-        :param poswid_dict: custom position of the widgets in the window to use
-            the positions defined by the layout mode (see input
-            ``layout_mode``). Value is a tuple of length 2 ``(row, col)``
+        :param poswid_dict: custom organization of widgets positioning in the
+            window layout. Value is a tuple of length 2 ``(row, col)``
             or 4 ``(row, col, rowspan, colspan)``. Key identifies the widget:
 
-            - ``"logo"``
-            - ``"select_trunc"``
+            - ``"video"``
             - ``"select_manual"``
             - ``"select_from_cursor"``
             - ``"annot_event"``
@@ -227,21 +222,19 @@ class ViSiAnnoT():
             - ``"zoomin"``
             - ``"zoomout"``
             - ``"progress"``
+
+            The signal widgets are automatically positioned below the progress
+            bar.
         :type poswid_dict: dict
-        :param layout_mode: layout mode of the window for positioning the
-            widgets, one of the following:
+        :param layout_mode: organization of widgets positioning in the window
+            layout (ignored if custom layout organization provided with keyword
+            argument ``poswid_dict``), one of the following:
 
             - ``1`` (focus on video, works better with a big screen),
             - ``2`` (focus on signal, suitable for a laptop screen),
-            - ``3`` (compact display with some features disabled).
+            - ``3`` (compact display with some features disabled),
+            - ``4`` (adapted to portrait screen orientation).
         :type layout_mode: int
-        :param trunc_duration: (tool for fast navigation) duration
-            ``(min, sec)`` to be used for splitting video/file in the combo box
-            of temporal range selection. For example, for a video of 30
-            minutes, ``trunc_duration=(10, 0)`` will provide 3 temporal ranges
-            in the combo box: from 0 to 10 minutes, from 10 to 20 minutes and
-            from 20 to 30 minutes.
-        :type trunc_duration: list
         :param flag_long_rec: specify if :class:`.ViSiAnnoT` is launched in the
             context of :class:`.ViSiAnnoTLongRec` (long recording)
         :type flag_long_rec: bool
@@ -378,8 +371,7 @@ class ViSiAnnoT():
         #: always equal to 0.
         self.ite_file = 0
 
-        #: (*int*) Number of files for reference modality in case of long
-        #: recording
+        #: (*int*) Number of files for splitting the long recording
         #:
         #: If :attr:`.flag_long_rec` is ``False``, then :attr:`.nb_files` is
         #: set to 1.
@@ -397,8 +389,25 @@ class ViSiAnnoT():
         #: Key is the camera ID (same keys as ``video_dict``, positional
         #: argument of the constructor of :class:`.ViSiAnnoT`).
         #:
-        #: Value is an instance of **cv2.VideoCapture** containing the video
-        #: data
+        #: If :attr:`.flag_long_rec` is ``False``, value is a tuple of 2
+        #: elements:
+        #:
+        #:  - (*cv2.VideoCapture*) Video data
+        #:  - (*str*) Name of the video file
+        #:
+        #: If :attr:`.flag_long_rec` is ``True``, value is a tuple of 3
+        #: elements:
+        #:
+        #:  - (*list*) Instances of **cv2.VideoCapture** containing the
+        #:    video data spanning the current file in the long recording
+        #:  - (*list*) Names of the the video files spanning the current file
+        #:    in the long recording (same ordering than list of
+        #:    **cv2.VideoCapture** instances)
+        #:  - (*numpy array*) Array of shape *(n, 2)* (*n* is equal to the
+        #:    length of the list of video data), each row corresponds to an
+        #:    element of the list of **cv2.VideoCapture** instances (same
+        #:    ordering) and contains the bounding frames that the video spans
+        #:    in the current file in the long recording
         self.video_data_dict = {}
 
         #: (*dict*) Signal data, each item corresponds to a signal widget
@@ -438,8 +447,8 @@ class ViSiAnnoT():
         #: is no video)
         self.nframes = None
 
-        #: (*datetime.datetime*) Beginning datetime of the video (or the first
-        #: signal if there is no video)
+        #: (*datetime.datetime*) Beginning datetime of the data (current file
+        #: in case of long recording)
         self.beginning_datetime = None
 
         # set data
@@ -513,46 +522,40 @@ class ViSiAnnoT():
 
         # define window organization if none provided
         if not any(poswid_dict):
-            nb_video = len(video_dict)
 
             # check layout mode
             if layout_mode == 1:
-                for ite_video, video_id in enumerate(video_dict.keys()):
-                    poswid_dict[video_id] = (0, ite_video, 5, 1)
-                poswid_dict['select_trunc'] = (0, nb_video, 1, 2)
-                poswid_dict['select_manual'] = (1, nb_video, 1, 3)
-                poswid_dict['select_from_cursor'] = (0, nb_video + 2)
-                poswid_dict['annot_event'] = (2, nb_video, 1, 3)
-                poswid_dict['annot_image'] = (3, nb_video, 1, 3)
-                poswid_dict['visi'] = (4, nb_video)
-                poswid_dict['zoomin'] = (4, nb_video + 1)
-                poswid_dict['zoomout'] = (4, nb_video + 2)
-                poswid_dict['progress'] = (5, 0, 1, nb_video + 3)
+                poswid_dict["video"] = (0, 0, 5, 1)
+                poswid_dict['select_from_cursor'] = (0, 1, 1, 3)
+                poswid_dict['select_manual'] = (1, 1, 1, 3)
+                poswid_dict['annot_event'] = (2, 1, 1, 3)
+                poswid_dict['annot_image'] = (3, 1, 1, 3)
+                poswid_dict['visi'] = (4, 1)
+                poswid_dict['zoomin'] = (4, 2)
+                poswid_dict['zoomout'] = (4, 3)
+                poswid_dict['progress'] = (5, 0, 1, 4)
 
 
             elif layout_mode == 2:
-                for ite_video, video_id in enumerate(video_dict.keys()):
-                    poswid_dict[video_id] = (0, ite_video, 4, 1)
-                poswid_dict['select_trunc'] = (1, nb_video, 1, 2)
-                poswid_dict['select_manual'] = (2, nb_video, 1, 3)
-                poswid_dict['select_from_cursor'] = (1, nb_video + 2)
-                poswid_dict['annot_event'] = (0, nb_video + 3, 4, 1)
-                poswid_dict['annot_image'] = (0, nb_video, 1, 3)
-                poswid_dict['visi'] = (3, nb_video)
-                poswid_dict['zoomin'] = (3, nb_video + 1)
-                poswid_dict['zoomout'] = (3, nb_video + 2)
-                poswid_dict['progress'] = (4, 0, 1, nb_video + 4)
+                poswid_dict["video"] = (0, 0, 4, 1)
+                poswid_dict['select_from_cursor'] = (1, 1, 1, 3)
+                poswid_dict['select_manual'] = (2, 1, 1, 3)
+                poswid_dict['annot_event'] = (0, 4, 4, 1)
+                poswid_dict['annot_image'] = (0, 1, 1, 3)
+                poswid_dict['visi'] = (3, 1)
+                poswid_dict['zoomin'] = (3, 2)
+                poswid_dict['zoomout'] = (3, 3)
+                poswid_dict['progress'] = (4, 0, 1, 5)
 
 
             elif layout_mode == 3:
-                for ite_video, video_id in enumerate(video_dict.keys()):
-                    poswid_dict[video_id] = (0, ite_video, 2, 1)
-                poswid_dict['annot_event'] = (0, nb_video, 2, 1)
-                poswid_dict['annot_image'] = (0, nb_video + 1, 1, 3)
-                poswid_dict['visi'] = (1, nb_video + 1)
-                poswid_dict['zoomin'] = (1, nb_video + 2)
-                poswid_dict['zoomout'] = (1, nb_video + 3)
-                poswid_dict['progress'] = (2, 0, 1, nb_video + 4)
+                poswid_dict["video"] = (0, 0, 2, 1)
+                poswid_dict['annot_event'] = (0, 1, 2, 1)
+                poswid_dict['annot_image'] = (0, 2, 1, 3)
+                poswid_dict['visi'] = (1, 2)
+                poswid_dict['zoomin'] = (1, 3)
+                poswid_dict['zoomout'] = (1, 4)
+                poswid_dict['progress'] = (2, 0, 1, 5)
 
 
             else:
@@ -614,28 +617,6 @@ class ViSiAnnoT():
         self.menu_bar = MenuBar(self.win, self.lay)
 
 
-        # *************** widget for truncated temporal range *************** #
-        if len(self.sig_dict) > 0 and "select_trunc" in poswid_dict.keys():
-            # check trunc duration
-            if trunc_duration[0] == 0 and trunc_duration[1] == 0:
-                print(
-                    "Duration of truncated temporal range is 0 => widget not "
-                    "created"
-                )
-
-                self.wid_trunc = None
-
-            else:
-                #: (:class:`.TruncTemporalRangeWidget`) Widget for selecting a
-                #: truncated temporal range
-                self.wid_trunc = TruncTemporalRangeWidget(
-                    self, poswid_dict['select_trunc'], trunc_duration
-                )
-
-        else:
-            self.wid_trunc = None
-
-
         # **************** widget for custom temporal range ***************** #
         if len(self.sig_dict) > 0 and "select_manual" in poswid_dict.keys():
             #: (:class:`.CustomTemporalRangeWidget`) Widget for defining a
@@ -687,23 +668,24 @@ class ViSiAnnoT():
         #: ``video_dict`` of the constructor of :class:`.ViSiAnnoT`).
         #:
         #: Value is an instance of :class:`.VideoWidget` where the
-        #: corresponding video is displayed.
+        #: corresponding camera is displayed.
         self.wid_vid_dict = {}
 
-        # loop on cameras
-        for video_id, (video_path, _, _, _) in video_dict.items():
-            # check if widget position exists
-            if video_id in poswid_dict.keys():
-                # create widget
-                self.wid_vid_dict[video_id] = VideoWidget(
-                    self.lay, poswid_dict[video_id], video_path,
-                    **font_default_title
-                )
+        if any(self.video_data_dict):
+            grid_video, _ = pyqt_overlayer.add_group_box(
+                self.lay, poswid_dict["video"]
+            )
 
-                # initialize image
-                self.wid_vid_dict[video_id].setAndDisplayImage(
-                    self.video_data_dict[video_id], self.frame_id
-                )
+        # loop on cameras
+        for ite_video, (video_id, video_data) \
+                in enumerate(self.video_data_dict.items()):
+            # create widget
+            self.wid_vid_dict[video_id] = VideoWidget(
+                grid_video, (0, ite_video), video_data
+            )
+
+            # initialize image
+            self.wid_vid_dict[video_id].setAndDisplayImage(self.frame_id)
 
 
         # *********************** signal widgets **************************** #
@@ -1011,10 +993,8 @@ class ViSiAnnoT():
         while self.flag_processing:
             if not self.flag_pause_status:
                 # get image at the current frame for each camera
-                for video_id, data_video in self.video_data_dict.items():
-                    self.wid_vid_dict[video_id].setImage(
-                        data_video, self.frame_id
-                    )
+                for video_id in self.video_data_dict.keys():
+                    self.wid_vid_dict[video_id].setImage(self.frame_id)
 
             else:
                 sleep(0.001)
@@ -1040,7 +1020,7 @@ class ViSiAnnoT():
             # get list of files/folders in the annotation directory
             annot_path_list = os.listdir(self.annot_dir)
 
-            # loop on annotation files/folders
+            # loop on annotation files/folders => remove empty files/folders
             for annot_file_name in annot_path_list:
                 # get path of file/folder
                 annot_path = "%s/%s" % (self.annot_dir, annot_file_name)
@@ -1067,28 +1047,20 @@ class ViSiAnnoT():
                 # update the list of files/folders in the annotation directory
                 annot_path_list = os.listdir(self.annot_dir)
 
-                # get file name of events annotation of protected label
-                protected_name = "%s_%s-datetime.txt" % (
-                    self.wid_annotevent.file_name_base,
-                    self.wid_annotevent.protected_label
-                )
-
-                # check if empty annotation directory (or only filled with
-                # events annotation of protected label)
-                if len(annot_path_list) == 0 or len(annot_path_list) == 1 and \
-                        annot_path_list[0] == protected_name:
+                # check if empty annotation directory
+                if len(annot_path_list) == 0:
                     rmtree(self.annot_dir)
 
         # close videos
         print("close videos (if any)")
-        for data_video in self.video_data_dict.values():
-            if data_video is not None:
-                data_video.release()
+        for vid_wid in self.wid_vid_dict.values():
+            if vid_wid.data_video is not None:
+                vid_wid.data_video.release()
 
         # delete temporary files
         if self.flag_long_rec:
             print("delete temporary signal files")
-            rmtree(self.tmp_name, ignore_errors=True)
+            rmtree(self.synchro_dir, ignore_errors=True)
 
 
     def update_plot(self):
@@ -1137,10 +1109,8 @@ class ViSiAnnoT():
 
         # get image for each camera if pause status is true
         if self.flag_pause_status:
-            for video_id, data_video in self.video_data_dict.items():
-                self.wid_vid_dict[video_id].setImage(
-                    data_video, self.frame_id
-                )
+            for video_id in self.video_data_dict.keys():
+                self.wid_vid_dict[video_id].setImage(self.frame_id)
 
         # plot frame id position
         self.plot_frame_id_position()
@@ -1252,26 +1222,19 @@ class ViSiAnnoT():
 
 
     def update_signal_plot(
-        self, flag_reset_combo_trunc=True, flag_reset_combo_from_cursor=True
+        self, flag_reset_combo_from_cursor=True
     ):
         """
         Updates the signal plots and the progress bar so that they span the
         current temporal range defined by :attr:`.first_frame` and
         :attr:`.last_frame`
 
-        :param flag_reset_combo_trunc: specify if the combo box of
-            :attr:`.wid_trunc` must be reset
-        :type flag_reset_combo_trunc: bool
         :param flag_reset_combo_from_cursor: specify if the combo box of
             :attr:`.wid_from_cursor` must be reset
         :type flag_reset_combo_from_cursor: bool
         """
 
-        # reset combo boxes
-        if flag_reset_combo_trunc and self.wid_trunc is not None:
-            if self.wid_trunc.combo_box is not None:
-                self.wid_trunc.combo_box.setCurrentIndex(0)
-
+        # reset combo box
         if flag_reset_combo_from_cursor and self.wid_from_cursor is not None:
             self.wid_from_cursor.combo_box.setCurrentIndex(0)
 
@@ -1305,6 +1268,66 @@ class ViSiAnnoT():
                 wid, self.nb_ticks, (first_frame_ms, last_frame_ms),
                 self.beginning_datetime, fmt=self.ticks_fmt
             )
+
+
+    def update_plot_new_frame(
+        self, new_frame_id, new_temporal_range=None, flag_previous_scroll=False
+    ):
+        """
+        Updates plots after having set the current frame to display by
+        changing file in long recording or defining a custom temporal range
+
+        :param new_frame_id: new current frame number (sampled at the
+            reference frequency :attr:`.ViSiAnnoT.fps`)
+        :type new_frame_id: int
+        :param new_temporal_range: new temporal range (first frame,
+            last frame), if last frame is above :attr:`ViSiAnnoT.nframes`, then
+            it is truncated - by default it starts at 0 (or at the end of the
+            file in case of backward scrolling) and keeps the same current
+            temporal range duration
+        :type new_temporal_range: tuple
+        :param flag_previous_scroll: specify if the new file is reach backward
+            by scrolling
+        :type flag_previous_scroll: bool
+        """
+
+        # reset previous frame id
+        for wid_vid in self.wid_vid_dict.values():
+            wid_vid.previous_frame_id = None
+
+        # update frame id
+        self.update_frame_id(new_frame_id)
+
+        # new temporal range
+        if new_temporal_range is not None:
+            self.first_frame, self.last_frame = new_temporal_range
+            self.last_frame = min(self.nframes, self.last_frame)
+
+        else:
+            current_range = self.last_frame - self.first_frame
+            if not flag_previous_scroll:
+                self.first_frame = 0
+                self.last_frame = min(current_range, self.nframes)
+
+            else:
+                self.first_frame = max(0, self.nframes - current_range)
+                self.last_frame = self.nframes
+
+        # update progress bar
+        self.wid_progress.updateFromViSiAnnoT(
+            self.nframes, self.first_frame, self.last_frame, self.fps,
+            self.beginning_datetime
+        )
+
+        # update signals plot
+        self.update_signal_plot()
+
+        # update annotation regions plot if necessary
+        if self.wid_annotevent is not None:
+            if self.wid_annotevent.push_text_list[3].text() == "On":
+                self.wid_annotevent.clear_regions(self)
+                self.wid_annotevent.description_dict = {}
+                self.wid_annotevent.plot_regions(self)
 
 
     # *********************************************************************** #
@@ -1761,8 +1784,8 @@ class ViSiAnnoT():
         - :attr:`.interval_dict`
 
         Otherwise the video thread throws a RunTime error. These attributes are
-        then set thanks to the positional arguments ``video_dict`` and
-        ``signal_dict``.
+        then set thanks to the positional arguments ``video_dict``,
+        ``signal_dict`` and ``interval_dict``.
 
         This method sets the following attributes:
 
@@ -1771,14 +1794,11 @@ class ViSiAnnoT():
         - :attr:`.beginning_datetime`
         - :attr:`.sig_dict`
         - :attr:`.interval_dict`
-        - :attr:`.data_wave`
+        - :attr:`.video_data_dict`
 
         If there is no video, the attributes :attr:`.nframes`,
         :attr:`.ViSiAnnoT.fps` and :attr:`.beginning_datetime` are
         set with the first signal in ``signal_dict``.
-
-        It raises an exception if 2 videos do not have the same FPS or have a
-        temporal shift of more than 1 second.
 
         :param video_dict: same as first positional argument of
             :class:`.ViSiAnnoT` constructor
@@ -1795,12 +1815,6 @@ class ViSiAnnoT():
         # **************************** Video ******************************** #
         # ******************************************************************* #
 
-        # initialize temporary lists (used in case of several cameras to check
-        # synchronization)
-        nframes_list = []
-        fps_list = []
-        beginning_datetime_list = []
-
         # reset attributes
         self.sig_dict = {}
         self.interval_dict = {}
@@ -1813,70 +1827,45 @@ class ViSiAnnoT():
             )
 
             # get video configuration
-            path_video, delimiter, pos, fmt = video_config
+            path, delimiter, pos, fmt = video_config
 
-            # get video data
-            self.video_data_dict[video_id], nframes, fps = get_data_video(
-                path_video
-            )
+            # check if long recording
+            if self.flag_long_rec:
+                # get beginning datetime
+                self.beginning_datetime = \
+                    datetime_converter.get_datetime_from_path(
+                        path,
+                        self.synchro_timestamp_config[0],
+                        self.synchro_timestamp_config[1],
+                        self.synchro_timestamp_config[2],
+                        time_zone=self.time_zone
+                    )
 
-            # check if no video data
-            if self.video_data_dict is None:
-                beginning_datetime = None
+                self.video_data_dict[video_id] = self.get_synchro_video(path)
+
+                # get number of frames
+                if self.nframes is None:
+                    self.nframes = self.temporal_range_duration * self.fps
 
             else:
-                # get beginning datetime of video file
-                beginning_datetime = datetime_converter.get_datetime_from_path(
-                    path_video, delimiter, pos, fmt, time_zone=self.time_zone
-                )
-
-            # update lists
-            nframes_list.append(nframes)
-            fps_list.append(fps)
-            beginning_datetime_list.append(beginning_datetime)
-
-            # check FPS
-            if fps <= 0 and path_video != '':
-                raise Warning("Video with null FPS at %s" % path_video)
-
-        # check if there is any video
-        if any(self.video_data_dict):
-            # make sure that FPS is not null
-            flag_ok = False
-            for ite_vid, fps in enumerate(fps_list):
-                if fps > 0:
-                    flag_ok = True
-                    break
-
-            # check if fps attribute to be set
-            if self.fps is None:
-                if flag_ok:
-                    self.fps = fps_list[ite_vid]
-
-                else:
-                    self.fps = 1
-
-            # get number of frames of the video
-            self.nframes = nframes_list[ite_vid]
-
-            # get beginning datetime of the video
-            self.beginning_datetime = beginning_datetime_list[ite_vid]
-
-        # check if more than 1 video
-        if len(nframes_list) > 1:
-            # update number of frames
-            self.nframes = max(nframes_list)
-
-            # check coherence
-            for fps in fps_list[1:]:
-                if self.fps != fps and fps >= 0:
-                    if '' not in video_dict.values():
-                        raise Exception(
-                            "The 2 videos do not have the same FPS: "
-                            "%s - %s" % (
-                                list(video_dict.values())[0][0], path_video
-                            )
+                # get beginning datetime
+                if self.beginning_datetime is None:
+                    self.beginning_datetime = \
+                        datetime_converter.get_datetime_from_path(
+                            path, delimiter, pos, fmt,
+                            time_zone=self.time_zone
                         )
+
+                # get video data
+                data_video, nframes, fps = get_data_video(path)
+                video_name = os.path.splitext(os.path.basename(path))[0]
+                self.video_data_dict[video_id] = (data_video, video_name)
+
+                if self.fps is None and fps > 0:
+                    self.fps = fps
+
+                if self.nframes is None and self.fps is not None:
+                    self.nframes = nframes
 
 
         # ******************************************************************* #
@@ -1899,33 +1888,62 @@ class ViSiAnnoT():
             # get first signal configuration
             path, delimiter, pos, fmt, key_data, freq, _ = signal_config
 
-            # check if attribute fps to be set
-            if self.fps is None:
-                # get frequency and store it as reference frequency
-                self.fps = self.get_data_frequency(path, freq)
+            # check if long recording
+            if self.flag_long_rec:
+                # get beginning date-time
+                self.beginning_datetime = \
+                    datetime_converter.get_datetime_from_path(
+                        path, self.synchro_timestamp_config[0],
+                        self.synchro_timestamp_config[1],
+                        self.synchro_timestamp_config[2],
+                        time_zone=self.time_zone
+                    )
 
-            # get beginning date-time
-            self.beginning_datetime = \
-                datetime_converter.get_datetime_from_path(
-                    path, delimiter, pos, fmt, time_zone=self.time_zone
-                )
-
-            # get data path (in case not synchronized)
-            if self.flag_long_rec and not self.flag_synchro:
-                # get first synchronization file content
+                # get synchronization file content
                 lines = data_loader.get_txt_lines(path)
 
-                # get first signal file
-                path = lines[1].replace("\n", "")
+                # check if any signal file
+                if len(lines) > 0:
+                    # get path to first signal file
+                    path = lines[1].replace("\n", "")
 
-            # get number of frames
-            self.nframes = data_loader.get_nb_samples_generic(path, key_data)
+                    # check if attribute fps to be set
+                    if self.fps is None:
+                        # get frequency and store it as reference frequency
+                        self.fps = self.get_data_frequency(path, freq)
 
-            # check if there is data indeed
-            if self.nframes == 0:
-                raise Exception(
-                    "There is no data in the first signal file %s" % path
+                else:
+                    raise Exception(
+                        "No data for first signal at the beginning of the "
+                        "long recording"
+                    )
+
+                # get number of frames
+                if self.nframes is None:
+                    self.nframes = self.temporal_range_duration * self.fps
+
+            else:
+                # get beginning date-time
+                self.beginning_datetime = \
+                    datetime_converter.get_datetime_from_path(
+                        path, delimiter, pos, fmt, time_zone=self.time_zone
+                    )
+
+                # check if attribute fps to be set
+                if self.fps is None:
+                    # get frequency and store it as reference frequency
+                    self.fps = self.get_data_frequency(path, freq)
+
+                # get number of frames
+                self.nframes = data_loader.get_nb_samples_generic(
+                    path, key_data
                 )
+
+                # check if there is data indeed
+                if self.nframes == 0:
+                    raise Exception(
+                        "There is no data in the first signal file %s" % path
+                    )
 
 
         # ******************************************************************* #
@@ -1971,31 +1989,24 @@ class ViSiAnnoT():
                             path_interval, freq_interval
                         )
 
-                        # asynchronous signal
-                        if self.flag_long_rec and not self.flag_synchro:
+                        # check if long recording
+                        if self.flag_long_rec:
                             # load intervals data
-                            interval, _ = self.get_data_sig_tmp(
+                            interval, _ = self.get_synchro_signal(
                                 path_interval, delimiter_interval,
                                 pos_interval, fmt_interval, key_interval,
-                                freq_interval, signal_id, self.tmp_delimiter,
-                                flag_interval=True
+                                freq_interval, signal_id, flag_interval=True
                             )
 
                             # check if empty
                             if interval is None:
                                 interval = np.empty((0,))
 
-                        # synchro OK
                         else:
-                            # check if fake hole file
-                            if path_interval == '':
-                                interval = np.empty((0,))
-
-                            else:
-                                # load intervals data
-                                interval = data_loader.get_data_interval(
-                                    path_interval, key_interval
-                                )
+                            # load intervals data
+                            interval = data_loader.get_data_interval(
+                                path_interval, key_interval
+                            )
 
                         # update dictionary value
                         self.interval_dict[signal_id].append(
@@ -2003,38 +2014,31 @@ class ViSiAnnoT():
                         )
 
                 # ********************** load data ************************** #
-                # asynchronous signal
-                if self.flag_long_rec and not self.flag_synchro:
+                # check if long recording
+                if self.flag_long_rec:
                     # get data and frequency
-                    data, freq_data = self.get_data_sig_tmp(
+                    data, freq_data = self.get_synchro_signal(
                         path_data, delimiter, pos, fmt, key_data, freq_data,
-                        signal_id, self.tmp_delimiter
+                        signal_id
                     )
 
-                # synchronous signals
                 else:
-                    # check if fake hole file
-                    if path_data == '':
-                        freq_data = 1
-                        data = None
+                    # get frequency
+                    freq_data = self.get_data_frequency(
+                        path_data, freq_data
+                    )
 
-                    else:
-                        # get frequency
-                        freq_data = self.get_data_frequency(
-                            path_data, freq_data
+                    # keyword arguments for data_loader.get_data_generic
+                    kwargs = {}
+                    if os.path.splitext(path_data)[1] == ".wav":
+                        kwargs["channel_id"] = convert_key_to_channel_id(
+                            key_data
                         )
 
-                        # keyword arguments for data_loader.get_data_generic
-                        kwargs = {}
-                        if os.path.splitext(path_data)[1] == ".wav":
-                            kwargs["channel_id"] = convert_key_to_channel_id(
-                                key_data
-                            )
-
-                        # load data
-                        data = data_loader.get_data_generic(
-                            path_data, key_data, **kwargs
-                        )
+                    # load data
+                    data = data_loader.get_data_generic(
+                        path_data, key_data, **kwargs
+                    )
 
 
                 # ********* convert data into an instance of Signal ********* #
@@ -2064,6 +2068,20 @@ class ViSiAnnoT():
 
 
     def get_data_frequency(self, path, freq):
+        """
+        Gets the frequency of data in a file
+
+        :param path: path to the data file
+        :type path: str
+        :param freq: data frequency as retrieved from input configuration
+            dictionary (it may be directly the frequency, or the key to get
+            frequency in a H5 file)
+        :type freq: str or float
+
+        :returns: data frequency
+        :rtype: float
+        """
+
         # get frequency if necessary
         if os.path.splitext(path)[1] == ".wav":
             _, freq, _ = get_audio_wave_info(path)
@@ -2077,28 +2095,26 @@ class ViSiAnnoT():
         return freq
 
 
-    @staticmethod
-    def get_file_sig_tmp(line, delimiter):
+    def get_synchro_info_signal(self, line):
         """
-        Gets the file name and the start second in a line of a temporary
-        synchronization file (in case signal is not synchronized with video)
+        In case of long recording, gets the path to data file and the start
+        second of a line of a temporary signal synchronization file
 
-        :param line: line containing the signal file name and start second
+        :param line: line of a temporary signal synchronization file
         :type line: str
-        :param delimiter: delimiter used to split the line between file name
-            and start second
+        :param delimiter: delimiter used to split the line
         :type delimiter: str
 
         :returns:
             - **path** (*str*) -- path to the signal file
-            - **start_sec** (*int*) -- start second
+            - **start_sec** (*float*) -- start second
         """
 
         # get data file name and starting second
-        if delimiter in line:
-            line_split = line.split(delimiter)
+        if self.synchro_delimiter in line:
+            line_split = line.split(self.synchro_delimiter)
             path = line_split[0]
-            start_sec = int(line_split[1].replace("\n", ""))
+            start_sec = float(line_split[1].replace("\n", ''))
 
         else:
             path = line.replace("\n", "")
@@ -2107,12 +2123,101 @@ class ViSiAnnoT():
         return path, start_sec
 
 
-    def get_data_sig_tmp(
+    def get_synchro_info_video(self, line):
+        """
+        In case of long recording, gets the path to video file, the start
+        second and end second of a line of a temporary signal synchronization
+        file
+
+        :param line: line of a temporary signal synchronization file
+        :type line: str
+        :param delimiter: delimiter used to split the line
+        :type delimiter: str
+
+        :returns:
+            - **path** (*str*) -- path to the signal file
+            - **start_sec** (*float*) -- start second
+            - **end_sec** (*float*) -- end second
+        """
+
+        # split line
+        line_split = line.split(self.synchro_delimiter)
+
+        # get data path
+        path = line_split[0]
+
+        # get start timestamp
+        start_sec = float(line_split[1])
+
+        # get end timestamp
+        end_sec = float(line_split[2].replace("\n", ''))
+
+        return path, start_sec, end_sec
+
+
+    def get_synchro_video(self, path):
+        """
+        Gets info for video synchronization for the current file in the long
+        recording
+
+        It is assumed that all videos have the same frequency, stored as
+        reference frequency in attribute :attr:`.fps`.
+
+        :param path: path to the current temporary synchronization file
+        :type path: str
+
+        :returns:
+            - **video_data_list** (*list*) -- instances of **cv2.VideoCapture**
+              with video data spanning the current file in the long recording
+            - **path_list** (*list*) -- names of the video files corresponding
+              to the elements of ``video_data_list``
+            - **frame_array** (*numpy array*) -- shape *(n, 2)*, where *n* is
+              equal to the length of ``video_data_list``, each row corresponds
+              to an element of ``video_data_list`` (same ordering) and gives
+              the starting frame and ending frame (sampled at video FPS) that
+              the video spans in the current file of the long recording
+        """
+
+        # read temporary file
+        lines = data_loader.get_txt_lines(path)
+
+        video_data_list = []
+        path_list = []
+        frame_array = np.empty((0, 2), dtype=int)
+
+        # check if any video
+        if len(lines) > 0:
+            # loop on temporary file lines
+            for ite_line, line in enumerate(lines):
+                # get data synchro info
+                vid_path, start_sec, end_sec = \
+                    self.get_synchro_info_video(line)
+
+                # get video name
+                path_list.append(
+                    os.path.splitext(os.path.basename(vid_path))[0]
+                )
+
+                # get video data
+                video_data_list.append(get_data_video(vid_path)[0])
+
+                # get start/end frame
+                frame_array = np.concatenate((
+                    frame_array,
+                    np.array(
+                        [[int(start_sec * self.fps), int(end_sec * self.fps)]]
+                    )
+                ), axis=0)
+                
+        return video_data_list, path_list, frame_array
+
+
+    def get_synchro_signal(
         self, path, delimiter, pos, fmt, key_data, freq_data, signal_id,
-        tmp_delimiter, flag_interval=False
+        flag_interval=False
     ):
         """
-        Gets signal data after synchronization with video
+        Gets synchronized signal data for current file in the long recording
 
         :param path: path to the temporary synchronization file
         :type path: str
@@ -2138,26 +2243,20 @@ class ViSiAnnoT():
         :param flag_interval: specify if data to load is intervals
         :type flag_interval: bool
 
-        :returns: signal data synchronized with video
-        :rtype: numpy array
+        :returns:
+            - **data** (*numpy array*) -- synchronized signal data
+            - **freq_data** (*float*) -- signal frequency
         """
 
         # read temporary file
         lines = data_loader.get_txt_lines(path)
 
-        # define empty data
+        # check if empty data
         if len(lines) == 0:
             data = None
             freq_data = None
 
         else:
-            # get timestamp of temporary file (i.e. timestamp of reference
-            # modality)
-            ref_timestamp = datetime_converter.get_datetime_from_path(
-                path, '_', -1, "%Y-%m-%dT%H-%M-%S",
-                time_zone=self.time_zone
-            )
-
             # initialize data list
             data_list = []
 
@@ -2166,9 +2265,9 @@ class ViSiAnnoT():
             if isinstance(freq_data, str):
                 freq_data_tmp = None
                 for line in lines:
-                    data_path, _ = ViSiAnnoT.get_file_sig_tmp(
-                        line, tmp_delimiter
-                    )
+                    data_path = line.split(
+                        self.synchro_delimiter
+                    )[0].replace("\n", '')
 
                     if data_path != "None":
                         freq_data_tmp = self.get_data_frequency(
@@ -2183,78 +2282,38 @@ class ViSiAnnoT():
             elif freq_data == -1:
                 freq_data = self.fps
 
-            # check if 1D data
-            if freq_data > 0:
-                # initialize timestamp of last sample of previous signal file
-                prev_sig_timestamp = ref_timestamp
-
-            # loop on temporary file lines
+            # loop on synchronization lines
             for ite_line, line in enumerate(lines):
-                # get data path and starting second
-                data_path, start_sec = ViSiAnnoT.get_file_sig_tmp(
-                    line, tmp_delimiter
-                )
+                # get synchronization info
+                data_path, start_sec = self.get_synchro_info_signal(line)
 
-                # no data at the beginning
-                if data_path == "None":
-                    # check if 2D data (signal not regularly sampled)
-                    if freq_data == 0:
-                        next_data = np.empty((0, 2))
+                # initialize keyword arguments for loading data
+                kwargs = {"key": key_data}
+
+                # channel specification when loading audio
+                if data_path.split('.')[-1] == "wav":
+                    kwargs["channel_id"] = convert_key_to_channel_id(
+                        key_data
+                    )
+
+                # check if 1D data
+                if freq_data > 0:
+                    # hole in data
+                    if data_path == "None":
+                        start_ind = None
 
                     else:
-                        next_data = np.nan * np.ones(
-                            (int(start_sec * freq_data),)
-                        )
+                        # initialize slicing indexes
+                        start_ind = 0
+                        end_ind = None
 
-                else:
-                    # get signal file timestamp
-                    sig_timestamp = \
-                        datetime_converter.get_datetime_from_path(
-                            data_path, delimiter, pos, fmt,
-                            time_zone=self.time_zone
-                        )
-
-                    # check if 2D data (signal not regularly sampled)
-                    if freq_data == 0:
-                        # get temporal offset between reference modality and
-                        # signal
-                        temporal_offset = (
-                            sig_timestamp - ref_timestamp
-                        ).total_seconds()
-
-                        # get first column (samples timestamps)
-                        next_data_ts = data_loader.get_data_generic(
-                            data_path, key=key_data, slicing=("col", 0)
-                        )
-
-                    # initialize slicing indexes
-                    start_ind = 0
-                    end_ind = None
-
-                    # truncate data at the beginning if necessary
-                    if ite_line == 0:
-                        # 1D data (regularly sampled)
-                        if freq_data > 0:
+                        # truncate data at the beginning if necessary
+                        if ite_line == 0:
                             # get slicing index
                             start_ind = int(start_sec * freq_data)
 
-                        # 2D data (not regularly sampled)
-                        else:
-                            # get indexes of samples after starting second
-                            inds = np.where(
-                                next_data_ts >= start_sec * 1000
-                            )[0]
-
-                            # get slicing index
-                            start_ind = inds[0]
-
-                    # truncate data at the end if necessary
-                    if ite_line == len(lines) - 1:
-                        # get duration of reference data file in seconds
-                        ref_duration = self.nframes / self.fps
-
-                        # 1D data
-                        if freq_data > 0:
+                        # truncate data at the end if necessary
+                        if ite_line == len(lines) - 1:
                             # get length of data so far
                             data_length = 0
                             for data_tmp in data_list:
@@ -2263,45 +2322,64 @@ class ViSiAnnoT():
                             # get remaining data length required to fill
                             # the reference data file
                             remaining_length = int(round(
-                                freq_data * ref_duration - data_length
+                                freq_data * self.temporal_range_duration -
+                                data_length
                             ))
 
                             # get slicing index
                             end_ind = start_ind + remaining_length
 
-                        # 2D data (not regularly sampled)
+                        # slicing keyword argument for data loading
+                        if start_ind == 0 and end_ind is None:
+                            kwargs["slicing"] = ()
+
+                        elif end_ind is None:
+                            kwargs["slicing"] = (start_ind,)
+
                         else:
-                            temporal_limit = (
-                                ref_duration - temporal_offset
-                            ) * 1000
+                            kwargs["slicing"] = (start_ind, end_ind)
 
-                            # get indexes of samples before temporal limit
-                            inds = np.where(
-                                next_data_ts <= temporal_limit
-                            )[0]
+                # 2D data
+                else:
+                    # get first column (samples timestamps)
+                    next_data_ts = data_loader.get_data_generic(
+                        data_path, key=key_data, slicing=("col", 0)
+                    )
 
-                            # get slicing indexes
-                            end_ind = inds[-1] + 1
+                    # get indexes of samples spanning the reference temporal
+                    # range
+                    if start_sec < 0:
+                        next_data_inds_0 = np.where(
+                            next_data_ts >= -start_sec * 1000
+                        )[0]
 
-                    # keyword arguments for loading data
-                    kwargs = {"key": key_data}
-
-                    # channel specification when loading audio
-                    if data_path.split('.')[-1] == "wav":
-                        kwargs["channel_id"] = convert_key_to_channel_id(
-                            key_data
-                        )
-
-                    # slicing keyword argument for data loading
-                    if start_ind == 0 and end_ind is None:
-                        kwargs["slicing"] = ()
-
-                    elif end_ind is None:
-                        kwargs["slicing"] = (start_ind,)
+                        temporal_limit = (
+                            self.temporal_range_duration - start_sec
+                        ) * 1000
 
                     else:
-                        kwargs["slicing"] = (start_ind, end_ind)
+                        next_data_inds_0 = np.arange(next_data_ts.shape[0])
 
+                        temporal_limit = (
+                            self.temporal_range_duration - start_sec
+                        ) * 1000
+
+                    next_data_inds_1 = np.where(
+                        next_data_ts <= temporal_limit
+                    )[0]
+
+                    # slicing keyword argument for data loading
+                    kwargs["slicing"] = np.intersect1d(
+                        next_data_inds_0, next_data_inds_1
+                    )
+
+                # check if hole in data (1D)
+                if freq_data > 0 and start_ind is None:
+                    next_data = np.nan * np.ones(
+                        (int(start_sec * freq_data),)
+                    )
+
+                else:
                     # check if interval data
                     if flag_interval:
                         # load data with slicing
@@ -2316,33 +2394,12 @@ class ViSiAnnoT():
                             data_path, **kwargs
                         )
 
-                    # check if 1D data
-                    if freq_data > 0:
-                        # fill with NaN if not continuous with previous signal
-                        # file
-                        delta = (
-                            sig_timestamp - prev_sig_timestamp
-                        ).total_seconds()
-
-                        if delta > 0:
-                            next_data = np.concatenate((
-                                np.nan * np.ones((int(delta * freq_data),)),
-                                next_data
-                            ))
-
-                    else:
+                    if freq_data == 0:
                         # temporal offset
-                        next_data[:, 0] += temporal_offset * 1000
+                        next_data[:, 0] += start_sec * 1000
 
                 # concatenate data
                 data_list.append(next_data)
-
-                # check if 1D data
-                if freq_data > 0:
-                    # update timestamp of last sample
-                    prev_sig_timestamp += timedelta(
-                        seconds=next_data.shape[0] / freq_data
-                    )
 
             # get data as a numpy array
             data = np.concatenate(tuple(data_list))

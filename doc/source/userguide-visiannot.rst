@@ -9,14 +9,17 @@ User guide: ViSiAnnoT
 The dataset used for these examples is stored in a folder named "data" and is organized as follows:
 
 * Folder "interval": files with interval data to plot over signals
+
   * Pat01_2021-03-02T09-33-56_intervalA.txt
   * Pat01_2021-03-02T09-33-56_intervalB.txt
-* Folder "signal_sync": signal files that are synchronized with first video
-  * Pat01_2021-03-02T09-33-56_physio.h5 (contains ECG and respiration)
-  * Pat01_2021-03-02T10-03-56_physio.h5 (contains ECG and respiration)
-  * Pat01_2021-03-02T09-33-56_rr.txt
-  * Pat01_2021-03-02T09-33-56_tqrs.txt
+* Folder "signal": files with signal data
+
+  * Pat01_2021-03-02T09-33-56_physio.h5 (contains ECG and respiration), synchronized with first video
+  * Pat01_2021-03-02T09-33-56_rr.txt, synchronized with first video
+  * Pat01_2021-03-02T09-33-56_tqrs.txt, synchronized with first video
+  * physio_2021-03-02T09-34-09.h5 (contains ECG, respiration, TQRS and RR), spanning the long recording
 * Folder "video": video files for two cameras
+
   * Pat01_2021-03-02T09-33-56_BW1.mp4
   * Pat01_2021-03-02T09-33-56_BW2.mp4
   * Pat01_2021-03-02T10-03-56_BW1.mp4
@@ -24,7 +27,6 @@ The dataset used for these examples is stored in a folder named "data" and is or
   * Pat01_2021-03-02T10-33-56_BW1.mp4
   * Pat01_2021-03-02T10-33-56_BW2.mp4
 * Pat01_audio.wav
-* physio_2021-03-02T09-34-09.h5 (contains ECG, respiration, TQRS and RR)
 
 This dataset is not publicly available, but equivalent scripts are provided in `this repository <https://github.com/RphWbr/visiannot-example>`_, along with an example dataset.
 
@@ -105,8 +107,8 @@ Here is an example::
 	from visiannot.visiannot import ViSiAnnoT
 
 	# signal paths
-	path_physio = "data/signal_sync/Pat01_2021-03-02T09-33-56_physio.h5"
-	path_tqrs = "data/signal_sync/Pat01_2021-03-02T09-33-56_tqrs.txt"
+	path_physio = "data/signal/Pat01_2021-03-02T09-33-56_physio.h5"
+	path_tqrs = "data/signal/Pat01_2021-03-02T09-33-56_tqrs.txt"
 
 	# define plot style
 	plot_style_tqrs = {
@@ -201,7 +203,7 @@ Based on :numref:`fig-example-signal`, :numref:`fig-example-signal-zoom` illustr
 
 .. _fig-example-signal-zoom:
 
-.. figure:: images/example_signal_zoom.png
+.. figure:: images/example_zoom.png
 
   Screenshot of ViSiAnnoT used as a signal viewer after zoom
 
@@ -223,6 +225,15 @@ Threshold values
 Threshold values can be drawn as horizontal lines on a signal plot. It may be useful to identify temporal intervals where a signal is above or below a specific value.
 
 This is done with the dictionary ``threshold_dict`` which is passed to :class:`.ViSiAnnoT` as a keyword argument. The key of the dictionary must correspond to a key of ``signal_dict``, it specifies the signal widget where to draw the threshold. The value of the dictionary is a nested list of thresholds, each element is a list of length 2: threshold value and threshold color (RGB) or (RGBA).
+
+Here is an example::
+
+	# threshold configuration
+	threshold_dict = {}
+	threshold_dict["RR"] = [
+	    [500, (51, 102, 0)],
+	    [600, (178, 34, 34)]
+	]
 
 :numref:`fig-example-threshold` shows an example of a signal widget with thresholds.
 
@@ -259,8 +270,8 @@ Here is an example::
 	from visiannot.visiannot import ViSiAnnoT
 
 	# signal paths
-	path_physio = "data/signal_sync/Pat01_2021-03-02T09-33-56_physio.h5"
-	path_tqrs = "data/signal_sync/Pat01_2021-03-02T09-33-56_tqrs.txt"
+	path_physio = "data/signal/Pat01_2021-03-02T09-33-56_physio.h5"
+	path_tqrs = "data/signal/Pat01_2021-03-02T09-33-56_tqrs.txt"
 	path_interval_a = "data/interval/Pat01_2021-03-02T09-33-56_intervalA.txt"
 	path_interval_b = "data/interval/Pat01_2021-03-02T09-33-56_intervalB.txt"
 
@@ -319,8 +330,8 @@ Here is an example::
 	video_dict["BW2"] = [path_video_2, '_', 1, "%Y-%m-%dT%H-%M-%S"]
 
 	# signal paths
-	path_physio = "data/signal_sync/Pat01_2021-03-02T09-33-56_physio.h5"
-	path_tqrs = "data/signal_sync/Pat01_2021-03-02T09-33-56_tqrs.txt"
+	path_physio = "data/signal/Pat01_2021-03-02T09-33-56_physio.h5"
+	path_tqrs = "data/signal/Pat01_2021-03-02T09-33-56_tqrs.txt"
 
 	# define plot style
 	plot_style_tqrs = {
@@ -354,11 +365,9 @@ Here is an example::
 
 Tools for fast navigation
 =========================
-First, the user can set a truncation duration in order to split by default the display of the signals in several parts. For example, if the signal files last 30 minutes and the user chooses a 10 minutes truncation duration, then there is a combo box which allows to switch from a 10 minutes part to another (0 to 10 minutes , 10 to 20 minutes, 20 to 30 minutes). This feature is set by the keyword argument ``trunc_duration`` in :class:`.ViSiAnnoT` constructor. In the given example: ``trunc_duration=(10, 0)`` (tuple with minutes and seconds of the truncation duration).
+First, there is a combo box to select a temporal range duration in order to display a new temporal range that will begin at the current position of the temporal cursor. The list of available temporal range durations must be configured by the user with the keyword argument ``from_cursor_list`` in :class:`.ViSiAnnoT` constructor. For example, to have the choice between 30 seconds, 1 minute and 1 minute 30 seconds: ``from_cursor_list=[(0, 30), (1, 0), (1, 30)]``.
 
-Second, there is a combo box to select a temporal range duration in order to display a new temporal range that will begin at the current position of the temporal cursor. The list of available temporal range durations must be configured by the user with the keyword argument ``from_cursor_list`` in :class:`.ViSiAnnoT` constructor. For example, to have the choice between 30 seconds, 1 minute and 1 minute 30 seconds: ``from_cursor_list=[(0, 30), (1, 0), (1, 30)]``.
-
-Third, there is a tool for defining a custom temporal range, as shown in :numref:`fig-example-custom-interval`. The user must define the start datetime of the temporal range. The push button "Current" can be used to define it as the current position of the temporal cursor. Then, the user must define the temporal range duration.
+Second, there is a tool for defining a custom temporal range, as shown in :numref:`fig-example-custom-interval`. The user must define the start datetime of the temporal range. The push button "Current" can be used to define it as the current position of the temporal cursor. Then, the user must define the temporal range duration.
 
 .. _fig-example-custom-interval:
 
@@ -374,9 +383,26 @@ Management of long recording
 ============================
 This section introduces the features for managing long recordings. All features introduced above are still available for long recordings. The class :class:`.ViSiAnnoTLongRec` inherits from :class:`.ViSiAnnoT` and adds specific features to manage long recordings.
 
-A long recording is defined as a set of consecutive video and/or signal files. For example, a long recording lasting for two hours might be composed of four 30-minute length video files and eight 15-minute length signal files.
+A long recording is defined as a set of consecutive video and/or signal files. If we come back to the example dataset, we have a long recording composed of the following files:
 
-In this context, there are two additional buttons that allow to switch easily from one file to another and a combo box to directly select a specific file in the recording (with respect to the video files, or the first signal if no video). :numref:`fig-file-selection` shows these buttons and the combo box.
+* Video
+
+  * Pat01_2021-03-02T09-33-56_BW1.mp4
+  * Pat01_2021-03-02T09-33-56_BW2.mp4
+  * Pat01_2021-03-02T10-03-56_BW1.mp4
+  * Pat01_2021-03-02T10-03-56_BW2.mp4
+  * Pat01_2021-03-02T10-33-56_BW1.mp4
+  * Pat01_2021-03-02T10-33-56_BW2.mp4
+
+* Signal
+
+  * physio_2021-03-02T09-34-09.h5
+
+For both cameras, there are three consecutive video files of 30 minutes. The signals "ECG" and "Respiration" are both stored in one file which duration is 1h30min.
+
+The long recording is divided into several consecutive even-time parts, also called "files". The duration of the "files" is set with the keyword argument ``temporal_range`` of the constructor of :class:`.ViSiAnnoTLongRec`. It is a tuple of length 2 *(minute, second)*. For the example dataset, ``temporal_range=(30, 0)`` would lead to a division of the recording into 3 "files".
+
+In the context of long recording, there are two additional buttons that allow to switch easily from one "file" to another and a combo box to directly select a specific "file" in the recording. :numref:`fig-file-selection` shows these buttons and the combo box.
 
 .. _fig-file-selection:
 
@@ -384,7 +410,7 @@ In this context, there are two additional buttons that allow to switch easily fr
 
   Buttons and combo box for file selection in a long recording
 
-We define the video configuration and the signal configuration almost the same way as for the class :class:`.ViSiAnnoT`, but instead of specifying the path to a file, we specify the directory containing the files and a pattern to find them.
+We define the video configuration and the signal configuration almost the same way as for the class :class:`.ViSiAnnoT`, but instead of specifying the path to a file, we specify the directory containing the data files and a pattern to find them. We assume that the beginning datetime of each data file is contained in its name, which is required for synchronization.
 
 Regarding ``video_dict``, each item corresponds to one camera. The key is the camera ID and the value is a list of 5 elements:
 
@@ -404,55 +430,6 @@ Regarding ``signal_dict``, each item corresponds to one signal widget. The key i
 * Key to access the data in the file (in case of .h5 or .mat, set it to ``''`` otherwise), also used a legend - in case of 2D data with several value columns, then the column index must be specified, e.g. ``"key - 1"`` or ``"key - colName"`` if there is an attribute at ``key`` named ``columns`` with columns name being comma-separated (first column is always the timestamps),
 * Signal frequency (may also be a string with path to the frequency attribute in case of h5 file), set it to ``0`` in case of non-regularly sampled signal,
 * Dictionary with plot style.
-
-
-Set of synchronized files
--------------------------
-In this case, the different modalities are synchronized. In the constructor of :class:`.ViSiAnnoTLongRec`, the keyword argument ``flag_synchro`` is set to ``True`` (default value).
-
-Here is an example::
-
-	from visiannot.visiannot import ViSiAnnoTLongRec
-
-	# data directory
-	dir_vid = "data/video"
-	dir_sig = "data/signal_sync"
-
-	# video configuration
-	video_dict = {}
-	video_dict["BW1"] = [dir_vid, "*BW1*.mp4", '_', 1, "%Y-%m-%dT%H-%M-%S"]
-	video_dict["BW2"] = [dir_vid, "*BW2*.mp4", '_', 1, "%Y-%m-%dT%H-%M-%S"]
-
-	# signal configuration
-	signal_dict = {}
-	signal_dict["ECG"] = [[dir_sig, "*_physio.h5", '_', 1, "%Y-%m-%dT%H-%M-%S", "ecg", 500, None]]
-	signal_dict["Respiration"] = [[dir_sig, "*_physio.h5", '_', 1, "%Y-%m-%dT%H-%M-%S", "resp", "resp/freq", None]]
-
-	# create ViSiAnnoT window
-	win_visiannot = ViSiAnnoTLongRec(video_dict, signal_dict)
-
-At launch, **ViSiAnnoT** loads and display the files "Pat01_2021-03-02T09-33-56_BW1.mp", "Pat01_2021-03-02T09-33-56_BW2.mp4" and "Pat01_2021-03-02T09-33-56_physio.h5". When clicking on the "next file" button, the files "Pat01_2021-03-02T10-03-56_BW1.mp4", "Pat01_2021-03-02T10-03-56_BW2.mp4" and "Pat01_2021-03-02T10-03-56_physio.h5" are loaded and displayed.
-
-In this mode, "holes" in files of any modality is supported. For example, when switching to the third file (timestamp 10:33:56), there is no signal file named "Pat01_2021-03-02T10-33-56_physio.h5" and consequently no signal is displayed.
-
-:numref:`fig-long` shows a screenshot of the resulting window, with the first file selected.
-
-.. _fig-long:
-
-.. figure:: images/example_long.png
-
-  Screenshot of ViSiAnnoT for a long recording
-
-
-Set of asynchronous files
--------------------------
-In the case where the different modalities are not synchronized with each other, :class:`.ViSiAnnoTLongRec` automatically synchronize them before display. The keyword argument ``flag_synchro`` of the constructor must be set to ``False``.
-
-We assume that the beginning datetime of each file is contained in its name.
-
-The reference modality for synchronization is the video if there is any, otherwise it is the first signal to plot. Then, when loading a file of the reference modality, **ViSiAnnoT** loads the parts of the other signals that are covered by the reference file.
-
-**NB: if there are several cameras to display, they must be synchronized with each other, the synchronization process is applied only on signals.**
 
 Here is an example::
 
@@ -474,10 +451,77 @@ Here is an example::
 
 	# create ViSiAnnoT window
 	win_visiannot = ViSiAnnoTLongRec(
-	    video_dict, signal_dict, flag_pause_status=True, flag_synchro=False
+	    video_dict, signal_dict, flag_pause_status=True, temporal_range=(30, 0)
 	)
 
-Compared to previous example, there is only one signal file covering the 3 video files. So, this signal file is not synchronized with video.
+
+
+.. _synchro:
+
+Synchronization of the different modalities
+-------------------------------------------
+
+Let's give an example of synchronization of a long recording with three modalities. Below we give the timestamp and duration of the data files.
+
+* Video: 3 files
+
+  * 2000/01/01, 00h00m20s - 45 seconds
+  * 2000/01/01, 00h01m05s - 25 seconds
+  * 2000/01/01, 00h01m50s - 45 seconds
+
+* Signal regularly sampled (signal 1D): 3 files
+
+  * 2000/01/01, 00h00m35s - 30 seconds
+  * 2000/01/01, 00h01m30s - 50 seconds
+  * 2000/01/01, 00h02m20s - 30 seconds
+
+* Signal not regularly sampled (signal 2D): 3 files
+
+  * 2000/01/01, 00h00m00s - 50 seconds
+  * 2000/01/01, 00h01m05s - 45 seconds
+  * 2000/01/01, 00h01m50s - 45 seconds
+
+We choose a temporal range of 60 seconds for dividing the long recording into several "files", see :ref:`fig-synchro`.
+
+.. _fig-synchro:
+
+.. figure:: images/synchro.png
+
+  Example of synchronization
+
+In order to synchronize the different modalities with each other, :class:`.ViSiAnnoTLongRec` first creates a set of temporary synchronization files with the method :meth:`.process_synchronization_all`, stored in the folder *sig-tmp*. For each modality, a temporary file is created for each "file" of the long recording. The temporary file give all necessary information to get data spanning the corresponding "file" in the long recording.
+
+The set of temporary files begin at the earliest timestamp of all data files of all modalities (in the example, at 2000/01/01, 00h00m00s). The last "file" of the long recording is truncated if necessary so that it ends at the last sample of all data files of all modalities (in the example, instead of lasting 60 seconds, it lasts 50 seconds). In the example, there are 3 "files" in the long recording.
+
+The content of the temporary files depends on the data type (video, signal 1D or signal 2D). Basically, they contain the list of data files spanning the corresponding "file" in the long recording and the temporal offset relatively to the beginning of the corresponding "file".
+
+For video, here is the content of the temporary synchronization files::
+
+	File at 00h00m00s      File at 00h01m00s      File at 00h02m00s
+	V1 *=* 20 *=* 60       V1 *=* -40 *=* 5       V3 *=* -10 *=* 155
+	                       V2 *=* 5 *=* 30
+	                       V3 *=* 50 *=* 60
+
+Each line contains the path to the video file, its beginning and ending timestamp in the "file" of the long recording. A negative beginning timestamp means that the video file begins before the "file" in the long recording.
+
+For signal 1D, here is the content of the temporary synchronization files::
+
+	File at 00h00m00s      File at 00h01m00s      File at 00h02m00s
+	None *=* 35            S11 *=* -25            S12 *=* -30
+	S11                    None *=* 25            S13
+	                       S12
+
+If the path to signal file is ``None``, then it means that there is no data during the associated number of seconds. If the associated number of seconds is negative, then it means that the signal file begins before the "file" in the long recording. Otherwise, the whole signal file is used.
+
+For signal 2D, here is the content of the temporary synchronization files::
+
+	File at 00h00m00s      File at 00h01m00s      File at 00h02m00s
+	S21 *=* 0              S22 *=* 5              S23 *=* -10
+	                       S23 *=* 50
+
+Each line contains the path to the signal file and its beginning timestamp in the "file" of the long recording. A negative beginning timestamp means that the signal file begins before the "file" in the long recording.
+
+The method :meth:`.get_synchro_signal` is used to read the temporary synchronization file and gets the signal array that is synchronized with the current "file" in the long recording.
 
 
 Multi-label annotation tools
@@ -500,7 +544,7 @@ When creating an instance of :class:`.ViSiAnnoT` or :class:`.ViSiAnnoTLongRec`, 
 	annotevent_dict["Label-1"] = [200, 105, 0, 50]
 	annotevent_dict["Label-2"] = [105, 205, 0, 50]
 
-There are two labels (dictionary keys), to which is associated a color (dictionary values). It is worth to note that the label ``"DURATION"`` is not permitted because it is used internally by :class:`.ViSiAnnoT`.
+There are two labels (dictionary keys), to which is associated a color (dictionary values).
 
 :numref:`fig-annot-event` shows a screenshot of the events annotation tool.
 
@@ -541,7 +585,7 @@ Storage of events annotation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 In the constructor of :class:`.ViSiAnnoT`, the keyword argument ``annot_dir`` specifies the directory where to store annotation files. By default it is the directory "*Annotations*", located at the current working directory from where **ViSiAnnoT** is launched.
 
-For each label, a text file is created with the intervals of the annotated events. The name of the annotation file is ``BASENAME_LABEL-datetime``, where ``BASENAME`` is the basename of the annotation directory and ``LABEL`` is the label.
+For each label, a text file is created with the intervals of the annotated events. The name of the annotation file is ``BASENAME_LABEL``, where ``BASENAME`` is the basename of the annotation directory and ``LABEL`` is the label.
 
 Each line in an annotation file corresponds to an annotated event: ``TS1 - TS2``, where ``TS1`` (resp. ``TS2``) is the start (resp. stop) timestamp of the annotated event. The timestamp is formatted as follows: ``%Y-%m-%dT%H:%M:%S.%f``, where ``%Y`` is the year in 4 digits, ``%m`` is the month in 2 digits, ``%d`` is the day in 2 digits, ``%H`` is the hour, ``%M`` is the minute, ``%S`` is the second and ``%f`` is the microsecond.
 
@@ -571,7 +615,7 @@ The extracted images are stored in the same directory than events annotation fil
 
 Layout modes
 ============
-In the context of combined video and signal visualization, the user may want to put the emphasis on either the video or the signal. For this purpose, we provide three default layout mode, to be selected with the keyword argument ``layout_mode`` (may be ``1``, ``2`` or ``3``) The user may also manually configure the layout of the window with the keyword argument ``poswid_dict``.
+In the context of combined video and signal visualization, the user may want to put the emphasis on either the video or the signal. For this purpose, we provide four default layout mode, to be selected with the keyword argument ``layout_mode`` (may be ``1``, ``2``, ``3`` or ``4``). The user may also manually configure the layout of the window with the keyword argument ``poswid_dict``.
 
 Here is an example of combined video and signal visualization in the context of long recording with all features enabled (events annotation, image extraction, tools for fast navigation)::
 
@@ -614,10 +658,9 @@ Here is an example of combined video and signal visualization in the context of 
 	win_visiannot = ViSiAnnoTLongRec(
 	    video_dict, signal_dict,
 	    flag_pause_status=True,
-	    flag_synchro=False,
+	    temporal_range=(5, 0),
 	    annotevent_dict=annotevent_dict,
 	    annotimage_list=annotimage_list,
-	    trunc_duration=(5, 0),
 	    from_cursor_list=[(0, 30), (1, 0), (2, 0)],
 	    layout_mode=1
 	)
@@ -635,11 +678,18 @@ Mode 2 puts the emphasis on the signal.
 
   Layout mode 2
 
-Mode 3 provides a more compact display since the following features are disabled: selection of truncated temporal range, selection of temporal range from cursor, and custom selection of temporal range.
+Mode 3 provides a more compact display since the following features are disabled: selection of temporal range from cursor, and custom selection of temporal range.
 
 .. figure:: images/layout_mode_3.png
 
   Layout mode 3
+
+Mode 4 is adapted to portrait screen orientation.
+
+.. figure:: images/layout_mode_4.png
+
+  Layout mode 4
+
 
 
 Keyboard/mouse interactions

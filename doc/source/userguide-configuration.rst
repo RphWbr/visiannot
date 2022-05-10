@@ -33,24 +33,6 @@ See section :ref:`video` for details about video configuration. In a Python scri
 In the configuration file, we create a section named "Video", composed of as much sub-sections as cameras. The name of the subsections is equivalent to the dictionary keys. Here is the equivalent video configuration::
 
     [Video]
-    [[BW1]]
-    k0 = "dir/to/video"
-    k1 = "*BW1*.mp4"
-    k2 = '_'
-    k3 = 1
-    k4 = "%Y-%m-%dT%H-%M-%S"
-    [[BW2]]
-    k0 = "dir/to/video"
-    k1 = "*BW2*.mp4"
-    k2 = '_'
-    k3 = 1
-    k4 = "%Y-%m-%dT%H-%M-%S"
-
-The keys ``k*`` are arbitrary. The only constraint is that they must be different inside the same (sub-)section.
-
-Same configuration with a more compact writing::
-
-    [Video]
     BW1 = ["dir/to/video", "*BW1*.mp4", '_', 1, "%Y-%m-%dT%H-%M-%S"]
     BW2 = ["dir/to/video", "*BW2*.mp4", '_', 1, "%Y-%m-%dT%H-%M-%S"]
 
@@ -80,48 +62,6 @@ See section :ref:`signal` for details about signal configuration. In a Python sc
     ]
 
 There are two signal widgets ("ECG" and "Repsiration"), with two signals in the first one and one signal in the second one. In the configuration file, we create a section named "Signal", composed of as much sub-sections as signal widgets. Each sub-section is composed of as much sub-sub-sections as signals in the corresponding signal widget. Here is the equivalent signal configuration::
-
-    [Signal]
-    
-    [[ECG]]
-    [[[k0]]]
-    k0 = 'dir/to/sig'
-    k1 = 'physio_*.h5'
-    k2 = '_'
-    k3 = 1
-    k4 = '%Y-%m-%dT%H-%M-%S'
-    k5 = 'ecg'
-    k6 = 500
-    k7 = None
-    [[[k1]]]
-    k0 = 'dir/to/sig'
-    k1 = 'physio_*.h5'
-    k2 = '_'
-    k3 = 1
-    k4 = '%Y-%m-%dT%H-%M-%S'
-    k5 = 'tqrs'
-    k6 = 0
-    [[[[k7]]]]
-    pen = None
-    symbol = '+'
-    symbolPen = 'r'
-    symbolSize = 10
-
-    [[Respiration]]
-    [[[k0]]]
-    k0 = 'dir/to/sig'
-    k1 = 'physio_*.h5'
-    k2 = '_'
-    k3 = 1
-    k4 = '%Y-%m-%dT%H-%M-%S'
-    k5 = 'resp'
-    k6 = 'resp/freq'
-    [[[[k7]]]]
-    [[[[[pen]]]]]
-    color = 'm'
-    width = 1
-
-Same configuration with a more compact writing::
 
     [Signal]
     ECG = [['dir/to/sig', 'physio_*.h5', '_', 1, '%Y-%m-%dT%H-%M-%S', 'ecg', '500', None], ['dir/to/sig', 'physio_*.h5', '_', 1, '%Y-%m-%dT%H-%M-%S', 'tqrs', 0, {'pen': None, 'symbol': '+', 'symbolPen': 'r', 'symbolSize': 10}]]
@@ -155,17 +95,6 @@ In the configuration file, we create a section named "Threshold", composed of as
 
     [Threshold]
     [[RR]]
-    [[[k0]]]
-    k0 = 600
-    k1 = [220, 0, 0]
-    [[[k1]]]
-    k0 = 750
-    k1 = [178, 34, 34]
-
-Same configuration with a more compact writing::
-
-    [Threshold]
-    [[RR]]
     key_0 = [600, [220, 0, 0]]
     key_1 = [750, [178, 34, 34]]
 
@@ -184,29 +113,6 @@ See section :ref:`intervals` for details about interval configuration. In a Pyth
 Intervals must be plotted only the signal widget "ECG" with two interval types. In the configuration file, we create a section named "Interval", composed of as much sub-sections as signal widgets on which to plot intervals. Each sub-section is composed of as much sub-sub-sections as interval types to plot on the corresponding signal widget. Here is the equivalent interval configuration::
 
     [Interval]
-    [[ECG]]
-    [[[k0]]]
-    k0 = "dir/to/interval"
-    k1 = "I0_*.txt"
-    k2 = '_'
-    k3 = 0
-    k4 = '%Y%m%dT%H%M%S'
-    k5 = ''
-    k6 = 500
-    k7 = [0, 255, 0, 50]
-    [[[k1]]]
-    k0 = "dir/to/interval"
-    k1 = "I1_*.txt"
-    k2 = '_'
-    k3 = 0
-    k4 = '%Y%m%dT%H%M%S'
-    k5 = ''
-    k6 = 500
-    k7 = [255, 200, 0, 50]
-
-Same configuration with a more compact writing::
-
-    [Interval]
     ECG = [["dir/to/interval", "I0_*.txt", '_', 0, '%Y%m%dT%H%M%S', "", 500, [0, 255, 0, 50]], ["dir/to/interval", "I1_*.txt", '_', 0, '%Y%m%dT%H%M%S', "", 500, [255, 200, 0, 50]]]
 
 
@@ -220,20 +126,6 @@ See section :ref:`eventsannot` for details about events annotation configuration
     annotevent_dict["Label-2"] = [105, 205, 0, 50]
 
 In the configuration file, we create a section named "AnnotEvent", composed of as much sub-sections as labels. Here is the equivalent events annotation configuration::
-
-    [AnnotEvent]
-    [[Label-1]]
-    k0 = 200
-    k1 = 105
-    k2 = 0
-    k3 = 50
-    [[Label-2]]
-    k0 = 105
-    k1 = 205
-    k2 = 0
-    k3 = 50
-
-Same configuration with a more compact writing::
 
     [AnnotEvent]
     Label-1 = [200, 105, 0, 50]
@@ -263,13 +155,12 @@ General
 In a Python script, the general configuration is specified with the keyword arguments of :class:`.ViSiAnnoTLongRec` and :class:`.ViSiAnnoT`. In the configuration file, we create a section named "General" as in the following example::
 
     [General]
-    flag_synchro = False
+    temporal_range = (0, 30)
     flag_pause_status = True
-    layout_mode = 2
+    layout_mode = 1
     zoom_factor = 2
     max_points = 5000
     nb_ticks = 10
-    trunc_duration = [0, 0]
     time_zone = 'Europe/Paris'
     annot_dir = 'Annotations'
     from_cursor_list = [[0, 20], [0, 40], [1, 0]]
@@ -451,7 +342,7 @@ The general configuration is contained in the fifth group box named "General". F
 
   Screenshot of the general configuration
 
-The "Signals synchronized" check box specifies if the the signals are synchronized with video or synchronized with each other if there is no video.
+The "Temporal range" spin boxes specify the duration of "files" in the long recording.
 
 The "Video paused to launch" check box specifies if the video must be in pause mode when launching the software.
 
@@ -464,8 +355,6 @@ The "Time zone" line edit specifies the time zone that is used for date-time com
 The "Max nb of points to display" spin box specifies the maximum number of signal samples that are plotted. For a given temporal range, if the number of signal samples contained in this range is above the maximum number, then we simply skip samples so that we reach the maximum number.
 
 The "Minimum height in pixels of the signal widgets" spin box specifies the vertical size of the signal widgets in the scroll area in case it exceeds the size of the window.
-
-The "Trunc duration" spin boxes specifies the truncation duration (see section :ref:`sec-fast-nav`).
 
 The "Zoom factor" spin box specifies the zoom factor when zooming in/out around the temporal cursor.
 
@@ -539,12 +428,12 @@ We want the annotations to be stored as follows (two labels, "Label1" and "Label
     |__ Annnotations
         |__ Subject01
             |__ Subject01_2021-01-01T00-00-00
-                |__ Subject01_2021-01-01T00-00-00_Label1-datetime.txt
-                |__ Subject01_2021-01-01T00-00-00_Label2-datetime.txt
+                |__ Subject01_2021-01-01T00-00-00_Label1.txt
+                |__ Subject01_2021-01-01T00-00-00_Label2.txt
         |__ Subject02
             |__ Subject02_2021-01-03T01-00-00
-                |__ Subject02_2021-01-03T01-00-00_Label1-datetime.txt
-                |__ Subject02_2021-01-03T01-00-00_Label2-datetime.txt
+                |__ Subject02_2021-01-03T01-00-00_Label1.txt
+                |__ Subject02_2021-01-03T01-00-00_Label2.txt
 
 When we change subject and/or recording, we need to update the following fields in the configuration file (see :ref:`configuration`):
 
