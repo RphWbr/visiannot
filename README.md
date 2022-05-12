@@ -134,4 +134,4 @@ Bibtex entry::
 
 Acknowledgment
 --------------
-The initial development of **ViSiAnnoT** was made possible by a funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 689260 (`Digi-NewB project <http://www.digi-newb.eu/>`_).
+The initial development of **ViSiAnnoT** was made possible by a funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 689260 ([Digi-NewB project](http://www.digi-newb.eu/)).
