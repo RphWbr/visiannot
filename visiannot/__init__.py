@@ -8,7 +8,7 @@ Initially developed as part of the european project Digi-NewB at the LTSI lab,
 Université Rennes 1.
 """
 
-__version__ = "0.2.8"
+__version__ = "0.3.0"
 __authors__ = "Raphaël Weber"
 
 
