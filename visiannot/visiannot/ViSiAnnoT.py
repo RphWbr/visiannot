@@ -319,10 +319,6 @@ class ViSiAnnoT():
         if not any(video_dict) and not any(signal_dict):
             raise Exception("Input dictionaries are empty")
 
-        # ******************************************************************* #
-        # *********************** miscellaneous ***************************** #
-        # ******************************************************************* #
-
         #: (*str*) Datetime string format of the text of X axis ticks
         self.ticks_fmt = ticks_fmt
 
@@ -355,27 +351,13 @@ class ViSiAnnoT():
         #: are saved
         self.annot_dir = annot_dir
 
-
-        # ******************************************************************* #
-        # ************************ long recordings ************************** #
-        # ******************************************************************* #
-
         #: (*bool*) Specify if :class:`.ViSiAnnoT` is launched in the context
         #: of :class:`.ViSiAnnoTLongRec`
         self.flag_long_rec = flag_long_rec
 
-        #: (*int*) ID of the current video/signal file in case of long
-        #: recordings
-        #:
-        #: If :attr:`.flag_long_rec` is ``False``, then :attr:`.ite_file` is
-        #: always equal to 0.
-        self.ite_file = 0
-
-        #: (*int*) Number of files for splitting the long recording
-        #:
-        #: If :attr:`.flag_long_rec` is ``False``, then :attr:`.nb_files` is
-        #: set to 1.
-        self.nb_files = 1
+        if not flag_long_rec:
+            self.ite_file = 0
+            self.nb_files = 1
 
 
         # ******************************************************************* #
@@ -439,8 +421,7 @@ class ViSiAnnoT():
         # check if not long recording => create attribute of reference
         # frequency (otherwise already set in ViSiAnnoTLongRec)
         if not self.flag_long_rec:
-            #: (*int*) Frequency of the video (or the first signal if there is
-            #: no video), it is the reference frequency
+            #: (*int*) Reference frequency
             self.fps = None
 
         #: (*int*) Number of frames in the video (or the first signal if there
@@ -1820,119 +1801,95 @@ class ViSiAnnoT():
         self.interval_dict = {}
 
         # loop on video
-        for ite, (video_id, video_config) in enumerate(video_dict.items()):
+        for video_id, video_config in video_dict.items():
             # check number of elements in configuration
             check_configuration(
                 video_id, video_config, "Video", flag_long_rec=False
             )
 
-            # get video configuration
-            path, delimiter, pos, fmt = video_config
+            # get video path
+            path = video_config[0]
 
             # check if long recording
             if self.flag_long_rec:
-                # get beginning datetime
-                self.beginning_datetime = \
-                    datetime_converter.get_datetime_from_path(
-                        path,
-                        self.synchro_timestamp_config[0],
-                        self.synchro_timestamp_config[1],
-                        self.synchro_timestamp_config[2],
-                        time_zone=self.time_zone
-                    )
-
                 self.video_data_dict[video_id] = self.get_synchro_video(path)
 
-                # get number of frames
-                if self.nframes is None:
-                    self.nframes = self.temporal_range_duration * self.fps
-
             else:
-                # get beginning datetime
-                if self.beginning_datetime is None:
-                    self.beginning_datetime = \
-                        datetime_converter.get_datetime_from_path(
-                            path, delimiter, pos, fmt,
-                            time_zone=self.time_zone
-                        )
-
                 # get video data
-                data_video, nframes, fps = get_data_video(path)
+                data_video, _, _ = get_data_video(path)
                 video_name = os.path.splitext(os.path.basename(path))[0]
                 self.video_data_dict[video_id] = (data_video, video_name)
 
-                if self.fps is None and fps > 0:
-                    self.fps = fps
-
-                if self.nframes is None and self.fps is not None:
-                    self.nframes = nframes
-
 
         # ******************************************************************* #
-        # ************************** No video ******************************* #
+        # ************* Beginning datetime and temporal range *************** #
         # ******************************************************************* #
 
-        # check if there is no video
-        # in this case the attributes fps, nframes and beginning_datetime are
-        # not defined yet => these attributes are defined with the first signal
-        if not any(video_dict):
-            # get first signal configuration
-            signal_id = list(signal_dict.keys())[0]
-            signal_config = list(signal_dict.values())[0][0]
+        # check if long recording (reference frequency is already set in
+        # ViSiAnnoTLongRec)
+        if self.flag_long_rec:
+            # get beginning datetime
+            self.beginning_datetime = \
+                datetime_converter.get_datetime_from_path(
+                    path,
+                    self.synchro_timestamp_config[0],
+                    self.synchro_timestamp_config[1],
+                    self.synchro_timestamp_config[2],
+                    time_zone=self.time_zone
+                )
 
-            # check number of elements in first signal configuration
-            check_configuration(
-                signal_id, signal_config, "Signal", flag_long_rec=False
-            )
+            # get number of frames
+            self.nframes = self.temporal_range_duration * self.fps
 
-            # get first signal configuration
-            path, delimiter, pos, fmt, key_data, freq, _ = signal_config
+        else:
+            # check if there is video
+            if any(video_dict):
+                # loop on cameras
+                for video_id, video_config in video_dict.items():
+                    # get video configuration
+                    path, delimiter, pos, fmt = video_config
 
-            # check if long recording
-            if self.flag_long_rec:
-                # get beginning date-time
-                self.beginning_datetime = \
-                    datetime_converter.get_datetime_from_path(
-                        path, self.synchro_timestamp_config[0],
-                        self.synchro_timestamp_config[1],
-                        self.synchro_timestamp_config[2],
-                        time_zone=self.time_zone
-                    )
+                    # get number of frames and fps
+                    _, nframes, fps = get_data_video(path)
 
-                # get synchronization file content
-                lines = data_loader.get_txt_lines(path)
+                    # check if FPS OK
+                    if fps > 0:
+                        # set reference frequency
+                        self.fps = fps
 
-                # check if any signal file
-                if len(lines) > 0:
-                    # get path to first signal file
-                    path = lines[1].replace("\n", "")
+                        # set number of frames
+                        self.nframes = nframes
 
-                    # check if attribute fps to be set
-                    if self.fps is None:
-                        # get frequency and store it as reference frequency
-                        self.fps = self.get_data_frequency(path, freq)
+                        # get beginning datetime
+                        self.beginning_datetime = \
+                            datetime_converter.get_datetime_from_path(
+                                path, delimiter, pos, fmt,
+                                time_zone=self.time_zone
+                            )
 
-                else:
-                    raise Exception(
-                        "No data for first signal at the beginning of the "
-                        "long recording"
-                    )
-
-                # get number of frames
-                if self.nframes is None:
-                    self.nframes = self.temporal_range_duration * self.fps
+                        break
 
             else:
+                # get first signal configuration
+                signal_id = list(signal_dict.keys())[0]
+                signal_config = list(signal_dict.values())[0][0]
+
+                # check number of elements in first signal configuration
+                check_configuration(
+                    signal_id, signal_config, "Signal", flag_long_rec=False
+                )
+
+                # get first signal configuration
+                path, delimiter, pos, fmt, key_data, freq, _ = signal_config
+
                 # get beginning date-time
                 self.beginning_datetime = \
                     datetime_converter.get_datetime_from_path(
                         path, delimiter, pos, fmt, time_zone=self.time_zone
                     )
 
-                # check if attribute fps to be set
-                if self.fps is None:
-                    # get frequency and store it as reference frequency
-                    self.fps = self.get_data_frequency(path, freq)
+                # get frequency and store it as reference frequency
+                self.fps = self.get_data_frequency(path, freq)
 
                 # get number of frames
                 self.nframes = data_loader.get_nb_samples_generic(

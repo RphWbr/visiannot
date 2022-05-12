@@ -149,7 +149,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
 
         #: (*int*) Temporal range duration in seconds used to split long
         #: recording into several files
-        self.temporal_range_duration = \
+        self.temporal_range_duration_split = \
             temporal_range[0] * 60 + temporal_range[1]
 
         # get time zone
@@ -285,7 +285,30 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         while ref_datetime < ending_datetime_long:
             self.ref_beg_datetime_list.append(ref_datetime)
             ref_datetime = ref_datetime + \
-                timedelta(seconds=self.temporal_range_duration)
+                timedelta(seconds=self.temporal_range_duration_split)
+
+        #: (*float*) Temporal range duration of the last file in the long
+        #: recording (it might be lower than :attr:`.temporal_range_duration`)
+        self.temporal_range_duration_last = (
+            ending_datetime_long - self.ref_beg_datetime_list[-1]
+        ).total_seconds()
+
+        #: (*float*) Temporal range duration of the current file in the long
+        #: recording (equal to :attr:`.temporal_range_duration_last` if last
+        #: file, otherwise equal to :attr:`.temporal_range_duration_split`)
+        self.temporal_range_duration = None
+
+        #: (*int*) Index of the current file in the long recording
+        #:
+        #: If :attr:`.flag_long_rec` is ``False``, then :attr:`.ite_file` is
+        #: always equal to 0.
+        self.ite_file = 0
+
+        #: (*int*) Number of files for splitting the long recording
+        #:
+        #: If :attr:`.flag_long_rec` is ``False``, then :attr:`.nb_files` is
+        #: set to 1.
+        self.nb_files = len(self.ref_beg_datetime_list)
 
         #: (*str*) Directory where to save temporary files for synchronization
         self.synchro_dir = "sig-tmp"
@@ -387,7 +410,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         # ******************************************************************* #
 
         # get configuration dictionaries for first file
-        self.ite_file = 0
         video_dict_current, signal_dict_current, interval_dict_current = \
             self.get_current_file_configuration()
 
@@ -397,13 +419,6 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             interval_dict=interval_dict_current, poswid_dict=poswid_dict,
             flag_long_rec=True, layout_mode=layout_mode, **kwargs
         )
-
-        # update number of files splitting the long recording
-        if any(video_dict):
-            self.nb_files = len(list(self.video_list_dict.values())[0][0])
-
-        else:
-            self.nb_files = len(list(self.signal_list_dict.values())[0][0][0])
 
 
         # ******************* previous/next recording *********************** #
@@ -823,9 +838,9 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         Creates temporary synchronization files for a given modality
 
         The reference for synchronization is given by
-        :attr:`.ref_beg_datetime_list` and :attr:`.temporal_range_duration`. A
-        synchronization file is created for each element of the list
-        :attr:`.ref_beg_datetime_list`.
+        :attr:`.ref_beg_datetime_list` and
+        :attr:`.temporal_range_duration_split`. A synchronization file is
+        created for each element of the list :attr:`.ref_beg_datetime_list`.
 
         See :ref:`synchro` for an example of temporary synchronization files.
 
@@ -875,7 +890,14 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         synchro_path_list = []
 
         # loop on beginning datetimes of reference data files
-        for ref_datetime in self.ref_beg_datetime_list:
+        for ite, ref_datetime in enumerate(self.ref_beg_datetime_list):
+            # get temporal range duration of the file in the long recording
+            if ite < len(self.ref_beg_datetime_list) - 1:
+                temporal_range_duration = self.temporal_range_duration_split
+
+            else:
+                temporal_range_duration = self.temporal_range_duration_last
+
             # compute difference of beginning datetimes between reference and
             # signal
             start_data_diff_array = np.array([
@@ -886,7 +908,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
             # get signal files sharing temporality with reference data file
             data_file_id_list = np.intersect1d(
                 np.where(start_data_diff_array >= 0)[0],
-                np.where(start_data_diff_array <= self.temporal_range_duration)[0]
+                np.where(start_data_diff_array <= temporal_range_duration)[0]
             )
 
             # check if there is a signal file beginning before reference data
@@ -966,7 +988,7 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                             ref_datetime
                         ).total_seconds()
 
-                        end_sec = min(end_sec, self.temporal_range_duration)
+                        end_sec = min(end_sec, temporal_range_duration)
 
                         f.write("%s%s%f%s%f\n" % (
                             data_path, self.synchro_delimiter,
@@ -989,6 +1011,9 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
         """
         Gets configuration dictionaries for the current file in the long
         recording to provide to :class:`.ViSiAnnoT`
+
+        It also sets :attr:`.temporal_range_duration` according to the value of
+        :attr:`.ite_file`
 
         :returns:
             - **video_dict** (*dict*) -- video configuration
@@ -1022,6 +1047,14 @@ class ViSiAnnoTLongRec(ViSiAnnoT):
                 signal_dict[signal_id].append(
                     [path_list[self.ite_file]] + config
                 )
+
+        if self.ite_file == self.nb_files - 1:
+            self.temporal_range_duration = \
+                self.temporal_range_duration_last
+
+        else:
+            self.temporal_range_duration = \
+                self.temporal_range_duration_split
 
         return video_dict, signal_dict, interval_dict
 
