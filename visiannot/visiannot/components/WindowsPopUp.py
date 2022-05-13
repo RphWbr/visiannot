@@ -12,9 +12,6 @@ Module defining classes for creating pop-up windows in help menu bar
 
 
 from ...tools import pyqt_overlayer
-from ...tools import pyqtgraph_overlayer
-from ...tools.video_loader import read_image
-from ...tools.data_loader import get_working_directory
 from PyQt5.QtWidgets import QLabel, QWidget, QGridLayout
 from PyQt5.QtCore import Qt
 from importlib import import_module
@@ -64,6 +61,9 @@ class WindowPopUp(QWidget):
         :param scroll_lay: layout filling the scroll that must contain the
             label
         :type scroll_lay: QtWidgets.QGridLayout
+
+        :returns: label
+        :rtype: QtWidgets.QLabel
         """
 
         # create label
@@ -79,6 +79,8 @@ class WindowPopUp(QWidget):
         # check if label to be added to scroll area
         if scroll_lay is not None:
             scroll_lay.addWidget(label)
+
+        return label
 
 
 class WindowAbout(WindowPopUp):
@@ -105,21 +107,13 @@ class WindowAbout(WindowPopUp):
             <b>ViSiAnnoT</b> was<br>
             made possible by a funding from the European Union’s Horizon<br>
             2020 research and innovation programme under grant<br>
-            agreement No 689260 (Digi-NewB project).</p>
+            agreement No 689260:
+            <a href="https://www.digi-newb.eu/">Digi-NewB project</b>.</a>
         """
-        self.addLabel(text_acknowledgement, (1, 0), scroll_lay=scroll_lay)
-
-        # load Digi-NewB logo
-        dir_path = get_working_directory(__file__)
-        logo_im = read_image('%s/Images/DIGI-NEWB.jpg' % dir_path)
-
-        # add logo to layout
-        logo_plot = pyqtgraph_overlayer.create_widget_logo(
-            self.lay, (2, 0), logo_im
+        label = self.addLabel(
+            text_acknowledgement, (1, 0), scroll_lay=scroll_lay
         )
-
-        # add logo scroll area
-        scroll_lay.addWidget(logo_plot)
+        label.setOpenExternalLinks(True)
 
         # copyright label
         text_copyright = "© 2018-%s Université Rennes 1 / Raphaël Weber" % \
