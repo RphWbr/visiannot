@@ -18,7 +18,6 @@ from ...tools.data_loader import get_txt_lines
 from ...tools import datetime_converter
 from ...tools.pyqtgraph_overlayer import remove_item_in_widgets
 import numpy as np
-from datetime import timedelta
 
 
 class AnnotEventWidget():
