@@ -302,7 +302,7 @@ class AnnotEventWidget():
         :rtype: str
         """
 
-        return '%s/%s_%s.txt' % (
+        return '%s/%s_%s-datetime.txt' % (
             self.annot_dir, self.file_name_base, label
         )
 
