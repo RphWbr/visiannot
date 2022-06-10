@@ -60,8 +60,8 @@ if __name__ == '__main__':
 
     args, _ = parser.parse_known_args()
     config_path = abspath(args.config_path)
-    no_config_gui = args.no_config_gui
-    no_visi_gui = args.no_visi_gui
+    flag_config_gui = False if args.no_config_gui is None else True
+    flag_visi_gui = False if args.no_visi_gui is None else True
     config_update_function = args.config_update_function
 
     ####################
@@ -103,16 +103,16 @@ if __name__ == '__main__':
             print("Could not import package/module %s" % package_name)
 
     # check if configuration GUI
-    if no_config_gui is not None:
+    if flag_config_gui:
         # check if ViSiAnnoT GUI
-        if no_visi_gui is not None:
+        if flag_visi_gui:
             win_visi = ViSiAnnoTLongRecFromConfigGUI(path=config_path)
 
         else:
             # only configuration GUI
             win_config = ConfigurationWindow(path=config_path)
 
-    elif no_visi_gui is not None:
+    elif flag_visi_gui:
         # only ViSiAnnoT GUI
         win_visi = ViSiAnnoTLongRecFromConfigFile(config_path)
 
