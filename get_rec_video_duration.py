@@ -1,7 +1,7 @@
 from glob import glob
 from argparse import ArgumentParser
-from os.path import basename, isfile
-from os import remove
+from os.path import basename, isfile, isdir
+from os import remove, makedirs
 from datetime import timedelta
 from visiannot.tools.video_loader import get_duration_video
 from visiannot.tools.datetime_converter import get_datetime_from_path
@@ -19,8 +19,16 @@ parser.add_argument(
     help="Path to directory with video recording"
 )
 
+parser.add_argument(
+    "output_dir_base",
+    type=str,
+    help="Path to base directory where to store DURATION file"
+)
+
+
 args, _ = parser.parse_known_args()
 video_dir = args.video_dir
+output_dir_base = args.output_dir_base
 
 timestamp_format = "%Y-%m-%dT%H:%M:%S.%f"
 
@@ -29,6 +37,13 @@ output_path = None
 
 # get list of video paths
 vid_path_list = sorted(glob("%s/*BW1*.mp4" % video_dir))
+
+# get output directory
+rec_name = basename(video_dir)
+pat_id = rec_name.split("_")[0]
+output_dir = "%s/%s/%s" % (output_dir_base, pat_id, rec_name)
+if not isdir(output_dir):
+    makedirs(output_dir)
 
 # loop on paths
 for path in vid_path_list:
@@ -44,7 +59,9 @@ for path in vid_path_list:
     # get output path
     if output_path is None:
         base_name_split = basename(path).split('_')
-        output_path = "%s_%s_DURATION-datetime.txt" % (base_name_split[0], base_name_split[1])
+        output_path = "%s/%s_%s_DURATION-datetime.txt" % (
+            output_dir, base_name_split[0], base_name_split[1]
+        )
 
         if isfile(output_path):
             remove(output_path)
