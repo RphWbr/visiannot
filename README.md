@@ -88,7 +88,7 @@ Support
 
 This package is developed at the LTSI Lab, INSERM-1099, located at Université Rennes 1, France.
 
-For any enquiry, please send an email to raphael.weber@univ-rennes1.fr.
+For any enquiry, please send an email to raphael-weber@hotmail.fr.
 
 If you encounter a bug, feel free to raise an issue on [GitHub](https://github.com/RphWbr/visiannot/issues).
 
@@ -99,7 +99,7 @@ Copyright Université Rennes 1 / INSERM (2018)
 
 Contributor: Raphaël Weber
 
-raphael.weber@univ-rennes1.fr
+raphael-weber@hotmail.fr
 
 This software is a computer program whose purpose is to to provide a graphical user interface for the visualization and annotation of video and signal data.
 
